@@ -1,0 +1,22 @@
+---
+## for haveged/better entropy
+- include: redhat-epel.yml
+
+- name: Redhat | Extra packages install
+  yum: name={{item}} state=present update_cache=yes
+  with_items:
+    - git
+    - yum-cron
+    - gnupg
+    - haveged
+    - psacct
+
+- name: Redhat | Ensure yum-cron is running and enabled on boot.
+  service: name=yum-cron state=started enabled=yes
+
+- name: Redhat | Ensure haveged is running and enabled on boot.
+  service: name=haveged state=started enabled=yes
+- name: Redhat | Ensure psacct is running and enabled on boot.
+  service: name=psacct state=started enabled=yes
+
+

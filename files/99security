@@ -1,0 +1,22 @@
+## /etc/apt/apt.conf.d/99security
+## https://www.debian.org/doc/manuals/securing-debian-howto/ch4.fr.html#s4.10
+## http://wiki.itadmins.net/doku.php?id=debian:apt-xtras
+## $ sudo install -m 644 ~/script/linux/99security /etc/apt/apt.conf.d/
+DPkg
+{
+	#Pre-Invoke  { "mount /usr -o remount,rw" };
+	Pre-Invoke  { 
+#		"[ `egrep '\s+/tmp' /etc/fstab | wc -l` -gt 0 ] && mount /tmp -o remount,exec";
+#		"[ `egrep '\s+/var/tmp' /etc/fstab | wc -l` -gt 0 ] && mount /tmp -o remount,exec";
+		"chattr -R -i /lib /etc/init.d /boot > /tmp/apt.tmp 2>&1; true";
+	};
+	Post-Invoke  { 
+#		"[ `egrep '\s+/tmp' /etc/fstab | wc -l` -gt 0 ] && mount /tmp -o remount,noexec; ";
+#		"[ `egrep '\s+/var/tmp' /etc/fstab | wc -l` -gt 0 ] && mount /tmp -o remount,noexec; ";
+#		"[ -x /usr/local/scripts/aide-update.sh ] && /usr/local/scripts/aide-update.sh;" ;
+		"if [ -x /usr/bin/rkhunter ] && ( ! grep -q -E '^DISABLE_TESTS=.*(hashes.*attributes|attributes.*hashes|properties)' /etc/rkhunter.conf || grep -q -E '^ENABLE_TESTS=.*(hashes|attributes|properties)' /etc/rkhunter.conf); then /usr/bin/rkhunter --propupd --nolog; fi";
+## https://isc.sans.edu/diary/XOR+DDOS+Mitigation+and+Analysis/19827
+		"chattr -R +i /lib /etc/init.d /boot > /tmp/apt2.tmp 2>&1; true";
+	};
+};
+

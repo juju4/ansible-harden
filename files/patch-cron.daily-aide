@@ -1,0 +1,17 @@
+--- cron.daily-aide.orig	2014-07-29 19:42:40.639274876 -0400
++++ /etc/cron.daily/aide	2014-07-29 19:44:28.366052106 -0400
+@@ -697,11 +697,13 @@
+ 	printf >> "$POSTRUNLOG" "no significant changes detected.\n"
+ fi
+ 
+-if [ "$COPYNEWDB" = "yes" ]; then
++if [ "$COPYNEWDB" = "yes" -o "$COPYNEWDB" = "rotate" ]; then
+ 	COPYDB=1
+ fi
+ 
+ if [ "$COPYDB" = "1" ] && [ "$COMMAND" = "update" ]; then
++	[ "$COPYNEWDB" = "rotate" ] && savelog -c 14 "$DATABASE" > /dev/null
++	setfacl -m "u:_backup:r--" -- $DATABASE*
+ 	cp -f "$DATABASE_OUT" "$DATABASE"
+ 	printf >> "$POSTRUNLOG" "output database %s was copied to %s as requested by cron job configuration\n" "$DATABASE_OUT" "$DATABASE"
+ fi

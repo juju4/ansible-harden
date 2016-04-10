@@ -1,0 +1,154 @@
+!/media
+!/opt/tmp
+!/opt/Images
+!/var/log
+!/var/lock
+/var/crash$ VarDir
+/var/crash/.lock$ VarFile
+!/var/run
+!/var/lib/dhcp
+!/var/lib/dhcp3
+!/var/tmp
+/var/cache/apt/pkgcache.bin$ VarFile
+/var/cache/apt/srcpkgcache.bin$ VarFile
+!/var/cache/apt/archives
+!/var/cache/gdm
+!/var/cache/man
+!/var/cache/fontconfig
+!/var/cache/nfdump
+!/var/cache
+!/var/lib/ucf/cache
+!/var/lib/gdm/\.fontconfig/.*\.cache-([0-9]+)$
+!/var/lib/lightdm/.fontconfig
+!/var/spool/postfix
+/var/spool/openoffice/uno_packages/cache$ VarDir
+!/tmp
+!/dev/shm
+!/dev/char
+!/dev/bus
+!/dev/block
+!/dev/disk
+!/dev/vboxbus
+!/dev/\.udev
+!/dev/vcs
+!/dev/serial/by-id
+!/dev/serial/by-path/pci-.*
+/etc/ld.so.cache$ VarFile
+/etc/cups$ VarDirTime
+/etc/cups/printers.conf$ VarInode
+/etc/cups/printers.conf.O$ VarInode
+/etc/motd$ VarFile
+/etc/samba$ VarDirTime
+/etc/samba/dhcp.conf$ VarInode
+/etc/snort/rules/.*\.rules VarFile
+!/run/shm
+!/run/udev
+!/run/console
+!/run/ConsoleKit
+!/run/systemd/sessions
+!/run/vmblock-fuse
+!/run
+/run$ VarDir
+!/var/lib/aide
+!/var/lib/apt-xapian-index
+!/var/lib/upower
+/var/lib/gdm$ VarDir
+!/var/lib/gdm/\.cache
+!/var/lib/gdm/\.dbus/session-bus
+!/var/lib/gdm/\.pulse
+/var/lib/logrotate$ VarDirTime
+/var/lib/NetworkManager/NetworkManager.state$ VarFile
+/var/lib/NetworkManager$ VarDirTime
+/var/lib/dpkg$ VarDirTime
+/var/lib/dpkg/triggers/Lock$ VarFile
+!/var/lib/ntop/rrd/interfaces
+/var/lib/ntop/rrd/graphics$ VarDir
+/var/lib/ntop/fingerprint.db$ VarFile
+/var/lib/ntop/hostSerials.db$ VarFile
+/var/lib/ntop/prefsCache.db$ VarFile
+/var/lib/ntop/resolverCache.db$ VarFile
+/var/lib/ntop/topTalkers.db$ VarFile
+!/var/lib/php5
+!/var/lib/sudo
+!/var/lib/tor
+!/var/lib/apt/lists
+/var/lib/apt/periodic/update-success-stamp$ VarFile
+/var/lib/apt/periodic/update-stamp$ VarFile
+/var/lib/apt/periodic/upgrade-stamp$ VarTime
+/var/lib/apt/periodic/unattended-upgrades-stamp$ VarTime
+/var/lib/ubuntu-release-upgrader/release-upgrade-available$ VarTime
+/var/lib/update-manager/meta-release-lts$ VarFile
+/var/lib/update-notifier$ VarDirTime
+/var/lib/update-notifier/updates-available$ VarFile
+/var/lib/update-notifier/dpkg-run-stamp$ VarFile
+/var/lib/update-notifier/fsck-at-reboot$ VarTime
+/var/lib/update-notifier/user.d/ecryptfs-record-passphrase$ VarFile
+/var/lib/update-notifier/user.d$ VarDirTime
+!/var/lib/postfix/master.lock$
+/var/lib/postfix/prng_exch$ VarFile
+/var/lib/postfix/smtp_scache.db$ VarFile
+/var/lib/postfix/smtpd_scache.db$ VarFile
+!/var/backups/apt.extended_states(\.[0-9]*)?(\.gz)?$ VarFile
+/var/lib/udisks/mtab$ VarFile
+/var/lib/udisks$ VarDirTime
+/var/lib/misc/prelink.quick$ VarFile
+/etc/prelink.cache$ VarFile
+/etc/NetworkManager/system-connections$ VarFile
+/root/\.pulse$ VarDirTime
+!/root/\.pulse/.*-runtime
+/var/log/aide/aide\.log(\.[0-9]+)$ LowLog
+!/var/lib/cacti/rra/.*\.rrd
+/var/lib/mysql/cacti/.*\.(MYD|MYI)$ VarFile
+/var/lib/mysql/mysql/.*\.(CSM)$ VarFile
+!/var/cache/smokeping/images
+!/var/lib/ureadahead/.*pack$
+/var/lib/clamav/main.cvd$ VarFile
+/var/lib/clamav/daily.cld$ VarFile
+!/var/ossec/stats
+/var/ossec/etc/shared/.*\.txt$ VarTime
+/var/ossec/etc/shared/merged.mg$ VarTime
+!/var/ossec/logs
+!/var/ossec/rules/log-entries
+!/var/ossec/queue/diff
+!/var/ossec/queue/rids
+!/var/ossec/queue/rootcheck
+/var/ossec/queue/alerts/ar$ VarFile
+/var/ossec/queue/alerts/execq$ VarFile
+/var/ossec/queue/ossec/queue$ VarFile
+/var/ossec/queue/rootcheck/rootcheck$ VarFile
+/var/ossec/queue/syscheck/syscheck$ VarFile
+/var/ossec/queue/fts/fts-queue$ LowLog
+/var/ossec/queue/alerts$ VarDirTime
+/var/ossec/queue/ossec$ VarDirTime
+/var/ossec/queue/ossec/.agent_info$ VarTime
+/var/ossec/queue/agent-info/.*$ VarTime
+/var/ossec/var$ VarDir
+!/var/ossec/var/run
+!/var/lib/nagios3/spool
+!/var/lib/pnp4nagios/perfdata
+!/var/spool/pnp4nagios
+/var/lib/arpwatch$ VarDirTime
+/var/lib/arpwatch/arp.dat$ VarFile
+/var/lib/arpwatch/arp.dat-$ VarFile
+/var/lib/bindgraph/bindgraph.rrd$ VarFile
+## 201405 plunk
+#!/opt/splunk/var/lib/splunk/_internaldb/db
+#!/opt/splunk/var/lib/splunk/_introspection/db
+#!/opt/splunk/var/lib/splunk/audit/db
+#!/opt/splunk/var/lib/splunk/defaultdb
+#!/opt/splunk/var/run/splunk/dispatch
+!/opt/splunk/var
+!/opt/VM
+/opt/teamviewer/logfiles/TeamViewer10_Logfile.log$ VarFile
+/opt/teamviewer/logfiles/TeamViewer10_Logfile_OLD.log$ VarFile
+!/var/_backup
+!/home
+!/vagrant
+/var/chef/cache/chef-client-running.pid$ VarFile
+/var/chef/cache/chef-stacktrace.out$ VarFile
+/var/lib/icinga2$ VarDir
+/var/lib/icinga2/icinga2.state$ VarFile
+/var/lib/openntpd/ntpd.drift$ VarFile
+!/var/spool/icinga2
+!/var/lib/graphite/whisper/carbon/agents
+!/root/.ansible/tmp

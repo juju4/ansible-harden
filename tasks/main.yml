@@ -1,0 +1,28 @@
+---
+## usual suspect: http://bastille-linux.sourceforge.net/, https://cisofy.com/lynis/, https://fedorahosted.org/aqueduct/wiki, 
+## https://github.com/fcaviggia/hardening-script-el6
+## https://github.com/major/securekickstarts
+- name: Debian | Harden
+  include: debian.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Redhat | Harden
+  include: redhat.yml
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- include: unix.yml
+  when: ansible_system == 'Linux'
+### ntpdate deprecated, using openntpd
+#- name: Force time sync
+#  #command: ntpdate -b pool.ntp.org
+#  command: "{{ item }}"
+#  with_items:
+#    - "service ntp stop"
+#    - "ntpd -gq"
+#    - "service ntp start"
+#  when: ansible_distribution != 'OpenBSD'
+
+- name: Windows | Harden
+  include: windows.yml
+  when: ansible_os_family == "Windows"
+

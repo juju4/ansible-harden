@@ -1,0 +1,176 @@
+---
+- name: Debian | Enable backports (replace)
+  replace:
+## can be archive, or us-east-1.ec2.archive if amazon, or others
+    dest='/etc/apt/sources.list' regexp='^# deb http://(.*)/ubuntu([/]*) trusty-backports' replace='deb http://\1/ubuntu\2 trusty-backports' backup=yes
+## some providers haven't the commented line
+
+- name: Debian | Enable backports (line)
+  lineinfile:
+    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu trusty-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse' backup=yes
+
+- name: Debian | Extra packages install
+#  apt: name={{item}} state=present update_cache=yes cache_valid_time=3600  ## with cache, doesn't update even if repo changes
+  apt: name={{item}} state=present update_cache=yes
+  with_items:
+#    - harden       ## exist in precise/trusty/vivid, not wily
+    - unzip
+    - rkhunter
+    - chkrootkit
+    - openntpd
+    - acct
+    - auditd
+    - aide
+    - logcheck
+    - syslog-summary
+    - apparmor-profiles
+    - apparmor-utils
+    - acl
+    - sysstat
+    - sysdig
+    - tcpdump
+    - libcap2-bin
+    - rng-tools
+    - ldnsutils
+    - unattended-upgrades
+    - update-notifier-common
+    - gnupg
+- name: Debian | upgrade all packages to the latest version
+  apt: upgrade=dist
+- name: Debian | Remove some packages
+  apt: name={{item}} state=absent
+  with_items:
+    - rpcbind
+    - avahi-daemon
+
+## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
+- name: Debian | enable automatic security updates
+  lineinfile:
+    dest=/etc/apt/apt.conf.d/10periodic regexp="{{ item.regexp }}" line="{{ item.line }}"
+  with_items:
+    - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists \"1\";' }
+    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages', line: 'APT::Periodic::Download-Upgradeable-Packages \"1\";' }
+    - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade \"1\";' }
+    - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval \"14\";' }
+
+- name: Patch cron.daily/aide to rotate database
+  patch: >
+    src=patch-cron.daily-aide
+    dest=/etc/cron.daily/aide
+- name: Review Aide configuration
+  lineinfile:
+#    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
+    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=rotate'
+- name: Review Aide configuration
+  replace:
+    dest='/etc/default/aide' regexp='^FILTERUPDATES=no' replace='FILTERUPDATES=yes'
+- name: Add custom configuration for aide HIDS
+  copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
+  with_items:
+    - 99_aide_local_ecryptfs
+    - 99_aide_local_gvfs
+    - 99_aide_local_others
+- name: add additional aide HIDS configuration
+  copy: src=99_aide_local_ansible dest=/etc/aide/aide.conf.d/99_aide_local_ansible mode=0644
+
+#- name: patch aide daily cron
+#  patch: >
+#    src={{ local_home }}/opt/tmp/install-desktop/patch-cron.daily-aide
+#    basedir=/etc/cron.daily/aide
+### with patch
+#- name: Review Aide configuration
+#  replace:
+#    dest='/etc/default/aide' regexp={{ item.regexp }} replace={{ item.replace }}
+#  with_items:
+#    - { regexp: '^COMMAND', replace: 'COMMAND=rotate' }
+#    - { regexp: '^COPYNEWDB=', replace: 'COPYNEWDB=yes' }
+- name: Review Aide configuration
+  replace:
+    "dest='/etc/cron.daily/aide' regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
+  with_items:
+    - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
+
+- name: add apt hardening with somme immutable directories
+  copy: "src={{ item }} dest=/etc/apt/apt.conf.d owner=root mode=0644"
+  with_items:
+    - 99security
+
+- name: Review Logcheck configuration
+  replace:
+    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+  with_items:
+    - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
+    - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
+- name: Logcheck additional configuration
+  copy:
+    src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=644
+- name: Logcheck additional configuration
+  copy:
+    src=local-rules dest=/etc/logcheck/ignore.d.server/local-rules mode=644
+- name: Review logcheck frequency
+  replace: dest=/etc/cron.d/logcheck regexp='^2 * * * *       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'
+  when: logcheck_hours is defined and logcheck_hours != "" and logcheck_hours != '*'
+## http://wiki.bluelightav.org/display/BLUE/Logcheck+administration
+- name: Review Logcheck cron on reboot
+  replace:
+    "dest=/etc/cron.d/logcheck regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
+  with_items:
+    - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi', replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi' }
+
+#- name: iptables configuration file update
+#  template: src=rules.v4
+#    dest=/etc/iptables/rules.v4
+#    backup=yes
+#    owner=0 group=0 mode=0644
+#  notify:
+#    - restart iptables
+
+## aide at the end of provisioning?
+- stat: path=/var/lib/aide/aide.db
+  register: aidedb
+- name: Generating initial Aide database and backup
+  command: "{{ item }}"
+  with_items:
+    - aide.wrapper -i
+    - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+    - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
+  when: not aidedb.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+
+- name: Debian | More entropy
+  lineinfile:
+    dest='/etc/default/rng-tools' regexp='^HRNGDEVICE=/dev/urandom' insertafter='^#HRNGDEVICE=/dev/null' line='HRNGDEVICE=/dev/urandom'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+## Note: can't do before full end of provisioning else might break other things...
+#- file: path=/usr/bin/gcc-4.8 owner=root group=root mode=0755
+#- file: path=/usr/bin/gcc-5 owner=root group=root mode=0755
+#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'wily'
+#- file: path=/usr/bin/make owner=root group=root mode=0755
+#- file: path=/usr/bin/gcc-4.8 owner=root group=root mode=0700
+#- file: path=/usr/bin/make owner=root group=root mode=0700
+
+## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
+## https://bugzilla.redhat.com/show_bug.cgi?id=455713
+## https://wiki.archlinux.org/index.php/Capabilities
+## https://wiki.archlinux.org/index.php/DeveloperWiki:Security#Replacing_setuid_with_capabilities
+## https://wiki.ubuntu.com/Security/Investigation/Setuid
+## FIXME! same for chroot cap and others
+
+- name: Capabilities Hardening - default network tools
+  capabilities: "path={{ item }} capability='cap_net_raw+pe' state=present"
+  with_items:
+    - /bin/ping
+    - /bin/ping6
+    - /usr/bin/traceroute6.iputils
+    - /usr/bin/mtr
+- file:
+    path="{{ item }}"
+    mode=0755
+  with_items:
+    - /bin/ping
+    - /bin/ping6
+    - /usr/bin/traceroute6.iputils
+    - /usr/bin/mtr
+- name: Capabilities Hardening - tcpdump
+  capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
+

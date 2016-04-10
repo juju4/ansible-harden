@@ -1,0 +1,3 @@
+## ecryptfs file: BUG #629045
+!/home/\.ecryptfs/.*/\.Private/ECRYPTFS_FNEK_ENCRYPTED\..*$
+!/home/\.ecryptfs/.*/\.Private$

@@ -1,0 +1,9 @@
+---
+
+## Unix
+#harden_logcheck_hours: '*'
+harden_logcheck_hours: '6,18'
+
+## Windows
+## 300MB = 314572 (default in kb)
+harden_eventlogs_maxsize: 314572

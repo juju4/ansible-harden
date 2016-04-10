@@ -1,0 +1,6 @@
+---
+- name: restart sshd
+  service: name=ssh state=restarted
+- name: restart iptables
+  service: name=iptables-persistent state=restarted
+

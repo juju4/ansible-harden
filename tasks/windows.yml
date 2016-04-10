@@ -1,0 +1,155 @@
+---
+# https://docs.ansible.com/ansible/intro_windows.html
+# Client should have PowerShell remoting configured
+# Execute: https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
+
+# https://benchmarks.cisecurity.org/downloads/browse/index.cfm?category=benchmarks.os.windows
+# https://technet.microsoft.com/en-us/library/gg236605.aspx
+# https://technet.microsoft.com/en-us/library/cc677002.aspx
+# http://iase.disa.mil/stigs/Pages/index.aspx
+# http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx
+
+
+#- name: Create temp dir
+#  win_file: path='C:\temp' state=directory
+
+# https://technet.microsoft.com/en-us/security/jj653751
+#- name: Download EMET
+#  win_get_url:
+#    url: 'http://download.microsoft.com/download/7/0/A/70AF5150-10DD-4838-ACFC-C4390B05620A/EMET 5.2 Setup.msi'
+#    dest: 'C:\temp\EMET 5.2 Setup.msi'
+#- name: Install EMET
+#  win_msi: path='C:\temp\EMET 5.2 Setup.msi'
+
+- name: Install all security/critical updates
+  win_updates:
+    category: SecurityUpdates
+    logPath: c:\temp\ansible-updates.log
+
+- name: Install packages
+  win_chocolatey:
+    name: "{{ item }}"
+  with_items:
+# http://windows.microsoft.com/en-us/windows/security-essentials-all-versions
+## FAIL since 4m: https://gist.github.com/choco-bot/85701f4e87e16efed5be
+#    - microsoftsecurityessentials
+    - emet
+## currently only powershell4, 2016/03 (v5 under moderation/testing)
+    - powershell
+## for test
+    - adobereader
+
+# http://www.marksanborn.net/howto/turn-off-unnecessary-windows-services/
+# http://www.7tutorials.com/which-windows-services-are-safe-disable-when
+# http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
+- name: Disable unnecessary services
+  win_service:
+    name: "{{ item }}"
+    start_mode: disabled
+    state: stopped
+  with_items:
+    - AdobeLM Service
+    - Fast User Switching Compatibility
+    - Error Reporting Service
+    - FTP Publishing
+#    - Indexing Service
+    - InstallDriver Table Manager
+    - Windows Messenger
+    - NetMeeting Remote Desktop Sharing
+    - Network Provisioning Service
+    - NT LM Security Support Provider
+    - Remote Desktop Help Session Manager
+    - Remote Registry
+#    - Security Accounts Manager
+#    - Security Center
+    - Smart Card
+    - SSDP Discovery Service
+    - Telnet
+    - Terminal Services
+    - Uninterrupted Power Supply
+#    - Volume Shadow Copy
+    - Windows Firewall/Internet Connection Sharing (ICS)
+    - Fax
+    - Offline Files
+    - Geolocation Service
+    - Sensor Service
+    - Routing and Remote Access
+    - RetailDemo
+  ignore_errors: true
+## Win10 default: only fax and retaildemo
+
+- name: Set some services in manual start
+  win_service:
+    name: "{{ item }}"
+    start_mode: manual
+  with_items:
+    - Application Management
+    - Cryptographic Services
+    - Distributed Transaction Service
+    - Help and Support
+    - HTTP SSL
+    - IMAPI CD-Burning COM Service
+    - IPSEC Services
+    - MS Software Shadow Copy Provider
+    - Portable Media Serial Number Service
+    - Remote Procedure Call Locator
+    - Removable Storage
+    - Routing and Remote Access
+    - Secondary Logon
+    - Server
+    - TCP/IP NetBIOS Helper
+    - Universal Plug and Play Device Host
+    - User Privilege Service
+
+# If no network
+#    - Alerter 
+#    - ClipBook
+#    - Computer Browser
+#    - Net Logon
+
+## TODO: Enable AppLocker in audit mode
+
+- name: Disable IGMP
+  command: "Netsh interface ipv4 set global mldlevel=none"
+
+## win_regedit: New in ansible version 2.0
+- include: adobereader.yml
+- include: windows-registry.yml
+
+## Powershell profile
+## https://www.fireeye.com/blog/threat-research/2016/02/greater_visibilityt.html
+## http://fr.slideshare.net/Hackerhurricane/ask-aalware-archaeologist/25
+## https://logrhythm.com/fr/blog/powershell-command-line-logging/
+- name: set powershell profile
+  win_template: src=Profile.ps1.j2 dest="c:\windows\system32\WindowsPowershell\v1.\Profile.ps1"
+
+# https://gallery.technet.microsoft.com/scriptcenter/2d191bcd-3308-4edd-9de2-88dff796b0bc
+- name: Download Windows Update PowerShell Module
+  win_get_url:
+    url: 'https://gallery.technet.microsoft.com/scriptcenter/2d191bcd-3308-4edd-9de2-88dff796b0bc/file/41459/43/PSWindowsUpdate.zip'
+    dest: 'C:\temp\PSWindowsUpdate.zip'
+
+## Sysmon, https://gist.github.com/Neo23x0/f56bea38d95040b70cf5
+##  https://onedrive.live.com/view.aspx?resid=D026B4699190F1E6!2575 (RSA 2016)
+## http://www.darkoperator.com/blog/2014/8/8/sysinternals-sysmon
+#sysmon -i -accepteula
+#sysmon -i -accepteula c:\sysmonconfig.xml
+#PS > Get-WinEvent -FilterHashtable @{logname="Microsoft-Windows-Sysmon/Operational";}
+- name: download sysmon
+  win_get_url:
+    url: https://download.sysinternals.com/files/Sysmon.zip
+    dest: c:\temp\sysmon.zip
+- name: unzip sysmon
+  win_unzip:
+    src: c:\temp\sysmon.zip
+    dest: c:\temp\sysmon
+- name: install sysmon
+  raw: 'c:\temp\sysmon\sysmon -i -n -accepteula'
+
+## PECaptureSvc, https://isc.sans.edu/forums/diary/Hunting+for+Executable+Code+in+Windows+Environments/20745/
+
+## access time within Ntfs
+## volume shadow copies
+## central logging / windows event log forwarding
+## https://blog.brankovucinec.com/2014/10/24/use-software-restriction-policies-to-block-viruses-and-malware/ = SRP lock on %APPDATA%
+

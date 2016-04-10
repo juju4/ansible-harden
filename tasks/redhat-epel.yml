@@ -1,0 +1,25 @@
+---
+
+## https://fedoraproject.org/wiki/EPEL
+- name: RedHat6 | Installing epel rpm key
+  rpm_key: key=https://getfedora.org/static/0608B895.txt
+           state=present
+  tags:
+    - init
+  when: ansible_distribution_major_version == "6"
+- name: RedHat7 | Installing epel rpm key
+  rpm_key: key=https://getfedora.org/static/352C64E5.txt
+           state=present
+           validate_certs=no        ## not sure why, ok in browser...
+  tags:
+    - init
+  when: ansible_distribution_major_version == "7"
+- name: RedHat6 | Install Fedora epel
+  yum: name=http://fedora.westmancom.com/epel/6/x86_64/epel-release-6-8.noarch.rpm
+       state=present
+  when: ansible_distribution_major_version == "6"
+- name: RedHat7 | Install Fedora epel
+  yum: name=http://mirror.csclub.uwaterloo.ca/fedora/epel//7/x86_64/e/epel-release-7-5.noarch.rpm
+       state=present
+  when: ansible_distribution_major_version == "7"
+
