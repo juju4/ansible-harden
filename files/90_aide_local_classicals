@@ -1,0 +1,17 @@
+## https://isc.sans.edu/diary/What+to+watch+with+your+FIM%3F/20897
+/boot$ StaticFile
+/bin$ StaticFile
+/usr/bin$ StaticFile
+/usr/local/bin$ StaticFile
+/sbin$ StaticFile
+/usr/sbin$ StaticFile
+/usr/local/sbin$ StaticFile
+/lib$ StaticFile
+/usr/lib$ StaticFile
+/usr/local/lib$ StaticFile
+/var/lib$ StaticFile
+/lib64$ StaticFile
+/opt$ StaticFile
+/var/opt$ StaticFile
+/usr/local/etc$ VarDir
+/etc/mail/statistics$ VarFile

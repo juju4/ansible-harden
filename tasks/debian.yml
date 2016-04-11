@@ -35,8 +35,13 @@
     - unattended-upgrades
     - update-notifier-common
     - gnupg
+
+## FIXME! kitchen OK, travis NOK
 - name: Debian | upgrade all packages to the latest version
   apt: upgrade=dist
+  register: distout
+- debug: var=distout.stdout_lines
+
 - name: Debian | Remove some packages
   apt: name={{item}} state=absent
   with_items:
@@ -67,6 +72,7 @@
 - name: Add custom configuration for aide HIDS
   copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
   with_items:
+    - 90_aide_local_classicals
     - 99_aide_local_ecryptfs
     - 99_aide_local_gvfs
     - 99_aide_local_others
