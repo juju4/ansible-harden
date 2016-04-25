@@ -39,6 +39,8 @@
 ## FIXME! kitchen OK, travis NOK
 - name: Debian | upgrade all packages to the latest version
   apt: upgrade=dist
+  async: 3600
+  poll: 300
   register: distout
 - debug: var=distout.stdout_lines
 

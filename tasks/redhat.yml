@@ -11,6 +11,13 @@
     - haveged
     - psacct
 
+- name: yum | upgrade all packages to the latest version
+  yum: name=* state=latest
+  async: 3600
+  poll: 300
+  register: distout
+- debug: var=distout.stdout_lines
+
 - name: Redhat | Ensure yum-cron is running and enabled on boot.
   service: name=yum-cron state=started enabled=yes
 

@@ -10,6 +10,10 @@
   include: redhat.yml
   when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
+- name: Darwin | Harden
+  include: macosx.yml
+  when: ansible_os_family == "Darwin"
+
 - include: unix.yml
   when: ansible_system == 'Linux'
 ### ntpdate deprecated, using openntpd

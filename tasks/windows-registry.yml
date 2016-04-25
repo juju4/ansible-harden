@@ -109,4 +109,12 @@
 #    - 1
    command: "powershell -Command 'set-ItemProperty HKLM:SYSTEMCurrentControlSetservicesNetBTParametersInterfacestcpip* -Name NetbiosOptions -Value 2'"
 
+## http://news.softpedia.com/news/how-to-prevent-zip-files-from-executing-malicious-javascript-behind-your-back-503226.shtml
+## https://labsblog.f-secure.com/2016/04/19/how-to-disable-windows-script-host/
+- name: disable javascript execution by Windows Script Host
+  win_regedit:
+    key: HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings
+    value: Enabled
+    data: 0
+
 

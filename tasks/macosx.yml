@@ -1,0 +1,104 @@
+## https://github.com/SummitRoute/osxlockdown only osx 10.11/El Capitan
+## https://github.com/alterstep/dnscrypt-osxclient
+- set_fact:
+    install_archives: /private/var/_install
+
+- file: dest="{{ install_archives }}" mode=0755 state=directory
+  become: yes
+
+- name: enforce hibernation and evict Filevault keys from memory instead of traditional sleep to memory
+  command: "pmset -a {{ item.k }} {{ item.v }}"
+  with_items:
+    - { k: destroyfvkeyonstandby, v: 1 }
+## https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/pmset.1.html
+#    - { k: hibernatemode, v: 25 }      ## makes mac hibernate...
+
+- osx_defaults: domain=com.apple.alf key=globalstate type=bool value=true state=present
+- osx_defaults: domain=com.apple.alf key=loggingenabled type=bool value=true state=present
+#- osx_defaults: domain=com.apple.alf key=allowsignedenabled type=bool value=true state=present
+#- osx_defaults: domain=com.apple.captive.control key=Active type=bool value=false state=present
+#- osx_defaults: domain=com.apple.Safari key=IncludeInternalDebugMenu type=bool value=true state=present
+- osx_defaults: domain=NSGlobalDomain key=NSDocumentSaveNewDocumentsToCloud type=bool value=false state=present
+
+- name: disable IPv6 noise
+  sysctl: name="{{ item.k }}" value="{{ item.v }}" state=present
+  with_items:
+## setting net.inet6.ip6.accept_rtadv failed: sysctl: oid 'net.inet6.ip6.accept_rtadv' is read only
+#    - { k: 'net.inet6.ip6.accept_rtadv', v: 0 }
+    - { k: 'net.inet6.icmp6.rediraccept', v: 0 }
+    - { k: 'net.inet6.icmp6.nodeinfo', v: 0 }
+    - { k: 'net.inet6.icmp6.nd6_accept_6to4', v: 0 }
+
+## https://github.com/ansible/ansible-modules-extras/pull/995/files
+- name: disable launchd services
+  command: "launchctl unload -w {{ item }}"
+  with_items: "{{ harden_darwin_launchd_services_unload }}"
+
+- name: download fix-macosx.py to disable search engines 'leak'
+  get_url: url=https://fix-macosx.com/fix-macosx.py dest="{{ install_archives }}/fix-macosx.py" mode=0755 sha256sum=""
+## as your user?
+#- name: execute fix-macosx.py
+#  command: 'python {{ install_archives }}/fix-macosx.py'
+
+- name: download osxparanoia hosts
+  get_url: url=https://github.com/l1k/osxparanoia/blob/master/hosts dest="{{ install_archives }}/hosts.osxparanoia" mode=0644 sha256sum=""
+
+- stat: path={{ install_archives }}/osxlockdown
+  register: osxl
+- name: git clone osxlockdown
+  git:
+    repo=https://github.com/SummitRoute/osxlockdown
+    dest={{ install_archives }}/osxlockdown
+#  when: "{{ ansible_distribution_version | regex_replace('^(\d+)\.(\d+)\.(\d+)$', '\\1.\\2') }}" == '10.11'
+  when: ansible_distribution_version.find('10.11') != -1 and not osxl.stat.exists
+
+
+
+- stat: path=/opt/local/bin/port
+  register: mp
+- stat: path=/opt/local/bin/go
+  register: mpgo
+## FIXME! not installing correct packages: only get gobject-introspection, goffice
+- name: macports packages install
+  macports: name=go state=present
+  async: 3600
+  poll: 300
+  when: mp.stat.exists and not mpgo.stat.exists
+  register: mpgo
+- debug: var=mpgo
+- stat: path=/private/var/root/osxlockdown.audit
+  register: osxlfile
+- name: execute osxlockdown - audit mode only
+  shell: "{{ item.c }} chdir={{ item.d }}"
+  with_items:
+    - { c: "go get gopkg.in/yaml.v2", d: "{{ install_archives }}/osxlockdown" }
+    - { c: "go build osxlockdown", d: "{{ install_archives }}/osxlockdown" }
+    - { c: "./osxlockdown | tee /private/var/root/osxlockdown.audit", d: "{{ install_archives }}/osxlockdown" }
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/bin"
+    GOROOT: "/opt/local/lib/go"
+    GOPATH: "/tmp/gowork"
+  become: yes
+  register: osxlout
+  when: ansible_distribution_version.find('10.11') != -1 and not osxlfile.stat.exists
+  ignore_errors: true
+- debug: var=osxlout[2].stdout_lines
+  when: ansible_distribution_version.find('10.11') != -1 and not osxlfile.stat.exists
+
+- name: download dnscrypt-osxclient
+  get_url: url=https://github.com/alterstep/dnscrypt-osxclient/releases/download/1.0.11/dnscrypt-osxclient-1.0.11.dmg dest="{{ install_archives }}/dnscrypt-osxclient-1.0.11.dmg" mode=0644 sha256sum=""
+  become: yes
+- stat: path="/Applications/DNSCrypt Menubar.app"
+  register: dnsc
+## https://github.com/MWGriffin/ansible-playbooks/blob/master/install/dmg.yaml
+- name: Mount dnscrypt-osxclient image
+  command: hdiutil attach dnscrypt-osxclient-1.0.11.dmg chdir="{{ install_archives }}"
+  when: not dnsc.stat.exists
+- name: Install dnscrypt-osxclient pkg
+  command: installer -package /Volumes/dnscrypt-pkg/DNSCrypt.pkg -target /
+  become: yes
+  when: not dnsc.stat.exists
+- name: Unmount dnscrypt-osxclient image
+  command: hdiutil detach /Volumes/dnscrypt-pkg
+  when: not dnsc.stat.exists
+
