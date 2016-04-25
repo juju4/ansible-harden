@@ -145,7 +145,9 @@
     - aide.wrapper -i
     - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
     - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
-  when: not aidedb.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+  when: not aidedb.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and travisci is not defined or not travisci
+  async: 3600
+  poll: 300
 
 - name: Debian | More entropy
   lineinfile:
