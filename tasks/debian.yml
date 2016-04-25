@@ -37,12 +37,15 @@
     - gnupg
 
 ## FIXME! kitchen OK, travis NOK
+## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
 - name: Debian | upgrade all packages to the latest version
   apt: upgrade=dist
   async: 3600
   poll: 300
   register: distout
+  when: travisci is not defined or not travisci
 - debug: var=distout.stdout_lines
+  when: travisci is not defined or not travisci
 
 - name: Debian | Remove some packages
   apt: name={{item}} state=absent

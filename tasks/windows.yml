@@ -145,6 +145,7 @@
     dest: c:\temp\sysmon
 - name: install sysmon
   raw: 'c:\temp\sysmon\sysmon -i -n -accepteula'
+#  raw: 'c:\temp\sysmon\sysmon -i -n -accepteula c:\SysmonConfig.xml'
 
 ## PECaptureSvc, https://isc.sans.edu/forums/diary/Hunting+for+Executable+Code+in+Windows+Environments/20745/
 
