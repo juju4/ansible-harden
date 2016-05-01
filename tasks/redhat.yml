@@ -6,24 +6,55 @@
   yum: name={{item}} state=present update_cache=yes
   with_items:
     - git
-    - yum-cron
     - gnupg
     - haveged
     - psacct
+    - sysstat
+    - arpwatch
+    - aide
+    - rkhunter
+    - lynis
+    - yum-utils
+    - audit
+## FIXME!
+## https://bugs.centos.org/view.php?id=9938
+## https://bugzilla.redhat.com/show_bug.cgi?id=1293513
+## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
+#    - yum-cron
 
-- name: yum | upgrade all packages to the latest version
-  yum: name=* state=latest
-  async: 3600
-  poll: 300
-  register: distout
-- debug: var=distout.stdout_lines
+- name: Redhat| Remove some packages
+  yum: name={{item}} state=absent
+  with_items:
+    - rpcbind
+  when: harden_use_rpc is not defined or not harden_use_rpc
 
-- name: Redhat | Ensure yum-cron is running and enabled on boot.
-  service: name=yum-cron state=started enabled=yes
+## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
+## FIXME! slow... even when rerun
+#- name: yum | upgrade all packages to the latest version
+#  yum: name=* state=latest
+#  async: 3600
+#  poll: 300
+#  register: distout
+#- debug: var=distout.stdout_lines
 
-- name: Redhat | Ensure haveged is running and enabled on boot.
-  service: name=haveged state=started enabled=yes
-- name: Redhat | Ensure psacct is running and enabled on boot.
-  service: name=psacct state=started enabled=yes
+- name: set better login.defs - redhat only
+  lineinfile: "dest=/etc/login.defs regexp={{ item.r }} line={{ item.l }}"
+  with_items:
+    - { r: '^PASS_MIN_LEN', l: 'PASS_MIN_LEN    10' }
 
+- name: password set for single mode
+  lineinfile: dest=/etc/sysconfig/init regexp='^SINGLE=' line='SINGLE=/sbin/sulogin'
+
+- name: Redhat | Ensure services are running and enabled on boot.
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - psacct
+    - haveged
+    - auditd
+    - arpwatch
+#    - yum-cron
+
+## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
+- name: configure audit system
+  template: src=audit.rules.j2 dest=/etc/audit/rules.d/audit.rules mode=0644 backup=yes
 

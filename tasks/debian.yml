@@ -35,6 +35,10 @@
     - unattended-upgrades
     - update-notifier-common
     - gnupg
+    - libpam-cracklib
+    - debsums
+    - apt-show-versions
+    - arpwatch
 
 ## FIXME! kitchen OK, travis NOK
 ## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
@@ -52,6 +56,7 @@
   with_items:
     - rpcbind
     - avahi-daemon
+  when: harden_use_rpc is not defined or not harden_use_rpc
 
 ## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 - name: Debian | enable automatic security updates
@@ -145,7 +150,7 @@
     - aide.wrapper -i
     - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
     - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
-  when: not aidedb.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and travisci is not defined or not travisci
+  when: not aidedb.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and (travisci is not defined or not travisci)
   async: 3600
   poll: 300
 
@@ -186,4 +191,16 @@
     - /usr/bin/mtr
 - name: Capabilities Hardening - tcpdump
   capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
+
+- command: 'lsattr /etc/init.d/rc'
+  register: rclsattr
+  changed_when: false
+- name: remove temporarily immutable flag on file
+  command: 'chattr -i /etc/init.d/rc /etc/init.d'
+  when: rclsattr.stdout.find("----i-") == -1
+- name: set umask in /etc/init.d/rc
+  lineinfile: "dest=/etc/init.d/rc regexp='^umask ' line='umask {{ harden_umask }}'"
+- name: re-set immutable flag on file
+  command: 'chattr +i /etc/init.d/rc /etc/init.d'
+  when: rclsattr.stdout.find("----i-") == -1
 

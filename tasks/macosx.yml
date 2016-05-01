@@ -35,13 +35,13 @@
   with_items: "{{ harden_darwin_launchd_services_unload }}"
 
 - name: download fix-macosx.py to disable search engines 'leak'
-  get_url: url=https://fix-macosx.com/fix-macosx.py dest="{{ install_archives }}/fix-macosx.py" mode=0755 sha256sum=""
+  get_url: url=https://fix-macosx.com/fix-macosx.py dest="{{ install_archives }}/fix-macosx.py" mode=0755 sha256sum="b5a07e12269a11341c21f5a1a0951d9b9dbb002681ea1c251a325dc04951b9b3"
 ## as your user?
 #- name: execute fix-macosx.py
 #  command: 'python {{ install_archives }}/fix-macosx.py'
 
 - name: download osxparanoia hosts
-  get_url: url=https://github.com/l1k/osxparanoia/blob/master/hosts dest="{{ install_archives }}/hosts.osxparanoia" mode=0644 sha256sum=""
+  get_url: url=https://github.com/l1k/osxparanoia/blob/master/hosts dest="{{ install_archives }}/hosts.osxparanoia" mode=0644 sha256sum="a4ce3fd4ce634ea98bd9a485fcd5c03395b848e77b557cf175f18e80f670b487"
 
 - stat: path={{ install_archives }}/osxlockdown
   register: osxl
@@ -52,6 +52,12 @@
 #  when: "{{ ansible_distribution_version | regex_replace('^(\d+)\.(\d+)\.(\d+)$', '\\1.\\2') }}" == '10.11'
   when: ansible_distribution_version.find('10.11') != -1 and not osxl.stat.exists
 
+- stat: path={{ install_archives }}/fsmon
+  register: fsmon
+- name: git clone fsmon
+  git:
+    repo=https://github.com/nowsecure/fsmon.git
+    dest={{ install_archives }}/fsmon
 
 
 - stat: path=/opt/local/bin/port
@@ -86,7 +92,7 @@
   when: ansible_distribution_version.find('10.11') != -1 and not osxlfile.stat.exists
 
 - name: download dnscrypt-osxclient
-  get_url: url=https://github.com/alterstep/dnscrypt-osxclient/releases/download/1.0.11/dnscrypt-osxclient-1.0.11.dmg dest="{{ install_archives }}/dnscrypt-osxclient-1.0.11.dmg" mode=0644 sha256sum=""
+  get_url: url=https://github.com/alterstep/dnscrypt-osxclient/releases/download/1.0.11/dnscrypt-osxclient-1.0.11.dmg dest="{{ install_archives }}/dnscrypt-osxclient-1.0.11.dmg" mode=0644 sha256sum="91610e90474cf788430f820f9a13f59d84449773133ff11df1c5ee58a9dfe82e"
   become: yes
 - stat: path="/Applications/DNSCrypt Menubar.app"
   register: dnsc

@@ -24,6 +24,13 @@
                 </NetworkConnect>
     <ProcessCreate onmatch="exclude"/>
     <ProcessTerminate onmatch="include"/>
+    <ProcessCreate onmatch="include ">
+        <Image condition=”begin with”>C:\Windows</Image>
+        <Image condition=”begin with”>C:\Users</Image>
+    </ProcessCreate>
+    <ProcessCreate onmatch="exclude ">
+        <User>NT Authority\System</User>
+    </ProcessCreate>
      </EventFiltering>
 </Sysmon>
 

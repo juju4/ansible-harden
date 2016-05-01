@@ -154,3 +154,5 @@
 ## central logging / windows event log forwarding
 ## https://blog.brankovucinec.com/2014/10/24/use-software-restriction-policies-to-block-viruses-and-malware/ = SRP lock on %APPDATA%
 
+## Ansible v2: Windows Firewall configuration, http://docs.ansible.com/ansible/win_firewall_rule_module.html
+

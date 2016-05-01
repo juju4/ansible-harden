@@ -3,6 +3,10 @@
 ## Unix
 #harden_logcheck_hours: '*'
 harden_logcheck_hours: '6,18'
+harden_use_rpc: false
+harden_use_forwarding: false
+harden_umask: '022'
+#harden_umask: '027'
 
 ## Windows
 ## 300MB = 314572 (default in kb)

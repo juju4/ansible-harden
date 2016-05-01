@@ -5,6 +5,11 @@
 
 - include: travis.yml
 
+- include: unix.yml
+  when: ansible_system == 'Linux'
+- include: linux.yml
+  when: ansible_system == 'Linux'
+
 - name: Debian | Harden
   include: debian.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -17,8 +22,6 @@
   include: macosx.yml
   when: ansible_os_family == "Darwin"
 
-- include: unix.yml
-  when: ansible_system == 'Linux'
 ### ntpdate deprecated, using openntpd
 #- name: Force time sync
 #  #command: ntpdate -b pool.ntp.org

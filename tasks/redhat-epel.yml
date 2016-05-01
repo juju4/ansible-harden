@@ -14,12 +14,18 @@
   tags:
     - init
   when: ansible_distribution_major_version == "7"
+## FIXME! ansible not detecting package already installed if http
+- name: check if epel installed
+  command: rpm -q epel-release
+  register: rpmepel
+  changed_when: false
+  ignore_errors: true
 - name: RedHat6 | Install Fedora epel
   yum: name=https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
        state=present
-  when: ansible_distribution_major_version == "6"
+  when: ansible_distribution_major_version == "6" and rpmepel.rc != 0
 - name: RedHat7 | Install Fedora epel
   yum: name=https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm
        state=present
-  when: ansible_distribution_major_version == "7"
+  when: ansible_distribution_major_version == "7" and rpmepel.rc != 0
 
