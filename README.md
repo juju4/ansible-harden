@@ -1,8 +1,9 @@
 [![Build Status](https://travis-ci.org/juju4/ansible-harden.svg?branch=master)](https://travis-ci.org/juju4/ansible-harden)
 # harden ansible role
 
-A simple ansible role to harden system (linux, windows...)
+A simple ansible role to harden system (linux, windows...). Few task example below.
 
+Unix
 * SSH key only
 * (debian) Immutable system directory
 /lib /etc/init.d /boot are tagged immutable
@@ -10,6 +11,15 @@ A simple ansible role to harden system (linux, windows...)
 * block usb and firewire drivers
 
 Mailserver and Webserver hardening are addressed in other roles.
+
+Windows:
+* install EMET, Powershell v5
+* LSA hardening, review javascript/hta file association
+* review log settings, enabling command-line, powershell and WMI logging
+* try to harden adobe reader, flash
+
+Pay attention to test carefully role and fit to your context unless you want to lock yourself.
+This role is continuous work in progress as security landscape is constantly evolving.
 
 ## Requirements & Dependencies
 
@@ -21,6 +31,7 @@ It was tested on the following versions:
 ### Operating systems
 
 Tested with vagrant on Ubuntu 14.04, Kitchen test with trusty and centos7
+Windows part only tested against Win10 Evaluation
 
 ## Example Playbook
 
@@ -33,7 +44,15 @@ For example
     - harden
 ```
 
+Run
+```
+$ ansible-playbook -i inventory --limit linux site.yml
+$ ansible-playbook -i inventory --limit win10 site.yml
+```
+
 ## Variables
+
+Sample. See defaults/main.yml for full scope
 
 ```
 ## Unix
@@ -68,6 +87,8 @@ $ vagrant ssh
 
 ## Troubleshooting & Known issues
 
+* On Windows, ensure you follow ansible guide to be able to connect
+http://docs.ansible.com/ansible/intro_windows.html
 
 ## License
 

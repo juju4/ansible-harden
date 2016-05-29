@@ -1,4 +1,8 @@
 ---
+
+- set_fact:
+    ssh_svc: ssh
+
 - name: Debian | Enable backports (replace)
   replace:
 ## can be archive, or us-east-1.ec2.archive if amazon, or others
@@ -39,6 +43,7 @@
     - debsums
     - apt-show-versions
     - arpwatch
+    - iptables-persistent
 
 ## FIXME! kitchen OK, travis NOK
 ## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
@@ -133,24 +138,29 @@
   with_items:
     - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi', replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi' }
 
-#- name: iptables configuration file update
-#  template: src=rules.v4
-#    dest=/etc/iptables/rules.v4
-#    backup=yes
-#    owner=0 group=0 mode=0644
-#  notify:
-#    - restart iptables
+- block:
+    - name: ensure iptables directory exists
+      file: dest=/etc/iptables state=directory mode=0755
+    - name: iptables configuration file update
+      template: src=rules.v4.j2
+        dest=/etc/iptables/rules.v4
+        backup=yes
+        owner=0 group=0 mode=0644
+      notify:
+        - restart iptables
+  when: harden_fw is defined and harden_fw
 
 ## aide at the end of provisioning?
 - stat: path=/var/lib/aide/aide.db
   register: aidedb
+- debug: var=aidedb
 - name: Generating initial Aide database and backup
   command: "{{ item }}"
   with_items:
     - aide.wrapper -i
     - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
     - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
-  when: not aidedb.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and (travisci is not defined or not travisci)
+  when: not aidedb.stat.exists and harden_init_aidedb is defined and harden_init_aidedb and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and (travisci is not defined or not travisci)
   async: 3600
   poll: 300
 

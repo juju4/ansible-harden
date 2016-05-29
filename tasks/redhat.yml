@@ -1,4 +1,8 @@
 ---
+
+- set_fact:
+    ssh_svc: sshd
+
 ## for haveged/better entropy
 - include: redhat-epel.yml
 

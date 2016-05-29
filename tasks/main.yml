@@ -4,6 +4,7 @@
 ## https://github.com/major/securekickstarts
 
 - include: travis.yml
+  when: ansible_os_family != "Windows"
 
 - include: unix.yml
   when: ansible_system == 'Linux'
@@ -17,6 +18,10 @@
 - name: Redhat | Harden
   include: redhat.yml
   when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Alpine | Harden
+  include: alpine.yml
+  when: ansible_os_family == "Alpine"
 
 - name: Darwin | Harden
   include: macosx.yml

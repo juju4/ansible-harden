@@ -1,0 +1,17 @@
+---
+
+- set_fact:
+    ssh_svc: sshd
+
+- name: Alpine | Extra packages install
+  apk: name={{item}} state=present update_cache=yes
+  with_items:
+    - git
+    - gnupg
+#    - rng-tools
+    - acct
+    - sysstat
+    - arpwatch
+#    - aide
+#    - rkhunter
+#    - lynis

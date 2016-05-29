@@ -6,6 +6,7 @@
     - { r: '^PASS_MAX_DAYS', l: 'PASS_MAX_DAYS   182' }
     - { r: '^PASS_WARN_AGE', l: 'PASS_WARN_AGE    15' }
     - { r: '^UMASK', l: "UMASK     {{ harden_umask }}" }
+  when: ansible_os_family != "Alpine"
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - name: disable usb storage drivers - modprobe
@@ -13,6 +14,7 @@
 - name: disable usb storage drivers - grub
   replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1nousb\2' backup=yes
 ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
+  when: ansible_os_family != "Alpine"
 - name: disable firewire DMA drivers - modprobe
   lineinfile: dest=/etc/modprobe.d/no-firewire line='blacklist firewire-sbp2' create=yes
 

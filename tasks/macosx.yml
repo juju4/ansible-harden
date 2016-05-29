@@ -1,5 +1,8 @@
+---
 ## https://github.com/SummitRoute/osxlockdown only osx 10.11/El Capitan
 ## https://github.com/alterstep/dnscrypt-osxclient
+## https://github.com/herrbischoff/awesome-osx-command-line
+
 - set_fact:
     install_archives: /private/var/_install
 
@@ -18,10 +21,32 @@
 #- osx_defaults: domain=com.apple.alf key=allowsignedenabled type=bool value=true state=present
 #- osx_defaults: domain=com.apple.captive.control key=Active type=bool value=false state=present
 #- osx_defaults: domain=com.apple.Safari key=IncludeInternalDebugMenu type=bool value=true state=present
+#- osx_defaults: domain=com.apple.Safari key=IncludeDevelopMenu type=bool value=true state=present
+#- osx_defaults: domain=NSGlobalDomain key=WebKitDeveloperExtras type=bool value=true state=present
 - osx_defaults: domain=NSGlobalDomain key=NSDocumentSaveNewDocumentsToCloud type=bool value=false state=present
+## screen saver with password
+- osx_defaults: domain=com.apple.screensaver key=askForPassword type=int value=1 state=present
+- osx_defaults: domain=com.apple.screensaver key=askForPasswordDelay type=int value=300 state=present
+## Use Plain Text Mode as Default
+- osx_defaults: domain=com.apple.TextEdit key=RichText type=int value=0 state=present
+## Show Hidden Files
+- osx_defaults: domain=com.apple.finder key=AppleShowAllFiles type=bool value=true state=present
+## Path Bar
+- osx_defaults: domain=com.apple.finder key=ShowPathbar type=bool value=true state=present
+## Smooth Scrolling
+- osx_defaults: domain=NSGlobalDomain key=NSScrollAnimationEnabled type=bool value=false state=present
+## Save to Disk by Default
+- osx_defaults: domain=NSGlobalDomain key=NSDocumentSaveNewDocumentsToCloud type=bool value=false state=present
+## Disable Creation of Metadata Files on Network Volumes
+- osx_defaults: domain=com.apple.desktopservices key=DSDontWriteNetworkStores type=bool value=true state=present
+## Disable Creation of Metadata Files on USB Volumes
+- osx_defaults: domain=com.apple.desktopservices key=DSDontWriteUSBStores type=bool value=true state=present
+## Check for Software Updates Daily
+- osx_defaults: domain=com.apple.SoftwareUpdate key=ScheduleFrequency type=int value=1 state=present
+
 
 - name: disable IPv6 noise
-  sysctl: name="{{ item.k }}" value="{{ item.v }}" state=present
+  sysctl: name="{{ item.k }}" value="{{ item.v }}" state=present reload=no
   with_items:
 ## setting net.inet6.ip6.accept_rtadv failed: sysctl: oid 'net.inet6.ip6.accept_rtadv' is read only
 #    - { k: 'net.inet6.ip6.accept_rtadv', v: 0 }
@@ -58,6 +83,7 @@
   git:
     repo=https://github.com/nowsecure/fsmon.git
     dest={{ install_archives }}/fsmon
+  when: not fsmon.stat.exists
 
 
 - stat: path=/opt/local/bin/port
@@ -107,4 +133,18 @@
 - name: Unmount dnscrypt-osxclient image
   command: hdiutil detach /Volumes/dnscrypt-pkg
   when: not dnsc.stat.exists
+
+#- name: add certificate to keychain - admin store
+#  command: "security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <certificate>"
+#- name: add certificate to keychain - user store
+#  command: "security add-trusted-cert -r trustRoot -k $HOME/Library/Keychains/System.keychain <certificate>"
+#  become: yes
+#  become_user: targetuser
+
+## https://objective-see.com/products/ransomwhere.html
+- name: download ransomwhere
+  get_url: url=https://bitbucket.org/objective-see/deploy/downloads/RansomWhere_1.1.0.zip dest="{{ install_archives }}/RansomWhere_1.1.0.zip" mode=0644 sha256sum="aaa"
+  become: yes
+#- command: "RansomWhere.app/Contents/MacOS/RansomWhere -install"
+#  become: yes
 

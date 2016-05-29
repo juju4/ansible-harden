@@ -1,4 +1,7 @@
-<!-- http://securitylogsanalysis.blogspot.ca/2016/04/sysmon-playbook-v1.html -->
+<!-- 
+http://securitylogsanalysis.blogspot.ca/2016/04/sysmon-playbook-v1.html 
+https://gist.github.com/henrikjohansen/81d01b200ea3e58329ea#file-graylog_threat_hunt-txt-L24
+-->
 <Sysmon schemaversion="2.01">
    <HashAlgorithms>sha256</HashAlgorithms>
   <EventFiltering>
@@ -27,10 +30,18 @@
     <ProcessCreate onmatch="include ">
         <Image condition=”begin with”>C:\Windows</Image>
         <Image condition=”begin with”>C:\Users</Image>
+        <Image condition=”begin with”>C:\temp</Image>
     </ProcessCreate>
     <ProcessCreate onmatch="exclude ">
         <User>NT Authority\System</User>
     </ProcessCreate>
-     </EventFiltering>
+    <!-- Drop network noise and know good communications -->
+    <NetworkConnect onmatch="exclude">
+      <!-- local link layer multicast -->
+      <SourceIp>224.0.0.252</SourceIp>
+      <!-- broadcast traffic -->
+      <SourceIp condition="end with">.255</SourceIp>    
+    </NetworkConnect>
+  </EventFiltering>
 </Sysmon>
 
