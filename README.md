@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/juju4/ansible-harden.svg?branch=master)](https://travis-ci.org/juju4/ansible-harden)
 # harden ansible role
 
-A simple ansible role to harden system (linux, windows...). Few task example below.
+Ansible role to harden system and make it more forensics friendly (linux only). Few task example below.
 
 Unix
 * SSH key only
@@ -9,14 +9,9 @@ Unix
 /lib /etc/init.d /boot are tagged immutable
 /etc/apt/apt.conf.d/99security allows to handle gracefully update inside apt but else you will need to handle manually.
 * block usb and firewire drivers
+* bash commands sent to syslog
 
-Mailserver and Webserver hardening are addressed in other roles.
-
-Windows:
-* install EMET, Powershell v5
-* LSA hardening, review javascript/hta file association
-* review log settings, enabling command-line, powershell and WMI logging
-* try to harden adobe reader, flash
+Mailserver, Webserver, Darwin, OpenBSD and other hardening are addressed in other roles.
 
 Pay attention to test carefully role and fit to your context unless you want to lock yourself.
 This role is continuous work in progress as security landscape is constantly evolving.
@@ -25,13 +20,11 @@ This role is continuous work in progress as security landscape is constantly evo
 
 ### Ansible
 It was tested on the following versions:
- * 1.9
- * 2.0 (required for Win)
+ * 2.0
 
 ### Operating systems
 
-Tested with vagrant on Ubuntu 14.04, Kitchen test with trusty and centos7
-Windows part only tested against Win10 Evaluation
+Tested with vagrant on Ubuntu 14.04, Kitchen test vagrant or lxd, Travis.
 
 ## Example Playbook
 
@@ -47,7 +40,6 @@ For example
 Run
 ```
 $ ansible-playbook -i inventory --limit linux site.yml
-$ ansible-playbook -i inventory --limit win10 site.yml
 ```
 
 ## Variables
@@ -63,9 +55,6 @@ harden_use_forwarding: false
 harden_umask: '022'
 #harden_umask: '027'
 
-## Windows
-## 300MB = 314572 (default in kb)
-harden_eventlogs_maxsize: 314572
 ```
 
 ## Continuous integration
@@ -85,10 +74,12 @@ $ vagrant up
 $ vagrant ssh
 ```
 
+
 ## Troubleshooting & Known issues
 
-* On Windows, ensure you follow ansible guide to be able to connect
-http://docs.ansible.com/ansible/intro_windows.html
+* Tests has been mostly on Ubuntu trusty and xenial so coverage might be not equivalent for other distributions.
+* You are also advise to check projects like https://github.com/dev-sec
+Some tasks are better covered there like suid/sgid binaries cleaning and inspec control testing.
 
 ## License
 

@@ -1,13 +1,15 @@
 ---
-## usual suspect: http://bastille-linux.sourceforge.net/, https://cisofy.com/lynis/, https://fedorahosted.org/aqueduct/wiki, 
+## usual suspect: http://bastille-linux.sourceforge.net/, https://cisofy.com/lynis/, https://fedorahosted.org/aqueduct/wiki,
 ## https://github.com/fcaviggia/hardening-script-el6
 ## https://github.com/major/securekickstarts
+
+- name: Include version-specific variables for Ubuntu.
+  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+  when: ansible_distribution == 'Ubuntu'
 
 - include: travis.yml
   when: ansible_os_family != "Windows"
 
-- include: unix.yml
-  when: ansible_system == 'Linux'
 - include: linux.yml
   when: ansible_system == 'Linux'
 
@@ -23,21 +25,12 @@
   include: alpine.yml
   when: ansible_os_family == "Alpine"
 
-- name: Darwin | Harden
-  include: macosx.yml
-  when: ansible_os_family == "Darwin"
+- include: unix.yml
+  when: ansible_system == 'Linux' or ansible_distribution == 'OpenBSD'
 
-### ntpdate deprecated, using openntpd
-#- name: Force time sync
-#  #command: ntpdate -b pool.ntp.org
-#  command: "{{ item }}"
-#  with_items:
-#    - "service ntp stop"
-#    - "ntpd -gq"
-#    - "service ntp start"
-#  when: ansible_distribution != 'OpenBSD'
+- include: restrict_compiler.yml
+  when: harden_restrict_compiler is defined and harden_restrict_compiler
 
-- name: Windows | Harden
-  include: windows.yml
-  when: ansible_os_family == "Windows"
+- include: bash2syslog.yml
+  when: harden_bash2syslog is defined and harden_bash2syslog
 

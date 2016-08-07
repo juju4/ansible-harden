@@ -3,6 +3,8 @@
 :INPUT {{ harden_fw_default }} [0:0]
 :FORWARD {{ harden_fw_default }} [0:0]
 :OUTPUT {{ harden_fw_default }} [0:0]
+:fail2ban-ssh - [0:0]
+-A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh
 -A INPUT -i eth0 -p tcp -m state --state INVALID -m recent --update --seconds 10 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
 -A INPUT -i eth0 -p tcp -m state --state INVALID -m recent --set --name DEFAULT --mask 255.255.255.255 --rsource
 -A INPUT -i eth0 -p tcp -m state --state NEW -m recent --update --seconds 10 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
@@ -78,7 +80,13 @@
 ## Outgoing http, https
 -A OUTPUT -p tcp -m multiport --dport 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp -m multiport --sport 80,443 -m state --state ESTABLISHED -j ACCEPT
+{% if harden_fw_open_incoming is defined and harden_fw_open_incoming %}
+{% for item in harden_fw_open_incoming %}
+-A INPUT -p {{ item.proto }} --dport {{ item.port }} -j ACCEPT
+{% endfor %}
+{% endif %}
 ## generic rule
 -A OUTPUT -p tcp -m state --state ESTABLISHED -j ACCEPT
+-A fail2ban-ssh -j RETURN
 COMMIT
 # Completed

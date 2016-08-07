@@ -11,6 +11,7 @@
 !/var/tmp
 /var/cache/apt/pkgcache.bin$ VarFile
 /var/cache/apt/srcpkgcache.bin$ VarFile
+/var/lib/apt/periodic/download-upgradeable-stamp$ VarTime
 !/var/cache/apt/archives
 !/var/cache/gdm
 !/var/cache/man
@@ -101,6 +102,10 @@
 /var/lib/mysql/cacti/.*\.(MYD|MYI)$ VarFile
 /var/lib/mysql/mysql/.*\.(CSM)$ VarFile
 !/var/cache/smokeping/images
+/var/lib/smokeping/__sortercache$ VarTime
+/var/lib/smokeping/__sortercache/data.Curl.storable$ InodeData
+/var/lib/smokeping/__sortercache/data.DNS.storable$ InodeData
+/var/lib/smokeping/__sortercache/data.FPing.storable$ InodeData
 !/var/lib/ureadahead/.*pack$
 /var/lib/clamav/main.cvd$ VarFile
 /var/lib/clamav/daily.cld$ VarFile
@@ -152,3 +157,5 @@
 !/var/spool/icinga2
 !/var/lib/graphite/whisper/carbon/agents
 !/root/.ansible/tmp
+!/var/lib/docker/volumes
+!/opt/docker/volumes

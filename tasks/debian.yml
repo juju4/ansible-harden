@@ -3,47 +3,26 @@
 - set_fact:
     ssh_svc: ssh
 
-- name: Debian | Enable backports (replace)
+- name: Ubuntu | Enable backports (replace)
   replace:
 ## can be archive, or us-east-1.ec2.archive if amazon, or others
-    dest='/etc/apt/sources.list' regexp='^# deb http://(.*)/ubuntu([/]*) trusty-backports' replace='deb http://\1/ubuntu\2 trusty-backports' backup=yes
-## some providers haven't the commented line
+    dest='/etc/apt/sources.list' regexp='^# deb http://(.*)/ubuntu([/]*) {{ ansible_distribution_release }}-backports' replace='deb http://\1/ubuntu\2 {{ ansible_distribution_release }}-backports' backup=yes
+  when: ansible_distribution == "Ubuntu"
 
-- name: Debian | Enable backports (line)
+## some providers haven't the commented line
+- name: Ubuntu | Enable backports (line)
   lineinfile:
-    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu trusty-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse' backup=yes
+    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
+  when: ansible_distribution == "Ubuntu"
+
+## https://github.com/chef/bento/issues/592
+- name: fix Ubuntu network hack
+  file: dest=/etc/udev/rules.d/70-persistent-net.rules state=absent
 
 - name: Debian | Extra packages install
 #  apt: name={{item}} state=present update_cache=yes cache_valid_time=3600  ## with cache, doesn't update even if repo changes
   apt: name={{item}} state=present update_cache=yes
-  with_items:
-#    - harden       ## exist in precise/trusty/vivid, not wily
-    - unzip
-    - rkhunter
-    - chkrootkit
-    - openntpd
-    - acct
-    - auditd
-    - aide
-    - logcheck
-    - syslog-summary
-    - apparmor-profiles
-    - apparmor-utils
-    - acl
-    - sysstat
-    - sysdig
-    - tcpdump
-    - libcap2-bin
-    - rng-tools
-    - ldnsutils
-    - unattended-upgrades
-    - update-notifier-common
-    - gnupg
-    - libpam-cracklib
-    - debsums
-    - apt-show-versions
-    - arpwatch
-    - iptables-persistent
+  with_items: "{{ harden_debian_pkg + __ubuntu_packages }}"
 
 ## FIXME! kitchen OK, travis NOK
 ## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
@@ -56,12 +35,15 @@
 - debug: var=distout.stdout_lines
   when: travisci is not defined or not travisci
 
-- name: Debian | Remove some packages
+- name: Debian | Remove rpc-related packages
   apt: name={{item}} state=absent
   with_items:
     - rpcbind
-    - avahi-daemon
   when: harden_use_rpc is not defined or not harden_use_rpc
+
+- name: Debian | Remove some packages
+  apt: name={{item}} state=absent
+  with_items: "{{ harden_debian_remove }}"
 
 ## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 - name: Debian | enable automatic security updates
@@ -73,10 +55,14 @@
     - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade \"1\";' }
     - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval \"14\";' }
 
+- name: copy patch for aide
+  template: src=patch-cron.daily-aide dest=/root/patch-cron.daily-aide mode=0400
 - name: Patch cron.daily/aide to rotate database
   patch: >
-    src=patch-cron.daily-aide
+    src=/root/patch-cron.daily-aide
     dest=/etc/cron.daily/aide
+    remote_src=yes
+    backup=yes
 - name: Review Aide configuration
   lineinfile:
 #    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
@@ -111,10 +97,9 @@
   with_items:
     - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
 
+- debug: var=ansible_mounts
 - name: add apt hardening with somme immutable directories
-  copy: "src={{ item }} dest=/etc/apt/apt.conf.d owner=root mode=0644"
-  with_items:
-    - 99security
+  template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
 
 - name: Review Logcheck configuration
   replace:
@@ -148,7 +133,14 @@
         owner=0 group=0 mode=0644
       notify:
         - restart iptables
+        - restart iptables - xenial
   when: harden_fw is defined and harden_fw
+
+- name: Enable sysstat sar collection
+  replace:
+    dest='/etc/default/sysstat' regexp='^ENABLED="false"' replace='ENABLED="true"'
+  notify:
+    - restart sysstat
 
 ## aide at the end of provisioning?
 - stat: path=/var/lib/aide/aide.db
@@ -164,18 +156,21 @@
   async: 3600
   poll: 300
 
+- stat: path=/etc/default/rng-tools
+  register: rngconf
 - name: Debian | More entropy
   lineinfile:
     dest='/etc/default/rng-tools' regexp='^HRNGDEVICE=/dev/urandom' insertafter='^#HRNGDEVICE=/dev/null' line='HRNGDEVICE=/dev/urandom'
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and rngconf.stat.exists
 
-## Note: can't do before full end of provisioning else might break other things...
-#- file: path=/usr/bin/gcc-4.8 owner=root group=root mode=0755
-#- file: path=/usr/bin/gcc-5 owner=root group=root mode=0755
-#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'wily'
-#- file: path=/usr/bin/make owner=root group=root mode=0755
-#- file: path=/usr/bin/gcc-4.8 owner=root group=root mode=0700
-#- file: path=/usr/bin/make owner=root group=root mode=0700
+## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
+- name: Ubuntu | Disable automatic report of debsecan
+  replace: dest=/etc/default/debsecan regexp='^REPORT=.*' replace='REPORT=false' backup=yes
+#  replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE=sid' backup=yes
+  when: ansible_distribution == 'Ubuntu'
+- name: Debian | define distribution of debsecan
+  replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE={{ ansible_distribution_release }}' backup=yes
+  when: ansible_distribution == 'Debian'
 
 ## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
 ## https://bugzilla.redhat.com/show_bug.cgi?id=455713
@@ -184,23 +179,38 @@
 ## https://wiki.ubuntu.com/Security/Investigation/Setuid
 ## FIXME! same for chroot cap and others
 
-- name: Capabilities Hardening - default network tools
-  capabilities: "path={{ item }} capability='cap_net_raw+pe' state=present"
-  with_items:
-    - /bin/ping
-    - /bin/ping6
-    - /usr/bin/traceroute6.iputils
-    - /usr/bin/mtr
-- file:
-    path="{{ item }}"
-    mode=0755
-  with_items:
-    - /bin/ping
-    - /bin/ping6
-    - /usr/bin/traceroute6.iputils
-    - /usr/bin/mtr
-- name: Capabilities Hardening - tcpdump
-  capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
+## Not setpcap in unprivileged lxc container, https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
+- block:
+    - name: Capabilities Hardening - default network tools
+      capabilities: "path={{ item }} capability='cap_net_raw+pe' state=present"
+      with_items:
+        - /bin/ping
+        - /bin/ping6
+        - /usr/bin/traceroute6.iputils
+        - /usr/bin/mtr
+    - file:
+        path="{{ item }}"
+        mode=0755
+      with_items:
+        - /bin/ping
+        - /bin/ping6
+        - /usr/bin/traceroute6.iputils
+        - /usr/bin/mtr
+    - name: Capabilities Hardening - tcpdump
+      capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
+  when: ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc"
+
+- block:
+## https://github.com/lxc/lxd/issues/2004, only on xenial?
+    - name: Debian | auditd
+      apt: name=auditd state=present update_cache=yes
+    - name: configure audit system
+      template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes
+      notify:
+        - restart auditd
+    - name: Enable Auditing for Processes That Start Prior to auditd - CIS
+      replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX=""' replace='GRUB_CMDLINE_LINUX="audit=1"'
+  when: (ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc") and (ansible_distribution != "Ubuntu" or ansible_distribution_release != 'xenial')
 
 - command: 'lsattr /etc/init.d/rc'
   register: rclsattr

@@ -1,0 +1,54 @@
+---
+## https://isc.sans.edu/forums/diary/Improving+Bash+Forensics+Capabilities/20887/
+## https://blog.rootshell.be/2009/02/28/bash-history-to-syslog/
+## Syslog option is a compile option in bash, mostly not enabled
+## https://bugzilla.redhat.com/show_bug.cgi?id=1323808
+
+## https://administratosphere.wordpress.com/2011/05/20/logging-every-shell-command/
+- name: Enforce tighter bash settings
+  blockinfile:
+    dest: /etc/profile
+    marker: "### {mark} ANSIBLE MANAGED BLOCK: bash settings ###"
+    content: |
+      export HISTCONTROL=
+      export HISTFILE=$HOME/.bash_history
+      export HISTFILESIZE=5000
+      export HISTIGNORE=
+      export HISTSIZE=3000
+      export HISTTIMEFORMAT="%a %b %Y %T %z "
+      typeset -r HISTCONTROL
+      typeset -r HISTFILE
+      typeset -r HISTFILESIZE
+      typeset -r HISTIGNORE
+      typeset -r HISTSIZE
+      typeset -r HISTTIMEFORMAT
+  tags: bash
+## those two seems to create issues...
+#      export PROMPT_COMMAND=\"history -a\"
+#      typeset -r PROMPT_COMMAND
+
+## Note: does not apply to ansible (direct call to python?) or root bash (why?)
+## empty command are? typeset?
+- name: Enable syslog logging of shell command through /etc/profile
+  blockinfile:
+    dest: /etc/profile
+    marker: "### {mark} ANSIBLE MANAGED BLOCK: bash2syslog ###"
+    content: |
+      function log2syslog
+      {
+         declare command
+         command=$(fc -ln -0)
+         [ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command
+      }
+      trap log2syslog DEBUG
+  tags: bash
+
+- stat: path=/etc/rsyslog.d
+  register: rsyslog
+- name: add rsyslog configuration to filter to a specific file
+  template: src=99-bash2syslog.conf.j2 dest=/etc/rsyslog.d/99-bash2syslog.conf mode=0644 backup=yes
+  notify:
+    - restart rsyslog
+  when: rsyslog.stat.exists
+  tags: bash
+

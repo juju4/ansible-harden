@@ -14,8 +14,11 @@ HostKey /etc/ssh/ssh_host_dsa_key
 HostKey /etc/ssh/ssh_host_ecdsa_key
 HostKey /etc/ssh/ssh_host_ed25519_key
 #Privilege Separation is turned on for security
-#UsePrivilegeSeparation yes
+{% if ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_lsb.major_release|int <= 6 %}
+UsePrivilegeSeparation yes
+{% else %}
 UsePrivilegeSeparation sandbox
+{% endif %}
 
 # Lifetime and size of ephemeral version 1 server key
 KeyRegenerationInterval 3600
@@ -90,11 +93,11 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 # and ChallengeResponseAuthentication to 'no'.
 UsePAM yes
 
-## 20140203 JTO from ANSSI, http://www.ssi.gouv.fr/IMG/pdf/NP_OpenSSH_NoteTech.pdf
+## from ANSSI, http://www.ssi.gouv.fr/IMG/pdf/NP_OpenSSH_NoteTech.pdf
 #Ciphers aes256-ctr,aes192-ctr,aes128-ctr
 MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha1-96-etm@openssh.com,hmac-sha2-512
 
-## 201508 JTO https://wiki.mozilla.org/Security/Guidelines/OpenSSH
+## https://wiki.mozilla.org/Security/Guidelines/OpenSSH
 KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256
 Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
 #MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
@@ -103,11 +106,11 @@ KeyRegenerationInterval 1800
 #ClientAliveInterval 15
 #ClientAliveCountMax 3
 
-AllowUsers soc socadmin vagrant deploy
+AllowUsers vagrant deploy
 
 ## http://askubuntu.com/questions/48129/how-to-create-a-restricted-ssh-user-for-port-forwarding
 ## usage: ssh -N or http://tartarus.org/~simon/putty-snapshots/htmldoc/Chapter4.html#config-ssh-noshell or SecureCRT: Session Options: Connection / Port Forwarding: Do not request a shell
-Match User soc
+Match User myuser
     AllowTcpForwarding yes
     X11Forwarding yes
     PermitTunnel yes

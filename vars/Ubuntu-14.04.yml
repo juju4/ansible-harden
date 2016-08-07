@@ -1,0 +1,18 @@
+---
+__ubuntu_packages:
+    - linux-tools-generic   # perf /FlameGraph
+    - rng-tools
+    - iptables-persistent
+
+harden_distribution_sysctl:
+    - { n: 'net.ipv4.tcp_syncookies', v: 1 }
+    - { n: 'net.ipv4.tcp_timestamps', v: 0 }
+## https://lwn.net/Articles/420403/
+    - { n: 'kernel.kptr_restrict', v: 1 }
+    - { n: 'kernel.core_uses_pid', v: 1 }
+    - { n: 'fs.suid_dumpable', v: 2 }
+## https://www.kernel.org/doc/Documentation/sysrq.txt
+    - { n: 'kernel.sysrq', v: 0 }
+## general, but especially for containers
+    - { n: 'kernel.dmesg_restrict', v: 1 }
+    - { n: 'kernel.randomize_va_space', v: 2 }

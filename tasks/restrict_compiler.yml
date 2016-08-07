@@ -1,0 +1,24 @@
+---
+
+- set_fact:
+    gcc_v: 4.8
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0]|int <= 14
+- set_fact:
+    gcc_v: 5
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0]|int >= 15
+
+## Note: can't do before full end of provisioning else might break other things...
+- block:
+    - name: Restrict compiler tools to group {{ harden_restrict_compiler_group }}
+      file: path={{ item }} owner=root group={{ harden_restrict_compiler_group }} mode={{ harden_restrict_compiler_umask }} follow=yes
+      with_items:
+#        - /usr/bin/gcc-{{ gcc_v }}
+        - /usr/bin/gcc
+        - /usr/bin/gcc-ar
+        - /usr/bin/gcc-nm
+        - /usr/bin/gcc-ranlib
+        - /usr/bin/make
+        - /usr/bin/g++
+      ignore_errors: true
+## Note: ignore errors as compiler tools may not be installed...
+

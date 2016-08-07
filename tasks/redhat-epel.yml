@@ -1,19 +1,24 @@
 ---
 
 ## https://fedoraproject.org/wiki/EPEL
-- name: RedHat6 | Installing epel rpm key
-  rpm_key: key=https://getfedora.org/static/0608B895.txt
-           state=present
-  tags:
-    - init
+## Failed to validate the SSL certificate for getfedora.org:443. https://github.com/ansible/ansible/issues/12161
+- set_fact:
+    epel_rpm_key: 'https://getfedora.org/static/0608B895.txt'
   when: ansible_distribution_major_version == "6"
-- name: RedHat7 | Installing epel rpm key
-  rpm_key: key=https://getfedora.org/static/352C64E5.txt
-           state=present
-           validate_certs=no        ## not sure why, ok in browser...
-  tags:
-    - init
+- set_fact:
+    epel_rpm_key: 'https://getfedora.org/static/352C64E5.txt'
   when: ansible_distribution_major_version == "7"
+
+- stat: path="/var/tmp/{{ epel_rpm_key | basename }}"
+  register: epelkey
+- name: Download epel rpm key
+  command: "curl -s -o /var/tmp/{{ epel_rpm_key | basename }} {{ epel_rpm_key }}"
+  when: not epelkey.stat.exists
+- name: Installing epel rpm key
+#  rpm_key: key={{ epel_rpm_key }}
+  rpm_key: key=/var/tmp/{{ epel_rpm_key | basename }}
+           state=present
+
 ## FIXME! ansible not detecting package already installed if http
 - name: check if epel installed
   command: rpm -q epel-release

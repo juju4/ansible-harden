@@ -9,16 +9,21 @@
   when: ansible_os_family != "Alpine"
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
-- name: disable usb storage drivers - modprobe
-  lineinfile: dest=/etc/modprobe.d/no-usb line='install usb-storage /bin/true' create=yes
-- name: disable usb storage drivers - grub
-  replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1nousb\2' backup=yes
-## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
-  when: ansible_os_family != "Alpine"
+- block:
+    - name: disable usb storage drivers - modprobe
+      lineinfile: dest=/etc/modprobe.d/no-usb line='install usb-storage /bin/true' create=yes
+    - stat: path=/etc/default/grub
+      register: defgrub
+    - name: disable usb storage drivers - grub
+      replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1nousb\2' backup=yes
+    ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
+      when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
+  when: harden_disable_usb is defined and harden_disable_usb
+
 - name: disable firewire DMA drivers - modprobe
   lineinfile: dest=/etc/modprobe.d/no-firewire line='blacklist firewire-sbp2' create=yes
 
-- name: harden sysctl config
+- name: harden sysctl config - network
   sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
   with_items:
     - { n: 'net.ipv4.conf.all.accept_redirects', v: 0 }
@@ -33,25 +38,50 @@
     - { n: 'net.ipv4.conf.default.log_martians', v: 1 }
     - { n: 'net.ipv4.icmp_echo_ignore_broadcasts', v: 1 }
     - { n: 'net.ipv4.icmp_ignore_bogus_error_responses', v: 1 }
-    - { n: 'net.ipv4.tcp_syncookies', v: 1 }
-    - { n: 'net.ipv4.tcp_timestamps', v: 0 }
 #    - { n: 'net.ipv6.conf.all.send_redirects', v: 0 }
     - { n: 'net.ipv6.conf.all.accept_redirects', v: 0 }
     - { n: 'net.ipv6.conf.all.accept_source_route', v: 0 }
     - { n: 'net.ipv6.conf.default.accept_redirects', v: 0 }
     - { n: 'net.ipv6.conf.default.accept_source_route', v: 0 }
-## https://www.kernel.org/doc/Documentation/sysrq.txt
-    - { n: 'kernel.sysrq', v: 0 }
-## https://lwn.net/Articles/420403/
-    - { n: 'kernel.kptr_restrict', v: 1 }
-    - { n: 'kernel.core_uses_pid', v: 1 }
+    - { n: 'net.ipv4.icmp_ratelimit', v: 100 }
+    - { n: 'net.ipv4.icmp_ratemask', v: 88089 }
+    - { n: 'net.ipv4.conf.all.arp_ignore', v: 1 }
+    - { n: 'net.ipv4.conf.all.arp_announce', v: 2 }
+
+- name: harden sysctl config - network - not lxc compatible
+  sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
+  with_items:
+    - { n: 'net.ipv4.tcp_rfc1337', v: 1 }
+  when: harden_distribution_sysctl is defined and harden_distribution_sysctl != "" and harden_distribution_sysctl != 'None' and (ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc")
+
+- block:
+    - name: harden sysctl config - distribution specific
+      sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
+      with_items: "{{ harden_distribution_sysctl }}"
+  when: harden_distribution_sysctl is defined and harden_distribution_sysctl != "" and harden_distribution_sysctl != 'None' and (ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc")
 
 - name: disable forwarding in sysctl config
   sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
   with_items:
     - { n: 'net.ipv4.conf.all.forwarding', v: 0 }
-    - { n: 'net.ipv4.conf.all.mc_forwarding', v: 0 }
   when: not (harden_use_forwarding is defined and harden_use_forwarding)
+
+- name: disable forwarding in sysctl config - not centos6
+  sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
+  with_items:
+    - { n: 'net.ipv4.conf.all.mc_forwarding', v: 0 }
+  when: not (harden_use_forwarding is defined and harden_use_forwarding) and ((ansible_os_family == "RedHat" and ansible_distribution_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+
+- block:
+    - stat: path=/etc/default/apport
+      register: defapport
+      when: ansible_distribution == 'Ubuntu'
+    - name: Ubuntu | ensure Apport crash report is disabled
+      replace: dest=/etc/default/apport regexp='^enabled=' replace='enabled=0'
+      when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
+    - name: set sensible core pattern
+      sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
+  when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport
 
 ## FIXME! firewall rules
 

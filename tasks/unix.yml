@@ -4,9 +4,9 @@
   register: sshkey
 - name: Generate any missing SSH host key
   command: ssh-keygen -A
-  when: not sshkey.stat.exists
+  when: not sshkey.stat.exists and ((ansible_os_family == "RedHat" and ansible_distribution_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
-- name: Restrict sshd config
+- name: Restrict sshd config (1)
   lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes
   with_items:
     - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
@@ -14,9 +14,15 @@
     - { regexp: '^LogLevel', line: 'LogLevel VERBOSE' }
     - { regexp: '^TCPKeepAlive', line: 'TCPKeepAlive no' }
     - { regexp: '^UseDNS', line: 'UseDNS yes' }
+  notify:
+    - restart sshd
+- name: Restrict sshd config - UsePrivilegeSeparation sandbox
+  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes
+  with_items:
     - { regexp: '^UsePrivilegeSeparation', line: 'UsePrivilegeSeparation sandbox' }
   notify:
     - restart sshd
+  when: not (ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_lsb.major_release|int <= 6)
 
 #- name: sshd configuration file update
 #  template: src=sshd_config
@@ -40,4 +46,13 @@
 ## https://blog.rootshell.be/2009/02/28/bash-history-to-syslog/
 ## http://blog.hellosa.org/2013/07/27/log-bash-history-to-syslog-on-centos-6.html
 ## http://binbash.fr/2012/09/05/bash-syslog/
+
+- stat: path=/var/log/account/pacct
+  register: pacct
+- name: enable accounting
+  command: "accton on"
+  when: not pacct.stat.exists
+
+- include: unix-fstab.yml
+  when: harden_unix_fstab_flags is defined and harden_unix_fstab_flags
 

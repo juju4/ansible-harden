@@ -1,28 +1,30 @@
 ---
 driver:
-  name: vagrant
+  name: lxd_cli
 
 provisioner:
   name: ansible_playbook
-  roles_path: ../../roles
+  roles_path: ../
   hosts: test-kitchen
 #  ansible_verbose: true
   ansible_verbose: false
   ansible_verbosity: 3
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
+  ansible_yum_repo: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+  require_ansible_omnibus: true
+#  require_chef_for_busser: false
+  enable_yum_epel: true
+  ansible_connection: ssh
 
 platforms:
+  - name: ubuntu-16.04
   - name: ubuntu-14.04
-#  - name: ubuntu-16.04
-  - name: centos-7.1
-### http://kitchen.ci/blog/test-kitchen-windows-test-flight-with-vagrant/
-### FIXME! https://github.com/neillturner/kitchen-ansible/issues/131
-#  - name: windows-2012r2
-#    transport:
-#      name: winrm
-#    driver:
-##      gui: false
-#      gui: true
+  - name: ubuntu-12.04
+#  - name: centos-7
+#  - name: centos-6
+## "Failed to complete #create action: [Broken pipe] on default-alpine-34"
+## do we have python2 in default image?
+#  - name: alpine-3.4
 
 suites:
   - name: default

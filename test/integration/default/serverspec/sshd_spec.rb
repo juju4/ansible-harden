@@ -19,4 +19,5 @@ end
 
 describe file('/etc/ssh/sshd_config') do
   it { should contain 'PasswordAuthentication no' }
+  it { should contain 'PermitRootLogin without-password' }
 end

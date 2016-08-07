@@ -10,7 +10,7 @@
  fi
  
  if [ "$COPYDB" = "1" ] && [ "$COMMAND" = "update" ]; then
-+	[ "$COPYNEWDB" = "rotate" ] && savelog -c 14 "$DATABASE" > /dev/null
++	[ "$COPYNEWDB" = "rotate" ] && savelog -c {{ harden_aidedb_rotatedays }} "$DATABASE" > /dev/null
 +	setfacl -m "u:_backup:r--" -- $DATABASE*
  	cp -f "$DATABASE_OUT" "$DATABASE"
  	printf >> "$POSTRUNLOG" "output database %s was copied to %s as requested by cron job configuration\n" "$DATABASE_OUT" "$DATABASE"

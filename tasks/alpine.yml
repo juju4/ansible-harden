@@ -8,10 +8,11 @@
   with_items:
     - git
     - gnupg
-#    - rng-tools
+    - rng-tools@testing
     - acct
     - sysstat
     - arpwatch
+    - logcheck
 #    - aide
 #    - rkhunter
 #    - lynis
