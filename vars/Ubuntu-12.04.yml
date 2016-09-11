@@ -1,26 +1,10 @@
 ---
-__ubuntu_packages:
-    - rng-tools
-    - iptables-persistent
 
-#error: "net.ipv4.tcp_syncookies" is an unknown key
-#error: "net.ipv4.tcp_timestamps" is an unknown key
-harden_distribution_sysctl:
-#    - { n: 'net.ipv4.tcp_syncookies', v: 1 }
-#    - { n: 'net.ipv4.tcp_timestamps', v: 0 }
-## https://lwn.net/Articles/420403/
-#    - { n: 'kernel.kptr_restrict', v: 1 }
-#    - { n: 'kernel.core_uses_pid', v: 1 }
-#    - { n: 'fs.suid_dumpable', v: 2 }
-## https://www.kernel.org/doc/Documentation/sysrq.txt
-#    - { n: 'kernel.sysrq', v: 0 }
-## general, but especially for containers
-#    - { n: 'kernel.dmesg_restrict', v: 1 }
-#    - { n: 'kernel.randomize_va_space', v: 2 }
+ssh_svc: ssh
 
 ## override: no sysdig(unmet dependencies)
-harden_debian_pkg:
-#    - harden       ## exist in precise/trusty/vivid, not wily
+harden_pkg:
+    - harden       ## exist in precise/trusty/vivid, not wily
     - unzip
     - rkhunter
     - chkrootkit
@@ -49,6 +33,17 @@ harden_debian_pkg:
     - debian-goodies
     - debsecan
     - fail2ban
+    - rng-tools
+    - iptables-persistent
 ## requested by https://github.com/awailly/cis-ubuntu-ansible
     - aptitude
+## files classification
+    - tracker-utils
+
+harden_pkg_remove:
+    - avahi-daemon
+    - xinetd
+    - inetd
+    - telnet-server
+    - rsh-server
 

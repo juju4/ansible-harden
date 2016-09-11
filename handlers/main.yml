@@ -1,4 +1,5 @@
 ---
+
 - name: restart sshd
   service: name={{ ssh_svc }} state=restarted
 - name: restart iptables
@@ -18,4 +19,7 @@
 
 - name: restart rsyslog
   service: name=rsyslog state=restarted
+
+- name: restart fail2ban
+  service: name=fail2ban state=restarted
 

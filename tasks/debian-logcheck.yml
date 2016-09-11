@@ -1,0 +1,37 @@
+---
+
+- name: Review Logcheck configuration
+  replace:
+    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+  with_items:
+    - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
+    - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
+
+- name: Logcheck additional configuration - ntpd ignore
+  copy:
+    src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=644
+
+- name: Logcheck additional configuration - local ignore
+  copy:
+    src=local-rules dest=/etc/logcheck/ignore.d.server/local-rules mode=644
+
+- name: Logcheck replace rules
+  template: src=logcheck.replace.j2 dest=/etc/logcheck/logcheck.replace mode=0644
+
+- name: Patch logcheck to do replacement
+  patch: >
+    src=patch-logcheck-replace
+    dest=/usr/sbin/logcheck
+    remote_src=no
+    backup=yes
+  ignore_errors: true
+
+- name: Review logcheck frequency
+  replace: dest=/etc/cron.d/logcheck regexp='^2 \* \* \* \*       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'
+  when: harden_logcheck_hours is defined and harden_logcheck_hours != "" and harden_logcheck_hours != '*'
+## http://wiki.bluelightav.org/display/BLUE/Logcheck+administration
+- name: Review Logcheck cron on reboot
+  replace:
+    "dest=/etc/cron.d/logcheck regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
+  with_items:
+    - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi', replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi' }

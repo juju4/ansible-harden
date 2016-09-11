@@ -1,0 +1,39 @@
+# /etc/logcheck/logcheck.replace
+s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
+s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9\.:]*\) port [0-9]* ssh2/sshd: Failed \1 for \2 from \3 port N ssh2/
+s/sshd\[[0-9]*\]: Accepted publickey for \(.*\) from \([0-9\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+s/sshd\[[0-9]*\]: Failed publickey for \(.*\) from \([0-9\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+s/sshd\[[0-9]*\]: Postponed publickey for \(.*\) from \([0-9\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+#s/sshd\[[0-9]*\]: input_userauth_request: invalid user .*/sshd: input_userauth_request: invalid user XXX/
+#s/sshd\[[0-9]*\]: Invalid user .* from \([0-9\.]*\)/sshd: Invalid user XXX from \1/
+s/sshd\[[0-9]*\]: Connection closed by \([0-9\.:]*\) port [0-9]*/sshd: Connection closed by \1 port N/
+s/sshd\[[0-9]*\]: Connection reset by \([0-9\.:]*\) port [0-9]*/sshd: Connection reset by \1 port N/
+s/sshd\[[0-9]*\]: Connection from \([0-9\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from \1 port N on \2 port \3/
+s/sshd\[[0-9]*\]: Disconnected from \([0-9\.:]*\) port [0-9]*/sshd: Disconnected from \1 port N/
+s/sshd\[[0-9]*\]: Received disconnect from \([0-9\.:]*\) port [0-9]*/sshd: Received disconnect from \1 port N/
+s/sshd\[[0-9]*\]: Starting session: command for \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd: Starting session: command for \1 from \2 port N/
+s/sshd\[[0-9]*\]: Close session: user \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd: Close session: user \1 from \2 port N/
+s/sshd\[[0-9]*\]: Transferred: sent [0-9]*, received [0-9]* bytes/sshd: Transferred: sent N, received N bytes/
+
+### kernel
+s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
+s/device veth[A-Z0-9]* entered promiscuous mode/device vethXXXXXX entered promiscuous mode/
+s/device veth[A-Z0-9]* left promiscuous mode/device vethXXXXXX left promiscuous mode/
+
+### systemd
+s/systemd\[[0-9]*\]: Started Session [0-9]* of user \(.*\)/systemd: Started Session N of user \1/
+s/systemd-logind\[[0-9]*\]: New Session [0-9]* of user \(.*\)/systemd-logind: New Session N of user \1/
+
+### snmpd
+s/snmpd\[[0-9]*\]: Connection from UDP: \[\([0-9\.:]*\)\]:[0-9]* ->\[\([0-9\.:]*\)\]:\([0-9]*\)/snmpd: Connection from UDP: [\1]:N ->[\2]:\3/
+
+### lxd-bridge
+s/lxdbr0: port [0-9]*(veth[A-Z0-9]*) entered forwarding state/lxdbr0: port N(vethXXXXXX) entered forwarding state/
+s/lxdbr0: port [0-9]*(veth[A-Z0-9]*) entered disabled state/lxdbr0: port N(vethXXXXXX) entered disabled state/
+
+### ansible
+s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N still running (N)/
+
+### ptrace
+s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
+

@@ -1,0 +1,16 @@
+--- /usr/sbin/logcheck.orig	2016-08-22 12:34:18.553469921 -0400
++++ /usr/sbin/logcheck	2016-08-22 13:15:12.851338935 -0400
+@@ -685,11 +685,10 @@
+ # First sort the logs to remove duplicate lines (from different logfiles with
+ # the same lines) and reduce CPU and memory usage afterwards.
+ debug "Sorting logs"
+-$SORT "$TMPDIR/logoutput"/* | sed -e 's/[[:space:]]\+$//' | cat  \
+-    > "$TMPDIR/logoutput-sorted" \
++$SORT "$TMPDIR/logoutput"/* | sed -e 's/[[:space:]]\+$//' | sed -f /etc/logcheck/logcheck.replace \
++    | cat  > "$TMPDIR/logoutput-sorted" \
+         || error "Could not output to $TMPDIR/logoutput-sorted."
+ 
+-
+ # See if the tmp file exists and actually has data to check,
+ # if it doesn't we should erase it and exit as our job is done.
+ if [ ! -s "$TMPDIR/logoutput-sorted" -a ! -f "$TMPDIR/errors" ]; then

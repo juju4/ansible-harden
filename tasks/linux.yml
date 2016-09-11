@@ -3,8 +3,8 @@
 - name: set better login.defs
   lineinfile: "dest=/etc/login.defs regexp={{ item.r }} line={{ item.l }}"
   with_items:
-    - { r: '^PASS_MAX_DAYS', l: 'PASS_MAX_DAYS   182' }
-    - { r: '^PASS_WARN_AGE', l: 'PASS_WARN_AGE    15' }
+    - { r: '^PASS_MAX_DAYS', l: "PASS_MAX_DAYS   {{ harden_logindefs_pass_maxdays }}" }
+    - { r: '^PASS_WARN_AGE', l: "PASS_WARN_AGE    {{ harden_logindefs_pass_warnage }}" }
     - { r: '^UMASK', l: "UMASK     {{ harden_umask }}" }
   when: ansible_os_family != "Alpine"
 
@@ -23,65 +23,18 @@
 - name: disable firewire DMA drivers - modprobe
   lineinfile: dest=/etc/modprobe.d/no-firewire line='blacklist firewire-sbp2' create=yes
 
-- name: harden sysctl config - network
-  sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
-  with_items:
-    - { n: 'net.ipv4.conf.all.accept_redirects', v: 0 }
-    - { n: 'net.ipv4.conf.all.accept_source_route', v: 0 }
-    - { n: 'net.ipv4.conf.all.bootp_relay', v: 0 }
-    - { n: 'net.ipv4.conf.all.log_martians', v: 1 }
-    - { n: 'net.ipv4.conf.all.proxy_arp', v: 0 }
-    - { n: 'net.ipv4.conf.all.rp_filter', v: 1 }
-    - { n: 'net.ipv4.conf.all.send_redirects', v: 0 }
-    - { n: 'net.ipv4.conf.default.accept_redirects', v: 0 }
-    - { n: 'net.ipv4.conf.default.accept_source_route', v: 0 }
-    - { n: 'net.ipv4.conf.default.log_martians', v: 1 }
-    - { n: 'net.ipv4.icmp_echo_ignore_broadcasts', v: 1 }
-    - { n: 'net.ipv4.icmp_ignore_bogus_error_responses', v: 1 }
-#    - { n: 'net.ipv6.conf.all.send_redirects', v: 0 }
-    - { n: 'net.ipv6.conf.all.accept_redirects', v: 0 }
-    - { n: 'net.ipv6.conf.all.accept_source_route', v: 0 }
-    - { n: 'net.ipv6.conf.default.accept_redirects', v: 0 }
-    - { n: 'net.ipv6.conf.default.accept_source_route', v: 0 }
-    - { n: 'net.ipv4.icmp_ratelimit', v: 100 }
-    - { n: 'net.ipv4.icmp_ratemask', v: 88089 }
-    - { n: 'net.ipv4.conf.all.arp_ignore', v: 1 }
-    - { n: 'net.ipv4.conf.all.arp_announce', v: 2 }
-
-- name: harden sysctl config - network - not lxc compatible
-  sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
-  with_items:
-    - { n: 'net.ipv4.tcp_rfc1337', v: 1 }
-  when: harden_distribution_sysctl is defined and harden_distribution_sysctl != "" and harden_distribution_sysctl != 'None' and (ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc")
-
-- block:
-    - name: harden sysctl config - distribution specific
-      sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
-      with_items: "{{ harden_distribution_sysctl }}"
-  when: harden_distribution_sysctl is defined and harden_distribution_sysctl != "" and harden_distribution_sysctl != 'None' and (ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc")
-
-- name: disable forwarding in sysctl config
-  sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
-  with_items:
-    - { n: 'net.ipv4.conf.all.forwarding', v: 0 }
-  when: not (harden_use_forwarding is defined and harden_use_forwarding)
-
-- name: disable forwarding in sysctl config - not centos6
-  sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
-  with_items:
-    - { n: 'net.ipv4.conf.all.mc_forwarding', v: 0 }
-  when: not (harden_use_forwarding is defined and harden_use_forwarding) and ((ansible_os_family == "RedHat" and ansible_distribution_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
-
 - block:
     - stat: path=/etc/default/apport
       register: defapport
       when: ansible_distribution == 'Ubuntu'
     - name: Ubuntu | ensure Apport crash report is disabled
-      replace: dest=/etc/default/apport regexp='^enabled=' replace='enabled=0'
+      replace: dest=/etc/default/apport regexp='^enabled=.*$' replace='enabled=0'
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: set sensible core pattern
       sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
-  when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport
+  when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
 
 ## FIXME! firewall rules
+
+- include: aide-hids.yml
 

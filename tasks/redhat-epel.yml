@@ -2,17 +2,20 @@
 
 ## https://fedoraproject.org/wiki/EPEL
 ## Failed to validate the SSL certificate for getfedora.org:443. https://github.com/ansible/ansible/issues/12161
+## meantime: use hash + no cert validation
 - set_fact:
     epel_rpm_key: 'https://getfedora.org/static/0608B895.txt'
+    epel_rpm_key_hash: 16d35fa467c6efcee21d3aa068a02054b6a89a7a33bffa94db1fc141693d62a3
   when: ansible_distribution_major_version == "6"
 - set_fact:
     epel_rpm_key: 'https://getfedora.org/static/352C64E5.txt'
+    epel_rpm_key_hash: 22f25ad95d5e8d371760815485dba696ea3002fc2c7f812f2c75276853387107
   when: ansible_distribution_major_version == "7"
 
 - stat: path="/var/tmp/{{ epel_rpm_key | basename }}"
   register: epelkey
 - name: Download epel rpm key
-  command: "curl -s -o /var/tmp/{{ epel_rpm_key | basename }} {{ epel_rpm_key }}"
+  get_url: "url={{ epel_rpm_key }} dest=/var/tmp/{{ epel_rpm_key | basename }} mode=0600 checksum=sha256:{{ epel_rpm_key_hash }} validate_certs=no"
   when: not epelkey.stat.exists
 - name: Installing epel rpm key
 #  rpm_key: key={{ epel_rpm_key }}
@@ -30,7 +33,7 @@
        state=present
   when: ansible_distribution_major_version == "6" and rpmepel.rc != 0
 - name: RedHat7 | Install Fedora epel
-  yum: name=https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm
+  yum: name=https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
        state=present
   when: ansible_distribution_major_version == "7" and rpmepel.rc != 0
 

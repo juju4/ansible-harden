@@ -1,0 +1,26 @@
+---
+
+ssh_svc: sshd
+
+harden_pkg:
+    - git
+    - gnupg
+    - haveged
+    - psacct
+    - sysstat
+    - arpwatch
+    - aide
+    - rkhunter
+    - lynis
+    - yum-utils
+    - audit
+    - fail2ban
+## FIXME!
+## https://bugs.centos.org/view.php?id=9938
+## https://bugzilla.redhat.com/show_bug.cgi?id=1293513
+## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
+#    - yum-cron
+
+
+#harden_pkg_remove:
+

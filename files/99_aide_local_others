@@ -159,3 +159,13 @@
 !/root/.ansible/tmp
 !/var/lib/docker/volumes
 !/opt/docker/volumes
+@@define BACKUPFILES7R (diversions|statoverride)
+/var/backups/@@{BACKUPFILES7R}$ Log
+/var/backups/@@{BACKUPFILES7R}\.1$ LowLog
+/var/backups/@@{BACKUPFILES7R}\.2\.gz$ LoSerMemberLog
+/var/backups/@@{BACKUPFILES7R}\.[3-6]\.gz$ SerMemberLog
+/var/backups/@@{BACKUPFILES7R}\.7\.gz$ HiSerMemberLog
+/var/lib/snapd$ VarDirTime
+/var/lib/snapd/state.json$ InodeData
+/var/lib/systemd/timers/stamp-apt-daily.timer$ VarFile
+/var/lib/systemd/timers/stamp-snapd.refresh.timer$ VarFile

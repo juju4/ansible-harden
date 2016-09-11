@@ -1,0 +1,3 @@
+## aide HIDS configuration for fail2ban
+/var/lib/fail2ban$ VarDir
+/var/lib/fail2ban/fail2ban.sqlite3$ InodeData

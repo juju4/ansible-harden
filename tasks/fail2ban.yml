@@ -1,0 +1,30 @@
+---
+
+- block:
+    - name: enable fail2ban for sshd
+      template: src=fail2ban-jail.d-sshd.conf dest=/etc/fail2ban/jail.d/sshd.conf mode=0644
+      notify:
+        - restart fail2ban
+
+    - name: configure fail2ban for snmpd
+      template: "src={{ item.t }} dest={{ item.d }} mode=0644"
+      with_items:
+        - { t: 'fail2ban-filter.d-snmpd.conf', d: '/etc/fail2ban/filter.d/snmpd.conf' }
+        - { t: 'fail2ban-jail.d-snmpd.conf', d: '/etc/fail2ban/jail.d/snmpd.conf' }
+      notify:
+        - restart fail2ban
+
+    - name: extend whitelist for fail2ban
+      template: src=fail2ban-jail.d-whitelist.conf dest=/etc/fail2ban/jail.d/whitelist.conf mode=0644
+      notify:
+        - restart fail2ban
+  when: ansible_distribution_release != 'precise'
+## ubuntu precise has no jail.d
+
+- block:
+    - name: ensure aide HIDS directory tree exists
+      file: dest=/etc/aide/aide.conf.d state=directory mode=0755
+    - name: add additional aide HIDS configuration
+      copy: src=99_aide_local_fail2ban dest=/etc/aide/aide.conf.d/99_aide_local_fail2ban mode=0644
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+

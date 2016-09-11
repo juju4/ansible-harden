@@ -3,6 +3,7 @@
 ## https://blog.rootshell.be/2009/02/28/bash-history-to-syslog/
 ## Syslog option is a compile option in bash, mostly not enabled
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1323808
+## FIXME! activity from screen not logged (tmux OK), neither after sudo -s
 
 ## https://administratosphere.wordpress.com/2011/05/20/logging-every-shell-command/
 - name: Enforce tighter bash settings
@@ -45,8 +46,12 @@
 
 - stat: path=/etc/rsyslog.d
   register: rsyslog
+- name: get rsyslog version
+  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
+  changed_when: false
+  register: rsyslog_v
 - name: add rsyslog configuration to filter to a specific file
-  template: src=99-bash2syslog.conf.j2 dest=/etc/rsyslog.d/99-bash2syslog.conf mode=0644 backup=yes
+  template: src=49-bash2syslog.conf.j2 dest=/etc/rsyslog.d/49-bash2syslog.conf mode=0644 backup=yes
   notify:
     - restart rsyslog
   when: rsyslog.stat.exists

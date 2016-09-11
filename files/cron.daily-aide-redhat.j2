@@ -1,0 +1,582 @@
+#!/bin/bash
+## adapted from debian package
+
+set -e
+set -C
+
+# trap handler
+
+FQDN="$(hostname -f)"
+if [ -z "$FQDN" ]; then
+  echo >&2 "error determining FQDN: hostname -f does not give output"
+  hostname -f >&2
+  exit 1
+fi
+
+traphandler() {
+	trap - INT ERR
+	if [ -n "${LOCKED:-}" ]; then
+	  # we have the lock, 
+	  pidof aide | xargs --no-run-if-empty kill -9
+	fi
+	onexit signal $1
+	return 0
+}
+trap ' traphandler INT; trap - INT ERR' INT
+trap ' traphandler ERR; trap - INT ERR' ERR
+
+# bail if no aide binary found
+
+if ! [ -f "/usr/bin/aide" ] && ! [ -f "/usr/sbin/aide" ]; then
+  exit 0
+fi
+
+# default variables
+
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+LOGDIR="/var/log/aide"
+# LOGFILE: /var/log/aide/aide.log - all logs untruncated (not temp)
+LOGFILE="$LOGDIR/aide.log"
+CONFFILE="/etc/aide.conf"
+PREFIX="aide"
+TMPBASE="/run/aide"
+LOCKFILE="$TMPBASE/cron.daily.lock"
+TMPDIRIN="$TMPBASE/cron.daily"
+USE_SAVELOG=""
+if command -v savelog > /dev/null; then
+  USE_SAVELOG="1"
+fi
+
+AIDEARGS="-V4"
+MAILSUBJ="Daily AIDE report for $FQDN"
+
+DATE="$(date +"%Y-%m-%d %H:%M")"
+BEGINSTAMP="$(date +"%Y-%m-%d %H:%M:%S")"
+
+# make sure $TMPBASE exists
+
+if ! [ -d "$TMPBASE" ]; then
+  mkdir -p $TMPBASE
+  chown root:root $TMPBASE
+  chmod 600 $TMPBASE
+fi
+
+# have /etc/default/aide override variables
+
+if [ -f "/etc/default/aide" ]; then
+	. "/etc/default/aide"
+fi
+
+# from here on, we're going to bail on unbound variables
+
+set -u
+
+# umask
+
+umask 077
+
+# grep aide configuration data from aide config
+
+DATABASE="$(< "$CONFFILE" grep "^database[[:space:]]*=[[:space:]]*file:/" | head -n 1 | cut --delimiter=: --fields=2)"
+DATABASE_OUT="$(< "$CONFFILE" grep "^database_out[[:space:]]*=[[:space:]]*file:/" | head -n 1 | cut --delimiter=: --fields=2)"
+
+< "$CONFFILE" grep -qE "^grouped[[:space:]]*=[[:space:]]*(no|false)[[:space:]]*$" && GROUPED="false" || GROUPED="true"
+
+# default values
+
+CRON_DAILY_RUN="${CRON_DAILY_RUN:-yes}"
+MAILTO="${MAILTO:-root}"
+eval MAILTO="$MAILTO"
+DATABASE="${DATABASE:-/var/lib/aide/aide.db}"
+LINES="${LINES:-1000}"
+COMMAND="${COMMAND:-check}"
+COPYNEWDB="${COPYNEWDB:-rotate}"
+QUIETREPORTS="${QUIETREPORTS:-no}"
+SILENTREPORTS="${SILENTREPORTS:-no}"
+TRUNCATEDETAILS="${TRUNCATEDETAILS:-no}"
+CRONEXITHOOK="${CRONEXITHOOK:-}"
+ONEXIT=""
+
+# silent implies quiet
+if [ "$SILENTREPORTS" = "yes" ]; then
+  QUIETREPORTS="yes"
+fi
+
+# Get the database's date
+DATABASEDATE=""
+if [ -f $DATABASE ]; then
+  DATABASEDATE="$(stat -c %y $DATABASE | sed -e "s/\..*//")"
+fi
+
+# functions
+
+mytempfile() {
+  NAME="$1"
+  echo "$TMPDIR/$NAME"
+  touch "$TMPDIR/$NAME"
+}
+
+frame() {
+  WIDTH=78
+  STARS="*******************************************************************************"
+  SPACES="                                                                               "
+  printf "%s\n" "${STARS:1:$WIDTH}"
+  while read line ; do
+    HALF="${SPACES:1:$((($WIDTH-${#line})/2))}"
+    LINE="$HALF$line$SPACES"
+    printf "*%s*\n" "${LINE:1:$(($WIDTH-2))}"
+  done
+  printf "%s\n" "${STARS:1:$WIDTH}"
+}
+
+onexit() {
+  if [ "$ONEXIT" = "running" ]; then
+    return 1
+  fi
+
+  ONEXIT="running"
+
+  local LOGHEAD
+  local MAILHEAD
+
+  CRONEXITHOOKPARM="$1"
+  case "$1" in
+	signal)
+		LOGHEAD="$(printf "terminated with signal %s" "$2")"
+		MAILHEAD="$(printf "The cron job was terminated with signal %s" "$2")"
+		;;
+	fatal)
+		LOGHEAD="$(printf "terminated by fatal error.")"
+		MAILHEAD="$(printf "The cron job was terminated by a fatal error.")"
+		;;
+	nolock)
+		LOGHEAD="$(printf "terminated because lock %s could not be obtained." "$LOCKFILE")"
+		MAILHEAD="$(printf "The cron job was terminated because lock %s could not be obtained." "$LOCKFILE")"
+		;;
+	cantmovetmp)
+		LOGHEAD="$(printf "terminated: Cannot move away %s." "$TMPDIRIN")"
+		MAILHEAD="$(printf "The cron job was terminated: Cannot move away %s." "$TMPDIRIN")"
+		;;
+	nohook)
+		LOGHEAD="$(printf "terminated: CRONEXITHOOK set to %s which is not executeable." "$CRONEXITHOOK")"
+		MAILHEAD="$(printf "The cron job was terminated: CRONEXITHOOK set to %s which is not executeable." "$CRONEXITHOOK")"
+		;;
+	cantcreatetmp)
+		LOGHEAD="$(printf "terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
+		MAILHEAD="$(printf "The cron job was terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
+		;;
+	success)
+		;;
+	*)
+		LOGHEAD="$(printf "wrong parameter (\"%s\") to onexit." "$1")"
+		MAILHEAD="$(printf "The cron job was terminated for unknown reasons, and a wrong parameter (\"%s\")was given to onexit." "$1")"
+		CRONEXITHOOKPARM="unknown"
+		;;
+  esac
+  
+  if [ -z "${TMPDIR:-}" ] || [ -z "${MAILFILE:-}" ]; then
+    # we are being called so early that we are not yet fully initialized
+    # LOGHEAD goes to syslog instead of LOGFILE since we do not know
+    # what's up with LOGFILE
+    logger -t aide-cron-daily "$LOGHEAD"
+    if [ "$SILENTREPORTS" != "yes" ]; then
+      echo "$MAILHEAD" | mail -s "premature termination - $MAILSUBJ" "$MAILTO"
+    fi
+    CRONEXITHOOKPARM="early-$CRONEXITHOOKPARM"
+  else
+    # we are being called after the cron job was properly set up.
+    # Do the full works.
+
+    if [ "$USE_SAVELOG" = "1" ] || [ "$USE_SAVELOG" = "yes" ]; then
+      savelog -t -g adm -m 644 -u root -c 7 "$LOGFILE" > /dev/null
+    else
+      LOGFILEWDATE="${LOGFILE}-$(date +%Y%m%d-%H%M%S)"
+      ln -sf $LOGFILEWDATE $LOGFILE
+      LOGFILE="${LOGFILEWDATE}"
+    fi
+
+    printf >> "$MAILFILE" \
+"This is an automated report generated by the Advanced Intrusion Detection 
+Environment on %s started at %s.\n\n" "$FQDN" "$BEGINSTAMP"
+
+    printf >> "$LOGFILE" \
+"aide run on %s started at %s.\n" "$FQDN" "$BEGINSTAMP"
+
+    if [ -n "${LOGHEAD:-}" ]; then
+      printf "$LOGHEAD\n" | frame >> "$LOGFILE"
+      printf "\n" >> "$LOGFILE"
+    fi
+    if [ -n "${MAILHEAD:-}" ]; then
+      printf "$MAILHEAD\n" | frame >> "$MAILFILE"
+      printf "\n\n" >> "$MAILFILE"
+    fi
+
+    # report about AIDE's return value
+
+    if [ -n "${ARETVAL:-}" ]; then
+      ARETEXPL=""
+      ARETERR=""
+      PREFIX="$(printf "AIDE returned with exit code %d." "$ARETVAL")"
+      case "$ARETVAL" in
+          -1)
+              PREFIX=""
+              ARETERR="the cron job was interrupted before AIDE could return an exit code.";;
+          0)
+              PREFIX="AIDE returned with a zero exit code."
+              ARETEXPL="No changes detected!";;
+          1)
+              ARETEXPL="Added entries detected!";;
+          2)
+              ARETEXPL="Removed entries detected!";;
+          3)
+              ARETEXPL="Added and removed entries detected!";;
+          4)
+              ARETEXPL="Changed entries detected!";;
+          5)
+              ARETEXPL="Added and changed entries detected!";;
+          6)
+              ARETEXPL="Removed and changed entries detected!";;
+          7)
+              ARETEXPL="Added, removed and changed entries detected!";;
+          14)
+              ARETERR="Error writing!";;
+          15)
+              ARETERR="Invalid Argument!";;
+          16)
+              ARETERR="Unimplemented function!";;
+          17)
+              ARETERR="Invalid configuration!";;
+          18)
+              ARETERR="Input/Output error!";;
+          *)
+              ARETERR="$(printf "AIDE returned an unknown non-zero exit value\nexit value is %d\n\n" "$ARETVAL")";;
+      esac
+      if [ -n "$ARETEXPL" ]; then
+        echo "$PREFIX $ARETEXPL" >> "$MAILFILE"
+        echo "$PREFIX $ARETEXPL" >> "$LOGFILE"
+      fi
+      if [ -n "$ARETERR" ]; then
+        echo "$PREFIX $ARETERR" | frame >> "$MAILFILE"
+        echo "$PREFIX $ARETERR" | frame >> "$LOGFILE"
+      fi
+      unset ARETEXPL
+      unset ARETERR
+      unset PREFIX
+    else
+      ARETEXPL="ARETVAL not initialized. cron job was aborted prematurely."
+      ARETVAL=255
+      echo $ARETEXPL | frame >> "$LOGFILE"
+      echo $ARETEXPL | frame >> "$MAILFILE"
+      unset ARETEXPL
+      printf "\n" >> "$LOGFILE"
+      printf "\n\n" >> "$MAILFILE"
+    fi
+
+    # script errors
+
+    if [ -n "${ERRORLOG:-}" ] && [ -s "$ERRORLOG" ]; then
+      printf "script errors\n" | frame >> "$MAILFILE"
+      < "$ERRORLOG" cat >> "$MAILFILE"
+      printf "End of script errors\n\n" >> "$MAILFILE"
+
+      printf "script errors\n" | frame >> "$LOGFILE"
+      < "$ERRORLOG" cat >> "$LOGFILE"
+      printf "End of script errors\n" >> "$LOGFILE"
+    fi
+
+    # aide post run information
+
+    if [ -n "${POSTRUNLOG:-}" ] && [ -s "$POSTRUNLOG" ]; then
+      printf "AIDE post run information\n" >> "$MAILFILE"
+      < "$POSTRUNLOG" cat >> "$MAILFILE"
+      printf "End of AIDE post run information\n\n" >> "$MAILFILE"
+
+      printf "AIDE post run information\n" >> "$LOGFILE"
+      < "$POSTRUNLOG" cat >> "$LOGFILE"
+      printf "End of AIDE post run information\n" >> "$LOGFILE"
+    fi
+
+    # include error log in daily report e-mail
+    
+    if [ -n "${AERRLOG:-}" ] && [ -s "$AERRLOG" ]; then
+	errorlines="$(wc -l "$AERRLOG" | awk '{ print $1 }')"
+	if [ "$LINES" -gt "0" ] && [ "${errorlines:=0}" -gt "$LINES" ]; then
+		printf "AIDE has returned many errors.\nthe error log output has been truncated in this mail\n" | \
+		    frame >> "$MAILFILE"
+		printf >> "$MAILFILE" "Error output is %d lines, truncated to %d.\n" "$errorlines" "$LINES"
+		< "$AERRLOG" head -n "$LINES" >> "$MAILFILE"
+		printf >> "$MAILFILE" "\nEnd of truncated AIDE error output. The full output can be found in %s.\n\n" "$LOGFILE"
+	else
+		printf >> "$MAILFILE" "Errors produced  (%d lines):\n" "$errorlines"
+		< "$AERRLOG" cat >> "$MAILFILE"
+		printf >> "$MAILFILE" "\nEnd of AIDE error output.\n\n"
+	fi
+	printf >> "$LOGFILE" "AIDE error output (%d lines):\n" "$errorlines"
+	< "$AERRLOG" cat >> "$LOGFILE"
+	printf >> "$LOGFILE" "End of AIDE error output\n"
+    else
+	printf >> "$MAILFILE" "AIDE produced no errors.\n\n"
+	printf >> "$LOGFILE" "AIDE produced no errors.\n"
+    fi
+
+
+    # finish log file
+    if [ -n "${ARUNLOG:-}" ] && [ -s "$ARUNLOG" ]; then
+        printf >> "$LOGFILE" "AIDE output (%d lines):\n" "$(wc -l "$ARUNLOG" | awk '{ print $1 }')"
+        < "$ARUNLOG" cat >> "$LOGFILE"
+        printf >> "$LOGFILE" "End of AIDE output.\n\n"
+    else
+        printf >> "$LOGFILE" "AIDE detected no changes.\n\n"
+    fi
+
+    if [ -n "${DBCHECKLOG:-}" ] && [ -s "$DBCHECKLOG" ]; then
+        < "$DBCHECKLOG" cat >> "$LOGFILE"
+    fi
+
+    ENDTIME="$(date +%s)"
+
+    printf >> "$LOGFILE" "End of AIDE daily cron job at %s, run time %d seconds\n"  "$(date +"%Y-%m-%d %H:%M" -d@$ENDTIME)" "$(( $ENDTIME - $BEGINTIME ))"
+
+    LOGFILE_CHECKSUM="$(sha256sum $LOGFILE)"
+
+    # include de-noised log into mail
+
+    if [ -n "${ARUNLOG:-}" ] && [ -s "$ARUNLOG" ]; then
+
+    MAIL_MODE=0
+
+    # truncate details
+    if [ "$TRUNCATEDETAILS" = "yes" ] ; then
+        case "$ARETVAL" in
+            4|5|6|7)
+                MAILTMP="$(mytempfile aidemail)"
+                < $ARUNLOG sed '/^Detailed information about changes:$/,/^The attributes of the (uncompressed) database(s):$/{/^The attributes of the (uncompressed) database(s):$/!d}' >> "$MAILTMP"
+                MAIL_MODE=1
+                ;;
+            *)
+                MAILTMP="$ARUNLOG"
+                ;;
+        esac
+
+    else
+        MAILTMP="$ARUNLOG"
+    fi
+
+      if [ -n "${NOISE:-}" ]; then
+	NOISETMP="$(mytempfile aidenoise1)"
+	NOISETMP2="$(mytempfile aidenoise2)"
+	< "$MAILTMP" sed -n '1,/^Detailed information about changes:/p' | \
+	grep '^\(changed\|removed\|added\|[fdLDBFs?!][ :l<>=bpugamcinCAXSE.+-]\{16\}\):' | \
+	grep -v "^added: THERE WERE ALSO [0-9]\+ FILES ADDED UNDER THIS DIRECTORY" >> "$NOISETMP2"
+	
+	if [ -n "$NOISE" ]; then
+		< "$NOISETMP2" grep -v "^\(changed\|removed\|added\|[fdLDBFs?!][ :l<>=bpugamcinCAXSE.+-]\{16\}\): $NOISE" >> "$NOISETMP" || true
+		printf >> "$MAILFILE" "De-Noised output removes everything matching %s.\n" "$NOISE"
+	fi
+	
+	if [ -s "$NOISETMP" ]; then
+		loglines="$(< $NOISETMP wc -l | awk '{ print $1 }')"
+		if [ "$LINES" -gt "0" ] && [ "${loglines:=0}" -gt "$LINES" ]; then
+			printf "AIDE has returned long output which has been truncated in this mail\n" | \
+			  frame >> "$MAILFILE"
+			printf >> "$MAILFILE" \
+                          "De-Noised output is %d lines, truncated to %d.\n" "$loglines" "$LINES"
+			< "$NOISETMP" head -n "$LINES" >> "$MAILFILE"
+			printf >> "$MAILFILE" "\nEnd of truncated De-Noised AIDE output. The full output can be found in %s.\nsha256sum: %s\n\n" "$LOGFILE" "$LOGFILE_CHECKSUM"
+		else
+			printf >> "$MAILFILE" "De-Noised output of the daily AIDE run (%d lines):\n" "$loglines"
+			< "$NOISETMP" cat >> "$MAILFILE"
+		        printf >> "$MAILFILE" "\nEnd of De-Noised AIDE output.\n\n"
+		fi
+	else
+		printf >> "$MAILFILE" "AIDE detected no changes after removing noise.\n\n"
+	fi
+	printf >> "$MAILFILE" "============================================================================\n"
+      fi
+
+      # include non-de-noised log into mail
+
+      if [ -n "${MAILTMP:-}" ] && [ -s "$MAILTMP" ]; then
+	loglines="$(wc -l "$MAILTMP" | awk '{ print $1 }')"
+	if [ "$LINES" -gt "0" ] && [ "${loglines:=0}" -gt "$LINES" ]; then
+		printf "AIDE has returned long output which has been truncated in this mail\n" | \
+		  frame >> "$MAILFILE"
+		printf >> "$MAILFILE" \
+		  "Output is %d lines, truncated to %d.\n" "$loglines" "$LINES"
+		< "$MAILTMP" head -n "$LINES" >> "$MAILFILE"
+		printf >> "$MAILFILE" "\nEnd of truncated AIDE output. The full output can be found in %s.\nsha256sum: %s\n\n" "$LOGFILE" "$LOGFILE_CHECKSUM"
+	else
+		printf >> "$MAILFILE" "Output of the daily AIDE run (%d lines):\n" "$loglines"
+		< "$MAILTMP" cat >> "$MAILFILE"
+        if [ "$MAIL_MODE" -gt "0" ] ; then
+            case "$MAIL_MODE" in
+                1) AIDE_OUTPUT="truncated" ;;
+                2) AIDE_OUTPUT="filtered" ;;
+                3) AIDE_OUTPUT="truncated and filtered" ;;
+            esac
+            printf >> "$MAILFILE" "\nEnd of %s AIDE output.\n\nThe full output can be found in %s.\nsha256sum: %s\n\n" "$AIDE_OUTPUT" "$LOGFILE" "$LOGFILE_CHECKSUM"
+        else
+	        printf >> "$MAILFILE" "\nEnd of AIDE output.\n\n"
+        fi
+	fi
+      else
+        printf >> "$MAILFILE" "AIDE detected no changes.\n\n"
+      fi
+    else
+	printf >> "$MAILFILE" "funny, AIDE did not leave a log.\n\n"
+	printf >> "$LOGFILE" "funny, AIDE did not leave a log.\n"
+    fi
+
+    if [ -n "${DBCHECKLOG:-}" ] && [ -s "$DBCHECKLOG" ]; then
+	< "$DBCHECKLOG" cat >> "$MAILFILE"
+	printf >> "$MAILFILE" "\n"
+    fi
+
+    printf >> "$MAILFILE" "End of AIDE daily cron job at %s, run time %d seconds\n"  "$(date +"%Y-%m-%d %H:%M" -d@$ENDTIME)" "$(( $ENDTIME - $BEGINTIME ))"
+
+    # send mail if changes or errors were detected or quiet reports not requested
+    if [ "$QUIETREPORTS" != "yes" ] || [ "$ARETVAL" != "0" ] || [ $(< "$ERRORLOG" wc -l) -ne 0 ]; then
+      # do not send anything (not even error messages) if silence is requested
+      if [ "$SILENTREPORTS" != "yes" ]; then
+        < "$MAILFILE" mail -s "$MAILSUBJ" "$MAILTO"
+      fi
+    fi
+
+    # clean up temp files
+    rm -rf $TMPDIR
+  fi
+
+  if [ -n "$CRONEXITHOOK" ] && [ -x "$CRONEXITHOOK" ]; then
+    $CRONEXITHOOK $CRONEXITHOOKPARM
+  fi
+
+  # clear lock
+  if [ -n "${LOCKED:-}" ] && command -v dotlockfile >/dev/null 2>&1; then
+    dotlockfile -u "$LOCKFILE" || true
+  fi
+  unset LOCKED
+
+  return 0
+}
+
+BEGINTIME="$(date +%s)"
+
+if [ "$CRON_DAILY_RUN" != "yes" ] && ! tty -s; then
+    exit 0
+fi
+
+if command -v dotlockfile >/dev/null 2>&1; then
+	if ! dotlockfile -p -l "$LOCKFILE"; then
+		onexit nolock
+		exit 1
+	fi
+else
+  PREERRLOG="no dotlockfile binary in path, not checking for already running aide cron job\n"
+fi
+LOCKED=yes
+
+# prepare temp dir
+if [ -e "$TMPDIRIN" ]; then
+	if ! NEWNAME="$(mktemp -d $TMPBASE/cron.daily.old.XXXXXXXXXX)"; then
+	        onexit cantmovetmp
+		exit 1
+	fi
+	mv "$TMPDIRIN" "$NEWNAME"
+	unset NEWNAME
+	OLDTMPDIRFOUND="yes"
+fi
+
+if ! mkdir -p $TMPDIRIN; then
+	onexit cantcreatetmp
+	exit 1
+fi
+
+# handle the case that CRONEXITHOOK does not exist or is not executeable
+if [ -n "$CRONEXITHOOK" ]; then
+  if ! [ -x "$CRONEXITHOOK" ]; then
+    onexit nohook
+    exit 1
+  fi
+fi
+
+# we can now directly use file names inside $TMPDIR: It is only
+# writeable for us (umask 077), so we're safe against symlink attacks.
+# We use invariant file names here since our work files need to be
+# excluded from aide.
+TMPDIR="$TMPDIRIN"
+
+# now, with $TMPDIR having been created, we can use onexit.
+
+# ERRORLOG: Error messages from script. Gets written to $LOGFILE first
+ERRORLOG="$(mytempfile errorlog)"
+
+if [ -n "${PREERRORLOG:-}" ]; then
+  printf >> "$ERRORLOG" "$PREERRORLOG"
+fi
+unset PREERRORLOG
+
+# MAILFILE: Contents gets mailed. Built and handled from inside onexit()
+MAILFILE="$(mytempfile mailfile)"
+
+# aide return value
+ARETVAL=-1
+
+if [ ! -f "$DATABASE" ]; then
+	printf >> "$ERRORLOG" "Fatal error: The AIDE database '%s' does not exist!\n" "$DATABASE"
+	printf >> "$ERRORLOG" "This may mean you haven't created it or that the initialization process is still running, or it may mean that someone has removed it.\n"
+	onexit fatal
+	exit 1
+fi
+
+# code
+
+# re-assign current time to be more accurate about aide's real start time
+BEGINSTAMP="$(date +"%Y-%m-%d %H:%M:%S")"
+
+# ARUNLOG: standard output of aide run
+ARUNLOG="$(mytempfile arunlog)"
+
+# AERRLOG: standard error of aide run
+AERRLOG="$(mytempfile aerrlog)"
+
+printf "begin timestamp %s\n" "$BEGINSTAMP" >> "$ARUNLOG"
+
+aide $AIDEARGS "--$COMMAND" >|"$ARUNLOG" 2>|"$AERRLOG" && ARETVAL="$?"
+ARETVAL="$?"
+
+# POSTRUNLOG: summary of aide execution and cron job log
+POSTRUNLOG="$(mytempfile postrunlog)"
+
+# DBCHECKLOG: Output of the database checksums
+DBCHECKLOG="$(mytempfile dbchecklog)"
+
+# NOISETMP: completely de-noised log
+# NOISETMP2: pre-filtered ARUNLOG, containing only changed, removed and added lines
+NOISETMP="$(mytempfile noisetmp)"
+NOISETMP2="$(mytempfile noisetmp2)"
+
+# find out whether we neeed to copy the new database over the old one
+
+COPYDB="0"
+if [ "$COPYNEWDB" = "ifnochange" ] && [ "$ARETVAL" = "0" ]; then
+	COPYDB="1"
+	printf >> "$POSTRUNLOG" "no significant changes detected.\n"
+fi
+
+if [ "$COPYNEWDB" = "yes" -o "$COPYNEWDB" = "rotate" ]; then
+	COPYDB=1
+fi
+
+if [ "$COPYDB" = "1" ] && [ "$COMMAND" = "update" ]; then
+	[ "$COPYNEWDB" = "rotate" ] && savelog -c 7 "$DATABASE" > /dev/null
+set -x
+	setfacl -m "u:_backup:r--" -- $DATABASE*
+set +x
+	cp -f "$DATABASE_OUT" "$DATABASE"
+	printf >> "$POSTRUNLOG" "output database %s was copied to %s as requested by cron job configuration\n" "$DATABASE_OUT" "$DATABASE"
+fi
+
+onexit success
+exit 0
+
+# end of file

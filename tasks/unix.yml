@@ -51,8 +51,20 @@
   register: pacct
 - name: enable accounting
   command: "accton on"
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   when: not pacct.stat.exists
+## FIXME! not working on centos-6
+  ignore_errors: true
 
 - include: unix-fstab.yml
   when: harden_unix_fstab_flags is defined and harden_unix_fstab_flags
 
+- name: Enforce shell timeout
+  blockinfile:
+    dest: /etc/profile
+    marker: "### {mark} ANSIBLE MANAGED BLOCK: shell timeout ###"
+    content: |
+      readonly TMOUT={{ harden_shell_timeout }}
+      #typeset -r HISTTIMEFORMAT
+  tags: bash

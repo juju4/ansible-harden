@@ -1,31 +1,5 @@
 ---
 
-- set_fact:
-    ssh_svc: sshd
-
-## for haveged/better entropy
-- include: redhat-epel.yml
-
-- name: Redhat | Extra packages install
-  yum: name={{item}} state=present update_cache=yes
-  with_items:
-    - git
-    - gnupg
-    - haveged
-    - psacct
-    - sysstat
-    - arpwatch
-    - aide
-    - rkhunter
-    - lynis
-    - yum-utils
-    - audit
-## FIXME!
-## https://bugs.centos.org/view.php?id=9938
-## https://bugzilla.redhat.com/show_bug.cgi?id=1293513
-## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
-#    - yum-cron
-
 - name: Redhat| Remove some packages
   yum: name={{item}} state=absent
   with_items:
@@ -39,6 +13,7 @@
 #  async: 3600
 #  poll: 300
 #  register: distout
+#  when: travisci is not defined or not travisci
 #- debug: var=distout.stdout_lines
 
 - name: set better login.defs - redhat only
@@ -63,4 +38,5 @@
   template: src=audit.rules.j2 dest=/etc/audit/rules.d/audit.rules mode=0644 backup=yes
   notify:
     - restart auditd
+  tags: auditd
 

@@ -1,2 +1,3 @@
 ## aide config for ansible targets
 !/root/.ansible/tmp
+!/root/.ansible_async

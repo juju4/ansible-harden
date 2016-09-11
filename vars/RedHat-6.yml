@@ -1,0 +1,19 @@
+---
+
+ssh_svc: sshd
+
+harden_pkg:
+    - git
+    - gnupg
+    - haveged
+    - psacct
+    - sysstat
+    - arpwatch
+    - aide
+    - rkhunter
+    - lynis
+    - yum-utils
+    - audit
+    - fail2ban
+
+#harden_pkg_remove:

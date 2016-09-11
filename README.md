@@ -5,13 +5,14 @@ Ansible role to harden system and make it more forensics friendly (linux only). 
 
 Unix
 * SSH key only
+* enable & configure auditd
 * (debian) Immutable system directory
 /lib /etc/init.d /boot are tagged immutable
 /etc/apt/apt.conf.d/99security allows to handle gracefully update inside apt but else you will need to handle manually.
 * block usb and firewire drivers
 * bash commands sent to syslog
 
-Mailserver, Webserver, Darwin, OpenBSD and other hardening are addressed in other roles.
+Sysctl, Mailserver, Webserver, Darwin, OpenBSD and other hardening are addressed in other roles.
 
 Pay attention to test carefully role and fit to your context unless you want to lock yourself.
 This role is continuous work in progress as security landscape is constantly evolving.
@@ -60,12 +61,15 @@ harden_umask: '022'
 ## Continuous integration
 
 This role has a travis basic test (for github), more advanced with kitchen and also a Vagrantfile (test/vagrant).
+Default kitchen config (.kitchen.yml) is lxd-based, while (.kitchen.vagrant.yml) is vagrant/virtualbox based.
 
 Once you ensured all necessary roles are present, You can test with:
 ```
+$ gem install kitchen-ansible kitchen-lxd_cli kitchen-sync kitchen-vagrant
 $ cd /path/to/roles/harden
 $ kitchen verify
 $ kitchen login
+$ KITCHEN_YAML=".kitchen.vagrant.yml" kitchen verify
 ```
 or
 ```
@@ -73,7 +77,6 @@ $ cd /path/to/roles/harden/test/vagrant
 $ vagrant up
 $ vagrant ssh
 ```
-
 
 ## Troubleshooting & Known issues
 

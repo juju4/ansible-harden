@@ -1,0 +1,69 @@
+---
+
+- name: Ensure aide package is installed
+  package: name=aide state=present
+
+- block:
+    - set_fact:
+        aide_bin: aide.wrapper
+    - name: copy patch for aide
+      template: src=patch-cron.daily-aide dest=/root/patch-cron.daily-aide mode=0400
+    - name: Patch cron.daily/aide to rotate database
+      patch: >
+        src=/root/patch-cron.daily-aide
+        dest=/etc/cron.daily/aide
+        remote_src=yes
+        backup=yes
+      ignore_errors: true
+    - name: Review Aide configuration
+      lineinfile:
+    #    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
+        dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=rotate'
+    - name: Review Aide configuration
+      replace:
+        dest='/etc/default/aide' regexp='^FILTERUPDATES=no' replace='FILTERUPDATES=yes'
+    - name: Add custom configuration for aide HIDS
+      copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
+      with_items:
+        - 90_aide_local_classicals
+        - 99_aide_local_ecryptfs
+        - 99_aide_local_gvfs
+        - 99_aide_local_others
+        - 99_aide_local_ansible
+
+    - name: Review Aide configuration
+      replace:
+        "dest='/etc/cron.daily/aide' regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
+      with_items:
+        - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- block:
+    - set_fact:
+        aide_bin: aide
+    - name: review aide settings
+      replace: "dest=/etc/aide.conf regexp={{ item.re }} replace={{ item.rep }} backup=yes"
+      with_items:
+        - { re: '^gzip_dbout=.*', rep: 'gzip_dbout=no' }
+        - { re: '^database=file:.*', rep: 'database=file:@@{DBDIR}/aide.db' }
+        - { re: '^database_out=file:.*', rep: 'database_out=file:@@{DBDIR}/aide.db.new' }
+    - name: add daily cron to check and update aide db
+      copy: src=cron.daily-aide-redhat.j2 dest=/etc/cron.daily/aide mode=0700
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+## aide at the end of provisioning?
+- stat: path=/var/lib/aide/aide.db
+  register: aidedb
+- debug: var=aidedb
+- name: Generating initial Aide database and backup
+  command: "{{ item }}"
+  with_items:
+    - "{{ aide_bin }} -i"
+    - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+    - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
+  when: not aidedb.stat.exists and harden_init_aidedb is defined and harden_init_aidedb and (travisci is not defined or not travisci)
+  async: 3600
+  poll: 300
+
+

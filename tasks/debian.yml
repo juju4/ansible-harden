@@ -1,29 +1,5 @@
 ---
 
-- set_fact:
-    ssh_svc: ssh
-
-- name: Ubuntu | Enable backports (replace)
-  replace:
-## can be archive, or us-east-1.ec2.archive if amazon, or others
-    dest='/etc/apt/sources.list' regexp='^# deb http://(.*)/ubuntu([/]*) {{ ansible_distribution_release }}-backports' replace='deb http://\1/ubuntu\2 {{ ansible_distribution_release }}-backports' backup=yes
-  when: ansible_distribution == "Ubuntu"
-
-## some providers haven't the commented line
-- name: Ubuntu | Enable backports (line)
-  lineinfile:
-    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
-  when: ansible_distribution == "Ubuntu"
-
-## https://github.com/chef/bento/issues/592
-- name: fix Ubuntu network hack
-  file: dest=/etc/udev/rules.d/70-persistent-net.rules state=absent
-
-- name: Debian | Extra packages install
-#  apt: name={{item}} state=present update_cache=yes cache_valid_time=3600  ## with cache, doesn't update even if repo changes
-  apt: name={{item}} state=present update_cache=yes
-  with_items: "{{ harden_debian_pkg + __ubuntu_packages }}"
-
 ## FIXME! kitchen OK, travis NOK
 ## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
 - name: Debian | upgrade all packages to the latest version
@@ -32,8 +8,8 @@
   poll: 300
   register: distout
   when: travisci is not defined or not travisci
-- debug: var=distout.stdout_lines
-  when: travisci is not defined or not travisci
+#- debug: var=distout.stdout_lines
+#  when: travisci is not defined or not travisci
 
 - name: Debian | Remove rpc-related packages
   apt: name={{item}} state=absent
@@ -41,87 +17,21 @@
     - rpcbind
   when: harden_use_rpc is not defined or not harden_use_rpc
 
-- name: Debian | Remove some packages
-  apt: name={{item}} state=absent
-  with_items: "{{ harden_debian_remove }}"
-
 ## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 - name: Debian | enable automatic security updates
   lineinfile:
     dest=/etc/apt/apt.conf.d/10periodic regexp="{{ item.regexp }}" line="{{ item.line }}"
   with_items:
-    - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists \"1\";' }
-    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages', line: 'APT::Periodic::Download-Upgradeable-Packages \"1\";' }
-    - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade \"1\";' }
-    - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval \"14\";' }
-
-- name: copy patch for aide
-  template: src=patch-cron.daily-aide dest=/root/patch-cron.daily-aide mode=0400
-- name: Patch cron.daily/aide to rotate database
-  patch: >
-    src=/root/patch-cron.daily-aide
-    dest=/etc/cron.daily/aide
-    remote_src=yes
-    backup=yes
-- name: Review Aide configuration
-  lineinfile:
-#    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
-    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=rotate'
-- name: Review Aide configuration
-  replace:
-    dest='/etc/default/aide' regexp='^FILTERUPDATES=no' replace='FILTERUPDATES=yes'
-- name: Add custom configuration for aide HIDS
-  copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
-  with_items:
-    - 90_aide_local_classicals
-    - 99_aide_local_ecryptfs
-    - 99_aide_local_gvfs
-    - 99_aide_local_others
-- name: add additional aide HIDS configuration
-  copy: src=99_aide_local_ansible dest=/etc/aide/aide.conf.d/99_aide_local_ansible mode=0644
-
-#- name: patch aide daily cron
-#  patch: >
-#    src={{ local_home }}/opt/tmp/install-desktop/patch-cron.daily-aide
-#    basedir=/etc/cron.daily/aide
-### with patch
-#- name: Review Aide configuration
-#  replace:
-#    dest='/etc/default/aide' regexp={{ item.regexp }} replace={{ item.replace }}
-#  with_items:
-#    - { regexp: '^COMMAND', replace: 'COMMAND=rotate' }
-#    - { regexp: '^COPYNEWDB=', replace: 'COPYNEWDB=yes' }
-- name: Review Aide configuration
-  replace:
-    "dest='/etc/cron.daily/aide' regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
-  with_items:
-    - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
+    - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists "1";' }
+    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages', line: 'APT::Periodic::Download-Upgradeable-Packages "1";' }
+    - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade "1";' }
+    - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval "14";' }
 
 - debug: var=ansible_mounts
 - name: add apt hardening with somme immutable directories
   template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
 
-- name: Review Logcheck configuration
-  replace:
-    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
-  with_items:
-    - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
-    - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
-- name: Logcheck additional configuration
-  copy:
-    src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=644
-- name: Logcheck additional configuration
-  copy:
-    src=local-rules dest=/etc/logcheck/ignore.d.server/local-rules mode=644
-- name: Review logcheck frequency
-  replace: dest=/etc/cron.d/logcheck regexp='^2 * * * *       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'
-  when: logcheck_hours is defined and logcheck_hours != "" and logcheck_hours != '*'
-## http://wiki.bluelightav.org/display/BLUE/Logcheck+administration
-- name: Review Logcheck cron on reboot
-  replace:
-    "dest=/etc/cron.d/logcheck regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
-  with_items:
-    - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi', replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi' }
+- include: debian-logcheck.yml
 
 - block:
     - name: ensure iptables directory exists
@@ -141,20 +51,6 @@
     dest='/etc/default/sysstat' regexp='^ENABLED="false"' replace='ENABLED="true"'
   notify:
     - restart sysstat
-
-## aide at the end of provisioning?
-- stat: path=/var/lib/aide/aide.db
-  register: aidedb
-- debug: var=aidedb
-- name: Generating initial Aide database and backup
-  command: "{{ item }}"
-  with_items:
-    - aide.wrapper -i
-    - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
-    - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
-  when: not aidedb.stat.exists and harden_init_aidedb is defined and harden_init_aidedb and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and (travisci is not defined or not travisci)
-  async: 3600
-  poll: 300
 
 - stat: path=/etc/default/rng-tools
   register: rngconf
@@ -181,6 +77,7 @@
 
 ## Not setpcap in unprivileged lxc container, https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
 - block:
+    - debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
       capabilities: "path={{ item }} capability='cap_net_raw+pe' state=present"
       with_items:
@@ -198,7 +95,7 @@
         - /usr/bin/mtr
     - name: Capabilities Hardening - tcpdump
       capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
-  when: ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc"
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
 
 - block:
 ## https://github.com/lxc/lxd/issues/2004, only on xenial?
@@ -208,13 +105,18 @@
       template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes
       notify:
         - restart auditd
-    - name: Enable Auditing for Processes That Start Prior to auditd - CIS
+    - stat: path=/etc/default/grub
+      register: hasgrub
+    - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
       replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX=""' replace='GRUB_CMDLINE_LINUX="audit=1"'
-  when: (ansible_virtualization_type is not defined or ansible_virtualization_type != "lxc") and (ansible_distribution != "Ubuntu" or ansible_distribution_release != 'xenial')
+      when: hasgrub.stat.exists
+  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc" and ansible_distribution == "Ubuntu" and ansible_distribution_release == 'xenial')
+  tags: auditd
 
 - command: 'lsattr /etc/init.d/rc'
   register: rclsattr
   changed_when: false
+- debug: var=rclsattr.stdout
 - name: remove temporarily immutable flag on file
   command: 'chattr -i /etc/init.d/rc /etc/init.d'
   when: rclsattr.stdout.find("----i-") == -1
@@ -223,4 +125,5 @@
 - name: re-set immutable flag on file
   command: 'chattr +i /etc/init.d/rc /etc/init.d'
   when: rclsattr.stdout.find("----i-") == -1
+  ignore_errors: true
 

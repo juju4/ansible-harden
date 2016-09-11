@@ -2,6 +2,9 @@
 driver:
   name: lxd_cli
 
+transport:
+  name: sftp
+
 provisioner:
   name: ansible_playbook
   roles_path: ../
@@ -20,6 +23,12 @@ platforms:
   - name: ubuntu-16.04
   - name: ubuntu-14.04
   - name: ubuntu-12.04
+## FIXME! centos-7, centos-6 NOK. lxc issue?
+#-----> Creating <default-centos-7>...
+#       Starting container default-centos-7-1472139573
+#error: Error calling 'lxd forkstart default-centos-7-1472139573 /var/lib/lxd/containers /var/log/lxd/default-centos-7-1472139573/lxc.conf': err='exit status 1'
+#Try `lxc info --show-log default-centos-7-1472139573` for more info
+#error: Container is not running.
 #  - name: centos-7
 #  - name: centos-6
 ## "Failed to complete #create action: [Broken pipe] on default-alpine-34"

@@ -21,6 +21,9 @@ galaxy_info:
     - system
     - security
 dependencies:
+  - redhat-epel
+## harden-sysctl before any other sysctl related tasks. doing some cleaning (centos-6)
+  - harden-sysctl
   - ipv6
 #  - syslogclient
 #  - ntpclient

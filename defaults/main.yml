@@ -10,10 +10,16 @@ harden_umask: '022'
 harden_init_aidedb: false
 harden_aidedb_rotatedays: 14
 harden_unix_fstab_flags: true
+harden_logindefs_pass_maxdays: 182
+harden_logindefs_pass_warnage: 30
+harden_shell_timeout: 900
 
 harden_disable_usb: true
 
 harden_bash2syslog: true
+
+## add email to /root/.forward?
+#harden_rootforward: email
 
 harden_restrict_compiler: true
 harden_restrict_compiler_umask: '0700'
@@ -44,6 +50,16 @@ harden_fw_smtp_port: 25
 harden_fw_open_incoming:
   - { proto: 'tcp', port: 8080 }
   - { proto: 'tcp', port: 9091 }
+## FIXME! open all or more? security can be split between VA scan, IR, ...
+#harden_fw_security_source:
+
+### Monitoring
+## can use inventory group but
+##  only possible if cache facts or talk with host in same play
+##  http://docs.ansible.com/ansible/playbooks_variables.html#fact-caching
+## OR define here
+#harden_fw_monitoring_source:
+## also review templates/rules.v4 as you might need specific flows for your setup
 
 ## Apport has been found to many vulnerabilities. Same for Fedora abrt
 ## https://bugs.launchpad.net/ubuntu/+source/apport/+bug/1507480
@@ -55,46 +71,9 @@ harden_linux_disable_bugreport: true
 
 _ubuntu_sysctl:
 
-## maybe override in vars/{{ distribution }}*.yml
+## define in vars/{{ distribution }}*.yml
 harden_debian_pkg:
-#    - harden       ## exist in precise/trusty/vivid, not wily
-    - unzip
-    - rkhunter
-    - chkrootkit
-    - openntpd
-    - acct
-    - aide
-    - logcheck
-    - syslog-summary
-    - apparmor-profiles
-    - apparmor-utils
-    - acl
-    - sysstat
-    - sysdig
-    - tcpdump
-    - libcap2-bin
-    - ldnsutils
-    - unattended-upgrades
-    - update-notifier-common
-    - gnupg
-    - libpam-cracklib
-    - debsums
-    - apt-show-versions
-    - arpwatch
-    - lynis
-    - libpam-tmpdir
-    - debian-goodies
-    - debsecan
-    - fail2ban
-## requested by https://github.com/awailly/cis-ubuntu-ansible
-    - aptitude
-
 harden_debian_remove:
-    - avahi-daemon
-    - xinetd
-    - inetd
-    - telnet-server
-    - rsh-server
 
 ## maybe override in vars/{{ distribution }}*.yml and disabled on lxc as parts are not permitted
 harden_distribution_sysctl:
@@ -105,9 +84,11 @@ harden_mount_options:
     "/home": "defaults,nosuid,nodev"
     "/tmp": "defaults,nosuid,nodev,noexec"
     "/usr": "defaults,ro"
+    "/var/log/audit": "defaults,nosuid,nodev,noexec"
     "/var/log": "defaults,nosuid,nodev,noexec"
     "/var/tmp": "defaults,nosuid,nodev,noexec"
     "/var": "defaults,nosuid"
+    "/dev/shm": "defaults,nosuid,nodev,noexec"
 
 harden_mount_options_aptpre:
     "/tmp": "exec"
