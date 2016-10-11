@@ -1,0 +1,5 @@
+## aide config for docker
+!/var/lib/docker/volumes
+!/opt/docker/volumes
+!/var/lib/docker/image/overlay/layerdb
+!/var/lib/docker/overlay

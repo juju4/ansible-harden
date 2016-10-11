@@ -7,10 +7,13 @@
   when: ansible_distribution == "Ubuntu"
 
 ## some providers haven't the commented line
-- name: Ubuntu | Enable backports (line)
-  lineinfile:
-    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
-  when: ansible_distribution == "Ubuntu"
+## FIXME! Not working
+##  ex: "deb http://mirrors.digitalocean.com/ubuntu xenial-backports main restricted universe multiverse" should be unchanged
+#- name: Ubuntu | Enable backports (line)
+#  lineinfile:
+##    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
+#    dest='/etc/apt/sources.list' regexp='^deb http://(.*)/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://\1/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
+#  when: ansible_distribution == "Ubuntu"
 
 ## https://github.com/chef/bento/issues/592
 - name: fix Ubuntu network hack

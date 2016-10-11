@@ -7,7 +7,7 @@
   async: 3600
   poll: 300
   register: distout
-  when: travisci is not defined or not travisci
+  when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 #- debug: var=distout.stdout_lines
 #  when: travisci is not defined or not travisci
 

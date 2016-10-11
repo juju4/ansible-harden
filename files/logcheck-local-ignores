@@ -1,0 +1,98 @@
+## /etc/logcheck/ignore.d.server/local-rules
+## Ubuntu 14.04
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ kernel: \[[. [:digit:]]*\] perf samples too long ([[:digit:]]* > [0-9]*), lowering kernel.perf_event_max_sample_rate to [[:digit:]]*$
+ntpd\[[0-9]+\]: adjusting clock frequency by [0-9]+\.[0-9]+ to [0-9]+\.[0-9]+ppm
+ntpd\[[0-9]+\]: adjusting clock frequency by [0-9]+\.[0-9]+ to -[0-9]+\.[0-9]+ppm
+ntpd\[[0-9]+\]: adjusting clock frequency by -[0-9]+\.[0-9]+ to [0-9]+\.[0-9]+ppm
+ntpd\[[0-9]+\]: adjusting clock frequency by -[0-9]+\.[0-9]+ to -[0-9]+\.[0-9]+ppm
+ntpd\[[0-9]+\]: adjusting local clock by [-]*[0-9]+\.[0-9]+s
+ntpd\[[0-9]+\]: bad peer from pool [0-9]+.debian.pool.ntp.org 
+ntpd\[[0-9]+\]: [0-9]+ out of [0-9]+ peers valid
+ntpd\[[0-9]+\]: reply from [\.0-9]+: not synced, next query [0-9]+s
+auditd\[[0-9]+\]: Audit daemon rotating log files
+kernel\[[0-9]+\]: \[[0-9]+\.[0-9]+\] INFO: NMI handler (perf_event_nmi_handler) took too long to run: [0-9]+.[0-9]+ msecs
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ kernel: \[[. [:digit:]]+\] hrtimer: interrupt took [[:digit:]]+ ns$
+rrdcached\[[0-9]+\]: flushing old values
+rrdcached\[[0-9]+\]: removing old journal /var/cache/rrdcached/rrd.journal.[0-9]+\.[0-9]+
+rrdcached\[[0-9]+\]: rotating journals
+rrdcached\[[0-9]+\]: started new journal /var/cache/rrdcached/rrd.journal.[0-9]+\.[0-9]+
+systemd-logind\[[0-9]+\]: New session c[0-9]+ of user nobody.
+systemd-logind\[[0-9]+\]: New session [0-9]+ of user vagrant.
+systemd-logind\[[0-9]+\]: Removed session [0-9]+.
+systemd-logind\[[0-9]+\]: Removed session c[0-9]+.
+## suppress issues that arise with publicly available services that people try to exploit. https://gist.github.com/towo/9600375
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Did not receive identification string from ::ffff:[\.0-9]+$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: fatal: Read from socket failed: Connection reset by peer \[preauth\]$
+#^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: I(llegal|nvalid) user [^[:space:]]* from ([:.[:xdigit:]]+|UNKNOWN)$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: invalid public DH value: <= 1 \[preauth\]$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Disconnecting: bad client public DH value \[preauth\]$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Disconnecting: Change of username or service not allowed: \([[:alpha:]]+,ssh-connection\) -> \([[:alpha:]]+,ssh-connection\) \[preauth\]$
+#^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 3: com.jcraft.jsch.JSchException: Auth fail \[preauth\]$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: error: Received disconnect from [:.[:xdigit:]]+: 3: com.jcraft.jsch.JSchException: Auth fail \[preauth\]$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Received disconnect from [\.0-9]+: 11: Bye Bye \[preauth\]$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: Goodbye \[preauth\]$
+^\w{3} [ :[:digit:]]{11} [._[:alnum:]-]+ sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: PECL/ssh2 \(http://pecl.php.net/packages/ssh2\) \[preauth\]$
+##
+##dhclient\[[[:digit:]]+\]: DHCPREQUEST of [\.0-9]+ on eth0 to [\.0-9]+ port [0-9]+ (xid=0x[0-9a-f]+)
+#dhclient\[[0-9]+\]: DHCPREQUEST of [\.0-9]+ on eth0 to [\.0-9]+ port [0-9]+ (xid=0x[0-9a-f]+)
+## Ubuntu 16.04
+systemd\[[0-9]+\]: Started LSB: process and login accounting.
+systemd\[[0-9]+\]: Starting LSB: process and login accounting...
+systemd\[[0-9]+\]: Stopped LSB: process and login accounting.
+systemd\[[0-9]+\]: Stopping LSB: process and login accounting...
+acct\[[0-9]+\]:  \* Done.
+systemd\[[0-9]+\]: Starting Automatically refresh installed snaps...
+systemd\[[0-9]+\]: snapd.refresh.timer: Adding [0-9]+h [0-9]+min [0-9]+\.[0-9]+s random time.
+systemd\[[0-9]+\]: snapd.refresh.timer: Adding [0-9]+min [0-9]+\.[0-9]+s random time.
+systemd\[[0-9]+\]: Started Automatically refresh installed snaps.
+systemd\[[0-9]+\]: Started Cleanup of Temporary Directories.
+systemd\[[0-9]+\]: Starting Cleanup of Temporary Directories...
+systemd\[[0-9]+\]: Starting Daily apt activities...
+systemd\[[0-9]+\]: Started Daily apt activities.
+systemd\[[0-9]+\]: apt-daily.timer: Adding [0-9]+h [0-9]+min [0-9]+\.[0-9]+s random time.
+systemd\[[0-9]+\]: apt-daily.timer: Adding [0-9]+min [0-9]+\.[0-9]+s random time.
+systemd\[[0-9]+\]: Created slice User Slice of root.
+systemd\[[0-9]+\]: Removed slice User Slice of root.
+systemd\[[0-9]+\]: Started Session N of user root.
+systemd\[[0-9]+\]: Started User Manager for UID 0.
+systemd\[[0-9]+\]: Starting User Manager for UID 0...
+systemd\[[0-9]+\]: Starting .*\.\.\.
+systemd\[[0-9]+\]: Stopped User Manager for UID 0.
+systemd\[[0-9]+\]: Stopping User Manager for UID 0...
+systemd\[[0-9]+\]: Stopping .*\.\.\.
+systemd\[[0-9]+\]: Reached target Basic System.
+systemd\[[0-9]+\]: Reached target Default.
+systemd\[[0-9]+\]: Reached target Paths.
+systemd\[[0-9]+\]: Reached target Sockets.
+systemd\[[0-9]+\]: Reached target Timers.
+systemd\[[0-9]+\]: Reached target Shutdown.
+systemd\[[0-9]+\]: Startup finished in [0-9]+ms.
+systemd\[[0-9]+\]: Starting Exit the Session...
+systemd\[[0-9]+\]: Stopped target Basic System.
+systemd\[[0-9]+\]: Stopped target Default.
+systemd\[[0-9]+\]: Stopped target Paths.
+systemd\[[0-9]+\]: Stopped target Sockets.
+systemd\[[0-9]+\]: Stopped target Timers.
+snap\[[0-9]+\]: \#015\#033\[K
+snap\[[0-9]+\]: All snaps up to date.
+/usr/lib/snapd/snapd\[[0-9]+\]: daemon.go:170: DEBUG: uid=[0-9]+;@ POST /v2/snaps [0-9]+\.[0-9]+ [0-9]+
+
+## verbose sshd
+sshd\[[0-9]+\]: Set /proc/self/oom_score_adj to 0
+
+### nrpe
+nagios-nrpe-server\[[0-9]+\]:    ...done.
+nagios-nrpe-server\[[0-9]+\]:  * Stopping nagios-nrpe nagios-nrpe
+nagios-nrpe-server\[[0-9]+\]:  * Starting nagios-nrpe nagios-nrpe
+nrpe\[[0-9]+\]: Caught SIGTERM - shutting down...
+nrpe\[[0-9]+\]: Daemon shutdown
+nrpe\[[0-9]+\]: Allowing connections from: 127.0.0.1
+nrpe\[[0-9]+\]: Listening for connections on port 0
+nrpe\[[0-9]+\]: Server listening on 0.0.0.0 port 5666.
+nrpe\[[0-9]+\]: Server listening on :: port 5666.
+nrpe\[[0-9]+\]: Starting up daemon
+#systemd\[[0-9]+\]: Started LSB: Start/Stop the Nagios remote plugin execution daemon.
+systemd\[[0-9]+\]: Starting LSB: Start/Stop the Nagios remote plugin execution daemon...
+#systemd\[[0-9]+\]: Stopped LSB: Start/Stop the Nagios remote plugin execution daemon.
+systemd\[[0-9]+\]: Stopping LSB: Start/Stop the Nagios remote plugin execution daemon...
+

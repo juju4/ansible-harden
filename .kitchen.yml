@@ -29,10 +29,8 @@ platforms:
 #error: Error calling 'lxd forkstart default-centos-7-1472139573 /var/lib/lxd/containers /var/log/lxd/default-centos-7-1472139573/lxc.conf': err='exit status 1'
 #Try `lxc info --show-log default-centos-7-1472139573` for more info
 #error: Container is not running.
-#  - name: centos-7
+  - name: centos-7
 #  - name: centos-6
-## "Failed to complete #create action: [Broken pipe] on default-alpine-34"
-## do we have python2 in default image?
 #  - name: alpine-3.4
 
 suites:

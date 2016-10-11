@@ -1,22 +1,24 @@
 ---
 
-- name: Review Logcheck configuration
-  replace:
-    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
-  with_items:
-    - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
-    - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
-
 - name: Logcheck additional configuration - ntpd ignore
   copy:
     src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=644
 
-- name: Logcheck additional configuration - local ignore
+- name: Logcheck additional configuration - ignore rules
   copy:
-    src=local-rules dest=/etc/logcheck/ignore.d.server/local-rules mode=644
+    src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=644
 
 - name: Logcheck replace rules
   template: src=logcheck.replace.j2 dest=/etc/logcheck/logcheck.replace mode=0644
+
+- name: Review Logcheck configuration
+  replace:
+## Error: Config file /tmp/tmp32Yy_d unreadable or does not exists
+#    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}" validate='sudo -u logcheck logcheck -t -d -c %s'
+    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+  with_items:
+    - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
+    - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
 
 - name: Patch logcheck to do replacement
   patch: >

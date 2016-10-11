@@ -154,17 +154,16 @@
 /var/lib/icinga2$ VarDir
 /var/lib/icinga2/icinga2.state$ VarFile
 /var/lib/openntpd/ntpd.drift$ VarFile
+/var/lib/openntpd/db/ntpd.drift$ VarFile
 !/var/spool/icinga2
 !/var/lib/graphite/whisper/carbon/agents
 !/root/.ansible/tmp
-!/var/lib/docker/volumes
-!/opt/docker/volumes
-@@define BACKUPFILES7R (diversions|statoverride)
+@@define BACKUPFILES7R (diversions|statoverride|arch)
 /var/backups/@@{BACKUPFILES7R}$ Log
-/var/backups/@@{BACKUPFILES7R}\.1$ LowLog
-/var/backups/@@{BACKUPFILES7R}\.2\.gz$ LoSerMemberLog
-/var/backups/@@{BACKUPFILES7R}\.[3-6]\.gz$ SerMemberLog
-/var/backups/@@{BACKUPFILES7R}\.7\.gz$ HiSerMemberLog
+/var/backups/@@{BACKUPFILES7R}\.[01]$ Log
+/var/backups/@@{BACKUPFILES7R}\.[12]\.gz$ Log
+/var/backups/@@{BACKUPFILES7R}\.[3-6]\.gz$ Log
+/var/backups/@@{BACKUPFILES7R}\.7\.gz$ Log
 /var/lib/snapd$ VarDirTime
 /var/lib/snapd/state.json$ InodeData
 /var/lib/systemd/timers/stamp-apt-daily.timer$ VarFile

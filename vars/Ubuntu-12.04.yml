@@ -24,6 +24,7 @@ harden_pkg:
     - unattended-upgrades
     - update-notifier-common
     - gnupg
+    - gnupg-curl
     - libpam-cracklib
     - debsums
     - apt-show-versions

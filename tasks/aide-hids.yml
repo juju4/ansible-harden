@@ -8,13 +8,18 @@
         aide_bin: aide.wrapper
     - name: copy patch for aide
       template: src=patch-cron.daily-aide dest=/root/patch-cron.daily-aide mode=0400
-    - name: Patch cron.daily/aide to rotate database
-      patch: >
-        src=/root/patch-cron.daily-aide
-        dest=/etc/cron.daily/aide
-        remote_src=yes
-        backup=yes
-      ignore_errors: true
+    - stat: path=/etc/cron.daily/.aide-harden-patch
+      register: aidepatch
+    - block:
+## FIXME! patch module not idempotent so adding file marker
+        - name: Patch cron.daily/aide to rotate database
+          patch: >
+            src=/root/patch-cron.daily-aide
+            dest=/etc/cron.daily/aide
+            remote_src=yes
+            backup=yes
+        - file: dest=/etc/cron.daily/.aide-harden-patch state=touch
+      when: not aidepatch.stat.exists
     - name: Review Aide configuration
       lineinfile:
     #    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
@@ -30,6 +35,10 @@
         - 99_aide_local_gvfs
         - 99_aide_local_others
         - 99_aide_local_ansible
+        - 99_aide_local_python
+        - 99_aide_local_docker
+        - 99_aide_local_composer
+        - 99_aide_local_osquery
 
     - name: Review Aide configuration
       replace:

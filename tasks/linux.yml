@@ -34,7 +34,25 @@
       sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
   when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
 
+#journalctl --disk-usage
+#journalctl --verify
+#journalctl --vacuum-size=800M
+- block:
+    - name: configure linux journal
+      ini_file: dest=/etc/systemd/journald.conf section={{ item.s }} option={{ item.o }} value={{ item.v }} backup=yes
+      with_items:
+        - { s: 'Journal', o: 'SystemMaxUse', v: '1024M' }
+#        - { s: 'Journal', o: 'ForwardToSyslog', v: 'yes' }
+  when: ansible_service_mgr == "systemd"
+
 ## FIXME! firewall rules
 
 - include: aide-hids.yml
+
+- name: configure osquery
+  template: src=osquery.conf.j2 dest=/etc/osquery/osquery.conf mode=0644 backup=yes
+  notify:
+    - restart osquery
+- name: ensure service is enabled and started
+  service: name=osqueryd state=started enabled=yes
 

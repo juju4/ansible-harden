@@ -7,17 +7,19 @@ galaxy_info:
   platforms:
   - name: EL
     versions:
-    - all
+    - 7
   - name: Fedora
     versions:
     - all
   - name: Ubuntu
     versions:
-    - all
+    - xenial
+    - trusty
+    - precise
   - name: Debian
     versions:
     - all
-  categories:
+  galaxy_tags:
     - system
     - security
 dependencies:
@@ -27,7 +29,7 @@ dependencies:
   - ipv6
 #  - syslogclient
 #  - ntpclient
-#  - kbrebanov.osquery
+  - kbrebanov.osquery
 ## better to enable falco at the end of the provisioning
 #  - falco
 

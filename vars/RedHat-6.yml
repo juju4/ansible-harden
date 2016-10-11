@@ -16,4 +16,13 @@ harden_pkg:
     - audit
     - fail2ban
 
-#harden_pkg_remove:
+harden_pkg_remove: []
+
+harden_services:
+    - haveged
+    - arpwatch
+#    - yum-cron
+harden_services_containers:
+    - psacct
+#    - auditd
+

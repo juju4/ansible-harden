@@ -68,3 +68,8 @@
       readonly TMOUT={{ harden_shell_timeout }}
       #typeset -r HISTTIMEFORMAT
   tags: bash
+
+## /etc/issue.net too ?
+- name: configure motd
+  template: src=motd.j2 dest=/etc/motd mode=0644 backup=yes
+

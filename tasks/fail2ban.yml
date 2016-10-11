@@ -2,12 +2,12 @@
 
 - block:
     - name: enable fail2ban for sshd
-      template: src=fail2ban-jail.d-sshd.conf dest=/etc/fail2ban/jail.d/sshd.conf mode=0644
+      template: src=fail2ban-jail.d-sshd.conf dest=/etc/fail2ban/jail.d/sshd.conf mode=0644 backup=yes
       notify:
         - restart fail2ban
 
     - name: configure fail2ban for snmpd
-      template: "src={{ item.t }} dest={{ item.d }} mode=0644"
+      template: "src={{ item.t }} dest={{ item.d }} mode=0644 backup=yes"
       with_items:
         - { t: 'fail2ban-filter.d-snmpd.conf', d: '/etc/fail2ban/filter.d/snmpd.conf' }
         - { t: 'fail2ban-jail.d-snmpd.conf', d: '/etc/fail2ban/jail.d/snmpd.conf' }
@@ -15,7 +15,7 @@
         - restart fail2ban
 
     - name: extend whitelist for fail2ban
-      template: src=fail2ban-jail.d-whitelist.conf dest=/etc/fail2ban/jail.d/whitelist.conf mode=0644
+      ini_file: dest=/etc/fail2ban/jail.local section=DEFAULT option=ignoreip value="{{ harden_fail2ban_ignoreip }}" mode=0644 backup=yes
       notify:
         - restart fail2ban
   when: ansible_distribution_release != 'precise'

@@ -1,39 +1,59 @@
 # /etc/logcheck/logcheck.replace
-s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
-s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9\.:]*\) port [0-9]* ssh2/sshd: Failed \1 for \2 from \3 port N ssh2/
-s/sshd\[[0-9]*\]: Accepted publickey for \(.*\) from \([0-9\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
-s/sshd\[[0-9]*\]: Failed publickey for \(.*\) from \([0-9\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
-s/sshd\[[0-9]*\]: Postponed publickey for \(.*\) from \([0-9\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
+s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Failed \1 for \2 from \3 port N ssh2/
+s/sshd\[[0-9]*\]: Accepted publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+s/sshd\[[0-9]*\]: Failed publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+s/sshd\[[0-9]*\]: Postponed publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
 #s/sshd\[[0-9]*\]: input_userauth_request: invalid user .*/sshd: input_userauth_request: invalid user XXX/
 #s/sshd\[[0-9]*\]: Invalid user .* from \([0-9\.]*\)/sshd: Invalid user XXX from \1/
-s/sshd\[[0-9]*\]: Connection closed by \([0-9\.:]*\) port [0-9]*/sshd: Connection closed by \1 port N/
-s/sshd\[[0-9]*\]: Connection reset by \([0-9\.:]*\) port [0-9]*/sshd: Connection reset by \1 port N/
-s/sshd\[[0-9]*\]: Connection from \([0-9\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from \1 port N on \2 port \3/
-s/sshd\[[0-9]*\]: Disconnected from \([0-9\.:]*\) port [0-9]*/sshd: Disconnected from \1 port N/
-s/sshd\[[0-9]*\]: Received disconnect from \([0-9\.:]*\) port [0-9]*/sshd: Received disconnect from \1 port N/
+s/sshd\[[0-9]*\]: Connection closed by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by \1 port N/
+s/sshd\[[0-9]*\]: Connection reset by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection reset by \1 port N/
+s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from \1 port N on \2 port \3/
+s/sshd\[[0-9]*\]: Disconnected from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 port N/
+s/sshd\[[0-9]*\]: Received disconnect from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Received disconnect from \1 port N/
 s/sshd\[[0-9]*\]: Starting session: command for \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd: Starting session: command for \1 from \2 port N/
-s/sshd\[[0-9]*\]: Close session: user \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd: Close session: user \1 from \2 port N/
+s/sshd\[[0-9]*\]: Close session: user \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Close session: user \1 from \2 port N/
 s/sshd\[[0-9]*\]: Transferred: sent [0-9]*, received [0-9]* bytes/sshd: Transferred: sent N, received N bytes/
+s/sshd\[[0-9]*\]: error: Received disconnect from \([0-9a-fA-F\.:]*\) port [0-9]*:/sshd: error: Received disconnect from \1 port N:/
+s/sshd\[[0-9]*\]: Starting session: shell on \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* id \([0-9]*\)/sshd: Starting session: shell on \1 for \2 from \3 port N id \4/
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
-s/device veth[A-Z0-9]* entered promiscuous mode/device vethXXXXXX entered promiscuous mode/
-s/device veth[A-Z0-9]* left promiscuous mode/device vethXXXXXX left promiscuous mode/
+s/kernel: \[\s*[0-9]*\.[0-9]*\] /kernel: [ N.N] /
+s/device veth[A-Za-z0-9]* entered promiscuous mode/device vethXXXXXX entered promiscuous mode/
+s/device veth[A-Za-z0-9]* left promiscuous mode/device vethXXXXXX left promiscuous mode/
+s/kernel: \[[0-9N]*\.[0-9N]*\] init: \(.*\) main process ([0-9]*) terminated with status \([0-9]*\)/kernel: [N.N] init: \1 main process (N) terminated with status \2/
+
+### iptables
+s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8/
+## optional fields
+s/iptables denied: \(.*\) WINDOW=[0-9]*/iptables denied: \1 WINDOW=X/
+s/iptables denied: \(.*\) LEN=[0-9]*/iptables denied: \1 LEN=X/
 
 ### systemd
 s/systemd\[[0-9]*\]: Started Session [0-9]* of user \(.*\)/systemd: Started Session N of user \1/
-s/systemd-logind\[[0-9]*\]: New Session [0-9]* of user \(.*\)/systemd-logind: New Session N of user \1/
+s/systemd-logind\[[0-9]*\]: New session [0-9]* of user \(.*\)/systemd-logind: New session N of user \1/
+s/systemd\[[0-9]*\]: Received SIGRTMIN+24 from PID [0-9]* (\(.*\))./systemd: Received SIGRTMIN+24 from PID N (\1)./
+s/systemd-udevd: Could not generate persistent MAC address for veth[A-Za-z0-9]*: No such file or directory/systemd-udevd: Could not generate persistent MAC address for vethXXXXXX: No such file or directory/
 
 ### snmpd
 s/snmpd\[[0-9]*\]: Connection from UDP: \[\([0-9\.:]*\)\]:[0-9]* ->\[\([0-9\.:]*\)\]:\([0-9]*\)/snmpd: Connection from UDP: [\1]:N ->[\2]:\3/
 
 ### lxd-bridge
-s/lxdbr0: port [0-9]*(veth[A-Z0-9]*) entered forwarding state/lxdbr0: port N(vethXXXXXX) entered forwarding state/
-s/lxdbr0: port [0-9]*(veth[A-Z0-9]*) entered disabled state/lxdbr0: port N(vethXXXXXX) entered disabled state/
+s/lxdbr\([0-9]*\): port [0-9]*(veth[A-Za-z0-9]*) entered forwarding state/lxdbr\1: port N(vethXXXXXX) entered forwarding state/
+s/docker\([0-9]*\): port [0-9]*(veth[A-Za-z0-9]*) entered forwarding state/docker\1: port N(vethXXXXXX) entered forwarding state/
+s/lxdbr0: port [0-9]*(veth[A-Za-z0-9]*) entered disabled state/lxdbr0: port N(vethXXXXXX) entered disabled state/
 
 ### ansible
 s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N still running (N)/
 
 ### ptrace
 s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
+
+### sysdig
+s/sysdig_probe: adding new consumer [0-9a-f]*/sysdig_probe: adding new consumer HEX-XXX/
+### falco
+#falco: Sun Oct  2 15:31:52 2016: Falco initialized with configuration file /etc/falco.yaml
+#falco: Sun Oct  2 15:31:52 2016: Parsed rules from file /etc/falco_rules.yaml
+s/falco\[[0-9]*\]: [A-Z][a-z]* [A-Z][a-z]*[ ]* [0-9]* [0-9]*:[0-9]*:[0-9]* [0-9]*: /falco: /
 
