@@ -8,4 +8,5 @@ rolesdir=$(dirname $0)/..
 [ ! -d $rolesdir/ipv6 ] && git clone https://github.com/juju4/ansible-ipv6 $rolesdir/ipv6
 [ ! -d $rolesdir/redhat-epel ] && git clone https://github.com/juju4/ansible-redhat-epel $rolesdir/redhat-epel
 [ ! -d $rolesdir/harden-sysctl ] && git clone https://github.com/juju4/ansible-harden-sysctl $rolesdir/harden-sysctl
+[ ! -d $rolesdir/kbrebanov.osquery ] && git clone https://github.com/kbrebanov/ansible-osquery.git $rolesdir/kbrebanov.osquery
 
