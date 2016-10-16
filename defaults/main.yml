@@ -19,6 +19,7 @@ harden_disable_usb: true
 harden_bash2syslog: true
 
 harden_upgradeall: true
+harden_use_containers_lxc: false
 
 ## add email to /root/.forward?
 #harden_rootforward: email
@@ -27,6 +28,10 @@ harden_restrict_compiler: true
 harden_restrict_compiler_umask: '0700'
 #harden_restrict_compiler_umask: '0750'
 harden_restrict_compiler_group: 'root'
+
+harden_logcheck_extra_logfiles:
+  - /var/log/fail2ban.log
+  - /var/log/supervisor/supervisord.log
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 

@@ -32,3 +32,6 @@ harden_services_containers:
     - psacct
     - auditd
 
+syslog_mainfile: /var/log/messages
+syslog_authfile: /var/log/secure
+

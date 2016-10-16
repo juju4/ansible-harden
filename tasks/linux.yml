@@ -49,10 +49,15 @@
 
 - include: aide-hids.yml
 
-- name: configure osquery
-  template: src=osquery.conf.j2 dest=/etc/osquery/osquery.conf mode=0644 backup=yes
-  notify:
-    - restart osquery
-- name: ensure service is enabled and started
-  service: name=osqueryd state=started enabled=yes
+- name: check if osquery is present
+  stat: path=/etc/osquery
+  register: hasOsquery
+- block:
+    - name: configure osquery
+      template: src=osquery.conf.j2 dest=/etc/osquery/osquery.conf mode=0644 backup=yes
+      notify:
+        - restart osquery
+    - name: ensure service is enabled and started
+      service: name=osqueryd state=started enabled=yes
+  when: hasOsquery.stat.exists
 

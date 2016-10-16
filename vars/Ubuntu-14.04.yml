@@ -36,6 +36,7 @@ harden_pkg:
     - linux-tools-generic   # perf /FlameGraph
     - rng-tools
     - iptables-persistent
+    - apt-transport-https
 ## requested by https://github.com/awailly/cis-ubuntu-ansible
     - aptitude
 ## files classification
@@ -47,4 +48,7 @@ harden_pkg_remove:
     - inetd
     - telnet-server
     - rsh-server
+
+syslog_mainfile: /var/log/syslog
+syslog_authfile: /var/log/auth.log
 

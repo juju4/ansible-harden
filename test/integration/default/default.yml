@@ -5,5 +5,8 @@
 #  vars:
 #    - a:
   roles:
-    - harden
+    - juju4.redhat-epel
+    - juju4.harden-sysctl
+#    - kbrebanov.osquery
+    - juju4.harden
 

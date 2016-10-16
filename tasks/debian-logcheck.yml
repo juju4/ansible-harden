@@ -20,6 +20,10 @@
     - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
     - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
 
+- name: Add log files for logcheck to check
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line={{ item }} backup=yes
+  with_items: "{{ harden_logcheck_extra_logfiles }}"
+
 - name: Patch logcheck to do replacement
   patch: >
     src=patch-logcheck-replace
@@ -27,6 +31,9 @@
     remote_src=no
     backup=yes
   ignore_errors: true
+
+- name: Add support for fail2ban date format to syslog-summary
+  lineinfile: dest=/usr/bin/syslog-summary line='\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),' insertafter='^\tre.compile(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [ 0-9][0-9][0-9][0-9]:[0-9][0-9]:[0-9][0-9] "),$' backup=yes
 
 - name: Review logcheck frequency
   replace: dest=/etc/cron.d/logcheck regexp='^2 \* \* \* \*       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'

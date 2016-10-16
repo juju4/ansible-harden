@@ -65,8 +65,7 @@
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: shell timeout ###"
     content: |
-      readonly TMOUT={{ harden_shell_timeout }}
-      #typeset -r HISTTIMEFORMAT
+      #readonly TMOUT={{ harden_shell_timeout }}
   tags: bash
 
 ## /etc/issue.net too ?

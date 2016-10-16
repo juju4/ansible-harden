@@ -96,3 +96,32 @@ systemd\[[0-9]+\]: Starting LSB: Start/Stop the Nagios remote plugin execution d
 #systemd\[[0-9]+\]: Stopped LSB: Start/Stop the Nagios remote plugin execution daemon.
 systemd\[[0-9]+\]: Stopping LSB: Start/Stop the Nagios remote plugin execution daemon...
 
+## osquery
+osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* scheduler.cpp:63\] Executing scheduled query: pack_.*
+osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* scheduler.cpp:63\] Executing scheduled query: system_info.*
+osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* rocksdb.cpp:191\] Opening RocksDB handle: /var/osquery/osquery.db
+
+## openvpn
+ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* TLS: soft reset sec=[0-9]* bytes=[0-9]*/[0-9]* pkts=[0-9]*/[0-9]*
+ovpn-.*\[[0-9]*\]: Socket Buffers: R=\[[0-9]*->[0-9]*\] S=\[[0-9]*->[0-9]*\]
+ovpn-.*\[[0-9]*\]: Data Channel Decrypt: Cipher 'AES-256-CBC' initialized with 256 bit key
+ovpn-.*\[[0-9]*\]: Data Channel Decrypt: Using 512 bit message hash 'SHA512' for HMAC authentication
+ovpn-.*\[[0-9]*\]: Data Channel Encrypt: Cipher 'AES-256-CBC' initialized with 256 bit key
+ovpn-.*\[[0-9]*\]: Data Channel Encrypt: Using 512 bit message hash 'SHA512' for HMAC authentication
+
+## fail2ban
+fail2ban.filter         \[[0-9]*\]: INFO    \[.*\] Found
+fail2ban.filter         \[[0-9]*\]: INFO    Log rotation detected for /var/log/syslog
+fail2ban.filter         \[[0-9]*\]: INFO    Log rotation detected for /var/log/auth.log
+fail2ban.server         \[[0-9]*\]: INFO    rollover performed on /var/log/fail2ban.log
+
+## iptables...
+iptables denied: IN=
+
+## supervisor
+INFO waiting for .* to stop
+INFO stopped: .* (terminated by SIGTERM)
+INFO stopped: .* (exit status [0-9]*)
+INFO spawned: '.*' with pid [0-9]*
+INFO success: .* entered RUNNING state, process has stayed up for > than [0-9]* seconds (startsecs)
+
