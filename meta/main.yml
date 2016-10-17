@@ -32,7 +32,7 @@ dependencies:
   - juju4.ipv6
 #  - juju4.syslogclient
 #  - juju4.ntpclient
-  - kbrebanov.osquery
+#  - kbrebanov.osquery
 ## better to enable falco at the end of the provisioning
 #  - juju4.falco
 

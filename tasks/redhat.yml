@@ -28,7 +28,7 @@
 - debug: var=ansible_virtualization_type
 - set_fact:
     harden_services_containers: []
-  when: (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
+  when: (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 - name: Redhat | Ensure services are running and enabled on boot.
   service: name={{ item }} state=started enabled=yes
   with_items:
