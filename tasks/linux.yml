@@ -48,10 +48,13 @@
 ## FIXME! firewall rules
 
 - include: iptables.yml
+  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"
 
 - include: aide-hids.yml
+  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"
 
 - include: osquery.yml
+  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"
 
 - include: ubuntu-livepatch.yml
   when: harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch

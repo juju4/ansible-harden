@@ -1,0 +1,35 @@
+---
+
+ssh_svc: sshd
+
+harden_pkg:
+    - openssh
+    - rsyslog
+    - unzip
+    - openntpd
+    - acct
+#    - aide
+    - logcheck
+    - acl
+    - sysstat
+    - tcpdump
+    - libcap
+    - ldns-tools
+    - gnupg
+    - arpwatch
+    - fail2ban
+#    - linux-tools-generic   # perf /FlameGraph
+    - haveged
+
+harden_pkg_remove: []
+
+syslog_mainfile: /var/log/messages
+syslog_authfile: /var/log/messages
+
+## Alpine3.4/ssh7.2
+harden_sshd_crypto:
+    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms curve25519-sha256@libssh.org' }
+    - { regexp: '^Ciphers ', line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' }
+#    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
+    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
+

@@ -9,6 +9,9 @@
 - name: Include version-specific variables for RedHat
   include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
   when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- name: Include version-specific variables for Alpine
+  include_vars: "Alpine.yml"
+  when: ansible_os_family == "Alpine"
 
 - include: travis.yml
   when: ansible_os_family != "Windows"
@@ -16,6 +19,13 @@
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages! (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
+## https://groups.google.com/forum/#!topic/beagleboard/jXb9KhoMOsk
+- block:
+    - command: "cat /etc/apt/apt.conf.d/02compress-indexes"
+      register: debugapt
+    - debug: "var={{ debugapt.stdout_lines }}"
+  when: ansible_distribution == 'Ubuntu'
 - name: Install some hardening packages
   package: name={{ item }} state=present update_cache=yes
   with_items: "{{ harden_pkg }}"

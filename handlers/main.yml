@@ -10,7 +10,7 @@
   when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int >= 16)
 - name: restart auditd
   service: name=auditd state=restarted
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm" or ansible_virtualization_type == "docker"))
 - name: reload fstab
   shell: "umount -a; mount -a"
   ignore_errors: true

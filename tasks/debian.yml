@@ -122,7 +122,7 @@
     - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
       replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX=""' replace='GRUB_CMDLINE_LINUX="audit=1"'
       when: hasgrub.stat.exists
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc" and ansible_distribution == "Ubuntu" and ansible_distribution_release == 'xenial')
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker") and ansible_distribution == "Ubuntu" and ansible_distribution_release == 'xenial')
   tags: auditd
 
 - command: 'lsattr /etc/init.d/rc'
