@@ -4,6 +4,7 @@ ssh_svc: sshd
 
 harden_pkg:
     - openssh-server
+    - rsyslog
     - git
     - gnupg
     - haveged

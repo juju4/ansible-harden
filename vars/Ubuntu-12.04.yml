@@ -5,6 +5,7 @@ ssh_svc: ssh
 ## override: no sysdig(unmet dependencies)
 harden_pkg:
     - openssh-server
+    - rsyslog
     - harden       ## exist in precise/trusty/vivid, not wily
     - unzip
     - rkhunter
