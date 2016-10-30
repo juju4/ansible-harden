@@ -20,6 +20,8 @@ harden_pkg:
     - fail2ban
 #    - linux-tools-generic   # perf /FlameGraph
     - haveged
+#    - rng-tools
+    - git
 
 harden_pkg_remove: []
 
