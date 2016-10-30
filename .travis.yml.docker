@@ -48,7 +48,8 @@ before_install:
 script:
   - container_id=$(mktemp)
     # Run container in detached state
-  - 'sudo docker run --detach --volume="${PWD%/*}":/etc/ansible/roles:ro ${run_opts} ${distribution}-${version}:ansible "${init}" > "${container_id}"'
+## Note: mapping urandom/random to have better entropy. Normally, have rng-tools or haveged to handle that but not running inside docker images we have
+  - 'sudo docker run --detach -v /dev/urandom:/dev/random --volume="${PWD%/*}":/etc/ansible/roles:ro ${run_opts} ${distribution}-${version}:ansible "${init}" > "${container_id}"'
 
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible --version'
 
