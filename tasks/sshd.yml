@@ -33,7 +33,8 @@
     - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
     - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
     - { regexp: '^PubkeyAuthentication ', line: 'PubkeyAuthentication yes' }
-    - { regexp: '^KerberosAuthentication ', line: 'KerberosAuthentication no' }	## default
+## default
+    - { regexp: '^KerberosAuthentication ', line: 'KerberosAuthentication no' }
     - { regexp: '^PermitRootLogin ', line: 'PermitRootLogin without-password' }
     - { regexp: '^PermitUserEnvironment ', line: 'PermitUserEnvironment no' }
 ## Forwarding, tunnel options
