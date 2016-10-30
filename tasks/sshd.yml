@@ -41,8 +41,10 @@
     - { regexp: '^AllowTcpForwarding', line: 'AllowTcpForwarding no' }
     - { regexp: '^X11Forwarding ', line: 'X11Forwarding no' }
     - { regexp: '^AllowAgentForwarding', line: 'AllowAgentForwarding no' }
-    - { regexp: '^GatewayPorts ', line: 'GatewayPorts no' }	## default
-    - { regexp: '^PermitTunnel ', line: 'PermitTunnel no' }	## default
+## default
+    - { regexp: '^GatewayPorts ', line: 'GatewayPorts no' }
+## default
+    - { regexp: '^PermitTunnel ', line: 'PermitTunnel no' }
 #    - { regexp: '^HashKnownHosts ', line: 'HashKnownHosts yes' }   ## not available anymore
 #    - { regexp: '^', line: '' }
   notify:
