@@ -29,7 +29,7 @@ before_install:
 #  - sudo apt install lxd
   - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/trusty-backports.list
   - sudo apt-get update -qq
-  - sudo apt -t trusty-backports -y install lxd acl -q
+  - sudo apt -t trusty-backports -y install lxd acl rng-tools -q
 ## change of group implies logout+login to apply... can't do with travis = run as root (sic)
 ## https://github.com/travis-ci/travis-ci/issues/1839   or chain: sudo -E su $USER -c "..."
   - sudo usermod -G lxd travis
