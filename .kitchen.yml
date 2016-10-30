@@ -15,6 +15,7 @@ provisioner:
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   ansible_yum_repo: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
   require_ansible_omnibus: true
+  require_chef_omnibus: false
 #  require_chef_for_busser: false
   enable_yum_epel: true
   ansible_connection: ssh
@@ -23,12 +24,6 @@ platforms:
   - name: ubuntu-16.04
   - name: ubuntu-14.04
   - name: ubuntu-12.04
-## FIXME! centos-7, centos-6 NOK. lxc issue?
-#-----> Creating <default-centos-7>...
-#       Starting container default-centos-7-1472139573
-#error: Error calling 'lxd forkstart default-centos-7-1472139573 /var/lib/lxd/containers /var/log/lxd/default-centos-7-1472139573/lxc.conf': err='exit status 1'
-#Try `lxc info --show-log default-centos-7-1472139573` for more info
-#error: Container is not running.
   - name: centos-7
 #  - name: centos-6
 #  - name: alpine-3.4

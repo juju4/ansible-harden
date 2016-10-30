@@ -19,8 +19,8 @@
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Install some packages
-  package: name={{ item }} state=present
+- name: Install some hardening packages
+  package: name={{ item }} state=present update_cache=yes
   with_items: "{{ harden_pkg }}"
 - name: Remove some packages
   package: name={{ item }} state=absent

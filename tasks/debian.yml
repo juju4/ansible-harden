@@ -69,9 +69,12 @@
   when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and rngconf.stat.exists
 
 ## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
-- name: Ubuntu | Disable automatic report of debsecan
-  replace: dest=/etc/default/debsecan regexp='^REPORT=.*' replace='REPORT=false' backup=yes
-#  replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE=sid' backup=yes
+- block:
+    - name: Ubuntu | Disable automatic report of debsecan
+      replace: dest=/etc/default/debsecan regexp='^REPORT=.*' replace='REPORT=false' backup=yes
+#      replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE=sid' backup=yes
+    - name: Ubuntu | Disable debsecan cron
+      replace: dest=/etc/cron.d/debsecan regexp='^(.*)test -x /usr/bin/debsecan && /usr/bin/debsecan --cron' replace='#\1test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
   when: ansible_distribution == 'Ubuntu'
 - name: Debian | define distribution of debsecan
   replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE={{ ansible_distribution_release }}' backup=yes

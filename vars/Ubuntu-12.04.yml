@@ -4,6 +4,7 @@ ssh_svc: ssh
 
 ## override: no sysdig(unmet dependencies)
 harden_pkg:
+    - openssh-server
     - harden       ## exist in precise/trusty/vivid, not wily
     - unzip
     - rkhunter
@@ -18,6 +19,8 @@ harden_pkg:
     - apparmor-utils
     - acl
     - sysstat
+    - systemtap-sdt-dev
+    - iotop
     - tcpdump
     - libcap2-bin
     - ldnsutils
@@ -51,4 +54,9 @@ harden_pkg_remove:
 
 syslog_mainfile: /var/log/syslog
 syslog_authfile: /var/log/auth.log
+
+harden_sshd_crypto:
+    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms diffie-hellman-group-exchange-sha256' }
+    - { regexp: '^Ciphers ', line: 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' }
+    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512,hmac-sha2-256' }
 

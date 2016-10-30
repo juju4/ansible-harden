@@ -39,7 +39,9 @@
       {
          declare command
          command=$(fc -ln -0)
-         [ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command
+         #[ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command
+         #[ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command -- `env -0`
+         [ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command --- $PWD, $OLDPWD, $SSH_CLIENT
       }
       trap log2syslog DEBUG
   tags: bash

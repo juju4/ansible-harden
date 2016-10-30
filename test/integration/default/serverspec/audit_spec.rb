@@ -3,11 +3,11 @@ require 'serverspec'
 # Required by serverspec
 set :backend, :exec
 
-describe linux_audit_system, :if => os[:family] == 'redhat' do
-  it { should be_running }
-  it { should be_enabled }
-end
 ## FIXME! no auditd in containers, serverspec container identification?
+#describe linux_audit_system, :if => os[:family] == 'redhat' do
+#  it { should be_running }
+#  it { should be_enabled }
+#end
 ## http://kb.plesk.com/en/121587	not executable in containers
 ## https://github.com/test-kitchen/test-kitchen/issues/174	Have access to node attributes in tests = NOK
 ## http://www.hurryupandwait.io/blog/accessing-chef-node-attributes-from-kitchen-tests

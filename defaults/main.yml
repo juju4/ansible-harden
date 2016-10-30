@@ -78,6 +78,9 @@ harden_fw_open_incoming:
 ## https://access.redhat.com/solutions/61536
 harden_linux_disable_bugreport: true
 
+harden_ubuntu_livepatch: false
+harden_ubuntu_livepatch_token: 'xxx'
+
 _ubuntu_sysctl:
 
 ## define in vars/{{ distribution }}*.yml
@@ -98,6 +101,8 @@ harden_mount_options:
     "/var/tmp": "defaults,nosuid,nodev,noexec"
     "/var": "defaults,nosuid"
     "/dev/shm": "defaults,nosuid,nodev,noexec"
+## https://linux-audit.com/linux-system-hardening-adding-hidepid-to-proc/
+#    "/proc": "rw,nosuid,nodev,noexec,relatime,hidepid=2"
 
 harden_mount_options_aptpre:
     "/tmp": "exec"

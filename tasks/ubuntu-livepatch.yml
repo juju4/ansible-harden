@@ -1,0 +1,32 @@
+---
+
+## http://blog.dustinkirkland.com/2016/10/canonical-livepatch.html
+## Register on https://www.ubuntu.com/server/livepatch
+
+- name: Compatibility check
+  fail: msg="FATAL! Free livepatch available only on Ubuntu xenial."
+  when: ansible_distribution_release != 'xenial'
+
+- name: Ensure snapd is installed
+  apt: name=snapd state=present
+
+- name: Ubuntu xenial | Install livepatch
+  command: "snap install canonical-livepatch creates=/var/lib/snapd/snaps/canonical-livepatch_15.snap"
+
+- name: Check livepatch status
+  command: "/snap/bin/canonical-livepatch status"
+  changed_when: false
+  register: livepatch
+  ignore_errors: true
+- name: Ubuntu xenial | Enable livepatch
+  command: "/snap/bin/canonical-livepatch enable {{ harden_ubuntu_livepatch_token }}"
+  no_log: true
+  when: livepatch is defined and livepatch.stdout is defined and livepatch.stdout.find("Machine is not enabled.") != -1
+
+## Note: display token
+#- name: Check status
+#  command: "/snap/bin/canonical-livepatch status --verbose"
+#  changed_when: false
+#  register: livepatchstatus
+#- debug: var=livepatchstatus
+

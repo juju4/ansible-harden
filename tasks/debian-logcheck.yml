@@ -9,7 +9,7 @@
     src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=644
 
 - name: Logcheck replace rules
-  template: src=logcheck.replace.j2 dest=/etc/logcheck/logcheck.replace mode=0644
+  template: src=logcheck.replace.j2 dest=/etc/logcheck/logcheck.replace mode=0644 validate='sed -f %s /var/log/syslog'
 
 - name: Review Logcheck configuration
   replace:
@@ -24,16 +24,25 @@
   lineinfile: dest=/etc/logcheck/logcheck.logfiles line={{ item }} backup=yes
   with_items: "{{ harden_logcheck_extra_logfiles }}"
 
-- name: Patch logcheck to do replacement
-  patch: >
-    src=patch-logcheck-replace
-    dest=/usr/sbin/logcheck
-    remote_src=no
-    backup=yes
-  ignore_errors: true
+
+- name: check if logcheck patched
+  stat: path=/usr/sbin/.logcheck-ansible-harden-patch
+  register: lpatch
+- block:
+    - name: Patch logcheck to do replacement
+      patch: >
+        src=patch-logcheck-replace
+        dest=/usr/sbin/logcheck
+        remote_src=no
+        backup=yes
+      ignore_errors: true
+    - name: add patch marker
+      file: dest=/usr/sbin/.logcheck-ansible-harden-patch state=touch
+  when: not lpatch.stat.exists
 
 - name: Add support for fail2ban date format to syslog-summary
-  lineinfile: dest=/usr/bin/syslog-summary line='\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),' insertafter='^\tre.compile(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [ 0-9][0-9][0-9][0-9]:[0-9][0-9]:[0-9][0-9] "),$' backup=yes
+#  lineinfile: dest=/usr/bin/syslog-summary line='\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),' insertafter='re.compile(r"^\(Mon\|Tue\|Wed\|Thu\|Fri\|Sat\|Sun\) \(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\) \[ 0-9\]\[0-9\]\[0-9\]\[0-9\]:\[0-9\]\[0-9\]:\[0-9\]\[0-9\] "),$' backup=yes
+  lineinfile: dest=/usr/bin/syslog-summary line='\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),' insertbefore='^\]$' backup=yes
 
 - name: Review logcheck frequency
   replace: dest=/etc/cron.d/logcheck regexp='^2 \* \* \* \*       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'
@@ -44,3 +53,8 @@
     "dest=/etc/cron.d/logcheck regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
   with_items:
     - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi', replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi' }
+
+- name: ensure pid directory for logcheck user at reboot (systemd-tmpfiles)
+  lineinfile: dest=/etc/tmpfiles.d/logcheck.conf line='    d    /run/logcheck   0755 logcheck logcheck - -' create=yes
+  when: ansible_service_mgr == 'systemd'
+

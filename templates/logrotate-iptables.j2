@@ -1,0 +1,12 @@
+## /etc/logrotate.d/iptables
+/var/log/iptables.log {
+    rotate 14
+    daily
+    missingok
+    notifempty
+    delaycompress
+    compress
+    postrotate
+        invoke-rc.d rsyslog rotate > /dev/null
+    endscript
+}

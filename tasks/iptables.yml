@@ -1,0 +1,9 @@
+---
+
+- name: send iptables log to separate file through rsyslog
+  template: src=rsyslog-iptables.conf.j2 dest=/etc/rsyslog.d/40-iptables.conf mode=0644
+  notify:
+    - restart rsyslog
+- name: add logrotate configuration for iptables.log
+  template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644
+

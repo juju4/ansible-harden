@@ -1,0 +1,104 @@
+---
+## or separate role like https://github.com/dev-sec/ansible-ssh-hardening
+
+- stat: path=/etc/ssh/ssh_host_ed25519_key
+  register: sshkey
+- name: Generate any missing SSH host key
+  command: ssh-keygen -A
+  when: not sshkey.stat.exists and ((ansible_os_family == "RedHat" and ansible_distribution_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+
+## ssh version: 5.9/precise, 6.6/trusty, 7.2/xenial, 5.3/centos6
+## https://stribika.github.io/2015/01/04/secure-secure-shell.html
+## http://www.ssi.gouv.fr/administration/guide/recommandations-pour-un-usage-securise-dopenssh/
+## http://www.ssi.gouv.fr/uploads/2014/01/NT_OpenSSH_en.pdf
+## https://wiki.mozilla.org/Security/Guidelines/OpenSSH
+## https://github.com/arthepsy/ssh-audit
+- name: Restrict sshd config (1)
+  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
+  with_items:
+    - { regexp: '^Port ', line: 'Port 22' }
+    - { regexp: '^Protocol ', line: 'Protocol 2' }	## default
+    - { regexp: '^MaxAuthTries ', line: 'MaxAuthTries 6' }	## default
+    - { regexp: '^MaxSessions ', line: 'MaxSessions 10' }	## default
+    - { regexp: '^LogLevel ', line: 'LogLevel VERBOSE' }
+    - { regexp: '^TCPKeepAlive ', line: 'TCPKeepAlive no' }
+    - { regexp: '^UseDNS ', line: 'UseDNS yes' }
+    - { regexp: '^PrintLastLog ', line: 'PrintLastLog yes' }
+#    - { regexp: '^BatchMode ', line: 'BatchMode no' }		## NOK
+## those 3 lines disable all password authentications
+    - { regexp: '^UsePAM ', line: 'UsePAM no' }
+    - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
+    - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
+    - { regexp: '^PubkeyAuthentication ', line: 'PubkeyAuthentication yes' }
+    - { regexp: '^KerberosAuthentication ', line: 'KerberosAuthentication no' }	## default
+    - { regexp: '^PermitRootLogin ', line: 'PermitRootLogin without-password' }
+    - { regexp: '^PermitUserEnvironment ', line: 'PermitUserEnvironment no' }
+## Forwarding, tunnel options
+    - { regexp: '^AllowTcpForwarding', line: 'AllowTcpForwarding no' }
+    - { regexp: '^X11Forwarding ', line: 'X11Forwarding no' }
+    - { regexp: '^AllowAgentForwarding', line: 'AllowAgentForwarding no' }
+    - { regexp: '^GatewayPorts ', line: 'GatewayPorts no' }	## default
+    - { regexp: '^PermitTunnel ', line: 'PermitTunnel no' }	## default
+#    - { regexp: '^HashKnownHosts ', line: 'HashKnownHosts yes' }   ## not available anymore
+#    - { regexp: '^', line: '' }
+  notify:
+    - restart sshd
+
+- name: Restrict sshd config - crypto
+  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
+  with_items: "{{ harden_sshd_crypto }}"
+  notify:
+    - restart sshd
+
+## for which version?
+#- name: Restrict sshd config (2)
+#  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
+#  with_items:
+#    - { regexp: '^HostbasedAcceptedKeyTypes ', line: 'HostbasedAcceptedKeyTypes ecdsa-sha2-nistp384-cert-v01@openssh.com,ecdsa-sha2-nistp521-cert-v01@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-rsa-cert-v01@openssh.com,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,ssh-rsa' }
+#  notify:
+#    - restart sshd
+#  when: ansible_distribution_release == 'precise'
+
+- name: Restrict sshd config - UsePrivilegeSeparation sandbox
+  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
+  with_items:
+    - { regexp: '^UsePrivilegeSeparation', line: 'UsePrivilegeSeparation sandbox' }
+  notify:
+    - restart sshd
+  when: not (ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_lsb.major_release|int <= 6)
+
+- name: sshd - restricted user configurations
+  blockinfile:
+    dest: /etc/ssh/sshd_config
+    block: |
+      Match group sftp-users
+          ForceCommand internal-sftp
+          ChrootDirectory /sftp-home/\%u
+
+      Match group forwarding-users
+          AllowTcpForwarding yes
+          X11Forwarding yes
+          AllowAgentForwarding yes
+          #PermitTunnel yes
+          #BatchMode yes
+
+      Match group restricted-users
+          AllowTcpForwarding no
+          X11Forwarding no
+          AllowAgentForwarding no
+
+      ## ensure proper end of Match block. but need conditions with it
+      #Match all
+    marker: "## {mark} ANSIBLE MANAGED BLOCK: sshd restricted users"
+    validate: 'sshd -f %s -T'
+  notify:
+    - restart sshd
+
+#- name: sshd configuration file update
+#  template: src=sshd_config
+#    dest=/etc/ssh/sshd_config
+#    backup=yes
+#    owner=0 group=0 mode=0644
+#    validate='/usr/sbin/sshd -T -f %s'
+#  notify:
+#    - restart sshd

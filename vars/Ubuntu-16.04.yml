@@ -3,6 +3,7 @@
 ssh_svc: ssh
 
 harden_pkg:
+    - openssh-server
 #    - harden       ## exist in precise/trusty/vivid, not wily+
     - unzip
     - rkhunter
@@ -16,6 +17,8 @@ harden_pkg:
     - apparmor-utils
     - acl
     - sysstat
+    - systemtap-sdt-dev
+    - iotop
     - sysdig
     - tcpdump
     - libcap2-bin
@@ -52,3 +55,8 @@ harden_pkg_remove:
 syslog_mainfile: /var/log/syslog
 syslog_authfile: /var/log/auth.log
 
+harden_sshd_crypto:
+    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms curve25519-sha256@libssh.org' }
+    - { regexp: '^Ciphers ', line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' }
+#    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
+    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }

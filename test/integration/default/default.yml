@@ -3,7 +3,7 @@
 - hosts: all
 #- hosts: test-kitchen
 #  vars:
-#    - a:
+#    - harden_upgradeall: false
   roles:
     - juju4.redhat-epel
     - juju4.harden-sysctl

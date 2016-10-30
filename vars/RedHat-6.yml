@@ -3,6 +3,7 @@
 ssh_svc: sshd
 
 harden_pkg:
+    - openssh-server
     - git
     - gnupg
     - haveged
@@ -22,10 +23,14 @@ harden_services:
     - haveged
     - arpwatch
 #    - yum-cron
-harden_services_containers:
-    - psacct
+harden_services_containers: []
+#    - psacct
 #    - auditd
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/secure
 
+harden_sshd_crypto:
+    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms diffie-hellman-group-exchange-sha256' }
+    - { regexp: '^Ciphers ', line: 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' }
+    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512,hmac-sha2-256' }
