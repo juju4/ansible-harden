@@ -13,9 +13,6 @@
 - include: travis.yml
   when: ansible_os_family != "Windows"
 
-- include: linux.yml
-  when: ansible_system == 'Linux'
-
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
@@ -25,6 +22,9 @@
 - name: Remove some packages
   package: name={{ item }} state=absent
   with_items: "{{ harden_pkg_remove }}"
+
+- include: linux.yml
+  when: ansible_system == 'Linux'
 
 - name: Debian | Harden
   include: debian.yml
