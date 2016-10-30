@@ -17,9 +17,12 @@
   lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
   with_items:
     - { regexp: '^Port ', line: 'Port 22' }
-    - { regexp: '^Protocol ', line: 'Protocol 2' }	## default
-    - { regexp: '^MaxAuthTries ', line: 'MaxAuthTries 6' }	## default
-    - { regexp: '^MaxSessions ', line: 'MaxSessions 10' }	## default
+## default
+    - { regexp: '^Protocol ', line: 'Protocol 2' }
+## default
+    - { regexp: '^MaxAuthTries ', line: 'MaxAuthTries 6' }
+## default
+    - { regexp: '^MaxSessions ', line: 'MaxSessions 10' }
     - { regexp: '^LogLevel ', line: 'LogLevel VERBOSE' }
     - { regexp: '^TCPKeepAlive ', line: 'TCPKeepAlive no' }
     - { regexp: '^UseDNS ', line: 'UseDNS yes' }
