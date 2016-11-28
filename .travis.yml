@@ -33,13 +33,12 @@ before_install:
   - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/trusty-backports.list
   - sudo apt-get update -qq
   - sudo apt -t trusty-backports -y install lxd acl rng-tools -q
-## change of group implies logout+login to apply... can't do with travis = run as root (sic)    = use 'newgrp lxd' ?
+## change of group implies logout+login to apply... can't do with travis = run as root (sic)    = use 'newgrp lxd' ? = travis stalling all ...
 ## https://github.com/travis-ci/travis-ci/issues/1839   or chain: sudo -E su $USER -c "..."
   - sudo usermod -G lxd travis
-  - newgrp lxd
+#  - newgrp lxd
   # Pull container
-#  - sudo -E su $USER -c "lxc remote list"
-  - lxc remote list
+  - sudo -E su $USER -c "lxc remote list"
   - sudo -E su $USER -c "lxc image list"
 ## pre-download base images
   - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
