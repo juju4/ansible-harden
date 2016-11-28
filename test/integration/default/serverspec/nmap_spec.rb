@@ -9,6 +9,7 @@ set :backend, :exec
 #
 ### https://speakerdeck.com/garethr/an-introduction-to-testing-infrastructure
 ### ?http://sysadvent.blogspot.ca/2013/12/day-21-making-web-secure-one-unit-test.html
+## https://dzone.com/articles/making-web-secure-one-unit
 #  it 'has only a limited number of open ports' do
 #    expect(@open_ports.count).to eq(3)
 #  end

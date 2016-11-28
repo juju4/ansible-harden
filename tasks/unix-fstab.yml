@@ -1,25 +1,5 @@
 ---
 
-#- name: harden mounting flags in fstab (/usr ro, large use of nosuid,nodev,noexec)
-#  replace: "dest=/etc/fstab regexp={{ item.re }} replace={{ item.rep }}"
-#  with_items:
-#    - { re: '^/(.*?)boot([\s]+)/boot([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: '/\1boot\2/boot\3\4\5defaults,nosuid,nodev,noexec\6' }
-#    - { re: '^UUID=(.*?)([\s]+)/boot([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: 'UUID=\1\2/boot\3\4\5defaults,nosuid,nodev,noexec\6' }
-### alpine linux
-#    - { re: '^UUID=(.*?)([\s]+)/boot([\s]+)(\w+)([\s]+)rw,relatime,stripe=4,data=ordered([\s]+)', rep: 'UUID=\1\2/boot\3\4\5rw,relatime,stripe=4,data=ordered,nosuid,nodev,noexec\6' }
-#    - { re: '^/(.*?)home([\s]+)/home([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: '/\1home\2/home\3\4\5defaults,nosuid,nodev\6' }
-#    - { re: '^UUID=(.*?)([\s]+)/home([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: 'UUID=\1\2/home\3\4\5defaults,nosuid,nodev\6' }
-#    - { re: '^/(.*?)tmp([\s]+)/tmp([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: '/\1tmp\2/tmp\3\4\5defaults,nosuid,nodev,noexec\6' }
-#    - { re: '^UUID=(.*?)([\s]+)/tmp([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: 'UUID=\1\2/tmp\3\4\5defaults,nosuid,nodev,noexec\6' }
-#    - { re: '^/(.*?)var/log([\s]+)/var/log([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: '/\1var/log\2/var/log\3\4\5defaults,nosuid,nodev,noexec\6' }
-#    - { re: '^UUID=(.*?)([\s]+)/var/log([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: 'UUID=\1\2/var/log\3\4\5defaults,nosuid,nodev,noexec\6' }
-#    - { re: '^/(.*?)var([\s]+)/var([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: '/\1var\2/var\3\4\5defaults,nosuid\6' }
-#    - { re: '^UUID=(.*?)([\s]+)/var([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: 'UUID=\1\2/var\3\4\5defaults,nosuid\6' }
-#    - { re: '^/(.*?)usr([\s]+)/usr([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: '/\1usr\2/usr\3\4\5defaults,ro\6' }
-#    - { re: '^UUID=(.*?)([\s]+)/usr([\s]+)(\w+)([\s]+)defaults([\s]+)', rep: 'UUID=\1\2/usr\3\4\5defaults,ro\6' }
-#  notify:
-#    - reload fstab
-
 ## https://groups.google.com/forum/#!msg/ansible-project/7MhOICPWkaI/rADYaeaRDlsJ
 - name: Secure Mount options
   mount: name={{ item.mount }} src={{ item.device }} state=present fstype={{ item.fstype }} opts={{ harden_mount_options[item.mount] | default(item.options) }}

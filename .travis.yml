@@ -5,6 +5,7 @@ rvm:
   - 2.2
 
 env:
+## those images need pre-configuration before being usable (openssh...)
 #  - distribution: centos
 #    version: 6
 #  - distribution: centos
@@ -17,6 +18,8 @@ env:
     version: 12.04
 #  - distribution: alpine
 #    version: 3.4
+#  - distribution: debian
+#    version: jessie
 
 before_install:
   - env
@@ -30,14 +33,16 @@ before_install:
   - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/trusty-backports.list
   - sudo apt-get update -qq
   - sudo apt -t trusty-backports -y install lxd acl rng-tools -q
-## change of group implies logout+login to apply... can't do with travis = run as root (sic)
+## change of group implies logout+login to apply... can't do with travis = run as root (sic)    = use 'newgrp lxd' ?
 ## https://github.com/travis-ci/travis-ci/issues/1839   or chain: sudo -E su $USER -c "..."
   - sudo usermod -G lxd travis
+  - newgrp lxd
   # Pull container
-  - sudo -E su $USER -c "lxc remote list"
+#  - sudo -E su $USER -c "lxc remote list"
+  - lxc remote list
   - sudo -E su $USER -c "lxc image list"
 ## pre-download base images
-  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:/${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
+  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
   - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || true'
 ## configure lxd-bridge
   - sudo perl -pi -e 's@^LXD_IPV4_ADDR=""@LXD_IPV4_ADDR="10.252.116.1"@;s@^LXD_IPV4_NETMASK=""@LXD_IPV4_NETMASK="255.255.255.0"@;s@^LXD_IPV4_NETWORK=""@LXD_IPV4_NETWORK="10.252.116.1/24"@;s@^LXD_IPV4_DHCP_RANGE=""@LXD_IPV4_DHCP_RANGE="10.252.116.2,10.252.116.254"@;s@^LXD_IPV4_DHCP_MAX=""@LXD_IPV4_DHCP_MAX="252"@;s@LXD_IPV6_PROXY="true"@LXD_IPV6_PROXY="false"@' /etc/default/lxd-bridge
@@ -82,10 +87,14 @@ before_install:
 script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/default/default.yml"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --sudo -vvvv /etc/ansible/roles/juju4.harden/test/integration/default/default.yml"
+
 ## FIXME! Travis request: Build config file had a parse error: "mapping values are not allowed in this context at line 72 column 321".
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory /etc/ansible/roles/juju4.harden/test/integration/default/default.yml --connection=local --sudo | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --sudo /etc/ansible/roles/juju4.harden/test/integration/default/default.yml" > /tmp/idempotency.log
+  - "grep -q 'changed=0.*failed=0' /tmp/idempotency.log && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)"
+
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh"
-  - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./}"
+  - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./} --force"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

@@ -10,10 +10,24 @@ ntpd\[[0-9]+\]: bad peer from pool [0-9]+.debian.pool.ntp.org
 ntpd\[[0-9]+\]: [0-9]+ out of [0-9]+ peers valid
 ntpd\[[0-9]+\]: reply from [\.0-9]+: not synced, next query [0-9]+s
 auditd\[[0-9]+\]: Audit daemon rotating log files
-kernel\[[0-9]+\]: \[[0-9]+\.[0-9]+\] INFO: NMI handler (perf_event_nmi_handler) took too long to run: [0-9]+.[0-9]+ msecs
+
+kernel\[[0-9]+\]: \[[0-9N]+\.[0-9N]+\] INFO: NMI handler (perf_event_nmi_handler) took too long to run: [0-9]+\.[0-9]+ msecs
 kernel: \[[. [:digit:]]+\] hrtimer: interrupt took [[:digit:]]+ ns$
 ## oom killer
-kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*.*
+kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9 ]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*.*
+kernel: \[[0-9N]*\.[0-9N]*\] Node [0-9]+ hugepages_total=[0-9]+ hugepages_free=[0-9]+ hugepages_surp=[0-9]+ hugepages_size=[0-9]+kB
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ total pagecache pages
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ pages in swap cache
+kernel: \[[0-9N]*\.[0-9N]*\] Swap cache stats: add [0-9]+, delete [0-9]+, find [0-9]+\/[0-9]+
+kernel: \[[0-9N]*\.[0-9N]*\] Free swap  = [0-9]+kB
+kernel: \[[0-9N]*\.[0-9N]*\] Total swap = [0-9]+kB
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ pages RAM
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ pages HighMem\/MovableOnly
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ pages reserved
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ pages cma reserved
+kernel: \[[0-9N]*\.[0-9N]*\] [0-9]+ pages hwpoisoned
+kernel: \[ [0-9N]*\.[0-9N]*\] acpiphp: Slot \[[0-9]+\] registered
+
 rrdcached\[[0-9]+\]: flushing old values
 rrdcached\[[0-9]+\]: removing old journal /var/cache/rrdcached/rrd.journal.[0-9]+\.[0-9]+
 rrdcached\[[0-9]+\]: rotating journals
@@ -35,6 +49,7 @@ sshd\[[[:digit:]]+\]: Received disconnect from [\.0-9]+: 11: Bye Bye \[preauth\]
 sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: Goodbye \[preauth\]$
 sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: PECL/ssh2 \(http://pecl.php.net/packages/ssh2\) \[preauth\]$
 sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching 
+sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)
 ##
 ##dhclient\[[[:digit:]]+\]: DHCPREQUEST of [\.0-9]+ on eth0 to [\.0-9]+ port [0-9]+ (xid=0x[0-9a-f]+)
 #dhclient\[[0-9]+\]: DHCPREQUEST of [\.0-9]+ on eth0 to [\.0-9]+ port [0-9]+ (xid=0x[0-9a-f]+)
@@ -85,6 +100,7 @@ snap\[[0-9]+\]: All snaps up to date.
 
 ## verbose sshd
 sshd\[[0-9]+\]: Set /proc/self/oom_score_adj to 0
+sshd\[[0-9]+\]: Set /proc/self/oom_score_adj from [0-9]* to [0-9]*
 
 ### nrpe
 nagios-nrpe-server\[[0-9]+\]:    ...done.
@@ -108,6 +124,12 @@ osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* scheduler.cpp:63\] 
 osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* rocksdb.cpp:191\] Opening RocksDB handle: /var/osquery/osquery.db
 osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* virtual_table.cpp:500\] The shell_history table returns data based on the current user by default, consider JOINing against the users table
 osqueryd\[[0-9]*\]: .* [0-9]*:[0-9]*:[0-9]*\.[0-9]*\s*[0-9]* query.cpp:72\] Scheduled query has been updated: pack_.*
+mount\[[0-9]*\]: mount: unknown filesystem type 'binfmt_misc'
+systemd\[1\]: Failed to mount Arbitrary Executable File Formats File System.
+systemd\[1\]: Mounting Arbitrary Executable File Formats File System...
+systemd\[1\]: proc-sys-fs-binfmt_misc.automount: Got automount request for /proc/sys/fs/binfmt_misc, triggered by [0-9]* (osqueryd)
+systemd\[1\]: proc-sys-fs-binfmt_misc.mount: Mount process exited, code=exited status=32
+systemd\[1\]: proc-sys-fs-binfmt_misc.mount: Unit entered failed state.
 
 ## openvpn
 ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* TLS: soft reset sec=[0-9]* bytes=[0-9]*/[0-9]* pkts=[0-9]*/[0-9]*
@@ -147,14 +169,15 @@ INFO spawned: '.*' with pid [0-9]*
 INFO success: .* entered RUNNING state, process has stayed up for > than [0-9]* seconds (startsecs)
 WARN received SIGTERM indicating exit request
 INFO waiting for .* to die
+WARN Included extra file "/etc/supervisor/conf.d/.*.conf" during parsing
 
 ## ansible
-ansible-async_wrapper: Module complete ([0-9]*)
-ansible-async_wrapper: Done in kid B.
-ansible-async_wrapper: Return async_wrapper task started.
-ansible-async_wrapper: Starting module and watcher
-ansible-async_wrapper: Start module ([0-9]*)
-ansible-async_wrapper: Start watching [0-9]* ([0-9]*)
+ansible-async_wrapper(.py?): Module complete ([0-9]*)
+ansible-async_wrapper(.py?): Done in kid B.
+ansible-async_wrapper(.py?): Return async_wrapper task started.
+ansible-async_wrapper(.py?): Starting module and watcher
+ansible-async_wrapper(.py?): Start module ([0-9]*)
+ansible-async_wrapper(.py?): Start watching [0-9]* ([0-9]*)
 
 ## livepatch
 canonical-livepatch\[[0-9]*\]: Checking with livepatch service.

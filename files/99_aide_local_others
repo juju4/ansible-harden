@@ -151,12 +151,8 @@
 !/vagrant
 /var/chef/cache/chef-client-running.pid$ VarFile
 /var/chef/cache/chef-stacktrace.out$ VarFile
-/var/lib/icinga2$ VarDir
-/var/lib/icinga2/icinga2.state$ VarFile
 /var/lib/openntpd/ntpd.drift$ VarFile
 /var/lib/openntpd/db/ntpd.drift$ VarFile
-!/var/spool/icinga2
-!/var/lib/graphite/whisper/carbon/agents
 !/root/.ansible/tmp
 @@define BACKUPFILES7R (diversions|statoverride|arch)
 /var/backups/@@{BACKUPFILES7R}$ Log

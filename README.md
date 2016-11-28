@@ -21,7 +21,8 @@ This role is continuous work in progress as security landscape is constantly evo
 
 ### Ansible
 It was tested on the following versions:
- * 2.0
+ * 2.2
+Previous releases of ansible are not supported because of module usages.
 
 ### Operating systems
 

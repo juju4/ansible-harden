@@ -21,6 +21,9 @@ s/sshd\[[0-9]*\]: Starting session: shell on \(.*\) for \(.*\) from \([0-9a-fA-F
 s/sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching /sshd: fatal: Unable to negotiate with <IP> port N: no matching /
 #s/sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching /sshd: fatal: Unable to negotiate with \1 port N: no matching /
 #s/sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching key exchange method found. Their offer: \(.*\)/sshd: fatal: Unable to negotiate with \1 port N: no matching key exchange method found. Their offer: \2/
+s/sshd\[[0-9]*\]: fatal: no matching mac found: client .* \[preauth\]/sshd: fatal: no matching mac found: client XXXXXX [preauth]/
+s/sshd\[[0-9]*\]: message repeated [0-9]* times: \[ Starting session: command for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]*\]/sshd: message repeated N times: [ Starting session: command for \1 from \2 port N]/
+s/sshd\[[0-9]*\]: error: maximum authentication attempts exceeded for root from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: error: maximum authentication attempts exceeded for root from \1 port N ssh2/
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
@@ -55,6 +58,7 @@ s/lxdbr0: port [0-9]*(veth[A-Za-z0-9]*) entered disabled state/lxdbr0: port N(ve
 
 ### ansible
 s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N still running (N)/
+s/ansible-async_wrapper.py: [0-9]* still running ([0-9]*)/ansible-async_wrapper.py: N still running (N)/
 
 ### ptrace
 s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
@@ -64,7 +68,9 @@ s/sysdig_probe: adding new consumer [0-9a-f]*/sysdig_probe: adding new consumer 
 ### falco
 #falco: Sun Oct  2 15:31:52 2016: Falco initialized with configuration file /etc/falco.yaml
 #falco: Sun Oct  2 15:31:52 2016: Parsed rules from file /etc/falco_rules.yaml
-s/falco\[[0-9]*\]: [A-Z][a-z]* [A-Z][a-z]*[ ]* [0-9]* [0-9]*:[0-9]*:[0-9]* [0-9]*: /falco: /
+s/falco: [A-Z][a-z]* [A-Z][a-z]*[ ]* [0-9]* [0-9]*:[0-9]*:[0-9]* [0-9]*: /falco: /
+#falco: 00:36:05.999146634: Warning Shell spawned by untrusted binary 
+s/falco: [0-9]*:[0-9]*:[0-9]*\.[0-9]*: /falco: N:N:N.N: /
 
 ### ansible
 s/ansible-async_wrapper: Invoked with [0-9]* [0-9]* \(.*\)\/.ansible\/tmp\/ansible-tmp-[0-9]*.[0-9]*-[0-9]*\/\(.*\)/ansible-async_wrapper: Invoked with N N \1\/.ansible\/tmp\/ansible-tmp-N.N-N\/\2/

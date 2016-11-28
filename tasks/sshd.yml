@@ -29,7 +29,8 @@
     - { regexp: '^PrintLastLog ', line: 'PrintLastLog yes' }
 #    - { regexp: '^BatchMode ', line: 'BatchMode no' }		## NOK
 ## those 3 lines disable all password authentications
-    - { regexp: '^UsePAM ', line: 'UsePAM no' }
+## RHEL7: 'WARNING: 'UsePAM no' is not supported in Red Hat Enterprise Linux and may cause several problems.'
+#    - { regexp: '^UsePAM ', line: 'UsePAM no' }
     - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
     - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
     - { regexp: '^PubkeyAuthentication ', line: 'PubkeyAuthentication yes' }

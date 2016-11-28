@@ -56,6 +56,13 @@ harden_pkg_remove:
 syslog_mainfile: /var/log/syslog
 syslog_authfile: /var/log/auth.log
 
+harden_services:
+    - rng-tools
+    - arpwatch
+harden_services_containers:
+    - psacct
+    - auditd
+
 harden_sshd_crypto:
     - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms curve25519-sha256@libssh.org' }
     - { regexp: '^Ciphers ', line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' }

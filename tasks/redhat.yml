@@ -37,8 +37,11 @@
 
 ## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
 - name: configure audit system
-  template: src=audit.rules.j2 dest=/etc/audit/rules.d/audit.rules mode=0644 backup=yes
+  template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
   notify:
     - restart auditd
   tags: auditd
+
+- name: initialize rootkithunter db
+  command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
 

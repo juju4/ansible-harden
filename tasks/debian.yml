@@ -41,6 +41,7 @@
   template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
 
 - include: debian-logcheck.yml
+  when: harden_logcheck is defined and harden_logcheck
 
 - block:
     - name: ensure iptables directory exists
@@ -74,7 +75,7 @@
       replace: dest=/etc/default/debsecan regexp='^REPORT=.*' replace='REPORT=false' backup=yes
 #      replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE=sid' backup=yes
     - name: Ubuntu | Disable debsecan cron
-      replace: dest=/etc/cron.d/debsecan regexp='^(.*)test -x /usr/bin/debsecan && /usr/bin/debsecan --cron' replace='#\1test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
+      replace: dest=/etc/cron.d/debsecan regexp='^([^#].*)test -x /usr/bin/debsecan && /usr/bin/debsecan --cron' replace='#\1test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
   when: ansible_distribution == 'Ubuntu'
 - name: Debian | define distribution of debsecan
   replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE={{ ansible_distribution_release }}' backup=yes
@@ -114,7 +115,7 @@
     - name: Debian | auditd
       apt: name=auditd state=present update_cache=yes
     - name: configure audit system
-      template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes
+      template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
       notify:
         - restart auditd
     - stat: path=/etc/default/grub

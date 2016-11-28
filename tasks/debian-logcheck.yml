@@ -14,7 +14,7 @@
 - name: Review Logcheck configuration
   replace:
 ## Error: Config file /tmp/tmp32Yy_d unreadable or does not exists
-#    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}" validate='sudo -u logcheck logcheck -t -d -c %s'
+#    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}" validate='sudo -u logcheck logcheck -t -d -o -c %s'
     dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
   with_items:
     - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
