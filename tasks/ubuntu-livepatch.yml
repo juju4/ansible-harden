@@ -21,7 +21,7 @@
   ignore_errors: true
 
 - debug: "WARNING! Possible error in current livepatch configuration. Please check."
-  when: livepatch is defined and livepatch.stdout is defined and livepatch.stdout.find("checkState: check-failed") != -1
+  when: livepatch is defined and livepatch.stdout is defined and livepatch.stdout.find("checkState{{ ':' }} check-failed") != -1
 
 - name: Ubuntu xenial | Enable livepatch
   command: "/snap/bin/canonical-livepatch enable {{ harden_ubuntu_livepatch_token }}"
