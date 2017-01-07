@@ -108,7 +108,7 @@
         - /usr/bin/mtr
     - name: Capabilities Hardening - tcpdump
       capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 
 - block:
 ## https://github.com/lxc/lxd/issues/2004, only on xenial?

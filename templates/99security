@@ -1,3 +1,4 @@
+## {{ ansible_managed }}
 ## /etc/apt/apt.conf.d/99security
 ## https://www.debian.org/doc/manuals/securing-debian-howto/ch4.fr.html#s4.10
 ## http://wiki.itadmins.net/doku.php?id=debian:apt-xtras

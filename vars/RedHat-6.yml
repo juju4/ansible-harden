@@ -17,6 +17,7 @@ harden_pkg:
     - yum-utils
     - audit
     - fail2ban
+    - systemtap
 
 harden_pkg_remove: []
 

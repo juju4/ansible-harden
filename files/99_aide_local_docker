@@ -3,3 +3,4 @@
 !/opt/docker/volumes
 !/var/lib/docker/image/overlay/layerdb
 !/var/lib/docker/overlay
+!/var/lib/docker/devicemapper/

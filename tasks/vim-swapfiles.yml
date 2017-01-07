@@ -1,0 +1,18 @@
+---
+
+## default: .swp/swx in same directory than edited file
+## reduce falco triggers when editing /etc
+- name: set swapfiles directory of vim
+  lineinfile:
+    dest: "{{ ansible_env['HOME'] }}/.vimrc"
+    regexp: "^set directory=.*"
+    line: "set directory=$HOME/.vim/swapfiles"
+    backup: yes
+    create: yes
+
+- name: ensure vim swapfiles directory exist
+  file:
+    dest: "{{ ansible_env['HOME'] }}/.vim/swapfiles"
+    state: directory
+    mode: '0700'
+

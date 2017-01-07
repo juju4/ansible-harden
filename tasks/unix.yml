@@ -18,8 +18,9 @@
 
 - stat: path=/var/log/account/pacct
   register: pacct
+## FIXME! might be not active if enabled/disabled...
 - name: enable accounting
-  command: "accton on"
+  command: "accton on creates=/var/log/account/pacct"
   environment:
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   when: not pacct.stat.exists

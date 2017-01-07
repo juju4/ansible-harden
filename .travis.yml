@@ -26,8 +26,7 @@ before_install:
   - pwd
   - find -ls
 ## use appropriate role path and not github name
-  - ln -s ansible-harden ../juju4.harden
-  - ./get-dependencies.sh
+  - "[ -f get-dependencies.sh ] && sh -x get-dependencies.sh"
 ## No Xenial, https://github.com/travis-ci/travis-ci/issues/5821
 #  - sudo apt install lxd
   - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/trusty-backports.list
@@ -76,9 +75,11 @@ before_install:
   - sudo -E su $USER -c "lxc config show run-${distribution}-${version//./}"
 ## FIXME! awk extraction is working in shell but not in travis... relying on global chmod as test ephemeral environment. DON'T USE IN PRODUCTION!
   - sudo -E su $USER -c "lxc config show run-${distribution}-${version//./} | awk -F'[\":,]' '/Hostid/ { print $13 }'"
-  - CUID=`sudo -E su $USER -c "lxc config show run-${distribution}-${version//./} | awk -F'[\":,]' '/Hostid/ { print $13 }'"`
+  - sudo -E su $USER -c "lxc config show run-${distribution}-${version//./} | sed -ne '/idmap.next/ s/.*\"Hostid\":\([0-9]*\),.*/\1/p'"
+#  - CUID=`sudo -E su $USER -c "lxc config show run-${distribution}-${version//./} | awk -F'[\":,]' '/idmap.next.*Hostid/ { print $13 }'"`
+  - CUID=`sudo -E su $USER -c "lxc config show run-${distribution}-${version//./} | sed -ne '/idmap.next/ s/.*\"Hostid\":\([0-9]*\),.*/\1/p'"`
   - "echo setfacl -Rm user:$CUID:rwx ${PWD%/*}"
-  - "setfacl -Rm user:$CUID:rwx ${PWD%/*}"
+  - "setfacl -Rm \"user:$CUID:rwx\" ${PWD%/*} || true"
   - sudo -E su $USER -c "lxc config device add run-${distribution}-${version//./} sharedroles disk path=/etc/ansible/roles source=${PWD%/*}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- mount"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pwd"

@@ -57,3 +57,5 @@
 
 - include: fail2ban.yml
 
+- include: vim-swapfiles.yml
+

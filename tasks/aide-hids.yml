@@ -44,7 +44,9 @@
       replace:
         "dest='/etc/cron.daily/aide' regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
       with_items:
-        - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
+## or 'setfacl -m u:nagios:r-- /var/log/aide/aide.log'
+#        - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
+        - { regexp: 'savelog -t -g adm -m 64? -u root -c 7 "$LOGFILE" > /dev/null$', replace: 'savelog -t -g adm -m 640 -u root -c 7 "$LOGFILE" > /dev/null && setfacl -m u:nagios:r-- "$LOGFILE" 2> /dev/null' }
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - block:

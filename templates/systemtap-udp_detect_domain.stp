@@ -1,0 +1,9 @@
+## {{ ansible_managed }}
+## https://serverfault.com/questions/192893/how-i-can-identify-which-process-is-making-udp-traffic-on-linux
+## $ stap -v udp_detect_domain.stp
+probe udp.sendmsg {
+  if ( dport == 53 && daddr == "8.8.8.8" ) {
+    printf ("PID %5d (%s) sent UDP to %15s 53\n", pid(), execname(), daddr)
+  }
+}
+

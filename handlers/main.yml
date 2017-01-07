@@ -10,7 +10,7 @@
   when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int >= 16)
 - name: restart auditd
   service: name=auditd state=restarted
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm" or ansible_virtualization_type == "docker"))
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 - name: reload fstab
   shell: "umount -a; mount -a"
   ignore_errors: true
@@ -26,4 +26,10 @@
 
 - name: restart osquery
   service: name=osqueryd state=restarted
+
+- name: restart journald
+  service: name=systemd-journald state=restarted
+
+- name: reload udev
+  command: "udevadm control --reload-rules"
 

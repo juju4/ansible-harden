@@ -1,0 +1,41 @@
+## {{ ansible_managed }}
+## USB firewall for Linux
+##
+## need:
+##		Linux udev
+
+### Note: only valid for automatic desktop mount
+#
+### Disable automounting ?	= doesn't seem effective
+### http://unix.stackexchange.com/questions/85061/automount-not-disabling-in-ubuntu-12-04-or-13-04
+#SUBSYSTEM=="usb", ENV{UDISKS_AUTO}="0"
+### http://zurlinux.com/?p=35
+##ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd*|sr", ENV{UDISKS_PRESENTATION_HIDE}="1"
+#
+
+### from irongeek
+## Blacklist everything
+ACTION=="add", SUBSYSTEMS=="usb", RUN+="/bin/sh -c 'for host in /sys/bus/usb/devices/usb*; do echo 0 > $host/authorized_default; done'"
+#Enable hub devices. There may be a better way than this.
+#ACTION=="add", ATTR{bDeviceClass}=="09", RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+ACTION=="add", ATTR{bDeviceClass}=="09", ATTR{idProduct}=="2507", ATTR{version}==" 2.00", RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+#Other things to enable
+ACTION=="add", ATTR{idVendor}=="046d", ATTR{idProduct}=="0809", RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+ACTION=="add", ATTR{serial}=="078606B90DD3", RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+#ACTION=="add", ATTR{product}=="802.11 n WLAN", RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+
+###
+
+## Whitelisted devices
+{% for dev in harden_usb_blockdevice_whitelist %}
+ACTION=="add", SUBSYSTEM=="block",{{ dev }},RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+{% endfor %}
+{% for dev in harden_usb_inputdevice_whitelist %}
+ACTION=="add", SUBSYSTEM=="input",{{ dev }},RUN+="/bin/sh -c 'echo 1 >/sys$DEVPATH/authorized'"
+{% endfor %}
+
+## 20140716 Rubber Ducky (keyboard attack)
+## FIXME! execute only if not blacklist/whitelist...
+ACTION=="add", ENV{DEVTYPE}=="usb_device",SUBSYSTEM=="usb",RUN+="/usr/local/bin/prevent-ducky.py %k '%E{DEVNAME}' '$attr{manufacturer}' '$attr{idVendor}' '$attr{idProduct}' '$attr{serial}'"
+
+

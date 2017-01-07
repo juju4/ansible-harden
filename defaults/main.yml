@@ -14,6 +14,8 @@ harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
 harden_shell_timeout: 900
 
+harden_journald_systemmaxuse: '1024M'
+
 harden_disable_usb: true
 
 harden_bash2syslog: true
@@ -34,6 +36,16 @@ harden_logcheck_extra_logfiles:
   - /var/log/supervisor/supervisord.log
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
+
+## Attention! those three would generate lot of logs. alternative: sysdig/falco, systemtap, osquery...
+harden_auditd_log_all_execve: false
+harden_auditd_log_all_socket: false
+harden_auditd_log_all_connect: false
+harden_auditd_sensitive_files:
+  - /etc/shadow
+## file must exist
+#  - /data/topsecret.data
+harden_auditd_extra_rules: []
 
 ## firewall rules? avoid to lock yourself
 #harden_fw: false
@@ -84,8 +96,8 @@ harden_ubuntu_livepatch_token: 'xxx'
 _ubuntu_sysctl:
 
 ## define in vars/{{ distribution }}*.yml
-harden_debian_pkg:
-harden_debian_remove:
+harden_debian_pkg: []
+harden_debian_remove: []
 
 ## maybe override in vars/{{ distribution }}*.yml and disabled on lxc as parts are not permitted
 harden_distribution_sysctl:
@@ -114,4 +126,13 @@ harden_mount_options_aptpost:
     "/tmp": "noexec"
     "/var/tmp": "noexec"
     "/usr": "ro"
+
+## Experimental
+harden_usb_restrict_udev: false
+harden_usb_blockdevice_whitelist:
+  - 'ATTR{idVendor}=="5572",ATTR{idProduct}=="123456",ATTR{serial}=="XXX"'
+harden_usb_inputdevice_whitelist:
+## Microsoft Wired keyboard 400
+  - 'ATTR{idVendor}=="045e",ATTR{idProduct}=="0752",ATTR{urbnum}=="2175"'
+
 

@@ -1,3 +1,4 @@
+## {{ ansible_managed }}
 local1.notice                    /var/log/bash.log
 {% if rsyslog_v.stdout is defined and rsyslog_v.stdout | version_compare('8.0', '<') %}
 & ~

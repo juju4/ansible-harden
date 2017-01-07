@@ -156,10 +156,10 @@
 !/root/.ansible/tmp
 @@define BACKUPFILES7R (diversions|statoverride|arch)
 /var/backups/@@{BACKUPFILES7R}$ Log
-/var/backups/@@{BACKUPFILES7R}\.[01]$ Log
-/var/backups/@@{BACKUPFILES7R}\.[12]\.gz$ Log
-/var/backups/@@{BACKUPFILES7R}\.[3-6]\.gz$ Log
-/var/backups/@@{BACKUPFILES7R}\.7\.gz$ Log
+/var/backups/@@{BACKUPFILES7R}\.[01]$ LowLog
+/var/backups/@@{BACKUPFILES7R}\.[12]\.gz$ LoSerMemberLog
+/var/backups/@@{BACKUPFILES7R}\.[3-6]\.gz$ SerMemberLog
+/var/backups/@@{BACKUPFILES7R}\.7\.gz$ HiSerMemberLog
 /var/lib/snapd$ VarDirTime
 /var/lib/snapd/state.json$ InodeData
 /var/lib/systemd/timers/stamp-apt-daily.timer$ VarFile

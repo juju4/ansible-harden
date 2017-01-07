@@ -1,0 +1,55 @@
+---
+
+## Misc Magazine N°50, FR, Jul/Aug 2010
+## https://www.lexsi.com/securityhub/danse-des-canards/
+## https://security.stackexchange.com/questions/64524/how-to-prevent-badusb-attacks-on-linux-desktop
+## https://en.wikibooks.org/wiki/Grsecurity/Appendix/Grsecurity_and_PaX_Configuration_Options#Deny_new_USB_connections_after_toggle
+## https://github.com/dkopecek/usbguard
+## http://www.opensourceforu.com/2012/06/some-nifty-udev-rules-and-examples/
+## http://www.irongeek.com/i.php?page=security/plug-and-prey-malicious-usb-devices
+## Deny new USB devices when locked?
+## Note: Alpine has no automount/autofs for storage
+
+- name: USB | Ensure udev & others are present
+  package: name={{ item }} state=present
+  with_items:
+    - udev
+    - zenity
+
+## FIXME! Currently not working
+## https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1414409       systemd-udevd[257]: specified group 'input' unknown
+## https://patchwork.ozlabs.org/patch/198234/
+## https://bugs.freedesktop.org/show_bug.cgi?id=88491
+- name: patch udev init for missing group
+  replace:
+    dest: /etc/init.d/udev
+    regexp: ' /sbin/udevd$'
+    replace: ' /sbin/udevd --resolve-names=never'
+    backup: yes
+  when: ansible_os_family == 'Alpine'
+
+- name: USB | add restriction rules
+  template:
+    src: 000_usbfilter.rules.j2
+    dest: /etc/udev/rules.d/000_usbfilter.rules
+    mode: '0644'
+    backup: yes
+  notify:
+    - reload udev
+
+- name: USB | download Lexsi prevent-ducky script
+  get_url:
+    url: https://www.lexsi.fr/sites/default/files/prevent-ducky.zip
+    dest: /usr/local/bin
+    mode: 0644
+    checksum: 'sha256:d76ad1f85fbca88515ddec2b7124fababbe45420a5ce34c0dc1b1f33fedbdded'
+    validate_certs: false
+
+- name: USB | uncompress prevent-ducky
+  unarchive:
+    src: /usr/local/bin/prevent-ducky.zip
+    dest: /usr/local/bin
+    mode: '0755'
+    remote_src: yes
+    creates: /usr/local/bin/prevent-ducky.py
+

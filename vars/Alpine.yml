@@ -1,6 +1,7 @@
 ---
 
 ssh_svc: sshd
+aide_bin: ''
 
 harden_pkg:
     - openssh
@@ -22,8 +23,12 @@ harden_pkg:
     - haveged
 #    - rng-tools
     - git
+#    - systemtap
 
 harden_pkg_remove: []
+harden_services:
+  - openntpd
+harden_services_containers: []
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/messages

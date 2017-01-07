@@ -21,4 +21,20 @@
         - /usr/bin/g++
       ignore_errors: true
 ## Note: ignore errors as compiler tools may not be installed...
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
+
+- block:
+## https://github.com/ansible/ansible/issues/13652
+    - name: Alpine | Restrict compiler tools to group {{ harden_restrict_compiler_group }}
+      file: dest={{ item }} owner=root group={{ harden_restrict_compiler_group }} mode={{ harden_restrict_compiler_umask }} state=file
+      with_items:
+        - /usr/bin/gcc
+        - /usr/bin/gcc-ar
+        - /usr/bin/gcc-nm
+        - /usr/bin/gcc-ranlib
+        - /usr/bin/make
+        - /usr/bin/g++
+      ignore_errors: true
+  when: ansible_os_family == 'Alpine'
+
 

@@ -14,7 +14,12 @@
 ## https://wiki.mozilla.org/Security/Guidelines/OpenSSH
 ## https://github.com/arthepsy/ssh-audit
 - name: Restrict sshd config (1)
-  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+    validate: 'sshd -f %s -T'
   with_items:
     - { regexp: '^Port ', line: 'Port 22' }
 ## default

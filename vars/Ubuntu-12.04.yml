@@ -1,6 +1,7 @@
 ---
 
 ssh_svc: ssh
+aide_bin: aide.wrapper
 
 ## override: no sysdig(unmet dependencies)
 harden_pkg:
@@ -45,6 +46,7 @@ harden_pkg:
     - aptitude
 ## files classification
     - tracker-utils
+    - systemtap
 
 harden_pkg_remove:
     - avahi-daemon

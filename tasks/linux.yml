@@ -32,7 +32,7 @@
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: set sensible core pattern
       sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
-  when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker" or ansible_virtualization_type == "kvm"))
+  when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 
 #journalctl --disk-usage
 #journalctl --verify
@@ -41,14 +41,19 @@
     - name: configure linux journal
       ini_file: dest=/etc/systemd/journald.conf section={{ item.s }} option={{ item.o }} value={{ item.v }} backup=yes
       with_items:
-        - { s: 'Journal', o: 'SystemMaxUse', v: '1024M' }
+        - { s: 'Journal', o: 'SystemMaxUse', v: "{{ harden_journald_systemmaxuse }}" }
 #        - { s: 'Journal', o: 'ForwardToSyslog', v: 'yes' }
+      notify:
+        - restart journald
   when: ansible_service_mgr == "systemd"
 
 ## FIXME! firewall rules
 
 - include: iptables.yml
   when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"
+
+- include: usb.yml
+  when: harden_usb_restrict_udev
 
 - include: aide-hids.yml
   when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"

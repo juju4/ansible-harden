@@ -1,7 +1,7 @@
 ## {{ ansible_managed }}
-## /etc/logrotate.d/iptables
-/var/log/iptables.log {
-    rotate 14
+## /etc/logrotate.d/osquery
+/var/log/osquery/osqueryd.results.log {
+    rotate 90
     daily
     missingok
     notifempty

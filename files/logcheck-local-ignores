@@ -136,6 +136,7 @@ ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* TLS: soft reset sec=[0-9]* bytes=[0-
 ovpn-.*\[[0-9]*\]: TLS: soft reset sec=[0-9]* bytes=[0-9]*/[0-9]* pkts=[0-9]*/[0-9]*
 ovpn-.*\[[0-9]*\]: Socket Buffers: R=\[[0-9]*->[0-9]*\] S=\[[0-9]*->[0-9]*\]
 # client
+ovpn-.*\[[0-9]*\]: VERIFY OK: depth=[0-9]*, C=[A-Z]{2}, ST=[A-Z]{2}, L=.*, O=.*, OU=.*, CN=.*, name=EasyRSA, emailAddress=.*
 ovpn-.*\[[0-9]*\]: Data Channel Decrypt: Cipher 'AES-256-CBC' initialized with 256 bit key
 ovpn-.*\[[0-9]*\]: Data Channel Decrypt: Using 512 bit message hash 'SHA512' for HMAC authentication
 ovpn-.*\[[0-9]*\]: Data Channel Encrypt: Cipher 'AES-256-CBC' initialized with 256 bit key
@@ -143,6 +144,7 @@ ovpn-.*\[[0-9]*\]: Data Channel Encrypt: Using 512 bit message hash 'SHA512' for
 ovpn-.*\[[0-9]*\]: Control Channel: TLSv1, cipher TLSv1/SSLv3 DHE-RSA-AES256-GCM-SHA384, 2048 bit RSA
 ovpn-.*\[[0-9]*\]: Control Channel: TLSv1, cipher TLSv1/SSLv3 DHE-RSA-AES256-SHA, 2048 bit RSA
 # server
+ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* VERIFY OK: depth=[0-9]*, C=[A-Z]{2}, ST=[A-Z]{2}, L=.*, O=.*, OU=.*, CN=.*, name=EasyRSA, emailAddress=.*
 ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* Data Channel Decrypt: Cipher 'AES-256-CBC' initialized with 256 bit key
 ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* Data Channel Decrypt: Using 512 bit message hash 'SHA512' for HMAC authentication
 ovpn-.*\[[0-9]*\]: .*/[0-9a-fA-F.:]*:[0-9]* Data Channel Encrypt: Cipher 'AES-256-CBC' initialized with 256 bit key
@@ -183,4 +185,7 @@ ansible-async_wrapper(.py?): Start watching [0-9]* ([0-9]*)
 canonical-livepatch\[[0-9]*\]: Checking with livepatch service.
 canonical-livepatch\[[0-9]*\]: No payload available.
 canonical-livepatch\[[0-9]*\]: No updates available at this time.
+
+## named
+named\[[0-9]*\]: automatic empty zone: .*.IN-ADDR.ARPA
 

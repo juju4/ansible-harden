@@ -1,6 +1,7 @@
 ---
 
 ssh_svc: ssh
+aide_bin: aide.wrapper
 
 harden_pkg:
     - openssh-server
@@ -45,6 +46,7 @@ harden_pkg:
     - aptitude
 ## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
 #    - tracker-utils
+    - systemtap
 
 harden_pkg_remove:
     - avahi-daemon

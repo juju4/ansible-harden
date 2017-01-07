@@ -7,3 +7,8 @@
   register: distout
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 
+- name: Alpine | Ensure services are running and enabled on boot.
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - "{{ harden_services }}"
+    - "{{ harden_services_containers }}"

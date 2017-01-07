@@ -1,3 +1,4 @@
+## {{ ansible_managed }}
 ## /etc/audit/rules.d/audit.rules
 ## https://cisofy.com/controls/ACCT-9630/
 ## http://www.digrouz.com/mediawiki/index.php?title=(RHEL)_HOWTO_configure_the_auditing_of_the_system_(auditd)
@@ -256,6 +257,54 @@
 -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
 -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
 -a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+
+## extra
+## https://slack.engineering/syscall-auditing-at-scale-e6a3ca8ac1b8
+## Audit any network listen (should include bind())
+## https://stackoverflow.com/questions/27014955/socket-connect-vs-bind
+## https://www.redhat.com/archives/linux-audit/2015-January/msg00057.html
+#?-a exit,always -F arch=b32 -S socketcall -k listen_call
+## FIXME! some system: 'Syscall name unknown: listen'
+#-a exit,always -F arch=b32 -S listen -k listen_call
+-a exit,always -F arch=b64 -S listen -k listen_call
+
+{% if harden_auditd_log_all_execve %}
+# Log all executed commands (larger than just root, above)
+-a exit,always -F arch=b32 -S execve -k execve_call
+-a exit,always -S arch=b64 -S execve -k execve_call
+
+{% endif %}
+{% if harden_auditd_log_all_connect %}
+# Log all connect (should include socket())
+-a exit,always -F arch=b32 -S connect -k connect_call
+-a exit,always -S arch=b64 -S connect -k connect_call
+
+{% endif %}
+{% if harden_auditd_log_all_socket %}
+# Log sockets, only the one succeeding
+#-a exit,always -F arch=b64 -F success=1 -S socket -k socket_call
+# socket(PF_INET, SOCK_STREAM, x) (ipv4/tcp)
+-a exit,always -F arch=b32 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+-a exit,always -F arch=b64 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+# socket(PF_INET, SOCK_DGRAM, x) (ipv4/udp)
+-a exit,always -F arch=b32 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+-a exit,always -F arch=b64 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+# socket(PF_INET6, SOCK_STREAM, x) (ipv6/tcp)
+-a exit,always -F arch=b32 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+-a exit,always -F arch=b64 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+# socket(PF_INET6, SOCK_DGRAM, x) (ipv6/udp)
+-a exit,always -F arch=b32 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+-a exit,always -F arch=b64 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+
+{% endif %}
+# Audit access to those files
+{% for f in harden_auditd_sensitive_files %}
+-w {{ f }} -p rwxa
+{% endfor %}
+
+{% for r in harden_auditd_extra_rules %}
+{{ r }}
+{% endfor %}
 
 ###################
 # Make the configuration immutable

@@ -5,10 +5,21 @@
   register: hasOsquery
 - block:
     - name: configure osquery
-      template: src=osquery.conf.j2 dest=/etc/osquery/osquery.conf mode=0644 backup=yes
+      template:
+        src: osquery.conf.j2
+        dest: /etc/osquery/osquery.conf
+        mode: '0644'
+        backup: yes
+        validate: 'osqueryi --config_path %s --config_check'
       notify:
         - restart osquery
+    - name: add logrotate configuration for iptables.log
+      template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644
     - name: ensure service is enabled and started
       service: name=osqueryd state=started enabled=yes
   when: hasOsquery.stat.exists
 
+## FIXME! warnings like (from packs/incident-response.conf)
+#virtual_table.cpp:484] The shell_history table returns data based on the current user by default, consider JOINing against the users table
+# but still apply with
+# SELECT s.uid,s.time,s.command,s.history_file FROM shell_history s JOIN users USING (uid) limit 10;
