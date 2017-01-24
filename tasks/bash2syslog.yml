@@ -17,12 +17,14 @@
       export HISTIGNORE=
       export HISTSIZE=3000
       export HISTTIMEFORMAT="%a %b %Y %T %z "
+      if [ "X$SHELL" = '/bin/bash' ]; then
       typeset -r HISTCONTROL
       typeset -r HISTFILE
       typeset -r HISTFILESIZE
       typeset -r HISTIGNORE
       typeset -r HISTSIZE
       typeset -r HISTTIMEFORMAT
+      fi
   tags: bash
 ## those two seems to create issues...
 #      export PROMPT_COMMAND=\"history -a\"
@@ -35,6 +37,7 @@
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: bash2syslog ###"
     content: |
+      if [ "X$SHELL" = '/bin/bash' ]; then
       function log2syslog
       {
          declare command
@@ -44,6 +47,7 @@
          [ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command --- $PWD, $OLDPWD, $SSH_CLIENT
       }
       trap log2syslog DEBUG
+      fi
   tags: bash
 
 - stat: path=/etc/rsyslog.d

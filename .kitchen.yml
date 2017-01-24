@@ -13,7 +13,7 @@ provisioner:
   ansible_verbose: false
   ansible_verbosity: 3
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
-  ansible_yum_repo: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+#  ansible_yum_repo: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
   require_ansible_omnibus: true
   require_chef_omnibus: false
 #  require_chef_for_busser: false
@@ -25,6 +25,10 @@ platforms:
   - name: ubuntu-14.04
   - name: ubuntu-12.04
   - name: centos-7
+## capability required for some packages upgrade: ping
+    driver:
+      config:
+        security.privileged: true
 #  - name: centos-6
 #  - name: alpine-3.4
 

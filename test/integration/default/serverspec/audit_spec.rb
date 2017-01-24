@@ -16,9 +16,9 @@ set :backend, :exec
 #  it { should be_enabled }
 #end
 
-describe file('/etc/audit/audit.rules'), :if => os[:family] == 'ubuntu' && os[:release] != '16.04' do
-  it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
-end
-describe file('/etc/audit/rules.d/audit.rules'), :if => os[:family] == 'redhat' do
-  it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
-end
+#describe file('/etc/audit/audit.rules'), :if => os[:family] == 'ubuntu' && os[:release] != '16.04' do
+#  it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
+#end
+#describe file('/etc/audit/rules.d/audit.rules'), :if => os[:family] == 'redhat' do
+#  it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
+#end
