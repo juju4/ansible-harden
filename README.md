@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/juju4/ansible-harden.svg?branch=master)](https://travis-ci.org/juju4/ansible-harden)
+[![Build Status - Master](https://travis-ci.org/juju4/ansible-harden.svg?branch=master)](https://travis-ci.org/juju4/ansible-harden)
+[![Build Status - Devel](https://travis-ci.org/juju4/ansible-harden.svg?branch=devel)](https://travis-ci.org/juju4/ansible-harden/branches)
 # harden ansible role
 
 Ansible role to harden system and make it more forensics friendly (linux only). Few task example below.
@@ -40,7 +41,7 @@ For example
 ```
 - host: all
   roles:
-    - harden
+    - juju4.harden
 ```
 
 Run
@@ -71,14 +72,14 @@ Default kitchen config (.kitchen.yml) is lxd-based, while (.kitchen.vagrant.yml)
 Once you ensured all necessary roles are present, You can test with:
 ```
 $ gem install kitchen-ansible kitchen-lxd_cli kitchen-sync kitchen-vagrant
-$ cd /path/to/roles/harden
+$ cd /path/to/roles/juju4.harden
 $ kitchen verify
 $ kitchen login
 $ KITCHEN_YAML=".kitchen.vagrant.yml" kitchen verify
 ```
 or
 ```
-$ cd /path/to/roles/harden/test/vagrant
+$ cd /path/to/roles/juju4.harden/test/vagrant
 $ vagrant up
 $ vagrant ssh
 ```
@@ -88,6 +89,10 @@ $ vagrant ssh
 * Tests has been mostly on Ubuntu trusty and xenial so coverage might be not equivalent for other distributions.
 * You are also advise to check projects like https://github.com/dev-sec
 Some tasks are better covered there like suid/sgid binaries cleaning and inspec control testing.
+
+* Canonical livepatch has some issues and may return ```canonical-livepatch: Bad server status code: 403. URL: https://livepatch.canonical.com/api/machine/xxx {"error": "Invalid Machine Token"}```
+https://askubuntu.com/questions/844583/state-check-failed-when-running-canonical-livepatch
+https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1642581
 
 ## License
 
