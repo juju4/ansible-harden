@@ -81,3 +81,10 @@ s/ansible-async_wrapper: Invoked with [0-9]* [0-9]* \(.*\)\/.ansible\/tmp\/ansib
 s/osqueryd\[[0-9]*\]: I1222 [0-9]*:[0-9]*:[0-9]*\.[0-9]*  5221 events.cpp:649\] Event publisher failed setup:/osqueryd: I1222 HH:MM:SS.XXXXXX  5221 events.cpp:649] Event publisher failed setup:/
 s/osqueryd\[[0-9]*\]: I1221 [0-9]*:[0-9]*:[0-9]*\.[0-9]* 25046 rocksdb.cpp:133\] RocksDB: \[ERROR\] \[JOB 227\] Failed to delete \/var\/osquery\/osquery.db\/[0-9]*.log type=0 #[0-9]* -- IO error: \/var\/osquery\/osquery.db\/[0-9]*.log: Permission denied/ osqueryd: I1221 HH:MM:SS.XXXXXX 25046 rocksdb.cpp:133] RocksDB: [ERROR] [JOB 227] Failed to delete \/var\/osquery\/osquery.db\/NNNNNNN.log type=0 #NNN -- IO error: \/var\/osquery\/osquery.db\/NNNNNN.log: Permission denied/
 
+### docker
+s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=info msg="libcontainerd: new containerd process, pid: [0-9]*"/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=info msg="libcontainerd: new containerd process, pid: N"/
+s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=/
+
+### digitalocean
+s/do-agent\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* /do-agent: YYY\/MM\/DD HH:MM:SS /
+

@@ -189,3 +189,7 @@ canonical-livepatch\[[0-9]*\]: No updates available at this time.
 ## named
 named\[[0-9]*\]: automatic empty zone: .*.IN-ADDR.ARPA
 
+## falco
+falco: Falco initialized with configuration file /etc/falco.yaml
+falco: Parsed rules from file /etc/falco_rules.yaml
+

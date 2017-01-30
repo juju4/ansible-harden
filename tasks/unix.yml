@@ -38,7 +38,9 @@
       #readonly TMOUT={{ harden_shell_timeout }}
   tags: bash
 
-## /etc/issue.net too ?
 - name: configure motd
-  template: src=motd.j2 dest=/etc/motd mode=0644 backup=yes
+  template: src=motd.j2 dest={{ item }} mode=0644 backup=yes
+  with_items:
+    - /etc/motd
+    - /etc/issue.net
 
