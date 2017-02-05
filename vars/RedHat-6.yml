@@ -10,7 +10,6 @@ harden_pkg:
     - haveged
     - psacct
     - sysstat
-    - arpwatch
     - aide
     - rkhunter
     - lynis
@@ -18,12 +17,12 @@ harden_pkg:
     - audit
     - fail2ban
     - systemtap
+    - setroubleshoot
 
 harden_pkg_remove: []
 
 harden_services:
     - haveged
-    - arpwatch
 #    - yum-cron
 harden_services_containers: []
 #    - psacct

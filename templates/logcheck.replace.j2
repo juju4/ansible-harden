@@ -33,6 +33,9 @@ s/kernel: \[[0-9N]*\.[0-9N]*\] \(.*\): renamed from veth\([A-Za-z0-9]*\)/kernel:
 s/kernel: \[[0-9N]*\.[0-9N]*\] veth\([A-Za-z0-9]*\): renamed from \(.*\)/kernel: [N.N] vethXXXXXX: renamed from \1/
 s/device veth[A-Za-z0-9]* entered promiscuous mode/device vethXXXXXX entered promiscuous mode/
 s/device veth[A-Za-z0-9]* left promiscuous mode/device vethXXXXXX left promiscuous mode/
+/kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9a-f]*\] \[[0-9a-f]*\] \[[0-9a-f]*\] \[[0-9a-f]*\]/d
+/kernel: \[[0-9N]*\.[0-9N]*\] Call Trace:/d
+/kernel: \[[0-9N]*\.[0-9N]*\]  \[\<[0-9a-f]*\>\] .*+0x[0-9a-f]*\/0x[0-9a-f]*/d
 s/kernel: \[[0-9N]*\.[0-9N]*\] init: \(.*\) main process ([0-9]*) terminated with status \([0-9]*\)/kernel: [N.N] init: \1 main process (N) terminated with status \2/
 s/kernel: \[[0-9]*\.[0-9]*\] Out of memory: Kill process [0-9]* (\(.*\)) score [0-9]* or sacrifice child/kernel: [N.N] Out of memory: Kill process X (\1) score X or sacrifice child/
 s/kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*.*//
@@ -83,6 +86,7 @@ s/osqueryd\[[0-9]*\]: I1221 [0-9]*:[0-9]*:[0-9]*\.[0-9]* 25046 rocksdb.cpp:133\]
 
 ### docker
 s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=info msg="libcontainerd: new containerd process, pid: [0-9]*"/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=info msg="libcontainerd: new containerd process, pid: N"/
+s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=error msg="containerd: deleting container" error="exit status 1: \"container .* does not exist\\\\none or more of the container deletions failed\\\\n\\""/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=error msg="containerd: deleting container" error="exit status 1: \"container XXXXXXXX does not exist\\\\none or more of the container deletions failed\\\\n\\""/
 s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=/
 
 ### digitalocean

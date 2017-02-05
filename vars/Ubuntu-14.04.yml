@@ -33,7 +33,6 @@ harden_pkg:
     - libpam-cracklib
     - debsums
     - apt-show-versions
-    - arpwatch
     - lynis
     - libpam-tmpdir
     - debian-goodies
@@ -61,7 +60,6 @@ syslog_authfile: /var/log/auth.log
 
 harden_services:
     - rng-tools
-    - arpwatch
 harden_services_containers:
     - psacct
     - auditd

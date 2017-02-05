@@ -17,7 +17,6 @@ harden_pkg:
     - libcap
     - ldns-tools
     - gnupg
-    - arpwatch
     - fail2ban
 #    - linux-tools-generic   # perf /FlameGraph
     - haveged

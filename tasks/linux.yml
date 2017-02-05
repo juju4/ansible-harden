@@ -56,7 +56,7 @@
   when: harden_usb_restrict_udev
 
 - include: aide-hids.yml
-  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"
+  when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
 
 - include: osquery.yml
   when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"

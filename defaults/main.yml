@@ -7,8 +7,10 @@ harden_use_rpc: false
 harden_use_forwarding: false
 harden_umask: '022'
 #harden_umask: '027'
+harden_aide: true
 harden_init_aidedb: false
 harden_aidedb_rotatedays: 14
+harden_arpwatch: true
 harden_unix_fstab_flags: true
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30

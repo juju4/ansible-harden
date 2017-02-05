@@ -10,13 +10,13 @@ harden_pkg:
     - haveged
     - psacct
     - sysstat
-    - arpwatch
     - aide
     - rkhunter
     - lynis
     - yum-utils
     - audit
     - fail2ban
+    - setroubleshoot
 ## FIXME!
 ## https://bugs.centos.org/view.php?id=9938
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1293513
@@ -29,7 +29,6 @@ harden_pkg_remove: []
 
 harden_services:
     - haveged
-    - arpwatch
 #    - yum-cron
 harden_services_containers:
     - psacct
