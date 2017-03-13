@@ -10,11 +10,11 @@ env:
   - distribution: centos
     version: 7
     init: /usr/lib/systemd/systemd
-    run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
-    run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
 #    run_opts: "--cap-add SYS_ADMIN"
   - distribution: ubuntu
     version: 14.04

@@ -4,17 +4,24 @@
 :INPUT {{ harden_fw_default }} [0:0]
 :FORWARD {{ harden_fw_default }} [0:0]
 :OUTPUT {{ harden_fw_default }} [0:0]
+:fail2ban-snmpd - [0:0]
 :fail2ban-ssh - [0:0]
+:fail2ban-sshd - [0:0]
+-A INPUT -p tcp -m multiport --dports 22 -j fail2ban-sshd
+-A INPUT -p udp -m multiport --dports 161 -j fail2ban-snmpd
 -A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh
 -A INPUT -i eth0 -p tcp -m state --state INVALID -m recent --update --seconds 10 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
 -A INPUT -i eth0 -p tcp -m state --state INVALID -m recent --set --name DEFAULT --mask 255.255.255.255 --rsource
 -A INPUT -i eth0 -p tcp -m state --state NEW -m recent --update --seconds 10 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
 -A INPUT -i eth0 -p tcp -m state --state NEW -m recent --set --name DEFAULT --mask 255.255.255.255 --rsource
--A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -i lo -j ACCEPT
 -A OUTPUT -o lo -j ACCEPT
+## block noise
+-A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,5666 -j DROP
+## Local DHCP?
+-A OUTPUT -o eth0 -p udp --sport 68 --d {{ harden_fw_gw }} --dport 67 -j ACCEPT
 ## Incoming SSH
-{% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted %}
+{% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}
 {% for host in harden_fw_ssh_restricted %}
 -A INPUT -p tcp -s {{ host }} --dport {{ harden_fw_ssh_port }} -j ACCEPT
 -A OUTPUT -p tcp --sport {{ harden_fw_ssh_port }} -m state --state ESTABLISHED -j ACCEPT
@@ -22,9 +29,11 @@
 {% else %}
 -A INPUT -p tcp --dport {{ harden_fw_ssh_port }} -j ACCEPT
 {% endif %}
+-A FORWARD -p tcp --dport {{ harden_fw_ssh_port }} -j ACCEPT
 ## Outgoing SSH 
 -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 ## DNS
 {% if harden_fw_dnsservers is defined and harden_fw_dnsservers %}
 {% for host in harden_fw_dnsservers %}
@@ -35,13 +44,21 @@
 -A OUTPUT -p tcp --dport 53 -j ACCEPT
 -A OUTPUT -p udp --dport 53 -j ACCEPT
 {% endif %}
+-A FORWARD -p tcp --dport 53 -j ACCEPT
+-A FORWARD -p udp --dport 53 -j ACCEPT
+## NTP
+-A INPUT -p udp --dport 123 -j ACCEPT
+-A OUTPUT -p udp --dport 123 -j ACCEPT
 ## ICMP
 -A INPUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 -A OUTPUT -p icmp --icmp-type 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp --icmp-type 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp --icmp-type 3 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -p icmp --icmp-type 0 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -p icmp --icmp-type 8 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 ## SMTP
-{% if harden_fw_smtpservers is defined and harden_fw_smtpservers %}
+{% if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
 {% for host in harden_fw_smtpservers %}
 -A OUTPUT -p tcp -d {{ host }} --dport {{ harden_fw_smtp_port }} -j ACCEPT
 {% endfor %}
@@ -73,17 +90,17 @@
 {% if groups['monitoring'] is defined and groups['monitoring'] %}
 ## Applications
 {% if inventory_hostname in groups['db_servers'] %}
--A INPUT -p tcp  --dport 3306 -j  ACCEPT
+-A INPUT -p tcp  --dport 3306 -j ACCEPT
 {% endif %}
 {% endif %}
 {% if groups['http_servers'] is defined and groups['http_servers'] %}
 {% if inventory_hostname in groups['http_servers'] %}
--A INPUT -p tcp  --dport 80 -j  ACCEPT
+-A INPUT -p tcp  --dport 80 -j ACCEPT
 {% endif %}
 {% endif %}
 {% if groups['https_servers'] is defined and groups['https_servers'] %}
 {% if inventory_hostname in groups['https_servers'] %}
--A INPUT -p tcp  --dport 443 -j  ACCEPT
+-A INPUT -p tcp  --dport 443 -j ACCEPT
 {% endif %}
 {% endif %}
 -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: " --log-level 7
@@ -97,6 +114,11 @@
 {% endif %}
 ## generic rule
 -A OUTPUT -p tcp -m state --state ESTABLISHED -j ACCEPT
+-A INPUT -j LOG --log-prefix "iptables: [NOMATCH] " --log-level 7
+-A OUTPUT -j LOG --log-prefix "iptables: [NOMATCH] " --log-level 7
+## fail2ban
+-A fail2ban-snmpd -j RETURN
 -A fail2ban-ssh -j RETURN
+-A fail2ban-sshd -j RETURN
 COMMIT
 # Completed

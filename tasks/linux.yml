@@ -64,3 +64,5 @@
 - include: ubuntu-livepatch.yml
   when: harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
 
+- include: grub.yml
+

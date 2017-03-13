@@ -98,3 +98,11 @@ https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1642581
 
 BSD 2-clause
 
+## References
+
+* CIS benchmarks (when was public)
+* https://www.asd.gov.au/publications/protect/top_4_mitigations_linux.htm
+* https://www.ncsc.gov.uk/guidance/eud-security-guidance-ubuntu-1604-lts
+* https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
+* experience, friends and colleagues, mailing-list and security community
+

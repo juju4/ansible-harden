@@ -1,0 +1,12 @@
+---
+
+## ANSSI R67
+- name: enforce more strict configuration for selinux
+  seboolean: name={{item}} state=no persistent=yes
+  with_items:
+    - allow_execheap
+    - allow_execmem
+    - allow_execstack
+    - secure_mode_insmod
+    - ssh_sysadm_login
+

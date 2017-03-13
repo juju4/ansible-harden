@@ -19,6 +19,7 @@ harden_shell_timeout: 900
 harden_journald_systemmaxuse: '1024M'
 
 harden_disable_usb: true
+harden_enable_iommu_force: false
 
 harden_bash2syslog: true
 
@@ -39,7 +40,9 @@ harden_logcheck_extra_logfiles:
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 
-## Attention! those three would generate lot of logs. alternative: sysdig/falco, systemtap, osquery...
+harden_auditd_log_tmp: true
+harden_auditd_log_etc: true
+## Attention! those three would generate lot of logs. alternatives: sysdig/falco, systemtap, osquery...
 harden_auditd_log_all_execve: false
 harden_auditd_log_all_socket: false
 harden_auditd_log_all_connect: false
@@ -52,6 +55,7 @@ harden_auditd_extra_rules: []
 ## firewall rules? avoid to lock yourself
 #harden_fw: false
 harden_fw: true
+harden_fw_template: rules.v4.j2
 ## Note: in default config, if you switch default policy to drop, you will lose access...
 #harden_fw_default: DROP
 harden_fw_default: ACCEPT
@@ -109,15 +113,18 @@ harden_mount_options:
     "/": "defaults"
     "/boot": "defaults,nosuid,nodev,noexec"
     "/home": "defaults,nosuid,nodev"
+#    "/home": "defaults,nosuid,nodev,noexec"
     "/tmp": "defaults,nosuid,nodev,noexec"
-    "/usr": "defaults,ro"
+    "/usr": "defaults,ro,nodev"
     "/var/log/audit": "defaults,nosuid,nodev,noexec"
     "/var/log": "defaults,nosuid,nodev,noexec"
     "/var/tmp": "defaults,nosuid,nodev,noexec"
     "/var": "defaults,nosuid"
     "/dev/shm": "defaults,nosuid,nodev,noexec"
+    "/run/shm": "defaults,nosuid,nodev,noexec"
 ## https://linux-audit.com/linux-system-hardening-adding-hidepid-to-proc/
 #    "/proc": "rw,nosuid,nodev,noexec,relatime,hidepid=2"
+    "/opt": "defaults,nosuid,nodev"
 
 harden_mount_options_aptpre:
     "/tmp": "exec"

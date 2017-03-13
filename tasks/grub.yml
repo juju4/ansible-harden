@@ -1,0 +1,35 @@
+---
+
+- stat: path=/etc/default/grub
+  register: hasgrub
+
+## from debian.yml
+- block:
+## https://github.com/lxc/lxd/issues/2004, only on xenial?
+    - name: Debian | ensure auditd package is present
+      apt: name=auditd state=present update_cache=yes
+    - name: configure audit system
+      template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
+      notify:
+        - restart auditd
+    - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
+      replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
+      when: hasgrub.stat.exists
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker") and ansible_distribution == "Ubuntu" and ansible_distribution_release == 'xenial')
+  tags: auditd
+
+## linux.yml: disable usb storage drivers - grub
+
+## Enable IOMMU, requires VT-d - DMA attack coverage. partial? perf impact?
+## ANSSI R11
+## https://www.sstic.org/2010/presentation/Analyse_de_l_efficacite_du_service_fourni_par_une_IOMMU/
+## https://www.cs.tau.ac.il/~mad/publications/asplos2016-iommu.pdf
+## http://www.stewin.org/papers/dimvap15-stewin.pdf
+- block:
+    - name: Enable IOMMU in grub
+      replace:
+        dest: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+        replace: 'GRUB_CMDLINE_LINUX="\1 iommu=force"'
+        backup: yes
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and hasgrub.stat.exists and harden_enable_iommu_force

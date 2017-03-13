@@ -47,10 +47,13 @@
     - name: ensure iptables directory exists
       file: dest=/etc/iptables state=directory mode=0755
     - name: iptables configuration file update
-      template: src=rules.v4.j2
-        dest=/etc/iptables/rules.v4
-        backup=yes
-        owner=0 group=0 mode=0644
+      template:
+        src: "{{ harden_fw_template }}"
+        dest: /etc/iptables/rules.v4
+        backup: yes
+        owner: '0'
+        group: '0'
+        mode: '0644'
       notify:
         - restart iptables
         - restart iptables - xenial
@@ -87,7 +90,7 @@
 ## https://wiki.archlinux.org/index.php/DeveloperWiki:Security#Replacing_setuid_with_capabilities
 ## https://wiki.ubuntu.com/Security/Investigation/Setuid
 ## FIXME! same for chroot cap and others
-
+## FIXME! not idempotent, https://github.com/ansible/ansible/issues/18911
 ## Not setpcap in unprivileged lxc container, https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
 - block:
     - debug: var=ansible_virtualization_type
@@ -98,7 +101,8 @@
         - /bin/ping6
         - /usr/bin/traceroute6.iputils
         - /usr/bin/mtr
-    - file:
+    - name: ensure permissions are not setuid - using capabilities
+      file:
         path="{{ item }}"
         mode=0755
       with_items:
@@ -112,7 +116,7 @@
 
 - block:
 ## https://github.com/lxc/lxd/issues/2004, only on xenial?
-    - name: Debian | auditd
+    - name: Debian | ensure auditd package is present
       apt: name=auditd state=present update_cache=yes
     - name: configure audit system
       template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
@@ -121,7 +125,7 @@
     - stat: path=/etc/default/grub
       register: hasgrub
     - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
-      replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX=""' replace='GRUB_CMDLINE_LINUX="audit=1"'
+      replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
       when: hasgrub.stat.exists
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker") and ansible_distribution == "Ubuntu" and ansible_distribution_release == 'xenial')
   tags: auditd

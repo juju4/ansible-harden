@@ -268,10 +268,31 @@
 #-a exit,always -F arch=b32 -S listen -k listen_call
 -a exit,always -F arch=b64 -S listen -k listen_call
 
+# suspicious x86 syscalls
+-a exit,always -S ioperm -S modify_ldt
+# uncommon and dangerous syscalls
+-a exit,always -S get_kernel_syms -S ptrace
+-a exit,always -S prctl
+
+# Monitor administrator access to /home directories
+-a always,exit -F dir=/home/ -F uid=0 -C auid!=obj_uid -k admin_user_home
+
 {% if harden_auditd_log_all_execve %}
 # Log all executed commands (larger than just root, above)
 -a exit,always -F arch=b32 -S execve -k execve_call
 -a exit,always -S arch=b64 -S execve -k execve_call
+
+{% endif %}
+{% if harden_auditd_log_etc %}
+# Log changes and executions within /etc
+-w /etc/ -p wa -k etc_write
+-w /etc/ -p x -k etc_exec
+
+{% endif %}
+{% if harden_auditd_log_tmp %}
+# Log changes and executions within /tmp
+-w /tmp/ -p wa -k tmp_write
+-w /tmp/ -p x -k tmp_exec
 
 {% endif %}
 {% if harden_auditd_log_all_connect %}
