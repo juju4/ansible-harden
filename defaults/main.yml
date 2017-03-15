@@ -100,6 +100,13 @@ harden_linux_disable_bugreport: true
 harden_ubuntu_livepatch: false
 harden_ubuntu_livepatch_token: 'xxx'
 
+harden_enable_osquery: true
+harden_enable_osquery_fim: true
+harden_enable_osquery_rsyslog: false
+## conflict with auditd. choose one.
+## https://osquery.readthedocs.io/en/stable/deployment/process-auditing/
+harden_enable_osquery_process_auditing: false
+
 _ubuntu_sysctl:
 
 ## define in vars/{{ distribution }}*.yml

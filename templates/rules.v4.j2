@@ -20,7 +20,7 @@
 -A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,5666 -j DROP
 {% if harden_fw_gw is defined %}
 ## Local DHCP?
--A OUTPUT -o eth0 -p udp --sport 68 --d {{ harden_fw_gw }} --dport 67 -j ACCEPT
+-A OUTPUT -o eth0 -p udp --sport 68 -d {{ harden_fw_gw }} --dport 67 -j ACCEPT
 {% endif %}
 ## Incoming SSH
 {% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}

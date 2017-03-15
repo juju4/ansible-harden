@@ -23,3 +23,49 @@
 #virtual_table.cpp:484] The shell_history table returns data based on the current user by default, consider JOINing against the users table
 # but still apply with
 # SELECT s.uid,s.time,s.command,s.history_file FROM shell_history s JOIN users USING (uid) limit 10;
+
+- block:
+    - name: review inotify sysctl settings for osquery
+      sysctl: name="{{ item.n }}" value="{{ item.v }}" sysctl_set=yes state=present reload=yes
+      with_items:
+        - { n: 'fs.inotify.max_user_watches', v: '524288' }
+        - { n: 'fs.inotify.max_user_instances', v: '256' }
+        - { n: 'fs.inotify.max_queued_events', v: '32768' }
+  when: harden_enable_osquery_fim and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+
+## ensure no auditd at the same time
+## https://osquery.readthedocs.io/en/stable/deployment/process-auditing/
+- block:
+    - name: ensure auditd is not present
+      package: name=auditd state=absent
+    - name: enable osquery process auditing with flags file
+      blockinfile:
+        path: /etc/osquery/osquery.flags
+        block: |
+          --disable_audit=false
+          --audit_allow_config=true
+          --audit_persist=true
+          --audit_allow_sockets
+        create: yes
+      notify:
+        - restart osquery
+  when: harden_enable_osquery_process_auditing
+
+- block:
+    - name: setup rsyslog pipe for osquery communication
+      template:
+        src: osquery-rsyslog.conf.j2
+        dest: /etc/rsyslog.d/90-osquery.conf
+        mode: '0644'
+        backup: yes
+      notify:
+        - restart rsyslog
+    - name: enable osquery syslog consumption
+      lineinfile:
+        path: /etc/osquery/osquery.flags
+        line: '--enable_syslog'
+        backup: yes
+        create: yes
+      notify:
+        - restart osquery
+  when: harden_enable_osquery_rsyslog

@@ -61,9 +61,32 @@
       "query": "SELECT hostname, cpu_brand, physical_memory FROM system_info;",
       // The interval in seconds to run this query, not an exact interval.
       "interval": 3600
+    },
+{% if harden_enable_osquery_fim %}
+    "fim" : {
+//      "query": "select target_path, category, time, action from file_events;", 
+      "query": "select * from file_events;",
+      "removed": false,
+      "interval": 300
     }
+{% endif %}
   },
 
+{% if harden_enable_osquery_fim %}
+  "file_paths": {
+    "homes": [
+      "/root/.ssh/%%",
+      "/home/%/.ssh/%%"
+    ],
+    "etc": [
+      "/etc/%%"
+    ],
+    "tmp": [
+      "/tmp/%%"
+    ]
+  }
+
+{% endif %}
   // Add default osquery packs or install your own.
   //
   // There are several 'default' packs installed with 'make install' or via

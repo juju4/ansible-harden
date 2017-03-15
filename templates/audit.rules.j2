@@ -269,10 +269,13 @@
 -a exit,always -F arch=b64 -S listen -k listen_call
 
 # suspicious x86 syscalls
--a exit,always -S ioperm -S modify_ldt
+-a exit,always -F arch=b32 -S ioperm -S modify_ldt
+-a exit,always -F arch=b64 -S ioperm -S modify_ldt
 # uncommon and dangerous syscalls
--a exit,always -S get_kernel_syms -S ptrace
--a exit,always -S prctl
+-a exit,always -F arch=b32 -S get_kernel_syms -S ptrace
+-a exit,always -F arch=b64 -S get_kernel_syms -S ptrace
+-a exit,always -F arch=b32 -S prctl
+-a exit,always -F arch=b64 -S prctl
 
 # Monitor administrator access to /home directories
 -a always,exit -F dir=/home/ -F uid=0 -C auid!=obj_uid -k admin_user_home
@@ -280,7 +283,7 @@
 {% if harden_auditd_log_all_execve %}
 # Log all executed commands (larger than just root, above)
 -a exit,always -F arch=b32 -S execve -k execve_call
--a exit,always -S arch=b64 -S execve -k execve_call
+-a exit,always -F arch=b64 -S execve -k execve_call
 
 {% endif %}
 {% if harden_auditd_log_etc %}
@@ -296,26 +299,26 @@
 
 {% endif %}
 {% if harden_auditd_log_all_connect %}
-# Log all connect (should include socket())
--a exit,always -F arch=b32 -S connect -k connect_call
--a exit,always -S arch=b64 -S connect -k connect_call
+# Log all connect (should include socket()) = 'Syscall name unknown: connect'
+#-a exit,always -F arch=b32 -S connect -k connect_call
+#-a exit,always -F arch=b64 -S connect -k connect_call
 
 {% endif %}
 {% if harden_auditd_log_all_socket %}
 # Log sockets, only the one succeeding
 #-a exit,always -F arch=b64 -F success=1 -S socket -k socket_call
 # socket(PF_INET, SOCK_STREAM, x) (ipv4/tcp)
--a exit,always -F arch=b32 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
--a exit,always -F arch=b64 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+#-a exit,always -F arch=b32 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+#-a exit,always -F arch=b64 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
 # socket(PF_INET, SOCK_DGRAM, x) (ipv4/udp)
--a exit,always -F arch=b32 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
--a exit,always -F arch=b64 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+#-a exit,always -F arch=b32 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+#-a exit,always -F arch=b64 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
 # socket(PF_INET6, SOCK_STREAM, x) (ipv6/tcp)
--a exit,always -F arch=b32 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
--a exit,always -F arch=b64 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+#-a exit,always -F arch=b32 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+#-a exit,always -F arch=b64 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
 # socket(PF_INET6, SOCK_DGRAM, x) (ipv6/udp)
--a exit,always -F arch=b32 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
--a exit,always -F arch=b64 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+#-a exit,always -F arch=b32 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+#-a exit,always -F arch=b64 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
 
 {% endif %}
 # Audit access to those files
