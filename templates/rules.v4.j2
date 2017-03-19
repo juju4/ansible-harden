@@ -10,7 +10,7 @@
 -A INPUT -p tcp -m multiport --dports 22 -j fail2ban-sshd
 -A INPUT -p udp -m multiport --dports 161 -j fail2ban-snmpd
 -A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh
-{% if (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= 14) or ansible_os_family == 'RedHat' %}
+{% if (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 14) or ansible_os_family == 'RedHat' %}
 {# no --mask option under precise #}
 -A INPUT -i eth0 -p tcp -m state --state INVALID -m recent --update --seconds 10 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
 -A INPUT -i eth0 -p tcp -m state --state INVALID -m recent --set --name DEFAULT --mask 255.255.255.255 --rsource
