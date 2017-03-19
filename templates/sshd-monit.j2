@@ -4,11 +4,11 @@ check process ssh
   group system
   group sshd
 {% if ansible_service_mgr == 'systemd' %}
-  start program = "/bin/systemctl start sshd" with timeout 60 seconds
-  stop program  = "/bin/systemctl stop sshd"
+  start program = "/bin/systemctl start ssh" with timeout 60 seconds
+  stop program  = "/bin/systemctl stop ssh"
 {% else %}
-  start program = "/etc/init.d/sshd start" with timeout 60 seconds
-  stop program  = "/etc/init.d/sshd stop"
+  start program = "/etc/init.d/ssh start" with timeout 60 seconds
+  stop program  = "/etc/init.d/ssh stop"
 {% endif %}
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert

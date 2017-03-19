@@ -65,4 +65,5 @@
   when: harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
 
 - include: grub.yml
+- include: monit.yml
 

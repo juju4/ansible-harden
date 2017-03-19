@@ -40,7 +40,7 @@
   replace: dest={{ monitrc }} regexp={{ item.re }} replace={{ item.rep }}
   with_items:
     - { re: '^# set httpd port 2812 and', rep: ' set httpd port 2812 and' }
-    - { re: '^#     use address localhost', rep: '     use address localhost' }
-    - { re: '^#     allow localhost', rep: '     allow localhost' }
+    - { re: '^#    \s*use address localhost', rep: '     use address localhost' }
+    - { re: '^#    \s*allow localhost', rep: '     allow localhost' }
 #    - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
 
