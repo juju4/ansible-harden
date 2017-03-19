@@ -16,6 +16,11 @@
       notify:
         - restart iptables
         - restart iptables - xenial
+      register: rulesv4
+## as validate option seems incorrect
+    - name: ensure rules are correct
+      shell: "iptables-restore -tv < /etc/iptables/rules.v4"
+      when: rulesv4.changed
   when: harden_fw is defined and harden_fw
 
 - name: send iptables log to separate file through rsyslog
