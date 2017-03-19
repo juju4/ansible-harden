@@ -1,12 +1,13 @@
 ## {{ ansible_managed }}
 ## /etc/logrotate.d/iptables
-/var/log/iptables.log {
-    rotate 14
+/var/log/iptables/iptables.log {
+    rotate 90
     daily
     missingok
     notifempty
     delaycompress
     compress
+    create 640 root adm
     postrotate
         invoke-rc.d rsyslog rotate > /dev/null
     endscript

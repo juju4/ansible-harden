@@ -2,14 +2,6 @@
 
 - include: sshd.yml
 
-#- name: iptables configuration file update
-#  template: src=rules.v4
-#    dest=/etc/iptables/rules.v4
-#    backup=yes
-#    owner=0 group=0 mode=0644
-#  notify:
-#    - restart iptables
-
 ## Bash history to syslog (since 4.1) but need re-compile for most distributions
 ## https://isc.sans.edu/forums/diary/Improving+Bash+Forensics+Capabilities/20887/
 ## https://blog.rootshell.be/2009/02/28/bash-history-to-syslog/

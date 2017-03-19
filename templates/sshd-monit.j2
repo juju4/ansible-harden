@@ -1,0 +1,27 @@
+## {{ ansible_managed }}
+check process ssh
+  with pidfile "/var/run/sshd.pid"
+  group system
+  group sshd
+{% if ansible_service_mgr == 'systemd' %}
+  start program = "/bin/systemctl start sshd" with timeout 60 seconds
+  stop program  = "/bin/systemctl stop sshd"
+{% else %}
+  start program = "/etc/init.d/sshd start" with timeout 60 seconds
+  stop program  = "/etc/init.d/sshd stop"
+{% endif %}
+  if cpu > 90% for 15 cycles then alert
+  if totalmem > 90% for 15 cycles then alert
+  if loadavg(15min) greater than 10 for 50 cycles then alert
+  if failed host 127.0.0.1 port 22 protocol ssh then restart
+  if 5 restarts with 5 cycles then alert
+  depends on sshd_binary
+
+check file sshd_binary
+  with path /usr/sbin/sshd
+  group sshd
+  if failed checksum then alert
+
+check file sshd_conf with path /etc/ssh/sshd_config
+  include /etc/monit/templates/rootrc
+  group sshd

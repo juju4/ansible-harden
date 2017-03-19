@@ -33,3 +33,6 @@
 - name: reload udev
   command: "udevadm control --reload-rules"
 
+- name: restart monit
+  service: name=monit state=restarted
+

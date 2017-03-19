@@ -4,17 +4,26 @@
   stat: path=/etc/osquery
   register: hasOsquery
 - block:
+    - name: push extra osquery packs file
+      template:
+        src: "{{ item }}"
+        dest: "/usr/share/osquery/packs/{{ item | basename | regex_replace('.j2$', '') }}"
+      with_items: "{{ harden_osquery_upload_packs }}"
+      notify:
+        - restart osquery
+    - debug: var=harden_osquery_packs
     - name: configure osquery
       template:
-        src: osquery.conf.j2
+        src: "{{ harden_osquery_template }}"
         dest: /etc/osquery/osquery.conf
         mode: '0644'
         backup: yes
-        validate: 'osqueryi --config_path %s --config_check'
+## FIXME! config_check is more strict than when running daemon
+#        validate: 'osqueryi --config_path %s --config_check --verbose'
       notify:
         - restart osquery
     - name: add logrotate configuration for iptables.log
-      template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644
+      template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644 validate='logrotate -dv %s'
     - name: ensure service is enabled and started
       service: name=osqueryd state=started enabled=yes
   when: hasOsquery.stat.exists
@@ -31,7 +40,7 @@
         - { n: 'fs.inotify.max_user_watches', v: '524288' }
         - { n: 'fs.inotify.max_user_instances', v: '256' }
         - { n: 'fs.inotify.max_queued_events', v: '32768' }
-  when: harden_enable_osquery_fim and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: harden_osquery_fim and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 
 ## ensure no auditd at the same time
 ## https://osquery.readthedocs.io/en/stable/deployment/process-auditing/
@@ -49,7 +58,7 @@
         create: yes
       notify:
         - restart osquery
-  when: harden_enable_osquery_process_auditing
+  when: harden_osquery_process_auditing
 
 - block:
     - name: setup rsyslog pipe for osquery communication
@@ -68,4 +77,4 @@
         create: yes
       notify:
         - restart osquery
-  when: harden_enable_osquery_rsyslog
+  when: harden_osquery_rsyslog

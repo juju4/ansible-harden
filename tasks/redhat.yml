@@ -35,14 +35,6 @@
     - "{{ harden_services }}"
     - "{{ harden_services_containers }}"
 
-## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
-- name: configure audit system
-  template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
-  notify:
-    - restart auditd
-  tags: auditd
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
-
 - name: initialize rootkithunter db
   command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
 

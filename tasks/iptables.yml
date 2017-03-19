@@ -1,9 +1,29 @@
 ---
 
+- block:
+    - name: ensure iptables directory exists
+      file: dest=/etc/iptables state=directory mode=0755
+    - name: iptables configuration file update
+      template:
+        src: "{{ harden_fw_template }}"
+        dest: /etc/iptables/rules.v4
+        backup: yes
+        owner: '0'
+        group: '0'
+        mode: '0644'
+        validate: 'iptables-restore -tv < %s'
+      notify:
+        - restart iptables
+        - restart iptables - xenial
+  when: harden_fw is defined and harden_fw
+
 - name: send iptables log to separate file through rsyslog
   template: src=rsyslog-iptables.conf.j2 dest=/etc/rsyslog.d/40-iptables.conf mode=0644
   notify:
     - restart rsyslog
+- name: ensure iptables log directory exists
+  file: dest=/var/log/iptables state=directory mode=0755 owner=root group=syslog
 - name: add logrotate configuration for iptables.log
-  template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644
+  template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644 validate='logrotate -dv %s'
+  ignore_errors: true
 

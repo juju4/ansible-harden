@@ -1,0 +1,22 @@
+---
+
+## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
+- block:
+## https://github.com/lxc/lxd/issues/2004, only on xenial?
+    - name: ensure auditd package is present
+      package: name=auditd state=present update_cache=yes
+    - name: configure audit system
+      template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
+      notify:
+        - restart auditd
+    - stat: path=/etc/default/grub
+      register: hasgrub
+    - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
+      replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
+      when: hasgrub.stat.exists
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not harden_osquery_process_auditing
+  tags: auditd
+- name: Disable auditd as osquery present with process auditing configured
+  service: name=auditd state=stopped enabled=no
+  when: harden_osquery_process_auditing
+

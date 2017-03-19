@@ -1,0 +1,46 @@
+---
+- set_fact:
+    daemon: sshd
+
+- block:
+    - name: apt | monit package
+      apt: name={{item}} state=present
+      with_items:
+        - monit
+    - block:
+        - name: set monit configuration for {{ daemon }}
+          template: src={{ daemon }}-monit.j2 dest=/etc/monit/monitrc.d/{{ daemon }} mode=0644 backup=yes
+          notify:
+            - restart monit
+        - name: enable monit {{ daemon }}
+          file: src=/etc/monit/monitrc.d/{{ daemon }} dest=/etc/monit/conf.d/{{ daemon }} state=link
+          notify:
+            - restart monit
+      when: ansible_distribution_release == 'trusty'
+    - block:
+        - name: set monit configuration for {{ daemon }}
+          template: src={{ daemon }}-monit.j2 dest=/etc/monit/conf-available/{{ daemon }} mode=0644 backup=yes
+          notify:
+            - restart monit
+        - name: enable monit {{ daemon }}
+          file: src=/etc/monit/conf-available/{{ daemon }} dest=/etc/monit/conf-enabled/{{ daemon }} state=link
+          notify:
+            - restart monit
+      when: ansible_distribution_release == 'xenial'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- block:
+    - name: yum | monit package
+      yum: name={{item}} state=present
+      with_items:
+        - monit
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: allow monit status/summary from localhost
+  replace: dest={{ monitrc }} regexp={{ item.re }} replace={{ item.rep }}
+  with_items:
+    - { re: '^# set httpd port 2812 and', rep: ' set httpd port 2812 and' }
+    - { re: '^#     use address localhost', rep: '     use address localhost' }
+    - { re: '^#     allow localhost', rep: '     allow localhost' }
+#    - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
+
