@@ -11,7 +11,8 @@
         owner: '0'
         group: '0'
         mode: '0644'
-        validate: 'iptables-restore -tv < %s'
+## works in ansible 2.2.0.0, nok 2.2.1.0?
+#        validate: 'iptables-restore -tv < %s'
       notify:
         - restart iptables
         - restart iptables - xenial
