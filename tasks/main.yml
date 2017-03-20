@@ -3,9 +3,9 @@
 ## https://github.com/fcaviggia/hardening-script-el6
 ## https://github.com/major/securekickstarts
 
-- name: Include version-specific variables for Ubuntu.
+- name: Include version-specific variables for Debian/Ubuntu.
   include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
 - name: Include version-specific variables for RedHat
   include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
   when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
@@ -41,7 +41,9 @@
 - include: linux.yml
   when: ansible_system == 'Linux'
 
+## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 - include: auditd.yml
+  when: ansible_system == 'Linux' and not (ansible_distribution == "Debian" and ansible_architecture == "armv6l")
 
 - name: Debian | Harden
   include: debian.yml

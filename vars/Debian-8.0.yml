@@ -1,0 +1,72 @@
+---
+
+ssh_svc: ssh
+aide_bin: aide.wrapper
+
+harden_pkg:
+    - openssh-server
+    - rsyslog
+#    - harden       ## exist in precise/trusty/vivid, not wily+
+    - unzip
+    - rkhunter
+    - chkrootkit
+    - openntpd
+    - acct
+    - aide
+    - logcheck
+    - syslog-summary
+    - apparmor-profiles
+    - apparmor-utils
+    - acl
+    - sysstat
+    - systemtap-sdt-dev
+    - iotop
+    - sysdig
+    - tcpdump
+    - libcap2-bin
+    - ldnsutils
+    - unattended-upgrades
+    - update-notifier-common
+    - gnupg
+    - gnupg-curl
+#    - libpam-cracklib
+    - debsums
+    - apt-show-versions
+    - lynis
+    - libpam-tmpdir
+    - debian-goodies
+    - debsecan
+    - fail2ban
+#    - linux-tools-generic   # perf /FlameGraph
+    - rng-tools
+    - iptables-persistent
+    - apt-transport-https
+## requested by https://github.com/awailly/cis-ubuntu-ansible
+    - aptitude
+## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
+#    - tracker-utils
+    - systemtap
+
+harden_pkg_remove:
+    - avahi-daemon
+    - xinetd
+    - inetd
+    - telnet-server
+    - rsh-server
+
+syslog_mainfile: /var/log/syslog
+syslog_authfile: /var/log/auth.log
+
+harden_services:
+    - rng-tools
+harden_services_containers:
+    - psacct
+    - auditd
+
+harden_sshd_crypto:
+    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms curve25519-sha256@libssh.org' }
+    - { regexp: '^Ciphers ', line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' }
+#    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
+    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
+
+monitrc: /etc/monit/monitrc

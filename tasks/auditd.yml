@@ -27,3 +27,17 @@
   service: name=auditd state=stopped enabled=no
   when: harden_osquery_process_auditing
 
+- block:
+## https://github.com/lxc/lxd/issues/2004, only on xenial?
+    - name: Debian | ensure auditd package is present
+      apt: name=auditd state=present update_cache=yes
+    - name: configure audit system
+      template: src=audit.rules.j2 dest=/etc/audit/audit.rules mode=0644 backup=yes validate='auditctl -R %s'
+      notify:
+        - restart auditd
+    - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
+      replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
+      when: hasgrub.stat.exists
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker") and ansible_distribution == "Ubuntu" and ansible_distribution_release == 'xenial')
+  tags: auditd
+
