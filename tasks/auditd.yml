@@ -20,7 +20,7 @@
         - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
           replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
           when: auditgrub.stdout == ''
-      when: hasgrub.stat.exists
+      when: hasgrub.stat is defined and hasgrub.stat.exists
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not harden_osquery_process_auditing
   tags: auditd
 - name: Disable auditd as osquery present with process auditing configured

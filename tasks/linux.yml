@@ -59,7 +59,7 @@
   when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
 
 - include: osquery.yml
-  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" and harden_enable_osquery
+  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" and harden_osquery
 
 - include: ubuntu-livepatch.yml
   when: harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
