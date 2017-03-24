@@ -18,8 +18,8 @@
         dest: /etc/osquery/osquery.conf
         mode: '0644'
         backup: yes
-## FIXME! config_check is more strict than when running daemon
-#        validate: 'osqueryi --config_path %s --config_check --verbose'
+        validate: 'osqueryi --config_path %s --config_check --verbose'
+#        validate: 'egrep -v '^\s*//' %s | python -mjson.tool'
       notify:
         - restart osquery
     - name: add logrotate configuration for iptables.log

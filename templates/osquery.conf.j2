@@ -61,15 +61,17 @@
       "query": "SELECT hostname, cpu_brand, physical_memory FROM system_info;",
       // The interval in seconds to run this query, not an exact interval.
       "interval": 3600
-    },
+    }{% if harden_osquery_fim %},{% endif %}
+
 {% if harden_osquery_fim %}
     "fim" : {
 //      "query": "select target_path, category, time, action from file_events;", 
       "query": "select * from file_events;",
       "removed": false,
       "interval": 300
-    },
+    }
 {% endif %}
+  },
 
 {% if harden_osquery_fim %}
   "file_paths": {
@@ -85,7 +87,7 @@
     ],
     "bin": [
       "/bin/%%",
-      "/sbin/%%",
+      "/sbin/%%"
     ],
     "webroot": [
       "/var/www/%%"
@@ -114,7 +116,7 @@
   //
   "packs": {
 {% for item in harden_osquery_packs %}
-    "{{ item }}": "/usr/share/osquery/packs/{{ item }}.conf"
+    "{{ item }}": "/usr/share/osquery/packs/{{ item }}.conf"{% if not loop.last %},{% endif %}
 {% endfor %}
   }
 }
