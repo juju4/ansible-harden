@@ -17,7 +17,7 @@ harden_logindefs_pass_warnage: 30
 harden_shell_timeout: 900
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
-harden_sshd_PasswordAuthentication: 'no'
+harden_sshd_PasswordAuthentication: false
 
 harden_journald_systemmaxuse: '1024M'
 harden_logrotate_days: 90

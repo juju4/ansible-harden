@@ -94,6 +94,15 @@ Some tasks are better covered there like suid/sgid binaries cleaning and inspec 
 https://askubuntu.com/questions/844583/state-check-failed-when-running-canonical-livepatch
 https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1642581
 
+* vagrant (up phase only) and kitchen/ruby net-ssh have issues to initiate ssh connection after role play.
+```
+# kitchen log
+Message: SSH command failed (could not settle on kex algorithm)
+```
+Implementation have older compatibility list. See
+https://security.stackexchange.com/questions/90503/metasploit-ssh-error-could-not-settle-on-kex-algorithm
+Normal ssh command line with recent releases should not be impacted. If required, review sshd cryptographic functions definitions inside vars/
+
 ## License
 
 BSD 2-clause
