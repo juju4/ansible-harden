@@ -21,7 +21,7 @@
     backup: yes
     validate: 'sshd -f %s -T'
   with_items:
-    - { regexp: '^Port ', line: 'Port 22' }
+    - { regexp: '^Port ', line: "Port {{ harden_sshd_port }}" }
 ## default
     - { regexp: '^Protocol ', line: 'Protocol 2' }
 ## default

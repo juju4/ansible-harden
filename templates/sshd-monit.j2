@@ -13,7 +13,7 @@ check process sshd
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert
   if loadavg(15min) greater than 10 for 50 cycles then alert
-  if failed host 127.0.0.1 port 22 protocol ssh then restart
+  if failed host 127.0.0.1 port {{ harden_sshd_port }} protocol ssh then restart
   if 5 restarts with 5 cycles then alert
   depends on sshd_binary
 

@@ -85,6 +85,7 @@
         - /bin/ping6
         - /usr/bin/traceroute6.iputils
         - /usr/bin/mtr
+      ignore_errors: true
     - name: ensure permissions are not setuid - using capabilities
       file:
         path="{{ item }}"
@@ -94,6 +95,7 @@
         - /bin/ping6
         - /usr/bin/traceroute6.iputils
         - /usr/bin/mtr
+      ignore_errors: true
     - name: Capabilities Hardening - tcpdump
       capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))

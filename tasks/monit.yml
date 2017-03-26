@@ -1,17 +1,14 @@
 ---
 - set_fact:
-    daemons:
-      - sshd
-      - rsyslog
-      - osqueryd
-- set_fact:
-    daemons:
-      - sshd
-      - rsyslog
-      - osqueryd
-      - auditd
-  when: monit_auditd
-
+    daemons: >
+      {%- set list = [ 'sshd', 'rsyslog' ] %}
+      {%- if monit_osqueryd %}
+      {%-   set list = list.append('osqueryd') %}
+      {%- endif %}
+      {%- if monit_auditd %}
+      {%-   set list = list.append('auditd') %}
+      {%- endif %}
+      {{- list -}}
 
 - block:
     - name: apt | monit package
@@ -24,12 +21,12 @@
       notify:
         - restart monit
     - block:
-        - name: Trusty | enable monit
+        - name: Trusty+Jessie | enable monit
           file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf.d/{{ item }} state=link"
           with_items: "{{ daemons }}"
           notify:
             - restart monit
-      when: ansible_distribution_release == 'trusty'
+      when: ansible_distribution_release == 'trusty' or ansible_distribution_release == 'jessie'
     - block:
         - name: Xenial | enable monit
           file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf-enabled/{{ item }} state=link"

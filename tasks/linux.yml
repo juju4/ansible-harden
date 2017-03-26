@@ -11,7 +11,7 @@
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - block:
     - name: disable usb storage drivers - modprobe
-      lineinfile: dest=/etc/modprobe.d/no-usb line='install usb-storage /bin/true' create=yes
+      lineinfile: dest=/etc/modprobe.d/no-usb.conf line='install usb-storage /bin/true' create=yes
     - stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
@@ -21,7 +21,7 @@
   when: harden_disable_usb is defined and harden_disable_usb
 - block:
     - name: ensure usb storage drivers not disabled at modprobe level
-      file: dest=/etc/modprobe.d/no-usb state=absent
+      file: dest=/etc/modprobe.d/no-usb.conf state=absent
     - stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
@@ -31,7 +31,7 @@
   when: not (harden_disable_usb is defined and harden_disable_usb)
 
 - name: disable firewire DMA drivers - modprobe
-  lineinfile: dest=/etc/modprobe.d/no-firewire line='blacklist firewire-sbp2' create=yes
+  lineinfile: dest=/etc/modprobe.d/no-firewire.conf line='blacklist firewire-sbp2' create=yes
 
 - block:
     - stat: path=/etc/default/apport

@@ -35,6 +35,8 @@
         - restart osquery
     - name: ensure service is enabled and started
       service: name=osqueryd state=started enabled=yes
+    - set_fact:
+        monit_osqueryd: true
   when: hasOsquery.stat.exists
 
 ## FIXME! warnings like (from packs/incident-response.conf)

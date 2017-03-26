@@ -15,6 +15,7 @@ harden_unix_fstab_flags: true
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
 harden_shell_timeout: 900
+harden_sshd_port: 22
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
 harden_sshd_PasswordAuthentication: false
@@ -168,3 +169,4 @@ harden_usb_inputdevice_whitelist:
   - 'ATTR{idVendor}=="045e",ATTR{idProduct}=="0752",ATTR{urbnum}=="2175"'
 
 monit_auditd: false
+monit_osqueryd: false
