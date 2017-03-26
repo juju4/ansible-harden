@@ -1,14 +1,14 @@
 ---
 - set_fact:
-    daemons: >
-      {%- set list = [ 'sshd', 'rsyslog' ] %}
-      {%- if monit_osqueryd %}
-      {%-   set list = list.append('osqueryd') %}
-      {%- endif %}
-      {%- if monit_auditd %}
-      {%-   set list = list.append('auditd') %}
-      {%- endif %}
-      {{- list -}}
+    daemons:
+      - sshd
+      - rsyslog
+- set_fact:
+    daemons: "{{ daemons }} + [ 'osqueryd' ]"
+  when: monit_osqueryd
+- set_fact:
+    daemons: "{{ daemons }} + [ 'auditd' ]"
+  when: monit_auditd
 
 - block:
     - name: apt | monit package
