@@ -70,4 +70,4 @@ harden_sshd_crypto:
     - { regexp: '^MACs ', line: 'MACs hmac-sha2-512,hmac-sha2-256' }
 
 monitrc: /etc/monit/monitrc
-monit_confdir: /etc/monit/monitrc.d
+monit_confdir: /etc/monit/conf.d

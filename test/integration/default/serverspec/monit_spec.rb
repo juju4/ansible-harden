@@ -11,7 +11,13 @@ end
 describe file('/etc/monit/monitrc'), :if => os[:family] == 'ubuntu' do
   it { should be_file }
 end
-describe file('/etc/monit/conf.d/sshd'), :if => os[:family] == 'ubuntu' do
+describe file('/etc/monit/conf-available/sshd'), :if => os[:family] == 'ubuntu' && os[:release] == '16.04' do
+  it { should be_file }
+end
+describe file('/etc/monit/monitrc.d/sshd'), :if => os[:family] == 'ubuntu' && os[:release] == '14.04' do
+  it { should be_file }
+end
+describe file('/etc/monit/conf.d/sshd'), :if => os[:family] == 'ubuntu' && os[:release] == '12.04' do
   it { should be_file }
 end
 describe file('/etc/monitrc'), :if => os[:family] == 'redhat' do

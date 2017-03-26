@@ -1,6 +1,11 @@
 ## {{ ansible_managed }}
 check process rsyslog
+{% if ansible_os_family == "RedHat" %}
   with pidfile "/var/run/syslogd.pid"
+{% endif %}
+{% if ansible_os_family == 'Debian' %}
+  with pidfile "/var/run/rsyslogd.pid"
+{% endif %}
   group system
   group rsyslog
 {% if ansible_service_mgr == 'systemd' %}
