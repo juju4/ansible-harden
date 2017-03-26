@@ -23,6 +23,10 @@
       when: rulesv4.changed
   when: harden_fw is defined and harden_fw
 
+- name: get rsyslog version
+  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
+  changed_when: false
+  register: rsyslog_v
 - name: send iptables log to separate file through rsyslog
   template: src=rsyslog-iptables.conf.j2 dest=/etc/rsyslog.d/40-iptables.conf mode=0644
   notify:

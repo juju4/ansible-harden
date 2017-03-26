@@ -24,6 +24,15 @@
         - restart osquery
     - name: add logrotate configuration for iptables.log
       template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644 validate='logrotate -dv %s'
+    - name: ensure osqueryd has pid file
+      lineinfile:
+        dest: /etc/osquery/osquery.flags
+        regexp: "^--pidfile=.*"
+        line: "--pidfile=/var/run/osqueryd.pid"
+        backup: yes
+        create: yes
+      notify:
+        - restart osquery
     - name: ensure service is enabled and started
       service: name=osqueryd state=started enabled=yes
   when: hasOsquery.stat.exists
@@ -46,7 +55,7 @@
 ## https://osquery.readthedocs.io/en/stable/deployment/process-auditing/
 - block:
     - name: ensure auditd is not present
-      package: name=auditd state=absent
+      package: name={{ auditd_pkg }} state=absent
     - name: enable osquery process auditing with flags file
       blockinfile:
         path: /etc/osquery/osquery.flags

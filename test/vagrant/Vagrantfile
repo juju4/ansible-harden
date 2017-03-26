@@ -7,8 +7,8 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 ## for xenial, need to manually install python as python v2 is not in default image.
     #config.vm.box = "ubuntu/xenial64"
-    #config.vm.box = "boxcutter/ubuntu1604"
-    config.vm.box = "ubuntu/trusty64"
+    config.vm.box = "boxcutter/ubuntu1604"
+    #config.vm.box = "ubuntu/trusty64"
     #config.vm.box = "centos/7"
 
     config.vm.provision :ansible do |ansible|

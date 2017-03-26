@@ -1,29 +1,39 @@
 ---
 - set_fact:
-    daemon: sshd
+    daemons:
+      - sshd
+      - rsyslog
+      - osqueryd
+- set_fact:
+    daemons:
+      - sshd
+      - rsyslog
+      - osqueryd
+      - auditd
+  when: monit_auditd
+
 
 - block:
     - name: apt | monit package
       apt: name={{item}} state=present
       with_items:
         - monit
+    - name: set monit configurations
+      template: "src={{ item }}-monit.j2 dest={{ monit_confdir }}/{{ item }} mode=0644 backup=yes"
+      with_items: "{{ daemons }}"
+      notify:
+        - restart monit
     - block:
-        - name: set monit configuration for {{ daemon }}
-          template: src={{ daemon }}-monit.j2 dest=/etc/monit/monitrc.d/{{ daemon }} mode=0644 backup=yes
-          notify:
-            - restart monit
-        - name: enable monit {{ daemon }}
-          file: src=/etc/monit/monitrc.d/{{ daemon }} dest=/etc/monit/conf.d/{{ daemon }} state=link
+        - name: Trusty | enable monit
+          file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf.d/{{ item }} state=link"
+          with_items: "{{ daemons }}"
           notify:
             - restart monit
       when: ansible_distribution_release == 'trusty'
     - block:
-        - name: set monit configuration for {{ daemon }}
-          template: src={{ daemon }}-monit.j2 dest=/etc/monit/conf-available/{{ daemon }} mode=0644 backup=yes
-          notify:
-            - restart monit
-        - name: enable monit {{ daemon }}
-          file: src=/etc/monit/conf-available/{{ daemon }} dest=/etc/monit/conf-enabled/{{ daemon }} state=link
+        - name: Xenial | enable monit
+          file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf-enabled/{{ item }} state=link"
+          with_items: "{{ daemons }}"
           notify:
             - restart monit
       when: ansible_distribution_release == 'xenial'
@@ -34,6 +44,11 @@
       yum: name={{item}} state=present
       with_items:
         - monit
+    - name: set monit configurations
+      template: "src={{ item }}-monit.j2 dest={{ monit_confdir }}/{{ item }} mode=0644 backup=yes"
+      with_items: "{{ daemons }}"
+      notify:
+        - restart monit
   when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: allow monit status/summary from localhost
@@ -44,3 +59,9 @@
     - { re: '^#    \s*allow localhost', rep: '     allow localhost' }
 #    - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
 
+- name: ensure monit service is enabled and started
+  service: name=monit state=started enabled=yes
+
+- meta: flush_handlers
+- include: "monit-checkmonitor.yml daemon={{ item }}"
+  with_items: "{{ daemons }}"

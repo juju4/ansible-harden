@@ -1,0 +1,11 @@
+---
+
+- name: review logrotate configuration
+  replace:
+    dest: /etc/logrotate.conf
+    regexp: "{{ item.re }}"
+    replace: "{{ item.rep }}"
+    backup: yes
+  with_items:
+    - { re: '^(weekly|daily|monthly)', rep: 'daily' }
+    - { re: '^rotate .*', rep: "rotate {{ harden_logrotate_days|int }}" }

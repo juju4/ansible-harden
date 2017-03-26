@@ -1,7 +1,7 @@
 ## {{ ansible_managed }}
 ## /etc/logrotate.d/osquery
 /var/log/osquery/osqueryd.results.log {
-    rotate 90
+    rotate {{ harden_logrotate_days|int }}
     daily
     missingok
     notifempty

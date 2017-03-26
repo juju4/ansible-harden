@@ -2,6 +2,7 @@
 
 ssh_svc: ssh
 aide_bin: aide.wrapper
+auditd_pkg: auditd
 
 harden_pkg:
     - openssh-server
@@ -70,3 +71,4 @@ harden_sshd_crypto:
     - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
 
 monitrc: /etc/monit/monitrc
+monit_confdir: /etc/monit/conf-available

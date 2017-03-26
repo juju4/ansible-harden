@@ -1,6 +1,7 @@
 ---
 
 ssh_svc: sshd
+auditd_pkg: audit
 
 harden_pkg:
     - openssh-server
@@ -14,7 +15,6 @@ harden_pkg:
     - rkhunter
     - lynis
     - yum-utils
-    - audit
     - fail2ban
     - setroubleshoot
 ## FIXME!
@@ -40,7 +40,9 @@ syslog_authfile: /var/log/secure
 harden_sshd_crypto:
     - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms curve25519-sha256@libssh.org' }
     - { regexp: '^Ciphers ', line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' }
-#    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
-    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
+## using first, second will break vagrant up detection
+    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
+#    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
 
 monitrc: /etc/monitrc
+monit_confdir: /etc/monit.d

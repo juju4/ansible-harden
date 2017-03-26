@@ -19,6 +19,16 @@
     ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: harden_disable_usb is defined and harden_disable_usb
+- block:
+    - name: ensure usb storage drivers not disabled at modprobe level
+      file: dest=/etc/modprobe.d/no-usb state=absent
+    - stat: path=/etc/default/grub
+      register: defgrub
+    - name: disable usb storage drivers - grub
+      replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1\2' backup=yes
+    ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
+      when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
+  when: not (harden_disable_usb is defined and harden_disable_usb)
 
 - name: disable firewire DMA drivers - modprobe
   lineinfile: dest=/etc/modprobe.d/no-firewire line='blacklist firewire-sbp2' create=yes
@@ -64,6 +74,11 @@
 - include: ubuntu-livepatch.yml
   when: harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
 
+## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
+- include: auditd.yml
+  when: ansible_system == 'Linux' and not (ansible_distribution == "Debian" and ansible_architecture == "armv6l")
+
 - include: grub.yml
 - include: monit.yml
+- include: logrotate.yml
 

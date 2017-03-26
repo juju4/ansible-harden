@@ -50,6 +50,7 @@ sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: Goodbye \[pr
 sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: PECL/ssh2 \(http://pecl.php.net/packages/ssh2\) \[preauth\]$
 sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching 
 sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)
+sshd\[[0-9]*\]: User child is on pid [0-9]*
 ##
 ##dhclient\[[[:digit:]]+\]: DHCPREQUEST of [\.0-9]+ on eth0 to [\.0-9]+ port [0-9]+ (xid=0x[0-9a-f]+)
 #dhclient\[[0-9]+\]: DHCPREQUEST of [\.0-9]+ on eth0 to [\.0-9]+ port [0-9]+ (xid=0x[0-9a-f]+)
@@ -163,6 +164,7 @@ fail2ban.server         \[[0-9]*\]: INFO    rollover performed on /var/log/fail2
 iptables denied: IN=
 
 ## supervisor
+INFO supervisord started with pid [0-9]*
 INFO waiting for .* to stop
 INFO stopped: .* (terminated by SIGTERM)
 INFO stopped: .* (exit status [0-9]*)

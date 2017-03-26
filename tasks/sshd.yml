@@ -36,8 +36,8 @@
 ## those 3 lines disable all password authentications
 ## RHEL7: 'WARNING: 'UsePAM no' is not supported in Red Hat Enterprise Linux and may cause several problems.'
 #    - { regexp: '^UsePAM ', line: 'UsePAM no' }
-    - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
-    - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
+#    - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
+#    - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
     - { regexp: '^PubkeyAuthentication ', line: 'PubkeyAuthentication yes' }
 ## default
     - { regexp: '^KerberosAuthentication ', line: 'KerberosAuthentication no' }
@@ -53,6 +53,23 @@
     - { regexp: '^PermitTunnel ', line: 'PermitTunnel no' }
 #    - { regexp: '^HashKnownHosts ', line: 'HashKnownHosts yes' }   ## not available anymore
 #    - { regexp: '^', line: '' }
+  notify:
+    - restart sshd
+
+- name: Running in vagrant - allow ssh password
+  set_fact:
+    harden_sshd_PasswordAuthentication: 'yes'
+  when: ansible_user == 'vagrant'
+- name: Set sshd config for PasswordAuthentication
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+    validate: 'sshd -f %s -T'
+  with_items:
+    - { regexp: '^PasswordAuthentication ', line: "PasswordAuthentication {{ harden_sshd_PasswordAuthentication | ternary('yes','no') }}" }
+    - { regexp: '^ChallengeResponseAuthentication ', line: "ChallengeResponseAuthentication {{ harden_sshd_PasswordAuthentication | ternary('yes','no') }}" }
   notify:
     - restart sshd
 

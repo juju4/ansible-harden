@@ -1,8 +1,8 @@
 ## {{ ansible_managed }}
-check process sshd
-  with pidfile "/var/run/sshd.pid"
+check process rsyslog
+  with pidfile "/var/run/syslogd.pid"
   group system
-  group sshd
+  group rsyslog
 {% if ansible_service_mgr == 'systemd' %}
   start program = "/bin/systemctl start ssh" with timeout 60 seconds
   stop program  = "/bin/systemctl stop ssh"
@@ -13,15 +13,15 @@ check process sshd
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert
   if loadavg(15min) greater than 10 for 50 cycles then alert
-  if failed host 127.0.0.1 port 22 protocol ssh then restart
   if 5 restarts with 5 cycles then alert
-  depends on sshd_binary
+  depends on rsyslog_binary
+  depends on rsyslog_conf
 
-check file sshd_binary
-  with path /usr/sbin/sshd
-  group sshd
+check file rsyslog_binary
+  with path /usr/sbin/rsyslogd
+  group rsyslog
   if failed checksum then alert
 
-check file sshd_conf with path /etc/ssh/sshd_config
+check file rsyslog_conf with path /etc/rsyslog.conf
   include /etc/monit/templates/rootrc
-  group sshd
+  group rsyslog

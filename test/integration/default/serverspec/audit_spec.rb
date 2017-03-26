@@ -15,6 +15,9 @@ set :backend, :exec
 #  it { should be_running }
 #  it { should be_enabled }
 #end
+#describe command('auditctl -R /etc/audit/audit.rules') do
+#  its(:exit_status) { should eq 0 }
+#end
 
 #describe file('/etc/audit/audit.rules'), :if => os[:family] == 'ubuntu' && os[:release] != '16.04' do
 #  it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
