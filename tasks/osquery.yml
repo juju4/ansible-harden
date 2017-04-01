@@ -4,6 +4,13 @@
   stat: path=/etc/osquery
   register: hasOsquery
 - block:
+    - name: ensure directories exist
+      file:
+        dest: "{{ item.d }}"
+        state: directory
+        mode: "{{ item.m }}"
+      with_items:
+        - { d: '/var/log/osquery', m: '0755' }
     - name: push extra osquery packs file
       template:
         src: "{{ item }}"
@@ -19,20 +26,26 @@
         mode: '0644'
         backup: yes
         validate: 'osqueryi --config_path %s --config_check --verbose'
-#        validate: 'egrep -v '^\s*//' %s | python -mjson.tool'
+#        validate: 'egrep -v '^\s*//' %s | tee /tmp/a | python -mjson.tool'
       notify:
         - restart osquery
-    - name: add logrotate configuration for iptables.log
-      template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644 validate='logrotate -dv %s'
     - name: ensure osqueryd has pid file
       lineinfile:
         dest: /etc/osquery/osquery.flags
-        regexp: "^--pidfile=.*"
-        line: "--pidfile=/var/run/osqueryd.pid"
+        regexp: "{{ item.re }}"
+        line: "{{ item.l }}"
         backup: yes
         create: yes
+      with_items:
+        - { re: '^--pidfile=.*', l: '--pidfile=/var/run/osqueryd.pid' }
+        - "{{ harden_osquery_flags }}"
       notify:
         - restart osquery
+    - name: re-validate whole osquery config
+      command: 'osqueryi --config_path /etc/osquery/osquery.conf --config_check --verbose'
+      changed_when: false
+    - name: add logrotate configuration for iptables.log
+      template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644 validate='logrotate -dv %s'
     - name: ensure service is enabled and started
       service: name=osqueryd state=started enabled=yes
     - set_fact:

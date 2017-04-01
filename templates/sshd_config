@@ -106,6 +106,8 @@ KeyRegenerationInterval 1800
 #ClientAliveInterval 15
 #ClientAliveCountMax 3
 
+AllowAgentForwarding no
+
 AllowUsers vagrant deploy
 
 ## http://askubuntu.com/questions/48129/how-to-create-a-restricted-ssh-user-for-port-forwarding
