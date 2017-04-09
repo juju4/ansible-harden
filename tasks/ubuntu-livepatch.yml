@@ -7,6 +7,14 @@
   fail: msg="FATAL! Free livepatch available only on Ubuntu xenial."
   when: ansible_distribution_release != 'xenial'
 
+## related? https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1590842
+##  https://bugs.launchpad.net/snapd/+bug/1555217
+- name: Ensure enough /dev/loop devices for snap
+  command: "mknod -m 0660 /dev/loop{{ item }} b 7 {{ item }}"
+  args:
+    creates: "/dev/loop{{ item }}"
+  with_sequence: start=0 end=32
+
 - name: Ensure snapd is installed
   apt: name=snapd state=present
 
