@@ -29,16 +29,12 @@
 #        validate: 'egrep -v '^\s*//' %s | tee /tmp/a | python -mjson.tool'
       notify:
         - restart osquery
-    - name: ensure osqueryd has pid file
-      lineinfile:
+    - name: configure osquery flags
+      template:
+        src: "osquery.flags.j2"
         dest: /etc/osquery/osquery.flags
-        regexp: "{{ item.re }}"
-        line: "{{ item.l }}"
+        mode: '0644'
         backup: yes
-        create: yes
-      with_items:
-        - { re: '^--pidfile=.*', l: '--pidfile=/var/run/osqueryd.pid' }
-        - "{{ harden_osquery_flags }}"
       notify:
         - restart osquery
     - name: re-validate whole osquery config
@@ -71,17 +67,6 @@
 - block:
     - name: ensure auditd is not present
       package: name={{ auditd_pkg }} state=absent
-    - name: enable osquery process auditing with flags file
-      blockinfile:
-        path: /etc/osquery/osquery.flags
-        block: |
-          --disable_audit=false
-          --audit_allow_config=true
-          --audit_persist=true
-          --audit_allow_sockets
-        create: yes
-      notify:
-        - restart osquery
   when: harden_osquery_process_auditing
 
 - block:
@@ -93,12 +78,4 @@
         backup: yes
       notify:
         - restart rsyslog
-    - name: enable osquery syslog consumption
-      lineinfile:
-        path: /etc/osquery/osquery.flags
-        line: '--enable_syslog'
-        backup: yes
-        create: yes
-      notify:
-        - restart osquery
   when: harden_osquery_rsyslog

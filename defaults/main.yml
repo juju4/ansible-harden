@@ -31,6 +31,10 @@ harden_bash2syslog: true
 harden_upgradeall: true
 harden_use_containers_lxc: false
 
+harden_rsyslog_extraconf:
+  - rsyslog-ansible.conf
+  - rsyslog-snmpd.conf
+
 ## add email to /root/.forward?
 #harden_rootforward: email
 

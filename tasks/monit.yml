@@ -10,11 +10,17 @@
     daemons: "{{ daemons }} + [ 'auditd' ]"
   when: monit_auditd
 
+- name: ensure monit package is present
+  package:
+    name: monit
+    state: present
+- name: ensure monit configuration subdir is present
+  file:
+    dest: "{{ monit_confdir }}"
+    state: directory
+    mode: '0755'
+
 - block:
-    - name: apt | monit package
-      apt: name={{item}} state=present
-      with_items:
-        - monit
     - name: set monit configurations
       template: "src={{ item }}-monit.j2 dest={{ monit_confdir }}/{{ item }} mode=0644 backup=yes"
       with_items: "{{ daemons }}"
@@ -37,10 +43,6 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - block:
-    - name: yum | monit package
-      yum: name={{item}} state=present
-      with_items:
-        - monit
     - name: set monit configurations
       template: "src={{ item }}-monit.j2 dest={{ monit_confdir }}/{{ item }} mode=0644 backup=yes"
       with_items: "{{ daemons }}"
@@ -55,6 +57,7 @@
     - { re: '^#    \s*use address localhost', rep: '     use address localhost' }
     - { re: '^#    \s*allow localhost', rep: '     allow localhost' }
 #    - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
+    - { re: '^#  include /etc/monit.d/*', rep: '  include /etc/monit.d/*' }
 
 - name: ensure monit service is enabled and started
   service: name=monit state=started enabled=yes

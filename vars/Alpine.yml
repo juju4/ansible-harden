@@ -2,6 +2,8 @@
 
 ssh_svc: sshd
 aide_bin: ''
+## 201704 only through edge testing, https://pkgs.alpinelinux.org/packages?name=audit
+auditd_pkg: audit@testing
 
 harden_pkg:
     - openssh
@@ -39,4 +41,5 @@ harden_sshd_crypto:
 #    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
     - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
 
-monitrc: /etc/monit/monitrc
+monitrc: /etc/monitrc
+monit_confdir: /etc/monit.d

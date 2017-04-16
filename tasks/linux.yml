@@ -68,17 +68,26 @@
 - include: aide-hids.yml
   when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
 
-- include: osquery.yml
-  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" and harden_osquery
+#- include: osquery.yml
+#  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" and harden_osquery
 
 - include: ubuntu-livepatch.yml
   when: harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
-- include: auditd.yml
-  when: ansible_system == 'Linux' and not (ansible_distribution == "Debian" and ansible_architecture == "armv6l")
+#- include: auditd.yml
+#  when: ansible_system == 'Linux' and not (ansible_distribution == "Debian" and ansible_architecture == "armv6l")
 
 - include: grub.yml
 - include: monit.yml
 - include: logrotate.yml
 
+- name: add rsyslog configurations
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/rsyslog.d/{{ item | regex_replace('^rsyslog-', '') }}.conf"
+    mode: '0644'
+    backup: yes
+  with_items: "{{ harden_rsyslog_extraconf }}"
+  notify:
+    - restart rsyslog

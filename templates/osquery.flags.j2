@@ -1,0 +1,13 @@
+--pidfile=/var/run/osqueryd.pid
+{% for flag in harden_osquery_flags %}
+{{ flag }}
+{% endfor %}
+{% if harden_osquery_process_auditing %}
+--disable_audit=false
+--audit_allow_config=true
+--audit_persist=true
+--audit_allow_sockets
+{% endif %}
+{% if harden_osquery_rsyslog %}
+--enable_syslog
+{% endif %}
