@@ -40,7 +40,7 @@
     - name: re-validate whole osquery config
       command: 'osqueryi --config_path /etc/osquery/osquery.conf --config_check --verbose'
       changed_when: false
-    - name: add logrotate configuration for iptables.log
+    - name: add logrotate configuration for osquery log
       template: src=logrotate-osquery.j2 dest=/etc/logrotate.d/osquery mode=0644 validate='logrotate -dv %s'
     - name: ensure service is enabled and started
       service: name=osqueryd state=started enabled=yes

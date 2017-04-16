@@ -14,6 +14,7 @@
   package:
     name: monit
     state: present
+  when: ansible_system == 'Linux'
 - name: ensure monit configuration subdir is present
   file:
     dest: "{{ monit_confdir }}"
@@ -58,9 +59,12 @@
     - { re: '^#    \s*allow localhost', rep: '     allow localhost' }
 #    - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
     - { re: '^#  include /etc/monit.d/*', rep: '  include /etc/monit.d/*' }
+  notify:
+    - restart monit
 
 - name: ensure monit service is enabled and started
   service: name=monit state=started enabled=yes
+  when: ansible_system == 'Linux'
 
 - meta: flush_handlers
 - include: "monit-checkmonitor.yml daemon={{ item }}"

@@ -27,12 +27,14 @@ env:
   - distribution: ubuntu
     version: 16.04
     ansible_version: 2.2.1.0
-  - distribution: ubuntu
-    version: 16.04
-    ansible_version: 2.1.2.0
-  - distribution: ubuntu
-    version: 16.04
-    ansible_version: 1.9.6.0
+## ansible2.2+: ini_file create
+#  - distribution: ubuntu
+#    version: 16.04
+#    ansible_version: 2.1.2.0
+## ansible2.0+: block
+#  - distribution: ubuntu
+#    version: 16.04
+#    ansible_version: 1.9.6.0
 
 before_install:
   - env

@@ -59,7 +59,7 @@
 - name: Running in vagrant - allow ssh password
   set_fact:
     harden_sshd_PasswordAuthentication: 'yes'
-  when: ansible_user == 'vagrant'
+  when: (ansible_user is defined and ansible_user == 'vagrant') or (ansible_ssh_user is defined and ansible_ssh_user == 'vagrant')
 - name: Set sshd config for PasswordAuthentication
   lineinfile:
     dest: /etc/ssh/sshd_config

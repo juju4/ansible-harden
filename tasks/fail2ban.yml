@@ -15,7 +15,14 @@
         - restart fail2ban
 
     - name: extend whitelist for fail2ban
-      ini_file: dest=/etc/fail2ban/jail.local section=DEFAULT option=ignoreip value="{{ harden_fail2ban_ignoreip }}" mode=0640 backup=yes create=yes
+      ini_file:
+        dest: /etc/fail2ban/jail.local
+        section: DEFAULT
+        option: ignoreip
+        value: "{{ harden_fail2ban_ignoreip }}"
+        mode: '0640'
+        backup: yes
+        create: yes
       notify:
         - restart fail2ban
 ## avoid conflict with role tersmitten.fail2ban
