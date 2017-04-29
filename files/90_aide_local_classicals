@@ -1,4 +1,5 @@
 ## https://isc.sans.edu/diary/What+to+watch+with+your+FIM%3F/20897
+## https://secludit.com/blog/windows-linux-vulnerable-files/
 /boot$ StaticFile
 /bin$ StaticFile
 /usr/bin$ StaticFile
@@ -11,7 +12,12 @@
 /usr/local/lib$ StaticFile
 /var/lib$ StaticFile
 /lib64$ StaticFile
+/usr/lib64$ StaticFile
 /opt$ StaticFile
+/opt/bin$ StaticFile
+/opt/sbin$ StaticFile
+/opt/local/bin$ StaticFile
+/opt/local/sbin$ StaticFile
 /var/opt$ StaticFile
 /usr/local/etc$ VarDir
 /etc/mail/statistics$ VarFile
