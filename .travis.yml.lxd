@@ -86,6 +86,11 @@ script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh"
   - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./}"
 
+after_failure:
+  # Check what happened on systemd systems.
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l status"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- journalctl -xe --no-pager"
+
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
 

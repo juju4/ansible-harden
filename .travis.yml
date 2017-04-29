@@ -13,12 +13,13 @@ env:
   - distribution: ubuntu
     version: 16.04
     ansible_version: 2.3.0.0
-  - distribution: ubuntu
-    version: 14.04
-    ansible_version: 2.3.0.0
-  - distribution: ubuntu
-    version: 12.04
-    ansible_version: 2.3.0.0
+## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
+#  - distribution: ubuntu
+#    version: 14.04
+#    ansible_version: 2.3.0.0
+#  - distribution: ubuntu
+#    version: 12.04
+#    ansible_version: 2.3.0.0
 #  - distribution: alpine
 #    version: 3.4
 #  - distribution: debian
@@ -113,6 +114,11 @@ script:
 
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh"
   - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./} --force"
+
+after_failure:
+  # Check what happened on systemd systems.
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l status"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- journalctl -xe --no-pager"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
