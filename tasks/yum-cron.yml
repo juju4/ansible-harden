@@ -1,0 +1,11 @@
+---
+
+- name: RedHat | enable yum-cron hourly security updates
+  replace:
+    dest: /etc/yum/yum-cron-hourly.conf
+    regexp: "{{ item.re }}"
+    replace: "{{ item.rep }}"
+    backup: yes
+  with_items:
+    - { re: '^update_cmd = .*', rep: 'update_cmd = security' }
+    - { re: '^apply_updates = .*', rep: 'apply_updates = yes' }
