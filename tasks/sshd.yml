@@ -94,7 +94,7 @@
     - { regexp: '^UsePrivilegeSeparation', line: 'UsePrivilegeSeparation sandbox' }
   notify:
     - restart sshd
-  when: not (ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_lsb.major_release|int <= 6)
+  when: not (ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6)
 
 - name: sshd - restricted user configurations
   blockinfile:
