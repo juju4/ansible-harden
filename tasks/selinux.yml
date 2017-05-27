@@ -1,5 +1,10 @@
 ---
 
+- name: Enable SELinux
+  selinux:
+    policy: targeted
+    state: enforcing
+
 ## ANSSI R67
 - name: enforce more strict configuration for selinux
   seboolean: name={{item}} state=no persistent=yes
