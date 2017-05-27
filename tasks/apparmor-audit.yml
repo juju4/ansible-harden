@@ -1,0 +1,21 @@
+---
+## https://www.linkedin.com/pulse/apparmor-auditd-almost-alex-maestretti
+## https://github.com/maestretti/AWS_IR/blob/master/apparmor.audit
+
+- name: ensure apparmor-utils is present
+  package:
+    name: apparmor-utils
+    state: present
+
+- name: install apparmor audit profile
+  get_url:
+    url: https://raw.githubusercontent.com/maestretti/AWS_IR/master/apparmor.audit
+    dest: /etc/apparmor.d/apparmor.audit
+    mode: '0644'
+    backup: yes
+    checksum: 'sha256:aaaaa'
+  register: apparmoraudit
+
+- name: enable apparmor audit profile
+  command: aa-complain /etc/apparmor.d/apparmor.audit
+  when: apparmoraudit.changed

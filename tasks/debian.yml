@@ -114,3 +114,6 @@
   when: rclsattr.stdout.find("----i-") == -1
   ignore_errors: true
 
+- include: apparmor-audit.yml
+  when: harden_apparmor_audit
+
