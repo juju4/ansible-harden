@@ -15,4 +15,5 @@
     - allow_execstack
     - secure_mode_insmod
     - ssh_sysadm_login
+  ignore_errors: true
 
