@@ -21,4 +21,4 @@
     - name: remount changed mount points
       command: "mount -o remount {{ item.mount }}"
       with_items: "{{ ansible_mounts }}"
-  when: mountopts.changed
+  when: mountopts.results.changed
