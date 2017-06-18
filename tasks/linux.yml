@@ -85,7 +85,7 @@
 - name: add rsyslog configurations
   template:
     src: "{{ item }}.j2"
-    dest: "/etc/rsyslog.d/{{ item | regex_replace('^rsyslog-', '') }}.conf"
+    dest: "/etc/rsyslog.d/{{ item | regex_replace('^rsyslog-', '') }}"
     mode: '0644'
     backup: yes
   with_items: "{{ harden_rsyslog_extraconf }}"
