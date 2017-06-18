@@ -15,6 +15,7 @@ harden_unix_fstab_flags: true
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
 harden_shell_timeout: 900
+harden_sshd_review: true
 harden_sshd_port: 22
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
@@ -163,23 +164,22 @@ harden_debian_remove: []
 ## maybe override in vars/{{ distribution }}*.yml and disabled on lxc as parts are not permitted
 harden_distribution_sysctl:
 
-## FIXME! changed: [dpjenkins] => (item={u'uuid': u'd39864c2-d249-4a0c-b885-5c72ef360b3f', u'size_total': 42142052352, u'mount': u'/var/lib/lxd/shmounts', u'size_available': 22098018304, u'fstype': u'ext4', u'device': u'/dev/vda1', u'options': u'rw,relatime,data=ordered,bind'})
+#harden_mount_options: []
 harden_mount_options:
-    "/": "defaults"
-    "/boot": "defaults,nosuid,nodev,noexec"
-    "/home": "defaults,nosuid,nodev"
-#    "/home": "defaults,nosuid,nodev,noexec"
-    "/tmp": "defaults,nosuid,nodev,noexec"
-    "/usr": "defaults,ro,nodev"
-    "/var/log/audit": "defaults,nosuid,nodev,noexec"
-    "/var/log": "defaults,nosuid,nodev,noexec"
-    "/var/tmp": "defaults,nosuid,nodev,noexec"
-    "/var": "defaults,nosuid"
-    "/dev/shm": "defaults,nosuid,nodev,noexec"
-    "/run/shm": "defaults,nosuid,nodev,noexec"
+    - { mount: "/", opts: "defaults" }
+    - { mount: "/boot", opts: "defaults,nosuid,nodev,noexec" }
+    - { mount: "/home", opts: "defaults,nosuid,nodev" }
+    - { mount: "/tmp", opts: "defaults,nosuid,nodev,noexec" }
+    - { mount: "/usr", opts: "defaults,ro,nodev" }
+    - { mount: "/var/log/audit", opts: "defaults,nosuid,nodev,noexec" }
+    - { mount: "/var/log", opts: "defaults,nosuid,nodev,noexec" }
+    - { mount: "/var/tmp", opts: "defaults,nosuid,nodev,noexec" }
+    - { mount: "/var", opts: "defaults,nosuid" }
+    - { mount: "/dev/shm", opts: "defaults,nosuid,nodev,noexec" }
+    - { mount: "/run/shm", opts: "defaults,nosuid,nodev,noexec" }
 ## https://linux-audit.com/linux-system-hardening-adding-hidepid-to-proc/
-#    "/proc": "rw,nosuid,nodev,noexec,relatime,hidepid=2"
-    "/opt": "defaults,nosuid,nodev"
+#    - { mount: "/proc", opts: "rw,nosuid,nodev,noexec,relatime,hidepid=2" }
+    - { mount: "/opt", opts: "defaults,nosuid,nodev" }
 
 harden_mount_options_aptpre:
     "/tmp": "exec"

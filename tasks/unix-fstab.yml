@@ -1,10 +1,23 @@
 ---
 
-## https://groups.google.com/forum/#!msg/ansible-project/7MhOICPWkaI/rADYaeaRDlsJ
-- name: Secure Mount options
-  mount: name={{ item.mount }} src={{ item.device }} state=present fstype={{ item.fstype }} opts={{ harden_mount_options[item.mount] | default(item.options) }}
-  with_items: "{{ ansible_mounts }}"
-## Note: better to use notify than state=mounted which is immediate. other part of role might conflict else
-  notify:
-    - reload fstab
+#- debug: var=ansible_mounts
+#- debug: var=harden_mount_options
 
+- name: backup fstab
+  copy:
+    src: /etc/fstab
+    dest: "/etc/fstab.{{ ansible_date_time.date }}"
+    remote_src: true
+
+## https://groups.google.com/forum/#!msg/ansible-project/7MhOICPWkaI/rADYaeaRDlsJ
+- include: unix-fstab-mount.yml
+  with_items: "{{ harden_mount_options }}"
+  loop_control:
+    loop_var: outer_item
+
+- name: check fstab changes
+  command: "diff /etc/fstab.{{ ansible_date_time.date }} /etc/fstab"
+  changed_when: false
+  ignore_errors: true
+  register: diff
+- debug: var=diff.stdout_lines
