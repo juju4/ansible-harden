@@ -8,4 +8,6 @@
     backup: yes
   with_items:
     - { re: '^update_cmd = .*', rep: 'update_cmd = security' }
+    - { re: '^update_messages = .*', rep: 'update_messages = yes' }
+    - { re: '^download_updates = .*', rep: 'download_updates = yes' }
     - { re: '^apply_updates = .*', rep: 'apply_updates = yes' }
