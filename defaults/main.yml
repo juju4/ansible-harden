@@ -60,6 +60,7 @@ harden_auditd_sensitive_files:
   - /etc/shadow
   - /etc/password
   - /etc/sudoers
+  - /etc/resolv.conf
 ## file must exist
 #  - /data/topsecret.data
 harden_auditd_extra_rules: []
