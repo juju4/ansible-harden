@@ -13,7 +13,11 @@ describe service('ssh'), :if => os[:family] == 'ubuntu' do
   it { should be_running }
 end
 
-describe port(22) do
+## precise does not support 'ss' call used by serverspec ('TCPDIAG answers: Operation not supported')
+describe port(22), :if => os[:family] == 'ubuntu' && os[:release] != '12.04' do
+  it { should be_listening }
+end
+describe port(22), :if => os[:family] == 'redhat' do
   it { should be_listening }
 end
 
