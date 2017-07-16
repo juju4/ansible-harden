@@ -1,0 +1,13 @@
+---
+## https://access.redhat.com/articles/2475321
+## RHEL7.2+
+
+- name: Ensure kpatch is present
+  yum:
+    name: kpatch
+    state: present
+
+- name: check kpatch applied
+  command: kpatch --list
+  changed_when: false
+  ignore_errors: true
