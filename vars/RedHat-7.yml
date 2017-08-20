@@ -8,7 +8,7 @@ harden_pkg:
     - rsyslog
     - git
     - gnupg
-    - haveged
+    - jitterentropy-rngd
     - psacct
     - sysstat
     - aide
@@ -28,7 +28,7 @@ harden_pkg:
 harden_pkg_remove: []
 
 harden_services:
-    - haveged
+    - jitterentropy-rngd
     - yum-cron
 harden_services_containers:
     - psacct

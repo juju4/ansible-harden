@@ -27,6 +27,7 @@ Only apply to your own system else for most countries (ex: Europe), user must ha
 ### Ansible
 It was tested on the following versions:
  * 2.2
+ * 2.3
 Previous releases of ansible are not supported because of module usages.
 
 ### Operating systems
@@ -84,6 +85,11 @@ $ vagrant up
 $ vagrant ssh
 ```
 
+## FAQ
+
+* Remove Haveged for RedHat7. Use Jitter Entropy RNG available since 7.4.
+https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7-Beta/html-single/7.4_Release_Notes/index.html#new_features_kernel
+
 ## Troubleshooting & Known issues
 
 * Tests has been mostly on Ubuntu trusty and xenial so coverage might be not equivalent for other distributions.
@@ -114,4 +120,7 @@ BSD 2-clause
 * https://www.ncsc.gov.uk/guidance/eud-security-guidance-ubuntu-1604-lts
 * https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
 * experience, friends and colleagues, mailing-list and security community
+
+See also
+* https://docs.openstack.org/developer/ansible-hardening/
 
