@@ -122,13 +122,15 @@ harden_osquery: true
 harden_osquery_template: 'osquery.conf.j2'
 harden_osquery_upload_packs: []
 harden_osquery_packs:
-    - "osquery-monitoring"
-    - "incident-response"
-    - "it-compliance"
-## FIXME! bugs in osx-attacks, and vuln-management
-#    - "osx-attacks"
-#    - "vuln-management"
-    - "hardware-monitoring"
+  - "osquery-monitoring"
+  - "incident-response"
+  - "it-compliance"
+#  - "osx-attacks"
+  - "ossec-rootkit"
+  - "vuln-management"
+  - "hardware-monitoring"
+  - "osquery-snapshots-pack"
+osquery_config_plugin: 'filesystem'
 harden_osquery_flags: []
 ## if using zentral, kolide or else
 ## https://github.com/zentralopensource/zentral/blob/f460b10a95d4ea1e515aea3363f55733465d1d9c/zentral/contrib/osquery/deb_script/template.sh
