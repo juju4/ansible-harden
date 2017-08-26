@@ -38,8 +38,9 @@
       ignore_errors: true
     - name: Backup patched logcheck
       copy:
-        src=/usr/sbin/logcheck
-        dest=/usr/sbin/logcheck.patched
+        src: /usr/sbin/logcheck
+        dest: /usr/sbin/logcheck.patched
+        mode: '0700'
         remote_src: true
     - name: add patch marker
       file: dest=/usr/sbin/.logcheck-ansible-harden-patch state=touch
