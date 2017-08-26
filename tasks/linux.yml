@@ -84,6 +84,7 @@
 - include: grub.yml
 - include: monit.yml
 - include: logrotate.yml
+- include: passwd.yml
 
 - name: add rsyslog configurations
   template:

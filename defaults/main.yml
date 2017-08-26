@@ -59,6 +59,9 @@ harden_logcheck_extra_logfiles:
   - /var/log/fail2ban.log
   - /var/log/supervisor/supervisord.log
 
+harden_cracklib_dict:
+  - { u: 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/10_million_password_list_top_1000000.txt', h: 'sha256:23f6d0966ef823a5cc746234e49bbf95eff14f8e425eca9263cdeaec6e11285f' }
+
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 
 harden_auditd_log_tmp: true

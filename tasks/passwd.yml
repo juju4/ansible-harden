@@ -1,0 +1,25 @@
+---
+## https://jerrygamblin.com/2017/08/24/disallow-million-most-common-passwords/
+## http://thegarywilson.com/blog/2006/using-cracklib-to-require-stronger-passwords/
+
+- name: recover dictionary files
+  get_url:
+    url: "{{ item.u }}"
+    dest: "/usr/share/dict/{{ item.u | basename }}"
+    mode: '0644'
+    checksum: "{{ item.h }}"
+  with_items: "{{ harden_cracklib_dict }}"
+
+- block:
+    - name: Debian | create cracklib database
+      command: "create-cracklib-dict /usr/share/dict/*"
+      args:
+## is it a creation or just a refresh?
+        creates: /var/cache/cracklib/cracklib_dict.pwd
+  when: ansible_os_family == 'Debian'
+- block:
+    - name: RedHat | create cracklib database
+      shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"
+      args:
+        creates: /usr/lib/cracklib_dict.pwd
+  when: ansible_os_family == 'RedHat'
