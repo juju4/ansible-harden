@@ -13,13 +13,13 @@
 - block:
     - name: Debian | create cracklib database
       command: "create-cracklib-dict /usr/share/dict/*"
-      args:
-## is it a creation or just a refresh?
-        creates: /var/cache/cracklib/cracklib_dict.pwd
+## just a refresh = not idempotent
+#      args:
+#        creates: /var/cache/cracklib/cracklib_dict.pwd
   when: ansible_os_family == 'Debian'
 - block:
     - name: RedHat | create cracklib database
       shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"
-      args:
-        creates: /usr/lib/cracklib_dict.pwd
+#      args:
+#        creates: /usr/lib/cracklib_dict.pwd
   when: ansible_os_family == 'RedHat'
