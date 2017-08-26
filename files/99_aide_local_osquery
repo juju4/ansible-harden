@@ -1,1 +1,3 @@
 !/var/osquery/osquery.db
+/var/osquery$ VarDir
+/var/osquery/osquery.em$ VarFile

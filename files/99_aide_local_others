@@ -8,6 +8,7 @@
 !/var/run
 !/var/lib/dhcp
 !/var/lib/dhcp3
+/var/lib/monit/state$ VarFile
 !/var/tmp
 /var/cache/apt/pkgcache.bin$ VarFile
 /var/cache/apt/srcpkgcache.bin$ VarFile
@@ -21,6 +22,7 @@
 !/var/lib/ucf/cache
 !/var/lib/gdm/\.fontconfig/.*\.cache-([0-9]+)$
 !/var/lib/lightdm/.fontconfig
+!/var/lib/logcheck/offset\.var\.log\..*\.log
 !/var/spool/postfix
 /var/spool/openoffice/uno_packages/cache$ VarDir
 !/tmp

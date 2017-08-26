@@ -10,6 +10,17 @@ harden_umask: '022'
 harden_aide: true
 harden_init_aidedb: false
 harden_aidedb_rotatedays: 14
+harden_aide_extra_conf:
+  - 90_aide_local_classicals
+  - 99_aide_local_ecryptfs
+  - 99_aide_local_gvfs
+  - 99_aide_local_others
+  - 99_aide_local_ansible
+  - 99_aide_local_python
+  - 99_aide_local_docker
+  - 99_aide_local_composer
+  - 99_aide_local_osquery
+  - 99_aide_local_netdata
 harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
