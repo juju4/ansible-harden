@@ -64,6 +64,13 @@ harden_auditd_sensitive_files:
 ## file must exist
 #  - /data/topsecret.data
 harden_auditd_extra_rules: []
+harden_auditd_exclusions: []
+## https://access.redhat.com/solutions/2477471
+## https://access.redhat.com/solutions/2482221: refine rules like: -a always,exit -F dir=/opt/application -F perm=w -F uid!=bob -F uid!=alice -F auid!=root -F uid>=1000 -F gid!=admins -F success=1
+## https://access.redhat.com/solutions/2482361 (exe keyword, only on RHEL7.3+ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/7.3_Release_Notes/new_features_security.html#idp2627632)
+#  - '-a exit,never -F arch=b64 -F euid=0 -S execve -F exe=/usr/bin/exec_dont_want_to_audit
+## http://linux.ittoolbox.com/groups/technical-functional/linuxadmin-l/auditd-configure-rules-to-filter-out-noisy-syscalls-5730672
+#  - '-a exit,never -F arch=b32 -S fchmodat -S open -S unlink '
 
 ## experimental
 harden_apparmor_audit: false

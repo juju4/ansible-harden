@@ -23,6 +23,15 @@
 # 2=panic, halt system
 -f 1
 
+{% if harden_auditd_exclusions %}
+###################
+# Exclusions
+###################
+{% for f in harden_auditd_exclusions %}
+{{ f }}
+{% endfor %}
+{% endif %}
+
 ###################
 # Audit the audit logs.
 ###################
@@ -198,6 +207,8 @@
 -a exit,always -F arch=b64 -S open -F dir=/usr/local/bin -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/usr/sbin -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/var -F success=0 -k unauthedfileacess
+#-a exit,always -F arch=b64 -S open,openat -F exit=-EACCES -k unauthedfileacess
+#-a exit,always -F arch=b64 -S open,openat -F exit=-EPERM -k unauthedfileacess
 
 ###################
 ## su/sudo
