@@ -122,5 +122,6 @@ BSD 2-clause
 * experience, friends and colleagues, mailing-list and security community
 
 See also
+* https://github.com/dev-sec/ansible-os-hardening/
 * https://docs.openstack.org/developer/ansible-hardening/
 
