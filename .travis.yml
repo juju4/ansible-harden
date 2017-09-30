@@ -13,7 +13,7 @@ env:
 #    ansible_version: latest
   - distribution: ubuntu
     version: 16.04
-    ansible_version: latest
+    ansible_version: 2.4.0.0
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
 #  - distribution: ubuntu
 #    version: 14.04
