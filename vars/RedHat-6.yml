@@ -18,6 +18,7 @@ harden_pkg:
     - fail2ban
     - systemtap
     - setroubleshoot
+    - sudo
 
 harden_pkg_remove: []
 

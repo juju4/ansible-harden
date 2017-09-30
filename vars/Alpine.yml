@@ -25,6 +25,7 @@ harden_pkg:
 #    - rng-tools
     - git
 #    - systemtap
+    - sudo
 
 harden_pkg_remove: []
 harden_services:

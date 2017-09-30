@@ -23,6 +23,7 @@ harden_pkg:
 ## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
     - yum-cron
     - systemtap
+    - sudo
 
 
 harden_pkg_remove: []

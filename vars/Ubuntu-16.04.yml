@@ -47,6 +47,7 @@ harden_pkg:
 ## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
 #    - tracker-utils
     - systemtap
+    - sudo
 
 harden_pkg_remove:
     - avahi-daemon

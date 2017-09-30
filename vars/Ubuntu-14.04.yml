@@ -48,6 +48,7 @@ harden_pkg:
 ## files classification
     - tracker-utils
     - systemtap
+    - sudo
 
 harden_pkg_remove:
     - avahi-daemon
