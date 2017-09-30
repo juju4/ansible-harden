@@ -8,9 +8,9 @@ env:
 ## those images need pre-configuration before being usable (openssh...)
 #  - distribution: centos
 #    version: 6
-#  - distribution: centos
-#    version: 7
-#    ansible_version: latest
+  - distribution: centos
+    version: 7
+    ansible_version: 2.4.0.0
   - distribution: ubuntu
     version: 16.04
     ansible_version: 2.4.0.0
