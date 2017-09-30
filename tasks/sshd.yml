@@ -5,7 +5,7 @@
   register: sshkey
 - name: Generate any missing SSH host key
   command: ssh-keygen -A
-  when: not sshkey.stat.exists and ((ansible_os_family == "RedHat" and ansible_distribution_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+  when: not sshkey.stat.exists and ((ansible_os_family == "RedHat" and ansible_distribution_major_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
 ## ssh version: 5.9/precise, 6.6/trusty, 7.2/xenial, 5.3/centos6
 ## https://stribika.github.io/2015/01/04/secure-secure-shell.html
