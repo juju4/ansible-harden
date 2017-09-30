@@ -116,7 +116,7 @@ script:
 ## known fail
   - "grep -q 'changed=0.*failed=0' /tmp/idempotency.log && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 0)"
 
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh"
+  - '[ "X${distribution}" != "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh"'
 
 after_failure:
   # Check what happened on systemd systems.
