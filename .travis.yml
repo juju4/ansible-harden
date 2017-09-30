@@ -10,9 +10,10 @@ env:
 #    version: 6
 #  - distribution: centos
 #    version: 7
+#    ansible_version: latest
   - distribution: ubuntu
     version: 16.04
-    ansible_version: 2.3.0.0
+    ansible_version: latest
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
 #  - distribution: ubuntu
 #    version: 14.04
@@ -25,6 +26,9 @@ env:
 #  - distribution: debian
 #    version: jessie
 ## past ansible versions
+  - distribution: ubuntu
+    version: 16.04
+    ansible_version: 2.3.0.0
   - distribution: ubuntu
     version: 16.04
     ansible_version: 2.2.1.0
@@ -75,7 +79,7 @@ before_install:
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get update" || true'
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get -y install python python-apt aptitude python-pip libssl-dev python-dev libffi-dev" || true'
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X6" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm" || true'
-  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm" || true'
+  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum update" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip"
@@ -113,12 +117,14 @@ script:
   - "grep -q 'changed=0.*failed=0' /tmp/idempotency.log && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 0)"
 
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh"
-  - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./} --force"
 
 after_failure:
   # Check what happened on systemd systems.
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l status"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- journalctl -xe --no-pager"
+
+after_script:
+  - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./} --force"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
