@@ -25,7 +25,10 @@ harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
+# seconds
 harden_shell_timeout: 900
+# minutes
+harden_sudo_timeout: 15
 harden_sshd_review: true
 harden_sshd_port: 22
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml

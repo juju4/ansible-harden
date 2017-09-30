@@ -1,0 +1,9 @@
+---
+
+- name: Configure sudo password timeout
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^Defaults        .*"
+    replace: "^Defaults        env_reset,timestamp_timeout={{ harden_sudo_timeout }}"
+    backup: yes
+  when: harden_sudo_timeout is defined and harden_sudo_timeout != ''

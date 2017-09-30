@@ -28,8 +28,9 @@
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: shell timeout ###"
     content: |
-      #readonly TMOUT={{ harden_shell_timeout }}
+      readonly TMOUT={{ harden_shell_timeout }}
   tags: bash
+  when: harden_shell_timeout is defined and harden_shell_timeout != ''
 
 - name: configure motd
   template: src=motd.j2 dest={{ item }} mode=0644 backup=yes
@@ -37,3 +38,4 @@
     - /etc/motd
     - /etc/issue.net
 
+- include: sudo.yml
