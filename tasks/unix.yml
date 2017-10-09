@@ -33,9 +33,14 @@
   when: harden_shell_timeout is defined and harden_shell_timeout != ''
 
 - name: configure motd
-  template: src=motd.j2 dest={{ item }} mode=0644 backup=yes
+  template:
+    src: "{{ harden_motd_template }}"
+    dest: "{{ item }}"
+    mode: '0644'
+    backup: yes
   with_items:
     - /etc/motd
     - /etc/issue.net
+  when: harden_motd_template != ''
 
 - include: sudo.yml
