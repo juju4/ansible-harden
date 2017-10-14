@@ -26,8 +26,7 @@ ServerKeyBits 1024
 
 # Logging
 SyslogFacility AUTH
-#LogLevel INFO
-LogLevel VERBOSE
+LogLevel {{ harden_sshd_loglevel | default('VERBOSE') }}
 
 # Authentication:
 LoginGraceTime 120
@@ -135,7 +134,7 @@ Match user upload
     X11Forwarding no
     AllowTcpForwarding no
     PasswordAuthentication no
-#    ForceCommand /bin/rsync --server -vlogDtprze.iLsf . /tdm/
+#    ForceCommand /bin/rsync --server -vlogDtprze.iLsf . /path/to/share/
 #    ForceCommand internal-sftp
 ## ensure chroot dir is owned by root for security reason
 #    ChrootDirectory %h
