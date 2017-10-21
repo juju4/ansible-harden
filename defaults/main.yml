@@ -1,5 +1,6 @@
 ---
 
+harden_timezone: UTC
 harden_logcheck: true
 #harden_logcheck_hours: '*'
 harden_logcheck_hours: '6,18'
@@ -45,6 +46,8 @@ harden_enable_iommu_force: false
 harden_bash2syslog: true
 
 harden_upgradeall: true
+## through unattended-upgrades or yum-cron
+harden_security_update_auto: true
 harden_use_containers_lxc: false
 
 harden_rsyslog_extraconf:
@@ -68,6 +71,11 @@ harden_cracklib_dict:
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 
+harden_auditd_buffer: 32768
+## 0=silent 1=printk 2=panic
+harden_auditd_failure_mode: 1
+## 0=can temporarily disable 1=enable auditing 2=immutable/changes require reboot
+harden_auditd_enabled_flag: 2
 harden_auditd_log_tmp: true
 harden_auditd_log_etc: true
 ## Attention! those three would generate lot of logs. alternatives: sysdig/falco, systemtap, osquery...
