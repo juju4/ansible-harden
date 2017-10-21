@@ -2,6 +2,7 @@
 ## /etc/audit/rules.d/audit.rules
 ## https://cisofy.com/controls/ACCT-9630/
 ## http://www.digrouz.com/mediawiki/index.php?title=(RHEL)_HOWTO_configure_the_auditing_of_the_system_(auditd)
+## https://github.com/major/cis-rhel-ansible/blob/master/roles/cis/files/etc/audit/audit.rules
 
 ###################
 # Remove any existing rules
@@ -13,7 +14,7 @@
 # Buffer Size
 ###################
 # Might need to be increased, depending on the load of your system.
--b 32768
+-b {{ harden_auditd_buffer | default(32768) }}
 
 ###################
 # Failure Mode
@@ -21,7 +22,7 @@
 # 0=Silent
 # 1=printk, print failure message
 # 2=panic, halt system
--f 1
+-f {{ harden_auditd_failure_mode | default(1) }}
 
 {% if harden_auditd_exclusions %}
 ###################
@@ -69,7 +70,6 @@
 ###################
 -a exit,always -F arch=b32 -S adjtimex -S settimeofday -S stime -S clock_settime -k time
 -a exit,always -F arch=b64 -S adjtimex -S settimeofday -S clock_settime -k time
--w /etc/localtime -p wa -k localtime
 -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
 -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
 -a always,exit -F arch=b64 -S clock_settime -k time-change
@@ -246,6 +246,8 @@
 -w /sbin/insmod -p x -k modules
 -w /sbin/rmmod -px -k modules
 -w /sbin/modprobe -p x -k modules
+-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+
 # 8.1.6,10,11,13,14,17.1 Record Events That Modify the System's Network Environment
 -a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale
 -a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale
@@ -253,6 +255,8 @@
 -w /etc/issue.net -p wa -k system-locale
 -w /etc/hosts -p wa -k system-locale
 -w /etc/network -p wa -k system-locale
+-w /etc/sysconfig/network -p wa -k system-locale
+
 -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
 -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
 -a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
@@ -344,7 +348,7 @@
 ###################
 # Make the configuration immutable
 ###################
--e 2
+-e {{ harden_auditd_enabled_flag | default(2) }}
 
 # EOF
 
