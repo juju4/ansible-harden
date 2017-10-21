@@ -1,0 +1,19 @@
+---
+
+- name: Debian | ensure unattended-upgrades is installed
+  apt:
+    name: unattended-upgrades
+    state: present
+
+## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
+- name: Debian | enable automatic security updates
+  lineinfile:
+    dest: /etc/apt/apt.conf.d/10periodic
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+  with_items:
+    - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists "1";' }
+    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages', line: 'APT::Periodic::Download-Upgradeable-Packages "1";' }
+    - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade "1";' }
+    - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval "14";' }

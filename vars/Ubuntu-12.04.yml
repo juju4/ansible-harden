@@ -27,7 +27,6 @@ harden_pkg:
     - tcpdump
     - libcap2-bin
     - ldnsutils
-    - unattended-upgrades
     - update-notifier-common
     - gnupg
     - gnupg-curl

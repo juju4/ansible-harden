@@ -26,15 +26,8 @@
     - liblxc1
   when: harden_use_containers_lxc is not defined or not harden_use_containers_lxc
 
-## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
-- name: Debian | enable automatic security updates
-  lineinfile:
-    dest=/etc/apt/apt.conf.d/10periodic regexp="{{ item.regexp }}" line="{{ item.line }}"
-  with_items:
-    - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists "1";' }
-    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages', line: 'APT::Periodic::Download-Upgradeable-Packages "1";' }
-    - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade "1";' }
-    - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval "14";' }
+- include: unattended-upgrades.yml
+  when: harden_security_update_auto
 
 - debug: var=ansible_mounts
 - name: add apt hardening with somme immutable directories

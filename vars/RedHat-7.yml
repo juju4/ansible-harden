@@ -17,11 +17,6 @@ harden_pkg:
     - yum-utils
     - fail2ban
     - setroubleshoot
-## FIXME!
-## https://bugs.centos.org/view.php?id=9938
-## https://bugzilla.redhat.com/show_bug.cgi?id=1293513
-## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
-    - yum-cron
     - systemtap
     - sudo
 
@@ -30,7 +25,6 @@ harden_pkg_remove: []
 
 harden_services:
     - jitterentropy-rngd
-    - yum-cron
 harden_services_containers:
     - psacct
     - auditd

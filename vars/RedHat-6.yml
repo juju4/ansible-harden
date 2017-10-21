@@ -24,7 +24,6 @@ harden_pkg_remove: []
 
 harden_services:
     - haveged
-    - yum-cron
 harden_services_containers: []
 #    - psacct
 #    - auditd
