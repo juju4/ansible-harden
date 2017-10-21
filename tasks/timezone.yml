@@ -1,0 +1,5 @@
+---
+
+- name: Set system timezone
+  timezone:
+    name: "{{ harden_timezone | default('UTC') }}"

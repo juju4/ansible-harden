@@ -1,5 +1,8 @@
 ---
 
+- include: timezone.yml
+  when: harden_timezone is defined and harden_timezone != ''
+
 - include: sshd.yml
   when: harden_sshd_review
 
