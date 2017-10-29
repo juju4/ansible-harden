@@ -4,11 +4,11 @@ check process auditd
   group system
   group auditd
 {% if ansible_service_mgr == 'systemd' %}
-  start program = "/bin/systemctl start ssh" with timeout 60 seconds
-  stop program  = "/bin/systemctl stop ssh"
+  start program = "/bin/systemctl start auditd" with timeout 60 seconds
+  stop program  = "/bin/systemctl stop auditd"
 {% else %}
-  start program = "/etc/init.d/ssh start" with timeout 60 seconds
-  stop program  = "/etc/init.d/ssh stop"
+  start program = "/etc/init.d/auditd start" with timeout 60 seconds
+  stop program  = "/etc/init.d/auditd stop"
 {% endif %}
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert

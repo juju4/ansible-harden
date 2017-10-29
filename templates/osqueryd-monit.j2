@@ -4,11 +4,11 @@ check process osqueryd
   group system
   group osqueryd
 {% if ansible_service_mgr == 'systemd' %}
-  start program = "/bin/systemctl start ssh" with timeout 60 seconds
-  stop program  = "/bin/systemctl stop ssh"
+  start program = "/bin/systemctl start osqueryd" with timeout 60 seconds
+  stop program  = "/bin/systemctl stop osqueryd"
 {% else %}
-  start program = "/etc/init.d/ssh start" with timeout 60 seconds
-  stop program  = "/etc/init.d/ssh stop"
+  start program = "/etc/init.d/osqueryd start" with timeout 60 seconds
+  stop program  = "/etc/init.d/osqueryd stop"
 {% endif %}
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert

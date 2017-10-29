@@ -9,11 +9,11 @@ check process rsyslog
   group system
   group rsyslog
 {% if ansible_service_mgr == 'systemd' %}
-  start program = "/bin/systemctl start ssh" with timeout 60 seconds
-  stop program  = "/bin/systemctl stop ssh"
+  start program = "/bin/systemctl start rsyslog" with timeout 60 seconds
+  stop program  = "/bin/systemctl stop rsyslog"
 {% else %}
-  start program = "/etc/init.d/ssh start" with timeout 60 seconds
-  stop program  = "/etc/init.d/ssh stop"
+  start program = "/etc/init.d/rsyslog start" with timeout 60 seconds
+  stop program  = "/etc/init.d/rsyslog stop"
 {% endif %}
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert
