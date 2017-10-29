@@ -27,3 +27,8 @@ describe file('/etc/monit.d/sshd'), :if => os[:family] == 'redhat' do
   it { should be_file }
 end
 
+describe command('monit status') do
+  its(:stdout) { should match /monitoring status.*Monitored/ }
+  its(:stdout) { should_not match /monitoring status.*Not Monitored/ }
+  its(:exit_status) { should eq 0 }
+end
