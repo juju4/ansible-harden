@@ -69,3 +69,5 @@
 
 - include: vim-swapfiles.yml
 
+- include: testing.yml
+  when: harden_testing

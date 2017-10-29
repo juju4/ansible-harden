@@ -1,0 +1,41 @@
+---
+# https://isc.sans.edu/forums/diary/Finding+Privilege+Escalation+Flaws+in+Linux/19207
+
+- name: Ensure user _test is present
+  user:
+    name: _test
+    state: present
+
+- name: retrieve unix-privesc-check
+  get_url:
+    url: http://pentestmonkey.net/tools/unix-privesc-check/unix-privesc-check-1.4.tar.gz
+    dest: /tmp/unix-privesc-check-1.4.tar.gz
+    checksum: 'sha256:aaaaa'
+    mode: '0644'
+
+- name: unarchive unix-privesc-check
+  unarchive:
+    src: /tmp/unix-privesc-check-1.4.tar.gz
+    dest: /tmp/
+    owner: _test
+
+- name: execute unix-privesc-check
+  shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check | tee /tmp/unix-privesc-check.out"
+  ignore_errors: true
+  register: privcheck
+
+- debug: var=privcheck.stdout_lines
+
+- name: retrieve linuxprivchecker
+  get_url:
+    url: http://www.securitysift.com/download/linuxprivchecker.py
+    dest: /tmp/linuxprivchecker.py
+    checksum: 'sha256:aaaaa'
+    mode: '0644'
+
+- name: execute unix-privesc-check
+  shell: "/tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
+  ignore_errors: true
+  register: linuxprivchecker
+
+- debug: var=linuxprivchecker.stdout_lines

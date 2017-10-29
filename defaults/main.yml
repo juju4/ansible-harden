@@ -239,3 +239,8 @@ harden_usb_inputdevice_whitelist:
 
 monit_auditd: false
 monit_osqueryd: false
+
+harden_testing: false
+harden_testing_inspec: true
+harden_testing_check: true
+harden_testing_privesc: true
