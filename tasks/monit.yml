@@ -21,12 +21,18 @@
     state: directory
     mode: '0755'
 
+- name: set monit configurations
+  template:
+    src: "{{ item }}-monit.j2"
+    dest: "{{ monit_confdir }}/{{ item }}"
+    mode: '0700'
+    backup: yes
+    validate: 'monit -t -c %s'
+  with_items: "{{ daemons }}"
+  notify:
+    - restart monit
+
 - block:
-    - name: set monit configurations
-      template: "src={{ item }}-monit.j2 dest={{ monit_confdir }}/{{ item }} mode=0644 backup=yes"
-      with_items: "{{ daemons }}"
-      notify:
-        - restart monit
     - block:
         - name: Trusty+Jessie | enable monit
           file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf.d/{{ item }} state=link"
@@ -42,14 +48,6 @@
             - restart monit
       when: ansible_distribution_release == 'xenial'
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- block:
-    - name: set monit configurations
-      template: "src={{ item }}-monit.j2 dest={{ monit_confdir }}/{{ item }} mode=0644 backup=yes"
-      with_items: "{{ daemons }}"
-      notify:
-        - restart monit
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: allow monit status/summary from localhost
   replace: dest={{ monitrc }} regexp={{ item.re }} replace={{ item.rep }}
