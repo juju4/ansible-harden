@@ -38,3 +38,8 @@ harden_sshd_crypto:
 
 monitrc: /etc/monitrc
 monit_confdir: /etc/monit.d
+
+testing_pkgs:
+  - ruby
+  - ruby-devel
+  - libffi-devel

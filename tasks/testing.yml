@@ -1,10 +1,11 @@
 ---
 
 - block:
-    - name: testing | Ensure ruby is present
+    - name: testing | Ensure ruby and dependencies are present
       package:
-        name: ruby
+        name: "{{ item }}"
         state: present
+      with_items: "{{ testing_pkgs }}"
     - name: testing | Ensure inspec is present
       gem:
         name: inspec
