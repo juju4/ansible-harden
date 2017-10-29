@@ -76,4 +76,5 @@ monit_confdir: /etc/monit/conf-available
 testing_pkgs:
   - ruby
   - ruby-dev
+  - rake
   - libffi-dev
