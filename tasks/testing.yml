@@ -1,20 +1,41 @@
 ---
 
 - block:
-    - name: testing | Ensure ruby and dependencies are present
-      package:
-        name: "{{ item }}"
+#    - name: testing | Ensure ruby and dependencies are present
+#      package:
+#        name: "{{ item }}"
+#        state: present
+#      with_items: "{{ testing_pkgs }}"
+#    - name: testing | Ensure inspec is present
+#      gem:
+#        name: "{{ item }}"
+#        state: present
+#        user_install: no
+#      with_items:
+#        - rake
+#        - inspec
+    - name: download inspec package
+      get_url:
+        url: "{{ inspec_url }}"
+        dest: "/tmp/{{ inspec_url | basename }}"
+        checksum: "{{ inspec_hash }}"
+        mode: '0600'
+    - name: Debian | install inspec package
+      apt:
+        deb: "/tmp/{{ inspec_url | basename }}"
         state: present
-      with_items: "{{ testing_pkgs }}"
-    - name: testing | Ensure inspec is present
-      gem:
-        name: inspec
+      when: ansible_os_family == 'Debian'
+    - name: RedHat | install inspec package
+      yum:
+        name: "/tmp/{{ inspec_url | basename }}"
         state: present
+      when: ansible_os_family == 'RedHat'
 
     - name: testing | run linux-baseline
       shell: "inspec exec https://github.com/juju4/linux-baseline | tee /var/log/inspec.log"
       ignore_errors: true
       register: inspeclog
+      changed_when: false
     - debug: var=inspeclog.stdout_lines
 
   when: harden_testing_inspec

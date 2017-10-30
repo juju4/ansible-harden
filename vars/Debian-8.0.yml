@@ -46,6 +46,7 @@ harden_pkg:
 #    - tracker-utils
     - systemtap
     - sudo
+    - ecryptfs-utils
 
 harden_pkg_remove:
     - avahi-daemon
@@ -75,5 +76,4 @@ monit_confdir: /etc/monit/conf-available
 testing_pkgs:
   - ruby
   - ruby-dev
-  - rake
   - libffi-dev

@@ -47,6 +47,7 @@ harden_pkg:
     - tracker-utils
     - systemtap
     - sudo
+    - ecryptfs-utils
 
 harden_pkg_remove:
     - avahi-daemon
@@ -76,5 +77,4 @@ testing_pkgs:
   - ruby
   - rubygems
   - ruby-dev
-  - rake
   - libffi-dev

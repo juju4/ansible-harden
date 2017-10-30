@@ -48,6 +48,7 @@ harden_pkg:
     - tracker-utils
     - systemtap
     - sudo
+    - ecryptfs-utils
 
 harden_pkg_remove:
     - avahi-daemon
@@ -77,5 +78,7 @@ monit_confdir: /etc/monit/monitrc.d
 testing_pkgs:
   - ruby
   - ruby-dev
-  - rake
   - libffi-dev
+
+inspec_url: https://packages.chef.io/files/stable/inspec/1.43.5/ubuntu/14.04/inspec_1.43.5-1_amd64.deb
+inspec_hash: 'sha256:5f1850b2bf8abf0a60c1c95bea83f34e8b3d56fa6fc373f0d07b19bcc43ae3f2'
