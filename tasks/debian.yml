@@ -12,13 +12,19 @@
 #  when: travisci is not defined or not travisci
 
 - name: Debian | Remove rpc-related packages
-  apt: name={{item}} state=absent
+  apt:
+    name: "{{item}}"
+    state: absent
+    purge: yes
   with_items:
     - rpcbind
   when: harden_use_rpc is not defined or not harden_use_rpc
 
 - name: Debian | Remove container lxc-related packages
-  apt: name={{item}} state=absent
+  apt:
+    name: "{{item}}"
+    state: absent
+    purge: yes
   with_items:
     - lxd
     - lxcfs

@@ -25,7 +25,10 @@
   package: name={{ item }} state=present update_cache=yes
   with_items: "{{ harden_pkg }}"
 - name: Remove some packages
-  package: name={{ item }} state=absent
+  package:
+    name: "{{ item }}"
+    state: absent
+    purge: yes
   with_items: "{{ harden_pkg_remove }}"
 
 - block:
@@ -35,7 +38,9 @@
       service: name=arpwatch state=started enabled=yes
   when: harden_arpwatch and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 - name: Install arpwatch
-  package: name=arpwatch state=absent
+  package:
+    name: arpwatch
+    state: absent
   when: not harden_arpwatch or (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 
 - include: linux.yml
