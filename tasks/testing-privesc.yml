@@ -10,7 +10,7 @@
   get_url:
     url: http://pentestmonkey.net/tools/unix-privesc-check/unix-privesc-check-1.4.tar.gz
     dest: /tmp/unix-privesc-check-1.4.tar.gz
-    checksum: 'sha256:aaaaa'
+    checksum: 'sha256:e1f85e7f69fabadd23756a3d76a0e3d864b21e28763b60ce2e6181290d1c1969'
     mode: '0644'
 
 - name: unarchive unix-privesc-check
@@ -20,22 +20,30 @@
     owner: _test
 
 - name: execute unix-privesc-check
-  shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check | tee /tmp/unix-privesc-check.out"
+  shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
   ignore_errors: true
   register: privcheck
+  args:
+    creates: /tmp/unix-privesc-check.out
 
-- debug: var=privcheck.stdout_lines
+#- debug: var=privcheck.stdout_lines
+- name: grep error+warning of unix-privesc
+  shell: egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | grep -v "Can't find full path of running program:" | sort | uniq
+  changed_when: false
+  ignore_errors: true
 
 - name: retrieve linuxprivchecker
   get_url:
     url: http://www.securitysift.com/download/linuxprivchecker.py
     dest: /tmp/linuxprivchecker.py
-    checksum: 'sha256:aaaaa'
+    checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
     mode: '0644'
 
 - name: execute unix-privesc-check
-  shell: "/tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
+  shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
   ignore_errors: true
   register: linuxprivchecker
+  args:
+    creates: /tmp/linuxprivchecker.out
 
-- debug: var=linuxprivchecker.stdout_lines
+#- debug: var=linuxprivchecker.stdout_lines
