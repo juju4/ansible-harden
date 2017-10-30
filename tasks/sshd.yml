@@ -123,6 +123,15 @@
   notify:
     - restart sshd
 
+- name: Ensure sshd groups exist
+  group:
+    name: "{{ item }}"
+    state: present
+    system: yes
+  with_items:
+    - sftp-users
+    - forwarding-users
+
 #- name: sshd configuration file update
 #  template: src=sshd_config
 #    dest=/etc/ssh/sshd_config
