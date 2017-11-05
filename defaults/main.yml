@@ -36,6 +36,7 @@ harden_sshd_port: 22
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
 harden_sshd_PasswordAuthentication: false
 harden_motd_template: motd.j2
+harden_modprobe_template: modprobe-dev-sec.conf.j2
 
 harden_journald_systemmaxuse: '1024M'
 harden_logrotate_days: 90
@@ -151,6 +152,8 @@ harden_ubuntu_livepatch_token: 'xxx'
 
 harden_rhel_kpatch: false
 
+harden_selinux_customhome: []
+
 harden_osquery: true
 harden_osquery_template: 'osquery.conf.j2'
 harden_osquery_upload_packs: []
@@ -242,5 +245,11 @@ monit_osqueryd: false
 
 harden_testing: false
 harden_testing_inspec: true
+harden_testing_inspec_paths:
+  - https://github.com/juju4/linux-baseline
+  - https://github.com/juju4/inspec-ntp.git
+  - https://github.com/juju4/inspec-audit.git
+  - https://github.com/juju4/inspec-osquery.git
+  - https://github.com/juju4/inspec-syslog.git
 harden_testing_check: true
 harden_testing_privesc: true
