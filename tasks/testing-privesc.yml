@@ -17,7 +17,8 @@
   unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
     dest: /tmp/
-    owner: _test
+  become: yes
+  become_user: _test
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
@@ -25,6 +26,8 @@
   register: privcheck
   args:
     creates: /tmp/unix-privesc-check.out
+  become: yes
+  become_user: _test
 
 #- debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
@@ -38,6 +41,8 @@
     dest: /tmp/linuxprivchecker.py
     checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
     mode: '0644'
+  become: yes
+  become_user: _test
 
 - name: execute unix-privesc-check
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
@@ -45,5 +50,29 @@
   register: linuxprivchecker
   args:
     creates: /tmp/linuxprivchecker.out
+  become: yes
+  become_user: _test
 
 #- debug: var=linuxprivchecker.stdout_lines
+
+# http://www.kitploit.com/2017/11/kernelpop-kernel-privilege-escalation.html
+# https://github.com/spencerdodd/kernelpop
+- name: retrieve kernelpop
+  git:
+    repo: 'https://github.com/spencerdodd/kernelpop'
+    dest: /home/_test/
+    version: HEAD
+  become: yes
+  become_user: _test
+
+- name: ensure python3 is present
+  package:
+    name: python3
+    state: present
+
+- name: execute kernelpop
+  shell: python3 kernelpop.py -b
+  args:
+    chdir: /home/_test/kernelpop
+  become: yes
+  become_user: _test
