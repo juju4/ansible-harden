@@ -32,7 +32,8 @@
       when: ansible_os_family == 'RedHat'
 
     - name: testing | run linux-baseline
-      shell: "inspec exec https://github.com/juju4/linux-baseline | tee /var/log/inspec.log"
+#      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
+      shell: "inspec exec --attrs test/integration/default/inspec/profile-attributes.yml test/integration/default/inspec/profile.yml | tee /var/log/inspec.log"
       ignore_errors: true
       register: inspeclog
       changed_when: false
