@@ -33,7 +33,9 @@
 
     - name: testing | run linux-baseline
 #      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
-      shell: "inspec exec --attrs test/integration/default/inspec/profile-attributes.yml test/integration/default/inspec/profile.yml | tee /var/log/inspec.log"
+      shell: "inspec exec --attrs profile-attributes.yml profile.yml | tee /var/log/inspec.log"
+      args:
+        chdir: /etc/ansible/roles/juju4.harden/test/integration/default/inspec
       ignore_errors: true
       register: inspeclog
       changed_when: false
