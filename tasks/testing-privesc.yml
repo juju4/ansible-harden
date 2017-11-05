@@ -60,7 +60,7 @@
 - name: retrieve kernelpop
   git:
     repo: 'https://github.com/spencerdodd/kernelpop'
-    dest: /home/_test/
+    dest: /home/_test/kernelpop
     version: HEAD
   become: yes
   become_user: _test
