@@ -95,3 +95,11 @@
   with_items: "{{ harden_rsyslog_extraconf }}"
   notify:
     - restart rsyslog
+
+- name: Disable unused filesystems modules
+  template:
+    src: "{{ harden_modprobe_template }}"
+    dest: /etc/modprobe.d/dev-sec.conf
+    mode: '0644'
+    backup: yes
+  when: harden_modprobe_template is defined and harden_modprobe_template != ''
