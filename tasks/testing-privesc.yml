@@ -71,7 +71,7 @@
     state: present
 
 - name: execute kernelpop
-  shell: python3 kernelpop.py -b
+  shell: "python3 kernelpop.py -b | tee /tmp/kernelpop.out"
   args:
     chdir: /home/_test/kernelpop
   become: yes
