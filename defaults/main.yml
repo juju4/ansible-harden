@@ -72,6 +72,7 @@ harden_cracklib_dict:
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 
+harden_auditd_template: audit.rules.j2
 harden_auditd_buffer: 32768
 ## 0=silent 1=printk 2=panic
 harden_auditd_failure_mode: 1
