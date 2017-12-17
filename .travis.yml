@@ -82,7 +82,8 @@ before_install:
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum update" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip"
+## FIXME: https://travis-ci.org/juju4/ansible-harden/jobs/317795507#L2007
+  - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip"'
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install ansible==${ansible_version}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible --version"
   - "echo localhost > inventory"
