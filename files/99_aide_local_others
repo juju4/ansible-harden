@@ -91,7 +91,7 @@
 /var/lib/postfix/prng_exch$ VarFile
 /var/lib/postfix/smtp_scache.db$ VarFile
 /var/lib/postfix/smtpd_scache.db$ VarFile
-!/var/backups/apt.extended_states(\.[0-9]*)?(\.gz)?$ VarFile
+!/var/backups/apt.extended_states(\.[0-9]*)?(\.gz)?$
 /var/lib/udisks/mtab$ VarFile
 /var/lib/udisks$ VarDirTime
 /var/lib/misc/prelink.quick$ VarFile
