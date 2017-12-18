@@ -1,5 +1,9 @@
 ## {{ ansible_managed }}
+{% if ansible_distribution == "Alpine" %}
+check process rsyslog matching "rsyslogd"
+{% else %}
 check process rsyslog
+{% endif %}
 {% if ansible_os_family == "RedHat" %}
   with pidfile "/var/run/syslogd.pid"
 {% endif %}

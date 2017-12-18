@@ -6,6 +6,9 @@ check process sshd
 {% if ansible_service_mgr == 'systemd' %}
   start program = "/bin/systemctl start ssh" with timeout 60 seconds
   stop program  = "/bin/systemctl stop ssh"
+{% elif ansible_distribution == 'Alpine' %}
+  start program = "/etc/init.d/sshd start" with timeout 60 seconds
+  stop program  = "/etc/init.d/sshd stop"
 {% else %}
   start program = "/etc/init.d/ssh start" with timeout 60 seconds
   stop program  = "/etc/init.d/ssh stop"
