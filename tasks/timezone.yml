@@ -23,4 +23,4 @@
 - name: Set system timezone
   timezone:
     name: "{{ harden_timezone | default('UTC') }}"
-  when: ansible_distribution != "Alpine"
+  when: ansible_distribution != "Alpine" and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
