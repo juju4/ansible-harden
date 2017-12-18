@@ -30,7 +30,7 @@ harden_pkg:
     - gnupg-curl
 #    - libpam-cracklib
     - debsums
-    - apt-show-versions
+#    - apt-show-versions
     - lynis
     - libpam-tmpdir
     - debian-goodies
