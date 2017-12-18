@@ -77,3 +77,4 @@ testing_pkgs:
   - ruby
   - ruby-dev
   - libffi-dev
+python3_pkg: python3
