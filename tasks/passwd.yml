@@ -9,6 +9,7 @@
     mode: '0644'
     checksum: "{{ item.h }}"
   with_items: "{{ harden_cracklib_dict }}"
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
 
 - block:
     - name: Debian | create cracklib database
