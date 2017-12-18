@@ -22,6 +22,11 @@
   with_items:
     - { r: '^PASS_MIN_LEN', l: 'PASS_MIN_LEN    10' }
 
+- name: Ensure initscripts package is present
+  package:
+    name: initscripts
+    state: present
+
 - name: password set for single mode
   lineinfile: dest=/etc/sysconfig/init regexp='^SINGLE=' line='SINGLE=/sbin/sulogin'
 
