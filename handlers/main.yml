@@ -2,6 +2,7 @@
 
 - name: restart sshd
   service: name={{ ssh_svc }} state=restarted
+  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart iptables
   service: name=iptables-persistent state=restarted
