@@ -30,7 +30,7 @@
     dest: /tmp/
   become: yes
   become_user: _test
-  when: ansible_os_family != "Alpine"
+  when: not (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
 
 - name: Alpine | unarchive unix-privesc-check
   command: tar xzf /tmp/unix-privesc-check-1.4.tar.gz
@@ -39,7 +39,7 @@
     creates: /tmp/unix-privesc-check-1.4
   become: yes
   become_user: _test
-  when: ansible_os_family == "Alpine"
+  when: (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
@@ -77,6 +77,11 @@
   become_user: _test
 
 #- debug: var=linuxprivchecker.stdout_lines
+
+- name: Ensure git is present
+  package:
+    name: git
+    state: present
 
 # http://www.kitploit.com/2017/11/kernelpop-kernel-privilege-escalation.html
 # https://github.com/spencerdodd/kernelpop
