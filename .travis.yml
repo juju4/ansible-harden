@@ -1,80 +1,84 @@
 ---
-dist: trusty
+## from https://github.com/geerlingguy/ansible-role-apache/blob/master/.travis.yml
 sudo: required
-rvm:
-  - 2.4
 
 env:
-## those images need pre-configuration before being usable (openssh...)
 #  - distribution: centos
 #    version: 6
+#    init: /sbin/init
+#    run_opts: ""
   - distribution: centos
     version: 7
+    init: /usr/lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
   - distribution: ubuntu
     version: 16.04
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+#    run_opts: "--cap-add SYS_ADMIN"
   - distribution: ubuntu
     version: 14.04
+    init: /sbin/init
+    run_opts: ""
   - distribution: ubuntu
     version: 12.04
-#  - distribution: alpine
-#    version: 3.4
+    init: /sbin/init
+    run_opts: ""
+  - distribution: alpine
+    version: 3.4
+    init: /sbin/init
+    run_opts: ""
+  - distribution: debian
+    version: 8
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+
+services:
+  - docker
 
 before_install:
+  # - sudo apt-get update
+  # Pull container
+  - 'sudo docker pull ${distribution}:${version}'
   - env
   - pwd
   - find -ls
-## use appropriate role path and not github name
   - "[ -f get-dependencies.sh ] && sh -x get-dependencies.sh"
-## No Xenial, https://github.com/travis-ci/travis-ci/issues/5821
-#  - sudo apt install lxd
-  - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/trusty-backports.list
-  - sudo apt-get update -qq
-  - sudo apt -t trusty-backports -y install lxd acl -q
-## change of group implies logout+login to apply... can't do with travis = run as root (sic)
-## https://github.com/travis-ci/travis-ci/issues/1839   or chain: sudo -E su $USER -c "..."
-  - sudo usermod -G lxd travis
-  # Pull container
-#  - lxc remote add images images.linuxcontainers.org
-  - sudo -E su $USER -c "lxc remote list"
-  - sudo -E su $USER -c "lxc image list"
-## pre-download base images
-  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:/${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
-  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || true'
-## configure lxd-bridge
-  - sudo perl -pi -e 's@^LXD_IPV4_ADDR=""@LXD_IPV4_ADDR="10.252.116.1"@;s@^LXD_IPV4_NETMASK=""@LXD_IPV4_NETMASK="255.255.255.0"@;s@^LXD_IPV4_NETWORK=""@LXD_IPV4_NETWORK="10.252.116.1/24"@;s@^LXD_IPV4_DHCP_RANGE=""@LXD_IPV4_DHCP_RANGE="10.252.116.2,10.252.116.254"@;s@^LXD_IPV4_DHCP_MAX=""@LXD_IPV4_DHCP_MAX="252"@;s@LXD_IPV6_PROXY="true"@LXD_IPV6_PROXY="false"@' /etc/default/lxd-bridge
-#  - cat /etc/default/lxd-bridge
-#  - service --status-all
-  - sudo service lxd restart
-
-  - sudo pip install ansible
-## need to use chef gem for some reason? BAD PATH https://github.com/chef/chef-dk/issues/15
-#  - chef gem install kitchen
-  - gem install kitchen
-  - gem install kitchen-ansible
-  - gem install kitchen-sync
-  - gem install kitchen-lxd_cli
-## Message: Unable to activate kitchen-ansible-0.45.0, because net-ssh-2.9.2 conflicts with net-ssh (~> 3.0)
-#  - chef gem uninstall net-ssh -v 2.9.2 -q ?-y
-#  - chef gem list
-  - gem list
-  - which kitchen
-#  - which chef
-#  - find /var/lib/gems $HOME/.gem /usr/local/rvm/gems /opt/chefdk/embedded/lib/ruby/gem -iname '*lxd_cli*' || true
-  - wget -q https://releases.hashicorp.com/vagrant/1.9.7/vagrant_1.9.7_x86_64.deb && sudo dpkg -i vagrant_1.9.7_x86_64.deb
-## ssh key for lxd_cli ?
-  - ls ~/.ssh
-  - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
-## sudo/su get us a non-usual PATH ...
-  - sudo -E su $USER -c "env"
-## The command "sudo -E su $USER -c "which kitchen"" failed and exited with 1 during .
-#  - sudo -E su $USER -c "which kitchen"
-  - sudo -E su $USER -c "env PATH=$PATH kitchen diagnose --all"
-#  - sudo -E su $USER -c "kitchen diagnose --all"
-#  - sudo -E -u $USER kitchen diagnose --all
+  - cp test/travis/initctl_faker test/
+  # Customize container
+  - 'sudo docker build --rm=true --file=test/travis/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:ansible test'
 
 script:
-#  - KITCHEN_LOCAL_YAML=.kitchen.local.yml bundle exec kitchen verify ${INSTANCE}
-  - sudo -E su $USER -c "env PATH=$PATH kitchen verify default-${distribution}-${version//./} -l debug || (cat $HOME/.kitchen/logs/default-${distribution}-${version//./}.log; find /tmp/kitchen)"
+  - container_id=$(mktemp)
+    # Run container in detached state
+## Note: mapping urandom/random to have better entropy. Normally, have rng-tools or haveged to handle that but not running inside docker images we have
+  - 'sudo docker run --detach -v /dev/urandom:/dev/random --volume="${PWD%/*}":/etc/ansible/roles:ro ${run_opts} ${distribution}-${version}:ansible "${init}" > "${container_id}"'
+
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible --version'
+
+  # Ansible syntax check.
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml --syntax-check'
+
+  # Test role.
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml'
+
+  # Test role idempotence.
+## known fail (harden-sysctl)
+  - >
+    sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml
+    | tee /tmp/idempotency.log
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 0)
+
+  # Clean up
+  - 'sudo docker stop "$(cat ${container_id})"'
+
+after_failure:
+  # Check what happened on systemd systems.
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l status'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm journalctl -xe --no-pager'
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
+
