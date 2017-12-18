@@ -2,7 +2,7 @@
 
 ssh_svc: ssh
 aide_bin: aide.wrapper
-immutable_testfile: /etc/init.d/networking
+immutable_testfile: /etc/init.d/sudo
 
 harden_pkg:
     - openssh-server
