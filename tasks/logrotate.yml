@@ -1,5 +1,10 @@
 ---
 
+- name: Ensure logrotate package is present
+  package:
+    name: logrotate
+    state: present
+
 - name: review logrotate configuration
   replace:
     dest: /etc/logrotate.conf
