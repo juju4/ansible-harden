@@ -79,6 +79,7 @@ testing_pkgs:
   - ruby
   - ruby-dev
   - libffi-dev
+python3_pkg: python3
 
 inspec_url: https://packages.chef.io/files/stable/inspec/1.43.5/ubuntu/14.04/inspec_1.43.5-1_amd64.deb
 inspec_hash: 'sha256:5f1850b2bf8abf0a60c1c95bea83f34e8b3d56fa6fc373f0d07b19bcc43ae3f2'

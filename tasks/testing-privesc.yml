@@ -67,7 +67,7 @@
 
 - name: ensure python3 is present
   package:
-    name: python3
+    name: "{{ python3_pkg | default('python3') }}"
     state: present
 
 - name: execute kernelpop
