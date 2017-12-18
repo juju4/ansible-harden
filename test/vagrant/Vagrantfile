@@ -10,6 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box = "boxcutter/ubuntu1604"
     #config.vm.box = "ubuntu/trusty64"
     #config.vm.box = "centos/7"
+    #config.vm.box = "generic/alpine36"
 
     config.vm.provision :ansible do |ansible|
        ansible.playbook = "site.yml"

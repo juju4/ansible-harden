@@ -5,6 +5,17 @@
   user:
     name: _test
     state: present
+  when: ansible_os_family != "Alpine"
+
+- name: Alpine | Add _test user
+  command: "adduser -D _test creates=/home/_test"
+  become: yes
+  ignore_errors: true
+  when: ansible_os_family == "Alpine"
+- name: Alpine | Unlock user
+  command: "passwd -u _test"
+  ignore_errors: true
+  when: ansible_os_family == "Alpine"
 
 - name: retrieve unix-privesc-check
   get_url:
@@ -19,6 +30,16 @@
     dest: /tmp/
   become: yes
   become_user: _test
+  when: ansible_os_family != "Alpine"
+
+- name: Alpine | unarchive unix-privesc-check
+  command: tar xzf /tmp/unix-privesc-check-1.4.tar.gz
+  args:
+    chdir: /tmp
+    creates: /tmp/unix-privesc-check-1.4
+  become: yes
+  become_user: _test
+  when: ansible_os_family == "Alpine"
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"

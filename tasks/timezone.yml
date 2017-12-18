@@ -1,5 +1,26 @@
 ---
 
+- name: Ensure tzdata package is present
+  package:
+    name: tzdata
+    state: present
+
+- block:
+    - name: Alpine | copy timezone file
+      file:
+        src: "/usr/share/zoneinfo/{{ harden_timezone | default('UTC') }}"
+        dest: "/etc/localtime"
+    - name: Alpine | set local timezone
+      lineinfile:
+        dest: /etc/timezone
+        regexp: '^.*'
+        line: "{{ harden_timezone | default('UTC') }}"
+        mode: '0644'
+        owner: root
+        create: yes
+  when: ansible_distribution == "Alpine"
+
 - name: Set system timezone
   timezone:
     name: "{{ harden_timezone | default('UTC') }}"
+  when: ansible_distribution != "Alpine"

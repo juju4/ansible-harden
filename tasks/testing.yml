@@ -41,7 +41,7 @@
       changed_when: false
     - debug: var=inspeclog.stdout_lines
 
-  when: harden_testing_inspec
+  when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
 
 - include: testing-check.yml
   when: harden_testing_check

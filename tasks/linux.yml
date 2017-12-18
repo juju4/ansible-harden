@@ -86,6 +86,21 @@
 - include: logrotate.yml
 - include: passwd.yml
 
+- block:
+    - name: Alpine | Ensure /etc/rsyslog.d exists
+      file:
+        dest: /etc/rsyslog.d
+        state: directory
+        owner: root
+        mode: '0755'
+    - name: Alpine | Ensure rsyslog use rsyslog.d directory
+      lineinfile:
+        dest: /etc/rsyslog.conf
+        regexp: '^\$IncludeConfig /etc/.*'
+        line: '$IncludeConfig /etc/rsyslog.d/*.conf'
+        backup: yes
+  when: ansible_distribution == "Alpine"
+
 - name: add rsyslog configurations
   template:
     src: "{{ item }}.j2"
