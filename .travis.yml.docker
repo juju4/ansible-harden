@@ -14,12 +14,12 @@ env:
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
-    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
 #    run_opts: "--cap-add SYS_ADMIN"
   - distribution: ubuntu
     version: 14.04
     init: /sbin/init
-    run_opts: ""
+    run_opts: "--cap-add LINUX_IMMUTABLE"
   - distribution: alpine
     version: 3.7
     init: /sbin/init
