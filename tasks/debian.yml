@@ -105,12 +105,12 @@
 - debug: var=rclsattr.stdout
 - name: remove temporarily immutable flag on file
   command: 'chattr -i /etc/init.d/rc /etc/init.d'
-  when: rclsattr.stdout.find("----i-") == -1
+  when: rclsattr.stdout.find("----i-") == -1 and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 - name: set umask in /etc/init.d/rc
   lineinfile: "dest=/etc/init.d/rc regexp='^umask ' line='umask {{ harden_umask }}'"
 - name: re-set immutable flag on file
   command: 'chattr +i /etc/init.d/rc /etc/init.d'
-  when: rclsattr.stdout.find("----i-") == -1
+  when: rclsattr.stdout.find("----i-") == -1 and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   ignore_errors: true
 
 - include: apparmor-audit.yml
