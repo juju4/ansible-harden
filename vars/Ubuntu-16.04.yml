@@ -3,6 +3,7 @@
 ssh_svc: ssh
 aide_bin: aide.wrapper
 auditd_pkg: auditd
+immutable_testfile: /etc/init.d/rc
 
 harden_pkg:
     - openssh-server

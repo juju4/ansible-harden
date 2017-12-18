@@ -99,17 +99,18 @@
       capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 
-- command: 'lsattr /etc/init.d/rc'
+- command: "lsattr {{ immutable_testfile }}"
   register: rclsattr
   changed_when: false
 - debug: var=rclsattr.stdout
 - name: remove temporarily immutable flag on file
-  command: 'chattr -i /etc/init.d/rc /etc/init.d'
+  command: "chattr -i /etc/init.d"
   when: rclsattr.stdout.find("----i-") == -1 and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 - name: set umask in /etc/init.d/rc
   lineinfile: "dest=/etc/init.d/rc regexp='^umask ' line='umask {{ harden_umask }}'"
+  when: ansible_distribution == "Ubuntu"
 - name: re-set immutable flag on file
-  command: 'chattr +i /etc/init.d/rc /etc/init.d'
+  command: "chattr +i /etc/init.d"
   when: rclsattr.stdout.find("----i-") == -1 and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   ignore_errors: true
 
