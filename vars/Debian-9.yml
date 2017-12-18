@@ -28,7 +28,7 @@ harden_pkg:
 #    - update-notifier-common
     - gnupg
 #    - gnupg-curl
-#    - libpam-cracklib
+    - libpam-cracklib
     - debsums
 #    - apt-show-versions
     - lynis
