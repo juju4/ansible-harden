@@ -25,9 +25,9 @@ harden_pkg:
     - tcpdump
     - libcap2-bin
     - ldnsutils
-    - update-notifier-common
+#    - update-notifier-common
     - gnupg
-    - gnupg-curl
+#    - gnupg-curl
 #    - libpam-cracklib
     - debsums
 #    - apt-show-versions
