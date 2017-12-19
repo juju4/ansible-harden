@@ -99,6 +99,10 @@
       capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 
+- command: "lsattr /etc/init.d/*"
+  register: debug
+- debug: var=debug.stdout
+
 - command: "lsattr {{ immutable_testfile }}"
   register: rclsattr
   changed_when: false
