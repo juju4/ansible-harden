@@ -38,6 +38,7 @@
 
 - name: restart fail2ban
   service: name=fail2ban state=restarted
+  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart osquery
   service: name=osqueryd state=restarted
