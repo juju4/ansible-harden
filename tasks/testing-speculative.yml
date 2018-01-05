@@ -1,0 +1,55 @@
+---
+# https://access.redhat.com/security/vulnerabilities/speculativeexecution
+# https://gist.github.com/ErikAugust/724d4a969fb2c6ae1bbd7b2a9e3d4bb6
+# https://twitter.com/pwnallthethings/status/948693961358667777
+# https://github.com/Eugnis/spectre-attack/blob/master/Source.c
+
+- name: download speculative execution sample code
+  get_url:
+    url: https://gist.githubusercontent.com/jedisct1/3bbb6e50b768968c30629bf734ea49c6/raw/6ede3c9a3356a4a55a27febaf38157897c4fed09/spectre.c
+    dest: /tmp/spectre.c
+    owner: nobody
+
+- name: compile sample code
+  shell: gcc -std=c99 -O0 spectre.c -o spectre
+  args:
+    chdir: /tmp
+  become: yes
+  become_user: nobody
+
+- name: run sample code
+  shell: ./spectre
+  args:
+    chdir: /tmp
+  become: yes
+  become_user: nobody
+  register: spectre
+  ignore_errors: true
+
+- debug: var=spectre
+
+- name: retrieve Am-I-affected-by-Meltdown
+  git:
+    url: https://github.com/raphaelsc/Am-I-affected-by-Meltdown.git
+    dest: /tmp
+    update: no
+  become: yes
+  become_user: nobody
+
+- name: build Am-I-affected-by-Meltdown
+  shell: make
+  args:
+    chdir: /tmp/Am-I-affected-by-Meltdown
+  become: yes
+  become_user: nobody
+
+- name: test Am-I-affected-by-Meltdown
+  shell: ./meltdown_checker
+  args:
+    chdir: /tmp/Am-I-affected-by-Meltdown
+  become: yes
+  become_user: nobody
+  register: meltdown
+  ignore_errors: true
+
+- debug: var=meltdown

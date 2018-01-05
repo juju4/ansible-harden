@@ -254,3 +254,4 @@ harden_testing_inspec_paths:
   - https://github.com/juju4/inspec-syslog.git
 harden_testing_check: true
 harden_testing_privesc: true
+harden_testing_speculative: true

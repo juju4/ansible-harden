@@ -48,3 +48,6 @@
 
 - include: testing-privesc.yml
   when: harden_testing_privesc
+
+- include: testing-speculative.yml
+  when: harden_testing_speculative
