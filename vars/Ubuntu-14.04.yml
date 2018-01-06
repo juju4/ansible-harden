@@ -84,6 +84,7 @@ python3_pkg: python3
 
 build_dev_tools:
   - gcc
+  - g++
   - make
 
 inspec_url: https://packages.chef.io/files/stable/inspec/1.43.5/ubuntu/14.04/inspec_1.43.5-1_amd64.deb

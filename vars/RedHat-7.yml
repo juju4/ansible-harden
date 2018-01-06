@@ -52,6 +52,7 @@ python3_pkg: python34
 
 build_dev_tools:
   - gcc
+  - gcc-c++
   - make
 
 inspec_url: https://packages.chef.io/files/stable/inspec/1.43.5/el/7/inspec-1.43.5-1.el7.x86_64.rpm

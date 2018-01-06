@@ -47,6 +47,8 @@ testing_pkgs:
 
 build_dev_tools:
   - gcc
+  - gcc-c++
+  - make
 
 inspec_url: https://packages.chef.io/files/stable/inspec/1.43.5/el/6/inspec-1.43.5-1.el6.x86_64.rpm
 inspec_hash: 'sha256:57ff0d5689649c9db033b3d1e962821ee55c4f2081c620af2d08953648232199'
