@@ -13,12 +13,14 @@
       file: path={{ item }} owner=root group={{ harden_restrict_compiler_group }} mode={{ harden_restrict_compiler_umask }} follow=yes
       with_items:
 #        - /usr/bin/gcc-{{ gcc_v }}
+        - /usr/bin/cc
         - /usr/bin/gcc
         - /usr/bin/gcc-ar
         - /usr/bin/gcc-nm
         - /usr/bin/gcc-ranlib
         - /usr/bin/make
         - /usr/bin/g++
+        - /usr/bin/c++
       ignore_errors: true
 ## Note: ignore errors as compiler tools may not be installed...
   when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
