@@ -55,3 +55,27 @@
   ignore_errors: true
 
 - debug: var=meltdown
+
+- name: retrieve another meltdown poc
+  git:
+    repo: https://github.com/paboldin/meltdown-exploit.git
+    dest: /tmp/meltdown-exploit
+    update: no
+  become: yes
+  become_user: nobody
+
+- name: build meltdown-exploit
+  shell: make
+  args:
+    chdir: /tmp/meltdown-exploit
+    creates: /tmp/meltdown-exploit/meltdown
+
+# root required as kptr_restrict set to 1
+- name: test meltdown-exploit
+  shell: ./run.sh
+  args:
+    chdir: /tmp/meltdown-exploit
+  register: meltdown2
+  ignore_errors: true
+
+- debug: var=meltdown2
