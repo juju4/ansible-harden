@@ -46,12 +46,11 @@
     chdir: /tmp/Am-I-affected-by-Meltdown
     creates: /tmp/Am-I-affected-by-Meltdown/meltdown-checker
 
+# root required as kptr_restrict set to 1
 - name: test Am-I-affected-by-Meltdown
   shell: ./meltdown-checker
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
-  become: yes
-  become_user: nobody
   register: meltdown
   ignore_errors: true
 
