@@ -44,7 +44,7 @@
   shell: make
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
-    create: /tmp/Am-I-affected-by-Meltdown/meltdown-checker
+    creates: /tmp/Am-I-affected-by-Meltdown/meltdown-checker
 
 - name: test Am-I-affected-by-Meltdown
   shell: ./meltdown-checker
