@@ -8,9 +8,7 @@
   package:
     name: "{{ item }}"
     state: present
-  with_items:
-    - gcc
-    - make
+  with_items: "{{ build_dev_tools }}"
 
 - name: download speculative execution sample code
   get_url:
@@ -37,7 +35,7 @@
 - name: retrieve Am-I-affected-by-Meltdown
   git:
     repo: https://github.com/raphaelsc/Am-I-affected-by-Meltdown.git
-    dest: /tmp
+    dest: /tmp/Am-I-affected-by-Meltdown
     update: no
   become: yes
   become_user: nobody

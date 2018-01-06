@@ -50,3 +50,6 @@ testing_pkgs:
   - ruby-devel
   - libffi-devel
 python3_pkg: python3
+
+build_dev_tools:
+  - build-base

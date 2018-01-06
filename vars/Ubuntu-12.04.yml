@@ -80,3 +80,7 @@ testing_pkgs:
   - ruby-dev
   - libffi-dev
 python3_pkg: python3
+
+build_dev_tools:
+  - gcc
+  - make
