@@ -92,13 +92,12 @@
   package:
     name: glib-static
     state: present
+  when: ansible_os_family == 'RedHat' or ansible_distribution == 'Alpine'
 
 - name: build IAIK poc
   shell: "{{ item }}"
   with_items:
     - make
-  become: yes
-  become_user: nobody
 
 - name: test IAIK poc
   shell: "{{ item }}"
