@@ -55,3 +55,86 @@
   ignore_errors: true
 
 - debug: var=meltdown
+
+- name: retrieve another meltdown poc
+  git:
+    repo: https://github.com/paboldin/meltdown-exploit.git
+    dest: /tmp/meltdown-exploit
+    update: no
+  become: yes
+  become_user: nobody
+
+- name: build meltdown-exploit
+  shell: make
+  args:
+    chdir: /tmp/meltdown-exploit
+    creates: /tmp/meltdown-exploit/meltdown
+
+# root required as kptr_restrict set to 1
+- name: test meltdown-exploit
+  shell: ./run.sh
+  args:
+    chdir: /tmp/meltdown-exploit
+  register: meltdown2
+  ignore_errors: true
+
+- debug: var=meltdown2
+
+- name: retrieve IAIK poc
+  git:
+    repo: https://github.com/IAIK/meltdown.git
+    dest: /tmp/meltdown-iaik
+    update: no
+  become: yes
+  become_user: nobody
+
+- name: ensure glib-static is present
+  package:
+    name: glib-static
+    state: present
+
+- name: build IAIK poc
+  shell: "{{ item }}"
+  with_items:
+    - make
+  become: yes
+  become_user: nobody
+
+- name: test IAIK poc
+  shell: "{{ item }}"
+  with_items:
+    - taskset 0x1 ./test
+    - taskset 0x1 ./kaslr
+    - taskset 0x1 ./reliability
+  become: yes
+  become_user: nobody
+  register: iaik1
+
+- debug: var=iaik1
+
+- name: test IAIK poc - root
+  shell: "{{ item }}"
+  with_items:
+    - nohup ./secret
+#    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
+  register: iaik2
+
+- debug: var=iaik2
+
+- name: retrieve another check
+  git:
+    repo: https://github.com/speed47/spectre-meltdown-checker.git
+    dest: /tmp/spectre-meltdown-checker
+    update: no
+  become: yes
+  become_user: nobody
+
+# root required
+- name: run spectre-meltdown-checker
+  shell: ./spectre-meltdown-checker.sh
+  args:
+    chdir: /tmp/spectre-meltdown-checker
+  register: checker
+  ignore_errors: true
+
+- debug: var=checker.stdout_lines
