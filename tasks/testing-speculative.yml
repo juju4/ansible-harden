@@ -98,6 +98,8 @@
   shell: "{{ item }}"
   with_items:
     - make
+  args:
+    chdir: /tmp/meltdown-iaik
 
 - name: test IAIK poc
   shell: "{{ item }}"
@@ -105,6 +107,8 @@
     - taskset 0x1 ./test
     - taskset 0x1 ./kaslr
     - taskset 0x1 ./reliability
+  args:
+    chdir: /tmp/meltdown-iaik
   become: yes
   become_user: nobody
   register: iaik1
@@ -113,6 +117,8 @@
 
 - name: test IAIK poc - root
   shell: "{{ item }}"
+  args:
+    chdir: /tmp/meltdown-iaik
   with_items:
     - nohup ./secret
 #    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
