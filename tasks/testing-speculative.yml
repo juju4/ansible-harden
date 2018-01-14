@@ -117,25 +117,25 @@
 
 - debug: var=iaik1
 
-- name: test IAIK poc - root
-  shell: "{{ item }}"
-  args:
-    chdir: /tmp/meltdown-iaik
-  with_items:
-# FIXME! travis/xenial: produce output with no end = The log length has exceeded the limit of 4 MB (this usually means that the test suite is raising the same exception over and over).
-# FIXME! travis/debian9: No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
-#    - taskset 0x1 ./kaslr
-# FIXME! travis/centos7: No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
-#    - taskset 0x1 ./reliability 0xffff880000000000
-    - nohup ./secret
-# FIXME! travis/alpine37: execution seen as not root + No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
-#    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
-  become: yes
-  become_user: root
-  register: iaik2
-  ignore_errors: true
-
-- debug: var=iaik2
+#- name: test IAIK poc - root
+#  shell: "{{ item }}"
+#  args:
+#    chdir: /tmp/meltdown-iaik
+#  with_items:
+## FIXME! travis/xenial: produce output with no end = The log length has exceeded the limit of 4 MB (this usually means that the test suite is raising the same exception over and over).
+## FIXME! travis/debian9: No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
+##    - taskset 0x1 ./kaslr
+## FIXME! travis/centos7: No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
+##    - taskset 0x1 ./reliability 0xffff880000000000
+#    - nohup ./secret
+## FIXME! travis/alpine37: execution seen as not root + No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
+##    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
+#  become: yes
+#  become_user: root
+#  register: iaik2
+#  ignore_errors: true
+#
+#- debug: var=iaik2
 
 - name: retrieve another check
   git:
