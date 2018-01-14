@@ -88,11 +88,14 @@
   become: yes
   become_user: nobody
 
-- name: ensure glib-static is present
+- name: ensure IAIK poc dependencies are present
   package:
-    name: glib-static
+    name: "{{ item }}"
     state: present
-  when: ansible_os_family == 'RedHat' or ansible_distribution == 'Alpine'
+  with_items:
+    - glibc-static
+    - util-linux
+  ignore_errors: true
 
 - name: build IAIK poc
   shell: "{{ item }}"
@@ -105,13 +108,12 @@
   shell: "{{ item }}"
   with_items:
     - taskset 0x1 ./test
-    - taskset 0x1 ./kaslr
-    - taskset 0x1 ./reliability
   args:
     chdir: /tmp/meltdown-iaik
   become: yes
   become_user: nobody
   register: iaik1
+  ignore_errors: true
 
 - debug: var=iaik1
 
@@ -120,9 +122,12 @@
   args:
     chdir: /tmp/meltdown-iaik
   with_items:
+    - taskset 0x1 ./kaslr
+    - taskset 0x1 ./reliability
     - nohup ./secret
 #    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
   register: iaik2
+  ignore_errors: true
 
 - debug: var=iaik2
 
