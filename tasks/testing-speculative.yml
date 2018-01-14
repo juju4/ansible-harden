@@ -123,9 +123,11 @@
     chdir: /tmp/meltdown-iaik
   with_items:
     - taskset 0x1 ./kaslr
-    - taskset 0x1 ./reliability
+    - taskset 0x1 ./reliability 0xffff880000000000
     - nohup ./secret
-#    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
+    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
+  become: yes
+  become_user: root
   register: iaik2
   ignore_errors: true
 
