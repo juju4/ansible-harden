@@ -3,6 +3,7 @@
 ## https://blog.rootshell.be/2009/02/28/bash-history-to-syslog/
 ## Syslog option is a compile option in bash, mostly not enabled
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1323808
+## https://www.scip.ch/en/?labs.20150604 = auditd, rootsh, pam_tty_audit.so, sudo
 ## FIXME! activity from screen not logged (tmux OK), neither after sudo -s
 
 ## https://administratosphere.wordpress.com/2011/05/20/logging-every-shell-command/
