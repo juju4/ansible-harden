@@ -53,8 +53,6 @@
 
   when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
 
-- fail: msg=stop
-
 - include: testing-check.yml
   when: harden_testing_check
 
