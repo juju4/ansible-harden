@@ -11,11 +11,13 @@ env:
     version: 7
     init: /usr/lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
 #    run_opts: "--cap-add SYS_ADMIN"
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
 ## travis/trusty: stalling... 'No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.'
 #  - distribution: ubuntu
 #    version: 14.04
@@ -25,10 +27,12 @@ env:
     version: 3.7
     init: /sbin/init
     run_opts: ""
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
   - distribution: debian
     version: 9
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
 
 services:
   - docker
@@ -57,12 +61,12 @@ script:
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml --syntax-check'
 
   # Test role.
-  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml -vvv'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml -vvv ${ansible_extra_vars}'
 
   # Test role idempotence.
 ## known fail (harden-sysctl)
   - >
-    travis_wait 30 sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml
+    travis_wait 30 sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml ${ansible_extra_vars}
     | tee /tmp/idempotency.log
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)

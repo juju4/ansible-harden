@@ -247,11 +247,11 @@ monit_osqueryd: false
 harden_testing: false
 harden_testing_inspec: true
 harden_testing_inspec_paths:
-  - https://github.com/juju4/linux-baseline
-  - https://github.com/juju4/inspec-ntp.git
-  - https://github.com/juju4/inspec-audit.git
-  - https://github.com/juju4/inspec-osquery.git
-  - https://github.com/juju4/inspec-syslog.git
+  - { i: 0, u: 'https://github.com/juju4/linux-baseline.git' }
+  - { i: 1, u: 'https://github.com/juju4/inspec-ntp.git' }
+  - { i: 2, u: 'https://github.com/juju4/inspec-audit.git' }
+  - { i: 3, u: 'https://github.com/juju4/inspec-osquery.git' }
+  - { i: 4, u: 'https://github.com/juju4/inspec-syslog.git' }
 harden_testing_check: true
 harden_testing_privesc: true
 harden_testing_speculative: true
