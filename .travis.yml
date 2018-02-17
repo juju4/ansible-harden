@@ -11,12 +11,14 @@ env:
     version: 7
     init: /usr/lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.4.3.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
 #    run_opts: "--cap-add SYS_ADMIN"
+    ansible_version: 2.4.3.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
 ## travis/trusty: stalling... 'No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.'
 #  - distribution: ubuntu
@@ -27,11 +29,20 @@ env:
     version: 3.7
     init: /sbin/init
     run_opts: ""
+    ansible_version: 2.4.3.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
   - distribution: debian
     version: 9
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.4.3.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
+# past ansible version
+  - distribution: ubuntu
+    version: 16.04
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
+    ansible_version: 2.3.3.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
 
 services:
@@ -49,14 +60,17 @@ before_install:
   # Customize container
   - 'sudo docker build --rm=true --file=test/travis/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:ansible test'
 
-script:
+before_script:
   - container_id=$(mktemp)
     # Run container in detached state
 ## Note: mapping urandom/random to have better entropy. Normally, have rng-tools or haveged to handle that but not running inside docker images we have
   - 'sudo docker run --detach -v /dev/urandom:/dev/random --volume="${PWD%/*}":/etc/ansible/roles:ro ${run_opts} ${distribution}-${version}:ansible "${init}" > "${container_id}"'
 
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm pip install --upgrade pip'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm pip install ansible==${ansible_version}'
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible --version'
 
+script:
   # Ansible syntax check.
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml --syntax-check'
 
