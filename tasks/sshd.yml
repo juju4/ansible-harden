@@ -7,7 +7,17 @@
   command: ssh-keygen -A
   when: not sshkey.stat.exists and ((ansible_os_family == "RedHat" and ansible_distribution_major_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == "Alpine")
 
-## ssh version: 5.9/precise, 6.6/trusty, 7.2/xenial, 5.3/centos6
+- name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)
+  lineinfile: dest=/etc/tmpfiles.d/sshd.conf line='    d    /run/sshd   0755 root root - -' create=yes
+  when: ansible_service_mgr == 'systemd' and (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+
+- name: ensure privsep directory for sshd
+  file:
+    dest: /run/sshd
+    state: directory
+  when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+
+## ssh version: 5.9/precise, 6.6/trusty, 7.2/xenial, 7.5/bionic, 5.3/centos6
 ## https://stribika.github.io/2015/01/04/secure-secure-shell.html
 ## http://www.ssi.gouv.fr/administration/guide/recommandations-pour-un-usage-securise-dopenssh/
 ## http://www.ssi.gouv.fr/uploads/2014/01/NT_OpenSSH_en.pdf
