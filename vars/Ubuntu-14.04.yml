@@ -87,5 +87,5 @@ build_dev_tools:
   - g++
   - make
 
-inspec_url: https://packages.chef.io/files/stable/inspec/1.51.0/ubuntu/14.04/inspec_1.51.0-1_amd64.deb
-inspec_hash: 'sha256:b78bac42394bcdc6a3d50fedf62e1cf7d1ed231f8edf3b5b195e902b93078907'
+inspec_url: https://packages.chef.io/files/stable/inspec/2.0.17/ubuntu/16.04/inspec_2.0.17-1_amd64.deb
+inspec_hash: 'sha256:bbe6cde3bb4a78ef6faa834f1ad4e7703f3a7c6ff3bb7b658b3b90218f96010e'

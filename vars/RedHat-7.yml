@@ -55,5 +55,5 @@ build_dev_tools:
   - gcc-c++
   - make
 
-inspec_url: https://packages.chef.io/files/stable/inspec/1.51.0/el/7/inspec-1.51.0-1.el7.x86_64.rpm
-inspec_hash: 'sha256:6c0b53b97a8f8541f87db828e74a11660f24edda04de75101dc92a9954024fa4'
+inspec_url: https://packages.chef.io/files/stable/inspec/2.0.17/el/7/inspec-2.0.17-1.el7.x86_64.rpm
+inspec_hash: 'sha256:13e396c87f58c34a5be8e62a7961de635fb5d6f744ffbd13471daf3a2c8b405a'
