@@ -33,7 +33,7 @@
 
     - name: testing | run linux-baseline
 #      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
-      shell: "inspec exec inspec --attrs inspec/profile-attributes.yml | tee /var/log/inspec.log | sed -r \"s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
+      shell: "inspec exec inspec --attrs inspec/profile-attributes.yml | tee {{ inspec_dir }}/inspec.log | sed -r \"s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
       args:
         chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
         creates: /var/log/inspec.log
