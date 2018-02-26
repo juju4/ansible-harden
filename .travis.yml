@@ -46,14 +46,14 @@ env:
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
-    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
     ansible_version: 2.3.3.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
 # upcoming ansible version
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
-    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
     ansible_version: 2.5.0b2
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default'"
 
