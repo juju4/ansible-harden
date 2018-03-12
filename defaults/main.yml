@@ -68,7 +68,7 @@ harden_logcheck_extra_logfiles:
   - /var/log/supervisor/supervisord.log
 
 harden_cracklib_dict:
-  - { u: 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/10_million_password_list_top_10000.txt', h: 'sha256:0279e0e7d854dc40460db18a7cf2e09fb661837dc0ae7d3b8dc6e783ba5d84b4' }
+  - { u: 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt', h: 'sha256:0279e0e7d854dc40460db18a7cf2e09fb661837dc0ae7d3b8dc6e783ba5d84b4' }
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 
