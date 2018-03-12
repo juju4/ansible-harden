@@ -81,6 +81,8 @@ before_script:
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm pip install --upgrade pip'
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm pip install ansible==${ansible_version}'
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible --version'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm mkdir /etc/ansible || true'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm (echo "[defaults]"; echo "callback_whitelist = profile_tasks, timer") > /etc/ansible/ansible.cfg'
 
 script:
   # Ansible syntax check.
