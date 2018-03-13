@@ -57,6 +57,7 @@
   ignore_errors: true
 
 ## FIXME: cert issue on ubuntu trusty - hash
+## FIXME: in some case, server returns 206 Partial Content
 - name: retrieve linuxprivchecker
   get_url:
     url: http://www.securitysift.com/download/linuxprivchecker.py
@@ -66,6 +67,7 @@
     validate_certs: false
   become: yes
   become_user: _test
+  ignore_errors: true
 
 - name: execute unix-privesc-check
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
@@ -75,6 +77,7 @@
     creates: /tmp/linuxprivchecker.out
   become: yes
   become_user: _test
+  ignore_errors: true
 
 #- debug: var=linuxprivchecker.stdout_lines
 
