@@ -26,5 +26,7 @@ check file sshd_binary
   if failed checksum then alert
 
 check file sshd_conf with path /etc/ssh/sshd_config
+{% if ansible_os_family == 'Debian' %}
   include /etc/monit/templates/rootrc
+{% endif %}
   group sshd
