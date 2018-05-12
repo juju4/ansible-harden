@@ -11,19 +11,19 @@ env:
     version: 7
     init: /usr/lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
-    ansible_version: 2.4.3.0
+    ansible_version: 2.5.2.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
   - distribution: ubuntu
     version: 18.04
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
-    ansible_version: 2.4.3.0
+    ansible_version: 2.5.2.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
-    ansible_version: 2.4.3.0
+    ansible_version: 2.5.2.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
 ## travis/trusty: stalling... 'No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.'
 #  - distribution: ubuntu
@@ -34,28 +34,28 @@ env:
     version: 3.7
     init: /sbin/init
     run_opts: ""
-    ansible_version: 2.4.3.0
+    ansible_version: 2.5.2.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
   - distribution: debian
     version: 9
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
-    ansible_version: 2.4.3.0
+    ansible_version: 2.5.2.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
 # past ansible version
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
-    ansible_version: 2.3.3.0
+    ansible_version: 2.4.4.0
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
 # upcoming ansible version
-  - distribution: ubuntu
-    version: 16.04
-    init: /lib/systemd/systemd
-    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
-    ansible_version: 2.5.0b2
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+#  - distribution: ubuntu
+#    version: 16.04
+#    init: /lib/systemd/systemd
+#    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+#    ansible_version: 2.5.0b2
+#    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
 
 services:
   - docker
