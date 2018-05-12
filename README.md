@@ -28,11 +28,12 @@ Only apply to your own system else for most countries (ex: Europe), user must ha
 It was tested on the following versions:
  * 2.2
  * 2.3
+ * 2.5
 Previous releases of ansible are not supported because of module usages.
 
 ### Operating systems
 
-Tested with vagrant on Ubuntu 14.04, Kitchen test vagrant or lxd, Travis.
+Tested on Ubuntu 14.04, 16.04, 18.04, Centos 7. Kitchen test vagrant or lxd, Travis.
 
 ## Example Playbook
 
