@@ -19,7 +19,7 @@ harden_pkg:
     - setroubleshoot
     - systemtap
     - sudo
-
+    - iptables-ipv6
 
 harden_pkg_remove: []
 
