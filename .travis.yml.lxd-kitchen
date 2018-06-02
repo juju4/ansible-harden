@@ -49,8 +49,6 @@ before_install:
   - sudo service lxd restart
 
   - sudo pip install ansible
-## need to use chef gem for some reason? BAD PATH https://github.com/chef/chef-dk/issues/15
-#  - chef gem install kitchen
   - gem install kitchen
   - gem install kitchen-ansible
   - gem install kitchen-sync
