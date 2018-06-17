@@ -71,7 +71,6 @@
 
 - name: execute unix-privesc-check
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
-  ignore_errors: true
   register: linuxprivchecker
   args:
     creates: /tmp/linuxprivchecker.out
