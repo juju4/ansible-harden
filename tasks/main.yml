@@ -76,6 +76,7 @@
 - include: fail2ban.yml
 
 - include: vim-swapfiles.yml
+- include: llmnr-systemd.yml
 
 - include: testing.yml
   when: harden_testing
