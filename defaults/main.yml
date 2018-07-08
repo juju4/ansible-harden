@@ -132,6 +132,7 @@ harden_fw_open_incoming:
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
 #harden_fw_security_source:
 harden_fw6_template: rules.v6.j2
+harden_fw6_default: ACCEPT
 harden_fw6_gw: ''
 harden_fw6_ssh_restricted:
   - fe80::/10
