@@ -131,6 +131,21 @@ harden_fw_open_incoming:
   - { proto: 'tcp', port: 9091 }
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
 #harden_fw_security_source:
+harden_fw6_template: rules.v6.j2
+harden_fw6_gw: ''
+harden_fw6_ssh_restricted:
+  - fe80::/10
+harden_fw6_ssh_port: 22
+harden_fw6_snmp_restricted: []
+harden_fw6_dnsservers:
+  - 2001:4860:4860::8888
+  - 2001:4860:4860::8844
+harden_fw6_smtpservers: []
+harden_fw6_smtp_port: 25
+harden_fw6_open_incoming:
+  - { proto: 'tcp', port: 8080 }
+  - { proto: 'tcp', port: 9091 }
+## FIXME! open all or more? security can be split between VA scan, IR, ...
 
 ### Monitoring
 ## can use inventory group but
