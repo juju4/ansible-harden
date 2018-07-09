@@ -29,7 +29,7 @@
 -A OUTPUT -d ff00::/8 -j ACCEPT
 ## block noise
 -A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,1900,5666 -j DROP
-{% if harden_fw6_gw is defined %}
+{% if harden_fw6_gw is defined and harden_fw6_gw != '' %}
 ## Local DHCP?
 -A OUTPUT -o eth0 -p udp --sport 68 -d {{ harden_fw6_gw }} --dport 67 -j ACCEPT
 -A INPUT -m state --state NEW -m udp -p udp -s fe80::/10 --dport 546 -j ACCEPT
