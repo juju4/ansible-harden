@@ -86,6 +86,23 @@ $ vagrant up
 $ vagrant ssh
 ```
 
+Role has also a packer config which allows to create image for virtualbox and vmware based on https://github.com/jonashackt/ansible-windows-docker-springboot/ and https://github.com/boxcutter/windows.
+Plan for about 50GB of free disk space and 1h to build one image.
+```
+$ cd /path/to/packer-build
+$ cp -Rd /path/to/juju4.harden/packer .
+## update packer-*.json with your current absolute ansible role path for the main role
+$ cd packer
+$ packer build *.json
+$ packer build -only=virtualbox-iso *.json
+## if you want to enable extra log
+$ PACKER_LOG_PATH="packerlog.txt" PACKER_LOG=1 packer build *.json
+# for Azure
+$ . ~/.azure/credentials
+$ packer build azure-packer-harden-centos7.json
+$ packer build -var-file=variables.json azure-packer-harden-centos7.json
+```
+
 ## FAQ
 
 * Remove Haveged for RedHat7. Use Jitter Entropy RNG available since 7.4.
