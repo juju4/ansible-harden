@@ -42,7 +42,7 @@
       register: rulesv6
 ## as validate option seems incorrect
     - name: ensure rules are correct
-      shell: "iptables-restore -tv < /etc/iptables/rules.v6"
+      shell: "ip6tables-restore -tv < /etc/iptables/rules.v6"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined and harden_fw6_template != ''
 
