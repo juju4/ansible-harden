@@ -97,7 +97,7 @@ $ packer build *.json
 $ packer build -only=virtualbox-iso *.json
 ## if you want to enable extra log
 $ PACKER_LOG_PATH="packerlog.txt" PACKER_LOG=1 packer build *.json
-# for Azure
+# for Azure, add ansible.cfg with roles_path
 $ . ~/.azure/credentials
 $ packer build azure-packer-harden-centos7.json
 $ packer build -var-file=variables.json azure-packer-harden-centos7.json
