@@ -20,7 +20,8 @@
     },
     {
       "type": "ansible",
-      "playbook_file": "../test/integration/default/default.yml"
+      "playbook_file": "../test/integration/default/default.yml",
+      "extra_arguments": [ "--become" ]
     }
   ],
   "builders": [
