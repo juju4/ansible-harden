@@ -28,6 +28,7 @@
   unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
     dest: /tmp/
+    remote_src: true
   become: yes
   become_user: _test
   when: not (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
@@ -60,7 +61,7 @@
 ## FIXME: in some case, server returns 206 Partial Content
 - name: retrieve linuxprivchecker
   get_url:
-    url: http://www.securitysift.com/download/linuxprivchecker.py
+    url: https://raw.githubusercontent.com/sleventyeleven/linuxprivchecker/master/linuxprivchecker.py
     dest: /tmp/linuxprivchecker.py
     checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
     mode: '0644'
