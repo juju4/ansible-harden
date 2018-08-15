@@ -8,11 +8,15 @@
   copy:
     src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=644
 
+- name: Debian-docker | check if /var/log/syslog exists
+  stat:
+    path: /var/log/syslog
+  register: syslogfile
 - name: Debian-docker | ensure /var/log/syslog file exists for following validate
   file:
     dest: /var/log/syslog
     state: touch
-  when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker") and ((ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18))
+  when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker") and ((ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)) and not syslogfile.stat.exists
 
 - name: Logcheck replace rules
   template: src=logcheck.replace.j2 dest=/etc/logcheck/logcheck.replace mode=0644 validate='sed -f %s /var/log/syslog'

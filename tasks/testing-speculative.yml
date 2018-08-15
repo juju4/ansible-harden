@@ -22,9 +22,10 @@
     chdir: /tmp
 
 - name: run sample code
-  shell: ./spectre
+  shell: ./spectre | tee /var/log/speculative-spectre.log
   args:
     chdir: /tmp
+    creates: /var/log/speculative-spectre.log
   become: yes
   become_user: nobody
   register: spectre
@@ -48,9 +49,10 @@
 
 # root required as kptr_restrict set to 1
 - name: test Am-I-affected-by-Meltdown
-  shell: ./meltdown-checker
+  shell: ./meltdown-checker | tee /var/log/speculative-meltdown-checker.log
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
+    creates: /var/log/speculative-meltdown-checker.log
   register: meltdown
   ignore_errors: true
 
@@ -72,9 +74,10 @@
 
 # root required as kptr_restrict set to 1
 - name: test meltdown-exploit
-  shell: ./run.sh
+  shell: ./run.sh | tee /var/log/speculative-meltdown-exploit-log
   args:
     chdir: /tmp/meltdown-exploit
+    creates: /var/log/speculative-meltdown-exploit-log
   register: meltdown2
   ignore_errors: true
 
@@ -107,9 +110,10 @@
 - name: test IAIK poc
   shell: "{{ item }}"
   with_items:
-    - taskset 0x1 ./test
+    - taskset 0x1 ./test | tee /var/log/speculative-IAIK.log
   args:
     chdir: /tmp/meltdown-iaik
+    creates: /var/log/speculative-IAIK.log
   become: yes
   become_user: nobody
   register: iaik1
@@ -147,10 +151,12 @@
 
 # root required
 - name: run spectre-meltdown-checker
-  shell: ./spectre-meltdown-checker.sh
+  shell: ./spectre-meltdown-checker.sh | tee /var/log/speculative-spectre-meltdown-checker.log
   args:
     chdir: /tmp/spectre-meltdown-checker
+    creates: /var/log/spectre-meltdown-checker.log
   register: checker
   ignore_errors: true
 
 - debug: var=checker.stdout_lines
+  when: checker is defined
