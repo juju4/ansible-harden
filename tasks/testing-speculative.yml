@@ -20,12 +20,13 @@
   shell: gcc -std=c99 -O0 spectre.c -o spectre
   args:
     chdir: /tmp
+    creates: /tmp/spectre
 
 - name: run sample code
-  shell: ./spectre | tee /var/log/speculative-spectre.log
+  shell: ./spectre | tee /tmp/speculative-spectre.log
   args:
     chdir: /tmp
-    creates: /var/log/speculative-spectre.log
+    creates: /tmp/speculative-spectre.log
   become: yes
   become_user: nobody
   register: spectre
@@ -106,6 +107,7 @@
     - make
   args:
     chdir: /tmp/meltdown-iaik
+    creates: /tmp/meltdown-iaik/test
 
 - name: test IAIK poc
   shell: "{{ item }}"

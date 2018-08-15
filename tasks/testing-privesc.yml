@@ -106,5 +106,6 @@
   shell: "python3 kernelpop.py -b | tee /tmp/kernelpop.out"
   args:
     chdir: /home/_test/kernelpop
+    creates: /tmp/kernelpop.out
   become: yes
   become_user: _test
