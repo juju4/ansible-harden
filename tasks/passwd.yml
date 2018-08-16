@@ -32,4 +32,4 @@
   file:
     path: /usr/share/dict/.ansible_cracklib_update
     state: touch
-  when: not cracklibrefresh.stat.exists
+  when: (ansible_os_family == 'Debian' or ansible_os_family == 'RedHat') and not cracklibrefresh.stat.exists
