@@ -91,8 +91,10 @@ script:
 
   # Test role idempotence.
 ## known fail (harden-sysctl)
+# https://github.com/travis-ci/travis-ci/issues/8526, https://github.com/travis-ci/travis-ci/issues/6934
+  - travis_wait 15 sleep infinity &
   - >
-    travis_wait 30 sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml ${ansible_extra_vars}
+    sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml ${ansible_extra_vars}
     | tee /tmp/idempotency.log
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
