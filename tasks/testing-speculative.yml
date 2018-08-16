@@ -153,10 +153,10 @@
 
 # root required
 - name: run spectre-meltdown-checker
-  shell: ./spectre-meltdown-checker.sh | tee /var/log/speculative-spectre-meltdown-checker.log
+  shell: ./spectre-meltdown-checker.sh | tee /tmp/speculative-spectre-meltdown-checker.log
   args:
     chdir: /tmp/spectre-meltdown-checker
-    creates: /var/log/spectre-meltdown-checker.log
+    creates: /tmp/spectre-meltdown-checker.log
   register: checker
   ignore_errors: true
 
