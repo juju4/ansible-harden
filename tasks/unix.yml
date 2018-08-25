@@ -47,3 +47,6 @@
   when: harden_motd_template != ''
 
 - include: sudo.yml
+
+- include: securetty.yml
+  when: harden_securetty

@@ -37,6 +37,7 @@ harden_sshd_port: 22
 harden_sshd_PasswordAuthentication: false
 harden_motd_template: motd.j2
 harden_modprobe_template: modprobe-dev-sec.conf.j2
+harden_securetty: true
 
 harden_journald_systemmaxuse: '1024M'
 harden_logrotate_days: 90
