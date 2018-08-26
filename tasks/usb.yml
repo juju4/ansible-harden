@@ -10,6 +10,7 @@
 ## Deny new USB devices when locked?
 ## Note: Alpine has no automount/autofs for storage
 ## https://github.com/probablynotablog/usb-canary
+## (RHEL7.6+) https://access.redhat.com/articles/3230621
 
 - name: USB | Ensure udev & others are present
   package: name={{ item }} state=present
