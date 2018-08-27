@@ -14,6 +14,7 @@
     - juju4.harden-sysctl
     - juju4.harden-mailserver
     - juju4.ipv6
+    - juju4.auditd
     - kbrebanov.osquery
     - juju4.harden
     - juju4.syslogclient
