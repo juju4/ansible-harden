@@ -1,0 +1,8 @@
+---
+
+- name: Configure ssh client options system-wide
+  template:
+    src: "{{ harden_ssh_template }}"
+    dest: /etc/ssh/ssh_config
+    mode: '0644'
+    backup: yes

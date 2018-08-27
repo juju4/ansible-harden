@@ -5,6 +5,8 @@
 
 - include: sshd.yml
   when: harden_sshd_review
+- include: ssh.yml
+  when: harden_ssh_review
 
 ## Bash history to syslog (since 4.1) but need re-compile for most distributions
 ## https://isc.sans.edu/forums/diary/Improving+Bash+Forensics+Capabilities/20887/
