@@ -10,16 +10,18 @@ env:
 #    version: 6
   - distribution: centos
     version: 7
+    suite: default
   - distribution: ubuntu
     version: 18.04
+    suite: default
   - distribution: ubuntu
     version: 16.04
-  - distribution: ubuntu
-    version: 14.04
-  - distribution: ubuntu
-    version: 12.04
+    suite: default
 #  - distribution: alpine
-#    version: 3.4
+#    version: 3.8
+  - distribution: ubuntu
+    version: 18.04
+    suite: full
 
 before_install:
   - env
@@ -69,7 +71,7 @@ before_install:
 
 script:
 #  - KITCHEN_LOCAL_YAML=.kitchen.local.yml bundle exec kitchen verify ${INSTANCE}
-  - sudo -E su $USER -c "env PATH=$PATH kitchen verify default-${distribution}-${version//./} -l debug || (cat $HOME/.kitchen/logs/default-${distribution}-${version//./}.log; find /tmp/kitchen)"
+  - sudo -E su $USER -c "env PATH=$PATH kitchen verify ${suite}-${distribution}-${version//./} -l debug || (cat $HOME/.kitchen/logs/${suite}-${distribution}-${version//./}.log; find /tmp/kitchen)"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

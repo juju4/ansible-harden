@@ -63,5 +63,8 @@ suites:
 #      ansible_version: 1.9.6.0
 #      name: ansible_playbook
 #      playbook: test/integration/default/default.yml
-
-
+  - name: full
+    run_list:
+    attributes:
+    verifier:
+        name: inspec

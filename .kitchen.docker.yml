@@ -35,3 +35,8 @@ suites:
   - name: default
     run_list:
     attributes:
+  - name: full
+    run_list:
+    attributes:
+    verifier:
+        name: inspec
