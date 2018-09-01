@@ -2,7 +2,7 @@
 dist: trusty
 sudo: required
 rvm:
-  - 2.4
+  - 2.5
 
 env:
 ## those images need pre-configuration before being usable (openssh...)
@@ -11,14 +11,17 @@ env:
   - distribution: centos
     version: 7
     ansible_version: 2.6.3.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.6.3.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: ubuntu
     version: 16.04
     ansible_version: 2.6.3.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
 #  - distribution: ubuntu
@@ -35,11 +38,13 @@ env:
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.5.8.0
-# upcoming
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
+# upcoming
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.7.0b1
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 ## ansible2.2+: ini_file create
 #  - distribution: ubuntu
@@ -52,6 +57,7 @@ env:
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.6.3.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
     suite: full
 
 before_install:
@@ -101,8 +107,8 @@ before_install:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible --version"
   - "echo localhost > inventory"
 ## enable ansible profiling (https://github.com/jlafon/ansible-profile)
-#  - "printf '[defaults]\ncallback_whitelist = profile_tasks' > ansible.cfg"
-#  - sudo -E su $USER -c "lxc file push inventory ansible.cfg run-${distribution}-${version//./}/root/"
+  - "printf '[defaults]\ncallback_whitelist = profile_tasks, timer' > ansible.cfg"
+  - sudo -E su $USER -c "lxc file push ansible.cfg run-${distribution}-${version//./}/root/"
   - sudo -E su $USER -c "lxc file push inventory run-${distribution}-${version//./}/root/"
 ## these lines are necessary so lxc mount is read-write, https://github.com/lxc/lxd/issues/1879
   - chmod -R go+w $PWD
@@ -121,12 +127,11 @@ before_install:
 
 script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
-#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vvvv /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vvv /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vvv /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}"
 
 ## FIXME! Travis request: Build config file had a parse error: "mapping values are not allowed in this context at line 72 column 321".
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml --connection=local --become | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml" > /tmp/idempotency.log
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}" > /tmp/idempotency.log
 ## known fail
   - "grep -q 'changed=0.*failed=0' /tmp/idempotency.log && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 0)"
 
