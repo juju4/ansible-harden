@@ -10,10 +10,16 @@ env:
 #    version: 6
   - distribution: centos
     version: 7
-    ansible_version: 2.4.0.0
+    ansible_version: 2.6.3.0
+    suite: default
+  - distribution: ubuntu
+    version: 18.04
+    ansible_version: 2.6.3.0
+    suite: default
   - distribution: ubuntu
     version: 16.04
-    ansible_version: 2.4.0.0
+    ansible_version: 2.6.3.0
+    suite: default
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
 #  - distribution: ubuntu
 #    version: 14.04
@@ -22,16 +28,19 @@ env:
 #    version: 12.04
 #    ansible_version: 2.3.0.0
 #  - distribution: alpine
-#    version: 3.4
+#    version: 3.8
 #  - distribution: debian
 #    version: jessie
 ## past ansible versions
   - distribution: ubuntu
-    version: 16.04
-    ansible_version: 2.3.0.0
+    version: 18.04
+    ansible_version: 2.5.8.0
+# upcoming
+    suite: default
   - distribution: ubuntu
-    version: 16.04
-    ansible_version: 2.2.1.0
+    version: 18.04
+    ansible_version: 2.7.0b1
+    suite: default
 ## ansible2.2+: ini_file create
 #  - distribution: ubuntu
 #    version: 16.04
@@ -40,6 +49,10 @@ env:
 #  - distribution: ubuntu
 #    version: 16.04
 #    ansible_version: 1.9.6.0
+  - distribution: ubuntu
+    version: 18.04
+    ansible_version: 2.6.3.0
+    suite: full
 
 before_install:
   - env
@@ -60,7 +73,7 @@ before_install:
   - sudo -E su $USER -c "lxc remote list"
   - sudo -E su $USER -c "lxc image list"
 ## pre-download base images
-  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
+  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}-nossh"'
   - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || true'
 ## configure lxd-bridge
   - sudo perl -pi -e 's@^LXD_IPV4_ADDR=""@LXD_IPV4_ADDR="10.252.116.1"@;s@^LXD_IPV4_NETMASK=""@LXD_IPV4_NETMASK="255.255.255.0"@;s@^LXD_IPV4_NETWORK=""@LXD_IPV4_NETWORK="10.252.116.1/24"@;s@^LXD_IPV4_DHCP_RANGE=""@LXD_IPV4_DHCP_RANGE="10.252.116.2,10.252.116.254"@;s@^LXD_IPV4_DHCP_MAX=""@LXD_IPV4_DHCP_MAX="252"@;s@LXD_IPV6_PROXY="true"@LXD_IPV6_PROXY="false"@' /etc/default/lxd-bridge
@@ -71,6 +84,7 @@ before_install:
   - ls ~/.ssh
   - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
 ## sudo/su get us a non-usual PATH ...
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "sh -x ./test/lxd/centos-ssh-image.sh" || true'
   - sudo -E su $USER -c "lxc launch ${distribution}-${version} run-${distribution}-${version//./}"
 #  - sudo -E su $USER -c "lxc start run-${distribution}-${version//./}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- env"
@@ -79,7 +93,7 @@ before_install:
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get update" || true'
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get -y install python python-apt aptitude python-pip libssl-dev python-dev libffi-dev" || true'
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X6" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm" || true'
-  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm" || true'
+  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-11.noarch.rpm" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum update" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip"
