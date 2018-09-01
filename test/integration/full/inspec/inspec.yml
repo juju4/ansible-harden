@@ -19,3 +19,5 @@ depends:
   url: https://github.com/juju4/inspec-audit/archive/master.tar.gz
 - name: syslog-baseline
   url: https://github.com/juju4/inspec-syslog/archive/master.tar.gz
+- name: postfix-baseline
+  url: https://github.com/juju4/inspec-postfix/archive/master.tar.gz
