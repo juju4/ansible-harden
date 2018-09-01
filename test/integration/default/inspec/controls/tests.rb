@@ -7,13 +7,5 @@ include_controls 'linux-baseline' do
 end
 include_controls 'ssh-baseline' do
 end
-include_controls 'osquery-baseline' do
-end
 include_controls 'ntp-baseline' do
-end
-include_controls 'audit-baseline' do
-end
-include_controls 'syslog-baseline' do
-end
-include_controls 'postfix-baseline' do
 end
