@@ -2,8 +2,8 @@
 driver:
   name: lxd_cli
 
-transport:
-  name: sftp
+#transport:
+#  name: sftp
 
 provisioner:
   name: ansible_playbook
