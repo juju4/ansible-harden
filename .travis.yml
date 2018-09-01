@@ -108,6 +108,7 @@ before_install:
   - "echo localhost > inventory"
 ## enable ansible profiling (https://github.com/jlafon/ansible-profile)
   - "printf '[defaults]\ncallback_whitelist = profile_tasks, timer' > ansible.cfg"
+  - cat ansible.cfg
   - sudo -E su $USER -c "lxc file push ansible.cfg run-${distribution}-${version//./}/root/"
   - sudo -E su $USER -c "lxc file push inventory run-${distribution}-${version//./}/root/"
 ## these lines are necessary so lxc mount is read-write, https://github.com/lxc/lxd/issues/1879
