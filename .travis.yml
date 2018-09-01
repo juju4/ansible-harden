@@ -107,7 +107,7 @@ before_install:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible --version"
   - "echo localhost > inventory"
 ## enable ansible profiling (https://github.com/jlafon/ansible-profile)
-  - head -2 ./test/vagrant/ansible.cfg /tmp/ansible.cfg
+  - head -2 ./test/vagrant/ansible.cfg > /tmp/ansible.cfg
   - sudo -E su $USER -c "lxc file push /tmp/ansible.cfg run-${distribution}-${version//./}/root/"
   - sudo -E su $USER -c "lxc file push inventory run-${distribution}-${version//./}/root/"
 ## these lines are necessary so lxc mount is read-write, https://github.com/lxc/lxd/issues/1879
