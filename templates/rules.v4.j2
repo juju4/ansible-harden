@@ -20,6 +20,7 @@
 {% endif %}
 -A INPUT -i lo -j ACCEPT
 -A OUTPUT -o lo -j ACCEPT
+-A INPUT -s 127.0.0.0/8 -j DROP
 ## block noise
 -A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,1900,5666 -j DROP
 {% if harden_fw_gw is defined %}
