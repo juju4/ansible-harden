@@ -114,8 +114,8 @@ harden_apparmor_audit: false
 harden_fw: true
 harden_fw_template: rules.v4.j2
 ## Note: in default config, if you switch default policy to drop, you will lose access...
-#harden_fw_default: DROP
-harden_fw_default: ACCEPT
+harden_fw_default: DROP
+#harden_fw_default: ACCEPT
 harden_fw_gw: 192.168.1.1
 harden_fw_ssh_restricted:
   - 192.168.1.0/24
