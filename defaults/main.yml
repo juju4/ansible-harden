@@ -131,9 +131,9 @@ harden_fw_dnsservers:
 harden_fw_smtpservers:
   - 192.168.1.20
 harden_fw_smtp_port: 25
-harden_fw_open_incoming:
-  - { proto: 'tcp', port: 8080 }
-  - { proto: 'tcp', port: 9091 }
+#harden_fw_open_incoming:
+#  - { proto: 'tcp', port: 8080 }
+#  - { proto: 'tcp', port: 9091 }
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
 #harden_fw_security_source:
 harden_fw6_template: rules.v6.j2
