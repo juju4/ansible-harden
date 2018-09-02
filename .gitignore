@@ -1,5 +1,6 @@
 .vagrant
 *.retry
+inspec.lock
 # https://github.com/github/gitignore/blob/master/Global/Vim.gitignore
 # Swap
 [._]*.s[a-v][a-z]
