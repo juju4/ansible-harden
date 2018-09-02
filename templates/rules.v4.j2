@@ -120,6 +120,14 @@
 {% endif %}
 ## generic rule
 -A OUTPUT -p tcp -m conntrack --ctstate ESTABLISHED -j ACCEPT
+## CIS 3.6.4
+-A OUTPUT -p tcp -m state --state NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p udp -m state --state NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p icmp -m state --state NEW,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m state --state ESTABLISHED -j ACCEPT
+-A INPUT -p udp -m state --state ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -m state --state ESTABLISHED -j ACCEPT
+#
 -A INPUT -j LOG --log-prefix "iptables: [NOMATCH] " --log-level 7
 -A OUTPUT -j LOG --log-prefix "iptables: [NOMATCH] " --log-level 7
 ## fail2ban
