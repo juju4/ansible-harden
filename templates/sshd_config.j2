@@ -33,7 +33,7 @@ UsePrivilegeSeparation sandbox
 {% endif %}
 UseDNS yes
 
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or and ansible_distribution == "Alpine") %}
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
 # Lifetime and size of ephemeral version 1 server key
 KeyRegenerationInterval 1800
 ServerKeyBits 1024
@@ -48,7 +48,7 @@ LoginGraceTime 30s
 PermitRootLogin {{ harden_sshd_PermitRootLogin | default('no') }}
 StrictModes yes
 
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or and ansible_distribution == "Alpine") %}
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
 RSAAuthentication yes
 # For this to work you will also need host keys in /etc/ssh_known_hosts
 RhostsRSAAuthentication no
@@ -93,7 +93,7 @@ PrintMotd no
 PrintLastLog no
 {% endif %}
 TCPKeepAlive no
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or and ansible_distribution == "Alpine") %}
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
 UseLogin no
 {% endif %}
 PermitUserEnvironment no
