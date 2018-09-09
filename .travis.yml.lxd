@@ -154,7 +154,7 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables -L -vn"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables-save"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/ntp.conf"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /var/lib/ntp /var/ntp/drift /var/lib/openntpd"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
   - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./} --force"
 
