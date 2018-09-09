@@ -57,13 +57,13 @@
 -A INPUT -p udp --dport 123 -j ACCEPT
 -A OUTPUT -p udp --dport 123 -j ACCEPT
 ## ICMP
--A INPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
 -A OUTPUT -p icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -p icmp --icmp-type 3 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A FORWARD -p icmp --icmp-type 0 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A FORWARD -p icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -p icmp --icmp-type 3 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -p icmp --icmp-type 0 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -p icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
 ## SMTP
 {% if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
 {% for host in harden_fw_smtpservers %}
