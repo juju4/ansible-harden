@@ -128,19 +128,8 @@ before_install:
   - sudo sysctl -w net.ipv4.tcp_timestamps=0
   - sudo sysctl -w net.ipv4.tcp_rfc1337=1
   - sudo sysctl -w net.ipv4.tcp_syncookies=1
-#  - sudo sysctl -w net.ipv6.conf.default.accept_redirects=0
-#  - sudo sysctl -w net.ipv6.conf.all.accept_redirects=0
-#  - sudo sysctl -w net.ipv6.conf.default.router_solicitations=0
-#  - sudo sysctl -w net.ipv6.conf.default.accept_ra_rtr_pref=0
-#  - sudo sysctl -w net.ipv6.conf.default.accept_ra_pinfo=0
-#  - sudo sysctl -w net.ipv6.conf.default.accept_ra_defrtr=0
-#  - sudo sysctl -w net.ipv6.conf.all.accept_ra=0
-#  - sudo sysctl -w net.ipv6.conf.default.accept_ra=0
-#  - sudo sysctl -w net.ipv6.conf.default.autoconf=0
-#  - sudo sysctl -w net.ipv6.conf.default.dad_transmits=0
-#  - sudo sysctl -w net.ipv6.conf.default.max_addresses=1
   - sudo sysctl -w kernel.sysrq=0
-#  - sudo sysctl -w kernel.core_pattern='/tmp/cores/core.%e.%p.%h.%t'
+  - sudo sysctl -w kernel.core_pattern='/tmp/cores/core.%e.%p.%h.%t'
 
 script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
