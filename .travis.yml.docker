@@ -121,6 +121,12 @@ after_failure:
 
 after_script:
   # Clean up
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables -L -vn'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables-save'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables -L -vn'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables-save'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /var/lib/ntp /var/ntp/drift /var/lib/openntpd'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /tmp/inspec.log'
   - 'sudo docker stop "$(cat ${container_id})"'
 
 notifications:
