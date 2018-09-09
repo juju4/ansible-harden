@@ -10,7 +10,8 @@ depends:
   url: https://github.com/juju4/linux-baseline/archive/master.tar.gz
 #  url: https://github.com/dev-sec/linux-baseline/archive/master.tar.gz
 - name: ssh-baseline
-  url: https://github.com/dev-sec/ssh-baseline/archive/master.tar.gz
+#  url: https://github.com/dev-sec/ssh-baseline/archive/master.tar.gz
+  url: https://github.com/juju4/ssh-baseline/archive/master.tar.gz
 - name: osquery-baseline
   url: https://github.com/juju4/inspec-osquery/archive/master.tar.gz
 - name: ntp-baseline

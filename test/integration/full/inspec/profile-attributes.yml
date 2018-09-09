@@ -27,3 +27,12 @@ iptables_output_ports: [
   '-A OUTPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT',
   '-A OUTPUT -p icmp -m icmp --icmp-type 3 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT'
 ]
+#sshd_valid_ciphers:
+sshd_valid_kexs: 'curve25519-sha256@libssh.org'
+sshd_valid_macs: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
+sshd_permittunnel: ["no", "yes", "no"]
+sshd_tcpforwarding: ["no", "yes", "no", "no", "yes", "no"]
+sshd_agentforwarding: ["no", "yes", "no"]
+sshd_gatewayports: ["no", "yes", "no"]
+sshd_x11forwarding: ["no", "yes", "no", "no", "yes", "no"]
+sshd_banner: "/etc/issue.net"

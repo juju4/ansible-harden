@@ -98,6 +98,7 @@ MaxStartups 10:30:100
 MaxAuthTries 2
 MaxSessions 10
 Banner /etc/issue.net
+DebianBanner no
 
 # Allow client to pass locale environment variables
 AcceptEnv LANG LC_*
@@ -162,7 +163,6 @@ Match User vagrant
 Match user upload
     X11Forwarding no
     AllowTcpForwarding no
-    PasswordAuthentication no
 #    ForceCommand /bin/rsync --server -vlogDtprze.iLsf . /path/to/share/
 #    ForceCommand internal-sftp
 ## ensure chroot dir is owned by root for security reason
