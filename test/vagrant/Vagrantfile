@@ -12,6 +12,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #config.vm.box = "centos/7"
     #config.vm.box = "generic/alpine36"
 
+    # use hostname based on host
+    config.vm.hostname = "#{`hostname`[0..-2]}".sub(/\..*$/,'')+"-harden-vagrant"
+
     config.vm.provision :ansible do |ansible|
        ansible.playbook = "site.yml"
        #ansible.verbose = "vvvv"
@@ -25,7 +28,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     config.vm.define "harden" do |harden|
-        harden.vm.hostname = "harden"
         harden.vm.provider "virtualbox" do |v|
           v.memory = 512
         end
