@@ -14,11 +14,11 @@
     content: |
       export HISTCONTROL=
       export HISTFILE=$HOME/.bash_history
-      export HISTFILESIZE=5000
+      export HISTFILESIZE={{ harden_bash_histfilesize | default(5000) }}
       export HISTIGNORE=
-      export HISTSIZE=3000
-      export HISTTIMEFORMAT="%a %b %Y %T %z "
-      export PS1="[\A] \u@\h {\W}\\$ "
+      export HISTSIZE={{ harden_bash_histsize | default(5000) }}
+      export HISTTIMEFORMAT="{{ harden_bash_histtimeformat | default('%a %b %Y %T %z') }}"
+      export PS1="{{ harden_bash_ps1 | default('[\A] \u@\h {\W}\\$ ') }}"
       if [ "X$SHELL" = '/bin/bash' ]; then
       typeset -r HISTCONTROL
       typeset -r HISTFILE
