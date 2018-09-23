@@ -20,6 +20,7 @@ harden_pkg:
     - systemtap
     - sudo
     - iptables-ipv6
+    - perf              # perf /FlameGraph
 
 harden_pkg_remove: []
 
