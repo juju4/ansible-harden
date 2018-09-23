@@ -18,6 +18,7 @@
       export HISTIGNORE=
       export HISTSIZE=3000
       export HISTTIMEFORMAT="%a %b %Y %T %z "
+      export PS1="[\A] \u@\h {\W}\\$ "
       if [ "X$SHELL" = '/bin/bash' ]; then
       typeset -r HISTCONTROL
       typeset -r HISTFILE
