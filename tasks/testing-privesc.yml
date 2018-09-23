@@ -23,6 +23,9 @@
     dest: /tmp/unix-privesc-check-1.4.tar.gz
     checksum: 'sha256:e1f85e7f69fabadd23756a3d76a0e3d864b21e28763b60ce2e6181290d1c1969'
     mode: '0644'
+# offline from time to time...
+  ignore_errors: true
+  register: upc
 
 - name: unarchive unix-privesc-check
   unarchive:
@@ -31,7 +34,7 @@
     remote_src: true
   become: yes
   become_user: _test
-  when: not (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
+  when: not (ansible_distribution == "Alpine" or ansible_distribution == "Debian") and upc is succeeded
 
 - name: Alpine | unarchive unix-privesc-check
   command: tar xzf /tmp/unix-privesc-check-1.4.tar.gz
@@ -40,7 +43,7 @@
     creates: /tmp/unix-privesc-check-1.4
   become: yes
   become_user: _test
-  when: (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
+  when: (ansible_distribution == "Alpine" or ansible_distribution == "Debian") and upc is succeeded
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
@@ -50,12 +53,14 @@
     creates: /tmp/unix-privesc-check.out
   become: yes
   become_user: _test
+  when: upc is succeeded
 
 #- debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
   shell: egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | grep -v "Can't find full path of running program:" | sort | uniq
   changed_when: false
   ignore_errors: true
+  when: upc is succeeded
 
 ## FIXME: cert issue on ubuntu trusty - hash
 ## FIXME: in some case, server returns 206 Partial Content
