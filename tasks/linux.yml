@@ -8,6 +8,12 @@
     - { r: '^UMASK', l: "UMASK     {{ harden_umask }}" }
   when: ansible_os_family != "Alpine"
 
+- name: Set Account Expiration Following Inactivity
+  lineinfile:
+    dest: /etc/default/useradd
+    regexp: '^INACTIVE=.*'
+    line: 'INACTIVE=90'
+
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - block:
     - name: disable usb storage drivers - modprobe

@@ -1,6 +1,7 @@
 ---
 ## https://jerrygamblin.com/2017/08/24/disallow-million-most-common-passwords/
 ## http://thegarywilson.com/blog/2006/using-cracklib-to-require-stronger-passwords/
+## https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-hardening_your_system_with_tools_and_services#sec-Password_Security pam_cracklib -> pam_pwquality
 
 - name: recover dictionary files
   get_url:
@@ -9,7 +10,7 @@
     mode: '0644'
     checksum: "{{ item.h }}"
   with_items: "{{ harden_cracklib_dict }}"
-  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)
 
 - name: check for cracklib refresh marker
   stat:
@@ -27,9 +28,30 @@
       shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"
 #      args:
 #        creates: /usr/lib/cracklib_dict.pwd
-  when: ansible_os_family == 'RedHat' and not cracklibrefresh.stat.exists
+  when: (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7) and not cracklibrefresh.stat.exists
 - name: add cracklib refresh marker
   file:
     path: /usr/share/dict/.ansible_cracklib_update
     state: touch
-  when: (ansible_os_family == 'Debian' or ansible_os_family == 'RedHat') and not cracklibrefresh.stat.exists
+  when: (ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)) and not cracklibrefresh.stat.exists
+
+- block:
+# complexity... do we still want that?
+    - name: RedHat | Set Password Strength complexity
+      lineinfile:
+        dest: /etc/security/pwquality.conf
+        regexp: "{{ item.re }}"
+        line: "{{ item.l }}"
+        backup: yes
+      with_items:
+        - { re: '^dcredit=.*', l: 'dcredit=1' }
+        - { re: '^ucredit=.*', l: 'ucredit=1' }
+        - { re: '^lcredit=.*', l: 'lcredit=1' }
+      when: harden_rhel_pwquality_with_complexity
+    - name: RedHat | Set Password Minimum Length
+      lineinfile:
+        dest: /etc/security/pwquality.conf
+        regexp: '^minlen=.*'
+        line: "minlen={{ harden_rhel_pwquality_minlen | default(16) }}"
+        backup: yes
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7

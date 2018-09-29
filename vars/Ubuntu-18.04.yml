@@ -53,6 +53,7 @@ harden_pkg:
     - libopenscap8
     - ssg-debderived
     - ssg-applications
+#    - libpam-pwquality     # conflicting with cracklib
 
 harden_pkg_remove:
     - avahi-daemon

@@ -26,6 +26,8 @@ harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
+harden_rhel_pwquality_with_complexity: true
+harden_rhel_pwquality_minlen: 16
 # seconds
 harden_shell_timeout: 3600
 # minutes
