@@ -49,3 +49,26 @@
 - include: yum-cron.yml
   when: harden_security_update_auto
 
+- name: Ensure YUM Removes Previous Package Versions
+  lineinfile:
+    dest: /etc/yum.conf
+    regexp: '^clean_requirements_on_remove=.*'
+    line: 'clean_requirements_on_remove=1'
+
+- name: Ensure gpgcheck Enabled for Local Packages
+  lineinfile:
+    dest: /etc/yum.conf
+    regexp: '^localpkg_gpgcheck=.*'
+    line: 'localpkg_gpgcheck=1'
+
+- name: Disable the Automounter
+  service:
+    name: autofs
+    enabled: no
+    state: stopped
+
+- name: Prevent Log In to Accounts With Empty Password
+  replace:
+    dest: /etc/pam.d/system-auth
+    regexp: ' nullok'
+    replace: ''
