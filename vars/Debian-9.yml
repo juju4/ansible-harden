@@ -50,6 +50,9 @@ harden_pkg:
     - ecryptfs-utils
     - apt-listbugs
     - apt-listchanges
+    - libopenscap8
+    - ssg-debian
+    - ssg-applications
 
 harden_pkg_remove:
     - avahi-daemon
