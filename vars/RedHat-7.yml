@@ -23,7 +23,7 @@ harden_pkg:
     - perf              # perf /FlameGraph
     - openscap-scanner
     - scap-security-guide
-    - pam_pwquality
+    - libpwquality
 
 harden_pkg_remove: []
 
