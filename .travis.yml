@@ -34,7 +34,7 @@ env:
 #    init: /sbin/init
 #    run_opts: "'--cap-add LINUX_IMMUTABLE'"
   - distribution: alpine
-    version: 3.7
+    version: 3.8
     init: /sbin/init
     run_opts: ""
     ansible_version: 2.6.3.0
