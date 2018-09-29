@@ -66,6 +66,7 @@
     name: autofs
     enabled: no
     state: stopped
+  ignore_errors: true
 
 - name: Prevent Log In to Accounts With Empty Password
   replace:
