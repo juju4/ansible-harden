@@ -25,12 +25,17 @@
     owner: 0
     group: 0
     backup: yes
-    validate: 'sshd -f %s -T'
+    validate: 'sshd -f %s -T -C user=nobody'
   notify:
     - restart sshd
 
 - name: Restrict sshd config - crypto
-  lineinfile: dest=/etc/ssh/sshd_config regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes validate='sshd -f %s -T'
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+    validate: 'sshd -f %s -T -C user=nobody'
   with_items: "{{ harden_sshd_crypto }}"
   notify:
     - restart sshd
