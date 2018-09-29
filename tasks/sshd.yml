@@ -25,20 +25,23 @@
     owner: 0
     group: 0
     backup: yes
-    validate: 'sshd -f %s -T -C user=nobody'
+    validate: 'sshd -f %s -T'
   notify:
     - restart sshd
+  when: not (ansible_distribution == "Alpine")
 
-- name: Restrict sshd config - crypto
-  lineinfile:
+- name: Alpine | Configure sshd_config
+  template:
+    src: "{{ harden_sshd_template }}"
     dest: /etc/ssh/sshd_config
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
+    mode: '0600'
+    owner: 0
+    group: 0
     backup: yes
     validate: 'sshd -f %s -T -C user=nobody'
-  with_items: "{{ harden_sshd_crypto }}"
   notify:
     - restart sshd
+  when: (ansible_distribution == "Alpine")
 
 - name: Check /etc/ssh/moduli for weak values
   shell: "awk '$5 < 2047 && $5 ~ /^[0-9]+$/ { print $5 }' /etc/ssh/moduli | uniq | wc -c"
