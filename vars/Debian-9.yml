@@ -51,7 +51,7 @@ harden_pkg:
     - apt-listbugs
     - apt-listchanges
     - libopenscap8
-    - ssg-debian
+#    - ssg-debian
 #    - ssg-applications
 
 harden_pkg_remove:
