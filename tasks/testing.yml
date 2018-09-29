@@ -22,8 +22,9 @@
         mode: '0600'
     - name: Debian | install chef public key for inspec package
       apt_key:
-        key: https://packages.chef.io/chef.asc
+        url: https://packages.chef.io/chef.asc
         state: present
+      when: ansible_os_family == 'Debian'
     - name: Debian | install inspec package
       apt:
         deb: "/tmp/{{ inspec_url | basename }}"
@@ -33,6 +34,7 @@
       rpm_key:
         key: https://packages.chef.io/chef.asc
         state: present
+      when: ansible_os_family == 'RedHat'
     - name: RedHat | install inspec package
       yum:
         name: "/tmp/{{ inspec_url | basename }}"
