@@ -20,11 +20,19 @@
         dest: "/tmp/{{ inspec_url | basename }}"
         checksum: "{{ inspec_hash }}"
         mode: '0600'
+    - name: Debian | install chef public key for inspec package
+      apt_key:
+        key: https://packages.chef.io/chef.asc
+        state: present
     - name: Debian | install inspec package
       apt:
         deb: "/tmp/{{ inspec_url | basename }}"
         state: present
       when: ansible_os_family == 'Debian'
+    - name: RedHat | install chef public key for inspec package
+      rpm_key:
+        key: https://packages.chef.io/chef.asc
+        state: present
     - name: RedHat | install inspec package
       yum:
         name: "/tmp/{{ inspec_url | basename }}"
