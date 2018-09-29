@@ -13,6 +13,7 @@
     dest: /etc/default/useradd
     regexp: '^INACTIVE=.*'
     line: 'INACTIVE=90'
+  when: ansible_os_family != "Alpine"
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - block:
