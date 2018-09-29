@@ -120,13 +120,20 @@ after_failure:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm journalctl -xe --no-pager'
 
 after_script:
-  # Clean up
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables -L -vn'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables-save'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables -L -vn'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables-save'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /tmp/inspec*.log'
+# Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
+# https://www.centos.org/forums/viewtopic.php?t=50462
+  - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" perl -pi -e "s@platform idref=\"cpe:/o:redhat:enterprise_linux:7\"@platform idref=\"cpe:/o:centos:centos:7\"@" /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
+  - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
+  - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel7-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
+#  - '[ "X${distribution}" == "Xubuntu" -a "X${version}" == "X18.04" ] && docker exec --tty "$(cat ${container_id})" perl -pi -e "s@platform idref=\"cpe:/o:canonical:ubuntu_linux:16.04\"@platform idref=\"cpe:/o:canonical:ubuntu_linux:18.04\"@" /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml'
+  - '[ "X${distribution}" == "Xubuntu" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml'
+  # Clean up
   - 'sudo docker stop "$(cat ${container_id})"'
 
 notifications:
