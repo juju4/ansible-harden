@@ -46,7 +46,7 @@
       shell: "inspec exec inspec --attrs inspec/profile-attributes.yml | tee {{ log_dir | default('/var/log') }}/inspec.log | sed -r \"s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
       args:
         chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
-        creates: /var/log/inspec.log
+        creates: "{{ log_dir | default('/var/log') }}/inspec.log"
       ignore_errors: true
       register: inspeclog
       changed_when: false
