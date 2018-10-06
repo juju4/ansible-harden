@@ -120,6 +120,7 @@ after_failure:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm journalctl -xe --no-pager'
 
 after_script:
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables -L -vn'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables-save'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables -L -vn'
