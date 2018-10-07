@@ -126,6 +126,7 @@ after_script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables -L -vn'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables-save'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /var/log/'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /tmp/inspec*.log'
 # Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
 # https://www.centos.org/forums/viewtopic.php?t=50462
