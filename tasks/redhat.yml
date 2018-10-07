@@ -68,8 +68,23 @@
     state: stopped
   ignore_errors: true
 
-- name: Prevent Log In to Accounts With Empty Password
-  replace:
-    dest: /etc/pam.d/system-auth
-    regexp: ' nullok'
-    replace: ''
+# password-auth: Set Deny For Failed Password Attempts - CCE-27350-8, CCE-26884-7
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-hardening_your_system_with_tools_and_services#sect-Security_Guide-Workstation_Security-Account_Locking = Keeping Custom Settings with authconfig
+# system-auth: CCE-26923-3, CCE-27286-4
+- name: Configure pam.d local system-auth and password-auth
+  template:
+    src: "rhel-{{ item }}.j2"
+    dest: "/etc/pam.d/{{ item }}"
+    backup: yes
+  with_items:
+    - password-auth-local
+    - system-auth-local
+
+- name: Link pam.d local system-auth and password-auth
+  file:
+    src: "{{ item }}-local"
+    dest: "/etc/pam.d/{{ item }}"
+    state: link
+  with_items:
+    - password-auth
+    - system-auth
