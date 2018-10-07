@@ -18,5 +18,6 @@
     - juju4.auditd
     - kbrebanov.osquery
     - juju4.harden
+    - juju4.ntpclient
     - juju4.syslogclient
 
