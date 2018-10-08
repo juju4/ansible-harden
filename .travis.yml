@@ -150,7 +150,7 @@ after_failure:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- journalctl -xe --no-pager"
 
 after_script:
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log"
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables -L -vn"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables-save"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables -L -vn"
@@ -158,8 +158,8 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/openntpd/ntpd.conf"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /var/log"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
 
 # Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
 # https://www.centos.org/forums/viewtopic.php?t=50462
