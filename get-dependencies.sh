@@ -13,6 +13,7 @@ rolesdir=$(dirname $0)/..
 [ ! -d $rolesdir/kbrebanov.osquery ] && git clone https://github.com/juju4/ansible-osquery.git $rolesdir/kbrebanov.osquery
 [ ! -d $rolesdir/juju4.auditd ] && git clone https://github.com/juju4/ansible-auditd $rolesdir/juju4.auditd
 [ ! -d $rolesdir/juju4.syslogclient ] && git clone https://github.com/juju4/ansible-syslogclient $rolesdir/juju4.syslogclient
+[ ! -d $rolesdir/juju4.ntpclient ] && git clone https://github.com/juju4/ansible-ntpclient $rolesdir/juju4.ntpclient
 ## galaxy naming: kitchen fails to transfer symlink folder
 #[ ! -e $rolesdir/juju4.harden ] && ln -s ansible-harden $rolesdir/juju4.harden
 [ ! -e $rolesdir/juju4.harden ] && cp -R $rolesdir/ansible-harden $rolesdir/juju4.harden
