@@ -49,6 +49,7 @@
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: set sensible core pattern
       sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
+      when: not (ansible_os_family == 'RedHat' and (ansible_virtualization_type is defined and ansible_virtualization_type == "lxd"))
   when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 #journalctl --disk-usage
