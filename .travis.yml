@@ -54,6 +54,11 @@ env:
 #  - distribution: ubuntu
 #    version: 16.04
 #    ansible_version: 1.9.6.0
+  - distribution: centos
+    version: 7
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: full
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.7.0.0
