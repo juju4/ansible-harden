@@ -88,3 +88,4 @@
   with_items:
     - password-auth
     - system-auth
+  ignore_errors: true
