@@ -137,6 +137,13 @@ after_script:
   - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel7-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
 #  - '[ "X${distribution}" == "Xubuntu" -a "X${version}" == "X18.04" ] && docker exec --tty "$(cat ${container_id})" perl -pi -e "s@platform idref=\"cpe:/o:canonical:ubuntu_linux:16.04\"@platform idref=\"cpe:/o:canonical:ubuntu_linux:18.04\"@" /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml'
   - '[ "X${distribution}" == "Xubuntu" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /etc/pam.d/'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/pam.d/system-auth'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/pam.d/password-auth'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /boot/grub2/grub.cfg'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/logrotate.conf'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/security/pwquality.conf'
+
   # Clean up
   - 'sudo docker stop "$(cat ${container_id})"'
 
