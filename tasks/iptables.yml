@@ -16,6 +16,7 @@
       notify:
         - restart iptables
         - restart iptables - xenial
+        - restart iptables - redhat
       register: rulesv4
 ## as validate option seems incorrect
     - name: ensure rules are correct
@@ -39,6 +40,7 @@
       notify:
         - restart iptables
         - restart iptables - xenial
+        - restart iptables - redhat
       register: rulesv6
 ## as validate option seems incorrect
     - name: ensure rules are correct
