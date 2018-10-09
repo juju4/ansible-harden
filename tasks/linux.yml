@@ -8,6 +8,7 @@
     - { r: '^LOGIN_RETRIES', l: "LOGIN_RETRIES    {{ harden_logindefs_login_retries }}" }
     - { r: '^LOGIN_TIMEOUT', l: "LOGIN_TIMEOUT    {{ harden_logindefs_login_timeout }}" }
     - { r: '^ENV_SUPATH', l: "ENV_SUPATH      {{ harden_logindefs_env_supath }}" }
+    - { r: '^ENV_PATH', l: "ENV_PATH        {{ harden_logindefs_env_path }}" }
     - { r: '^UMASK', l: "UMASK     {{ harden_umask }}" }
   when: ansible_os_family != "Alpine"
 
