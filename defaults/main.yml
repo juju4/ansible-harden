@@ -26,6 +26,9 @@ harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
+harden_logindefs_login_retries: 5
+harden_logindefs_login_timeout: 60
+harden_logindefs_env_supath: 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 harden_rhel_pwquality_with_complexity: true
 harden_rhel_pwquality_minlen: 16
 # seconds
