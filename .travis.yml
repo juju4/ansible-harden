@@ -167,7 +167,7 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/login.defs"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible -i inventory --connection=local -m setup"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible -i inventory --connection=local -m setup localhost"
 
 # Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
 # https://www.centos.org/forums/viewtopic.php?t=50462
