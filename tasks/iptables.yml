@@ -6,7 +6,7 @@
     - name: iptables configuration file update
       template:
         src: "{{ harden_fw_template }}"
-        dest: /etc/iptables/rules.v4
+        dest: "{{ iptables_rulesv4 }}"
         backup: yes
         owner: '0'
         group: '0'
@@ -20,7 +20,7 @@
       register: rulesv4
 ## as validate option seems incorrect
     - name: ensure rules are correct
-      shell: "iptables-restore -tv < /etc/iptables/rules.v4"
+      shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
       when: rulesv4.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
   when: harden_fw is defined and harden_fw
 
@@ -30,7 +30,7 @@
     - name: iptables configuration file update
       template:
         src: "{{ harden_fw6_template }}"
-        dest: /etc/iptables/rules.v6
+        dest: "{{ iptables_rulesv6 }}"
         backup: yes
         owner: '0'
         group: '0'
@@ -40,11 +40,11 @@
       notify:
         - restart iptables
         - restart iptables - xenial
-        - restart iptables - redhat
+        - restart ip6tables - redhat
       register: rulesv6
 ## as validate option seems incorrect
     - name: ensure rules are correct
-      shell: "ip6tables-restore -tv < /etc/iptables/rules.v6"
+      shell: "ip6tables-restore -tv < {{ iptables_rulesv4 }}"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined and harden_fw6_template != ''
 

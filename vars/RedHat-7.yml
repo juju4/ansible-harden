@@ -19,7 +19,7 @@ harden_pkg:
     - setroubleshoot
     - systemtap
     - sudo
-    - iptables-ipv6
+    - iptables-services
     - perf              # perf /FlameGraph
     - openscap-scanner
     - scap-security-guide
@@ -42,6 +42,9 @@ harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh
 
 monitrc: /etc/monitrc
 monit_confdir: /etc/monit.d
+
+iptables_rulesv4: /etc/sysconfig/iptables
+iptables_rulesv6: /etc/sysconfig/ip6tables
 
 testing_pkgs:
   - ruby

@@ -16,6 +16,10 @@
   service: name=iptables state=restarted
   when: (ansible_os_family == 'RedHat' and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker"))
 
+- name: restart ip6tables - redhat
+  service: name=ip6tables state=restarted
+  when: (ansible_os_family == 'RedHat' and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker"))
+
 - name: restart auditd
   service: name=auditd state=restarted
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')

@@ -74,6 +74,9 @@ harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh
 monitrc: /etc/monit/monitrc
 monit_confdir: /etc/monit/monitrc.d
 
+iptables_rulesv4: /etc/iptables/rules.v4
+iptables_rulesv6: /etc/iptables/rules.v6
+
 testing_pkgs:
   - ruby
   - ruby-dev

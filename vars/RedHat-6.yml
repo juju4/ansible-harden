@@ -39,6 +39,9 @@ harden_sshd_crypto_mac: 'hmac-sha2-512,hmac-sha2-256'
 monitrc: /etc/monitrc
 monit_confdir: /etc/monit.d
 
+iptables_rulesv4: /etc/sysconfig/iptables
+iptables_rulesv6: /etc/sysconfig/ip6tables
+
 testing_pkgs:
   - ruby
   - ruby-devel
