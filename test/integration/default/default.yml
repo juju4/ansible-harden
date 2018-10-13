@@ -8,6 +8,7 @@
     - harden_auditd_log_all_socket: true
     - harden_auditd_log_all_connect: true
     - harden_testing: true
+    - ipv6_config: 'harden'
   roles:
     - juju4.redhat-epel
     - juju4.harden-sysctl
