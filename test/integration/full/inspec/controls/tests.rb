@@ -17,3 +17,5 @@ include_controls 'syslog-baseline' do
 end
 include_controls 'postfix-baseline' do
 end
+include_controls 'falco-baseline' do
+end
