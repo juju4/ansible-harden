@@ -16,7 +16,7 @@ harden_pkg:
     - lynis
     - yum-utils
     - fail2ban
-    - setroubleshoot
+#    - setroubleshoot
     - systemtap
     - sudo
     - iptables-services

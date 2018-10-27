@@ -17,7 +17,7 @@ harden_pkg:
     - audit
     - fail2ban
     - systemtap
-    - setroubleshoot
+#    - setroubleshoot
     - sudo
     - iptables-ipv6
 
