@@ -37,6 +37,8 @@ suites:
   - name: default
     run_list:
     attributes:
+    verifier:
+        name: inspec
 ## ansible 2.0/2.1 not supported: fail2ban/ini_file module: create option
 #  - name: default-ansible20
 #    run_list:
