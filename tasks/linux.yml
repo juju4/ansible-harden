@@ -42,7 +42,20 @@
   when: not (harden_disable_usb is defined and harden_disable_usb)
 
 - name: disable firewire DMA drivers - modprobe
-  lineinfile: dest=/etc/modprobe.d/no-firewire.conf line='blacklist firewire-sbp2' create=yes
+  lineinfile:
+    dest: /etc/modprobe.d/no-firewire.conf
+    line: "{{ item }}"
+    create: yes
+  with_items:
+    - 'blacklist ohci1394'
+    - 'blacklist sbp2'
+    - 'blacklist dv1394'
+    - 'blacklist raw1394'
+    - 'blacklist video1394'
+    - 'blacklist firewire-ohci'
+    - 'blacklist firewire-sbp2'
+  notify:
+    - update-initramfs
 
 - block:
     - stat: path=/etc/default/apport

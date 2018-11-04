@@ -60,3 +60,6 @@
 - name: restart monit
   service: name=monit state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+
+- name: update-initramfs
+  command: update-initramfs -k all -u
