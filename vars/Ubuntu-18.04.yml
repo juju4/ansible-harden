@@ -62,6 +62,7 @@ harden_pkg_remove:
     - inetd
     - telnet-server
     - rsh-server
+    - open-iscsi
 
 syslog_mainfile: /var/log/syslog
 syslog_authfile: /var/log/auth.log
