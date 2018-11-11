@@ -19,9 +19,9 @@
         - restart iptables - redhat
       register: rulesv4
 ## as validate option seems incorrect
-    - name: ensure rules are correct
+    - name: ensure iptables v4 rules are correct
       shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
-      when: rulesv4.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+      when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw
 
 - block:
@@ -43,9 +43,9 @@
         - restart ip6tables - redhat
       register: rulesv6
 ## as validate option seems incorrect
-    - name: ensure rules are correct
+    - name: ensure iptables v6 rules are correct
       shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
-      when: rulesv6.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+      when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined and harden_fw6_template != ''
 
 - name: get rsyslog version
