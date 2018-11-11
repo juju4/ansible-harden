@@ -31,7 +31,7 @@
 {% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}
 {% for host in harden_fw_ssh_restricted %}
 -A INPUT -p tcp -s {{ host }} --dport {{ harden_fw_ssh_port }} -j ACCEPT
--A OUTPUT -p tcp --sport {{ harden_fw_ssh_port }} -m conntrack --ctstate ESTABLISHED -j ACCEPT
+-A OUTPUT -p tcp --sport {{ harden_fw_ssh_port }} -d {{ host }} -m conntrack --ctstate ESTABLISHED -j ACCEPT
 {% endfor %}
 {% else %}
 -A INPUT -p tcp --dport {{ harden_fw_ssh_port }} -j ACCEPT
