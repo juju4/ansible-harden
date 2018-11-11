@@ -30,5 +30,6 @@ end
 describe command('monit status') do
   its(:stdout) { should match /monitoring status.*Monitored/ }
   its(:stdout) { should_not match /monitoring status.*Not Monitored/ }
+  its(:stderr) { should match "" }
   its(:exit_status) { should eq 0 }
 end
