@@ -63,3 +63,4 @@
 
 - name: update-initramfs
   command: update-initramfs -k all -u
+  when: ansible_os_family == "Debian"
