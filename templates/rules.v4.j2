@@ -40,8 +40,8 @@
 ## Outgoing SSH 
 # Note: adapt to your environment: most servers should not ssh out at all, jumphost yes maybe only internal or maybe int+ext. reject ssh out by root
 #-A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
--A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-out] "
--A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j REJECT
+#-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-out] "
+#-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j REJECT
 -A OUTPUT -p tcp -d 10.0.0.0/8 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 -A OUTPUT -p tcp -d 172.16.0.0/12 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 -A OUTPUT -p tcp -d 192.168.0.0/16 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
@@ -110,11 +110,11 @@
 {% if inventory_hostname in groups['http_servers'] %}
 -A INPUT -p tcp  --dport 80 -j ACCEPT
 {% if ansible_os_family == 'RedHat' %}
--A OUTPUT -p tcp -m owner --uid-owner apache -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
--A OUTPUT -p tcp -m owner --uid-owner apache -j REJECT
+#-A OUTPUT -p tcp -m owner --uid-owner apache -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
+#-A OUTPUT -p tcp -m owner --uid-owner apache -j REJECT
 {% elif ansible_os_family == 'Debian' %}
--A OUTPUT -p tcp -m owner --uid-owner www-user -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
--A OUTPUT -p tcp -m owner --uid-owner www-user -j REJECT
+#-A OUTPUT -p tcp -m owner --uid-owner www-user -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
+#-A OUTPUT -p tcp -m owner --uid-owner www-user -j REJECT
 {% endif %}
 {% endif %}
 {% endif %}
