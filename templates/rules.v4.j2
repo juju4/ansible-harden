@@ -41,7 +41,7 @@
 # Note: adapt to your environment: most servers should not ssh out at all, jumphost yes maybe only internal or maybe int+ext. reject ssh out by root
 #-A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 #-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-out] "
-#-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j REJECT
+-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j REJECT
 -A OUTPUT -p tcp -d 10.0.0.0/8 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 -A OUTPUT -p tcp -d 172.16.0.0/12 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 -A OUTPUT -p tcp -d 192.168.0.0/16 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
