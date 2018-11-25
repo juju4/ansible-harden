@@ -42,4 +42,3 @@
     - name: add additional aide HIDS configuration
       copy: src=99_aide_local_fail2ban dest=/etc/aide/aide.conf.d/99_aide_local_fail2ban mode=0644
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-

@@ -4,11 +4,13 @@
   package: name=aide state=present
 
 - block:
-    - set_fact:
+    - name: Debian | set aide binary name
+      set_fact:
         aide_bin: aide.wrapper
     - name: copy patch for aide
       template: src=patch-cron.daily-aide dest=/root/patch-cron.daily-aide mode=0400
-    - stat: path=/etc/cron.daily/.aide-harden-patch
+    - name: Check if aide cron has been already patched
+      stat: path=/etc/cron.daily/.aide-harden-patch
       register: aidepatch
     - block:
 ## FIXME! patch module not idempotent so adding file marker
@@ -46,7 +48,8 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - block:
-    - set_fact:
+    - name: RedHat | set aide binary name
+      set_fact:
         aide_bin: aide
     - name: review aide settings
       replace: "dest=/etc/aide.conf regexp={{ item.re }} replace={{ item.rep }} backup=yes"
@@ -56,11 +59,12 @@
         - { re: '^database_out=file:.*', rep: 'database_out=file:@@{DBDIR}/aide.db.new' }
     - name: add daily cron to check and update aide db
       copy: src=cron.daily-aide-redhat.j2 dest=/etc/cron.daily/aide mode=0700
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 
 
 ## aide at the end of provisioning?
-- stat: path=/var/lib/aide/aide.db
+- name: Check if aide database exists
+  stat: path=/var/lib/aide/aide.db
   register: aidedb
 - debug: var=aidedb
 - name: Generating initial Aide database and backup
@@ -72,5 +76,3 @@
   when: not aidedb.stat.exists and harden_init_aidedb is defined and harden_init_aidedb and (travisci is not defined or not travisci)
   async: 3600
   poll: 300
-
-

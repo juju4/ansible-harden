@@ -4,7 +4,6 @@
   lineinfile:
     dest: /etc/sudoers
     regexp: "^Defaults        .*"
-    line: "Defaults        env_reset,timestamp_timeout={{ harden_sudo_timeout }}"
+    line: "Defaults        env_reset,timestamp_timeout={{ harden_sudo_timeout | default(15) }}"
     backup: yes
     validate: 'visudo -cf %s'
-  when: harden_sudo_timeout is defined and harden_sudo_timeout != ''

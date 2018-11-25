@@ -13,7 +13,7 @@
 
 - name: Debian | Remove rpc-related packages
   apt:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: absent
     purge: yes
   with_items:
@@ -22,7 +22,7 @@
 
 - name: Debian | Remove container lxc-related packages
   apt:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: absent
     purge: yes
   with_items:
@@ -48,7 +48,8 @@
   notify:
     - restart sysstat
 
-- stat: path=/etc/default/rng-tools
+- name: Check if rng-tools is present
+  stat: path=/etc/default/rng-tools
   register: rngconf
 - name: Debian | More entropy
   lineinfile:
@@ -81,7 +82,10 @@
 - block:
     - debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
-      capabilities: "path={{ item }} capability='cap_net_raw+pe' state=present"
+      capabilities:
+        path: "{{ item }}"
+        capability: 'cap_net_raw+pe'
+        state: present
       with_items:
         - /bin/ping
         - /bin/ping6
@@ -90,8 +94,8 @@
       ignore_errors: true
     - name: ensure permissions are not setuid - using capabilities
       file:
-        path="{{ item }}"
-        mode=0755
+        path: "{{ item }}"
+        mode: '0755'
       with_items:
         - /bin/ping
         - /bin/ping6
@@ -107,7 +111,8 @@
   stat: path=/etc/init.d/rc
   register: rcfile
 - block:
-    - command: "lsattr {{ immutable_testfile }}"
+    - name: Check attribute of immutable test file
+      command: "lsattr {{ immutable_testfile }}"
       register: rclsattr
       changed_when: false
     - debug: var=rclsattr.stdout
@@ -125,4 +130,3 @@
 
 - include: apparmor-audit.yml
   when: harden_apparmor_audit
-

@@ -1,7 +1,6 @@
 ---
 
 - include: timezone.yml
-  when: harden_timezone is defined and harden_timezone != ''
 
 - include: sshd.yml
   when: harden_sshd_review
@@ -14,7 +13,8 @@
 ## http://blog.hellosa.org/2013/07/27/log-bash-history-to-syslog-on-centos-6.html
 ## http://binbash.fr/2012/09/05/bash-syslog/
 
-- stat: path=/var/log/account/pacct
+- name: Check if /var/log/account/pacct exists
+  stat: path=/var/log/account/pacct
   register: pacct
 ## FIXME! might be not active if enabled/disabled...
 - name: enable accounting
@@ -33,9 +33,8 @@
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: shell timeout ###"
     content: |
-      readonly TMOUT={{ harden_shell_timeout }}
+      readonly TMOUT={{ harden_shell_timeout | default(3600) }}
   tags: bash
-  when: harden_shell_timeout is defined and harden_shell_timeout != ''
 
 - name: configure motd
   template:
@@ -46,7 +45,6 @@
   with_items:
     - /etc/motd
     - /etc/issue.net
-  when: harden_motd_template != ''
 
 - include: sudo.yml
 

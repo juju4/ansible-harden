@@ -23,7 +23,8 @@
 - block:
     - name: disable usb storage drivers - modprobe
       lineinfile: dest=/etc/modprobe.d/no-usb.conf line='install usb-storage /bin/true' create=yes
-    - stat: path=/etc/default/grub
+    - name: Check if grub is present
+      stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
       replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1nousb\2' backup=yes
@@ -33,7 +34,8 @@
 - block:
     - name: ensure usb storage drivers not disabled at modprobe level
       file: dest=/etc/modprobe.d/no-usb.conf state=absent
-    - stat: path=/etc/default/grub
+    - name: Check if grub is present
+      stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
       replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1\2' backup=yes
@@ -58,7 +60,8 @@
     - update-initramfs
 
 - block:
-    - stat: path=/etc/default/apport
+    - name: Ubuntu | check if apport is present
+      stat: path=/etc/default/apport
       register: defapport
       when: ansible_distribution == 'Ubuntu'
     - name: Ubuntu | ensure Apport crash report is disabled
@@ -142,4 +145,4 @@
     dest: /etc/modprobe.d/dev-sec.conf
     mode: '0644'
     backup: yes
-  when: harden_modprobe_template is defined and harden_modprobe_template != ''
+  when: harden_modprobe_template is defined

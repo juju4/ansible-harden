@@ -42,4 +42,3 @@
     - set_fact:
         monit_auditd: false
   when: harden_osquery_process_auditing
-

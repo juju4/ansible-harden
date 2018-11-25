@@ -53,7 +53,8 @@
       fi
   tags: bash
 
-- stat: path=/etc/rsyslog.d
+- name: Check if rsyslog is present
+  stat: path=/etc/rsyslog.d
   register: rsyslog
 - name: get rsyslog version
   command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
@@ -65,4 +66,3 @@
     - restart rsyslog
   when: rsyslog.stat.exists
   tags: bash
-

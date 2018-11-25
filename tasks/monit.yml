@@ -1,12 +1,14 @@
 ---
-- set_fact:
+- name: Monit | Set default daemons
+  set_fact:
     daemons:
       - sshd
       - rsyslog
-- set_fact:
+- name: Monit | Include osqueryd
     daemons: "{{ daemons }} + [ 'osqueryd' ]"
   when: monit_osqueryd
-- set_fact:
+- name: Monit | Include auditd
+  set_fact:
     daemons: "{{ daemons }} + [ 'auditd' ]"
   when: monit_auditd
 

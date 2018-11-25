@@ -38,6 +38,7 @@
   git:
     repo: https://github.com/raphaelsc/Am-I-affected-by-Meltdown.git
     dest: /tmp/Am-I-affected-by-Meltdown
+    version: HEAD
     update: no
   become: yes
   become_user: nobody
@@ -63,6 +64,7 @@
   git:
     repo: https://github.com/paboldin/meltdown-exploit.git
     dest: /tmp/meltdown-exploit
+    version: HEAD
     update: no
   become: yes
   become_user: nobody
@@ -88,6 +90,7 @@
   git:
     repo: https://github.com/IAIK/meltdown.git
     dest: /tmp/meltdown-iaik
+    version: HEAD
     update: no
   become: yes
   become_user: nobody
@@ -102,9 +105,7 @@
   ignore_errors: true
 
 - name: build IAIK poc
-  shell: "{{ item }}"
-  with_items:
-    - make
+  shell: make
   args:
     chdir: /tmp/meltdown-iaik
     creates: /tmp/meltdown-iaik/test
@@ -147,6 +148,7 @@
   git:
     repo: https://github.com/speed47/spectre-meltdown-checker.git
     dest: /tmp/spectre-meltdown-checker
+    version: HEAD
     update: no
   become: yes
   become_user: nobody

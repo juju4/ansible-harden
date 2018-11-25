@@ -2,11 +2,11 @@
 
 - name: Logcheck additional configuration - ntpd ignore
   copy:
-    src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=644
+    src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=0644
 
 - name: Logcheck additional configuration - ignore rules
   copy:
-    src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=644
+    src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=0644
 
 - name: Debian-docker | check if /var/log/syslog exists
   stat:
@@ -62,7 +62,7 @@
 
 - name: Review logcheck frequency
   replace: dest=/etc/cron.d/logcheck regexp='^2 \* \* \* \*       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'
-  when: harden_logcheck_hours is defined and harden_logcheck_hours != "" and harden_logcheck_hours != '*'
+  when: harden_logcheck_hours is defined and harden_logcheck_hours != '*'
 ## http://wiki.bluelightav.org/display/BLUE/Logcheck+administration
 - name: Review Logcheck cron on reboot
   replace:
@@ -73,4 +73,3 @@
 - name: ensure pid directory for logcheck user at reboot (systemd-tmpfiles)
   lineinfile: dest=/etc/tmpfiles.d/logcheck.conf line='    d    /run/logcheck   0755 logcheck logcheck - -' create=yes
   when: ansible_service_mgr == 'systemd'
-

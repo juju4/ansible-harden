@@ -1,7 +1,7 @@
 ---
 
 - name: Redhat| Remove some packages
-  yum: name={{item}} state=absent
+  yum: name={{ item }} state=absent
   with_items:
     - rpcbind
   when: harden_use_rpc is not defined or not harden_use_rpc
@@ -27,7 +27,7 @@
     dest: /etc/login.defs
     owner: root
     group: root
-    mode: '444'
+    mode: '0444'
 
 - name: Ensure initscripts package is present
   package:
@@ -38,7 +38,8 @@
   lineinfile: dest=/etc/sysconfig/init regexp='^SINGLE=' line='SINGLE=/sbin/sulogin'
 
 - debug: var=ansible_virtualization_type
-- set_fact:
+- name: Container inside | disable incompatible daemons
+  set_fact:
     harden_services_containers: []
   when: (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
 - name: Redhat | Ensure services are running and enabled on boot.

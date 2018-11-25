@@ -1,7 +1,8 @@
 ---
 ## or separate role like https://github.com/dev-sec/ansible-ssh-hardening
 
-- stat: path=/etc/ssh/ssh_host_ed25519_key
+- name: Check if /etc/ssh/ssh_host_ed25519_key exists
+  stat: path=/etc/ssh/ssh_host_ed25519_key
   register: sshkey
 - name: Generate any missing SSH host key
   command: ssh-keygen -A

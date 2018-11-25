@@ -8,4 +8,3 @@
 - name: force monitor of {{ daemon }}
   command: "monit monitor {{ item }}"
   when: "'unmonitor' in monitstatus.stdout"
-

@@ -15,7 +15,5 @@
     backup: yes
     checksum: 'sha256:aaaaa'
   register: apparmoraudit
-
-- name: enable apparmor audit profile
-  command: aa-complain /etc/apparmor.d/apparmor.audit
-  when: apparmoraudit.changed
+  notify:
+    - enable apparmor audit profile

@@ -1,6 +1,7 @@
 ---
 
-- stat: path=/etc/default/grub
+- name: Check if grub is present
+  stat: path=/etc/default/grub
   register: hasgrub
 
 ## linux.yml: disable usb storage drivers - grub

@@ -64,3 +64,6 @@
 - name: update-initramfs
   command: update-initramfs -k all -u
   when: ansible_os_family == "Debian"
+
+- name: enable apparmor audit profile
+  command: aa-complain /etc/apparmor.d/apparmor.audit

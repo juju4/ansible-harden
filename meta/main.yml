@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: harden
   author: juju4
   description: System Hardening role
   license: BSD

@@ -46,7 +46,7 @@
     - name: ensure iptables v6 rules are correct
       shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
-  when: harden_fw is defined and harden_fw and harden_fw6_template is defined and harden_fw6_template != ''
+  when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
 - name: get rsyslog version
   command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
@@ -61,4 +61,3 @@
 - name: add logrotate configuration for iptables.log
   template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644 validate='logrotate -dv %s'
   ignore_errors: true
-

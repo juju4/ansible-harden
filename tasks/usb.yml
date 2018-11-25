@@ -54,4 +54,3 @@
     mode: '0755'
     remote_src: yes
     creates: /usr/local/bin/prevent-ducky.py
-

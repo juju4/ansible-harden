@@ -27,4 +27,3 @@
         - autosave_v4
         - autosave_v6
   when: ansible_distribution == "Ubuntu" and ansible_distribution_release == 'precise'
-
