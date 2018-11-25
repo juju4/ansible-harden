@@ -54,6 +54,11 @@ env:
 #  - distribution: ubuntu
 #    version: 16.04
 #    ansible_version: 1.9.6.0
+  - distribution: centos
+    version: 7
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
+    suite: full
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.7.0.0
@@ -100,12 +105,13 @@ before_install:
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get update" || true'
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get -y install python python-apt aptitude python-pip libssl-dev python-dev libffi-dev" || true'
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X6" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm" || true'
-  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-11.noarch.rpm" || true'
+  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum update" || true'
-  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python2-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip" || true
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install ansible==${ansible_version}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible --version"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install ansible-lint"
   - "echo localhost > inventory"
 ## enable ansible profiling (https://github.com/jlafon/ansible-profile)
   - head -2 ./test/vagrant/ansible.cfg > /tmp/ansible.cfg
@@ -134,6 +140,7 @@ before_install:
 
 script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-lint /etc/ansible/roles/juju4.harden/tasks/main.yml"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vv /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}"
 
 ## FIXME! Travis request: Build config file had a parse error: "mapping values are not allowed in this context at line 72 column 321".
@@ -147,10 +154,14 @@ script:
 after_failure:
   # Check what happened on systemd systems.
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager --failed"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- journalctl -xe --no-pager"
 
 after_script:
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log"
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status iptables"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status netfilter-persistent"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/iptables/rules.v4 /etc/sysconfig/iptables"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables -L -vn"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables-save"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables -L -vn"
@@ -158,8 +169,11 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/openntpd/ntpd.conf"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /var/log"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /etc/login.defs"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/login.defs"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible -i inventory --connection=local -m setup localhost"
 
 # Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
 # https://www.centos.org/forums/viewtopic.php?t=50462
