@@ -14,4 +14,3 @@
     - juju4.harden-sysctl
 #    - kbrebanov.osquery
     - juju4.harden
-
