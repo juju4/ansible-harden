@@ -5,6 +5,7 @@
       - sshd
       - rsyslog
 - name: Monit | Include osqueryd
+  set_fact:
     daemons: "{{ daemons }} + [ 'osqueryd' ]"
   when: monit_osqueryd
 - name: Monit | Include auditd
