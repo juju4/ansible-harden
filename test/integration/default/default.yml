@@ -10,7 +10,7 @@
     - harden_testing: true
     - ipv6_config: 'harden'
   roles:
-    - juju4.redhat-epel
-    - juju4.harden-sysctl
+    - juju4.redhat_epel
+    - juju4.harden_sysctl
 #    - kbrebanov.osquery
     - juju4.harden

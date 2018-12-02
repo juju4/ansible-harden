@@ -11,9 +11,9 @@
     - harden_testing: true
     - ipv6_config: 'harden'
   roles:
-    - juju4.redhat-epel
-    - juju4.harden-sysctl
-    - juju4.harden-mailserver
+    - juju4.redhat_epel
+    - juju4.harden_sysctl
+    - juju4.harden_mailserver
     - juju4.ipv6
     - juju4.auditd
     - kbrebanov.osquery
