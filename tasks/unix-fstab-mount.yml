@@ -5,7 +5,9 @@
     name: "{{ outer_item.mount }}"
 #    src: "{{ item.device }}"
 #    src: "UUID={{ item.uuid }}"
-    src: "{% if ansible_virtualization_type is defined and ansible_virtualization_type == 'lxc' %}{{ item.device }}{% else %}UUID={{ item.uuid }}{% endif %}"
+    src: >-
+      {% if ansible_virtualization_type is defined and ansible_virtualization_type == 'lxc' %}{{ item.device }}
+      {% else %}UUID={{ item.uuid }}{% endif %}
     state: present
     fstype: "{{ item.fstype }}"
     opts: "{{ outer_item.opts | default(item.options) | regex_replace('^rw,seclabel,relatime,attr2,inode64,noquota$', 'defaults') }}"

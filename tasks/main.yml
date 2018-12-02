@@ -1,5 +1,8 @@
 ---
-## usual suspect: http://bastille-linux.sourceforge.net/, https://cisofy.com/lynis/, https://fedorahosted.org/aqueduct/wiki,
+## usual suspects:
+#    http://bastille-linux.sourceforge.net/
+#    https://cisofy.com/lynis/
+#    https://fedorahosted.org/aqueduct/wiki
 ## https://github.com/fcaviggia/hardening-script-el6
 ## https://github.com/major/securekickstarts
 
@@ -80,7 +83,7 @@
   when: harden_bash2syslog is defined and harden_bash2syslog
 
 - include: root-forward.yml
-  when: harden_rootforward is defined and harden_rootforward != ""
+  when: harden_rootforward is defined and harden_rootforward
 
 - include: fail2ban.yml
 

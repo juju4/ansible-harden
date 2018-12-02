@@ -12,7 +12,9 @@
 
 - name: download speculative execution sample code
   get_url:
-    url: https://gist.githubusercontent.com/jedisct1/3bbb6e50b768968c30629bf734ea49c6/raw/6ede3c9a3356a4a55a27febaf38157897c4fed09/spectre.c
+    url: >-
+      https://gist.githubusercontent.com/jedisct1/3bbb6e50b768968c30629bf734ea49c6/raw/
+      6ede3c9a3356a4a55a27febaf38157897c4fed09/spectre.c
     dest: /tmp/spectre.c
     owner: nobody
 

@@ -19,7 +19,8 @@
     - zenity
 
 ## FIXME! Currently not working
-## https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1414409       systemd-udevd[257]: specified group 'input' unknown
+## https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1414409
+##      systemd-udevd[257]: specified group 'input' unknown
 ## https://patchwork.ozlabs.org/patch/198234/
 ## https://bugs.freedesktop.org/show_bug.cgi?id=88491
 - name: patch udev init for missing group
