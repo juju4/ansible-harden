@@ -53,7 +53,10 @@
   register: rngconf
 - name: Debian | More entropy
   lineinfile:
-    dest='/etc/default/rng-tools' regexp='^HRNGDEVICE=/dev/urandom' insertafter='^#HRNGDEVICE=/dev/null' line='HRNGDEVICE=/dev/urandom'
+    dest: '/etc/default/rng-tools'
+    regexp: '^HRNGDEVICE=/dev/urandom'
+    insertafter: '^#HRNGDEVICE=/dev/null'
+    line: 'HRNGDEVICE=/dev/urandom'
   when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and rngconf.stat.exists
 
 ## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
@@ -68,7 +71,11 @@
         replace: '#\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
   when: ansible_distribution == 'Ubuntu'
 - name: Debian | define distribution of debsecan
-  replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE={{ ansible_distribution_release }}' backup=yes
+  replace:
+    dest: /etc/default/debsecan
+    regexp: '^SUITE=.*'
+    replace: 'SUITE={{ ansible_distribution_release }}'
+    backup: yes
   when: ansible_distribution == 'Debian'
 
 ## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
@@ -104,7 +111,10 @@
       ignore_errors: true
     - name: Capabilities Hardening - tcpdump
       capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )
 
 
 - name: check if /etc/init.d/rc exists
@@ -118,13 +128,17 @@
     - debug: var=rclsattr.stdout
     - name: remove temporarily immutable flag on file
       command: "chattr -i /etc/init.d"
-      when: rclsattr.stdout.find("----i-") == -1 and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+      when: >
+        rclsattr.stdout.find("----i-") == -1 and
+        not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
     - name: set umask in /etc/init.d/rc
       lineinfile: "dest=/etc/init.d/rc regexp='^umask ' line='umask {{ harden_umask }}'"
       when: ansible_distribution == "Ubuntu"
     - name: re-set immutable flag on file
       command: "chattr +i /etc/init.d"
-      when: rclsattr.stdout.find("----i-") == -1 and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+      when: >
+        rclsattr.stdout.find("----i-") == -1 and
+        not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
       ignore_errors: true
   when: rcfile.stat.exists
 

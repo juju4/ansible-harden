@@ -16,16 +16,22 @@
   file:
     dest: /var/log/syslog
     state: touch
-  when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker") and ((ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)) and not syslogfile.stat.exists
+  when: >
+    (ansible_virtualization_type is defined and ansible_virtualization_type == "docker") and
+    ((ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or
+      (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+    ) and not syslogfile.stat.exists
 
 - name: Logcheck replace rules
   template: src=logcheck.replace.j2 dest=/etc/logcheck/logcheck.replace mode=0644 validate='sed -f %s /var/log/syslog'
 
 - name: Review Logcheck configuration
   replace:
+    dest: '/etc/logcheck/logcheck.conf'
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
 ## Error: Config file /tmp/tmp32Yy_d unreadable or does not exists
-#    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}" validate='sudo -u logcheck logcheck -t -d -o -c %s'
-    dest='/etc/logcheck/logcheck.conf' regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+#    validate: 'sudo -u logcheck logcheck -t -d -o -c %s'
   with_items:
     - { regexp: '^#SORTUNIQ=0', replace: 'SORTUNIQ=1' }
     - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
@@ -57,19 +63,30 @@
   when: not lpatch.stat.exists
 
 - name: Add support for fail2ban date format to syslog-summary
-#  lineinfile: dest=/usr/bin/syslog-summary line='\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),' insertafter='re.compile(r"^\(Mon\|Tue\|Wed\|Thu\|Fri\|Sat\|Sun\) \(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\) \[ 0-9\]\[0-9\]\[0-9\]\[0-9\]:\[0-9\]\[0-9\]:\[0-9\]\[0-9\] "),$' backup=yes
-  lineinfile: dest=/usr/bin/syslog-summary line='\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),' insertbefore='^\]$' backup=yes
+  lineinfile:
+    dest: /usr/bin/syslog-summary
+    line: '\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),'
+    insertbefore: '^\]$'
+    backup: yes
 
 - name: Review logcheck frequency
-  replace: dest=/etc/cron.d/logcheck regexp='^2 \* \* \* \*       logcheck' replace='2 {{ harden_logcheck_hours }} * * *       logcheck'
+  replace:
+    dest: /etc/cron.d/logcheck
+    regexp: '^2 \* \* \* \*       logcheck'
+    replace: '2 {{ harden_logcheck_hours }} * * *       logcheck'
   when: harden_logcheck_hours is defined and harden_logcheck_hours != '*'
 ## http://wiki.bluelightav.org/display/BLUE/Logcheck+administration
 - name: Review Logcheck cron on reboot
   replace:
     "dest=/etc/cron.d/logcheck regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
   with_items:
-    - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi', replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi' }
+    - { regexp: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi',
+        replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi'
+      }
 
 - name: ensure pid directory for logcheck user at reboot (systemd-tmpfiles)
-  lineinfile: dest=/etc/tmpfiles.d/logcheck.conf line='    d    /run/logcheck   0755 logcheck logcheck - -' create=yes
+  lineinfile:
+    dest: /etc/tmpfiles.d/logcheck.conf
+    line: '    d    /run/logcheck   0755 logcheck logcheck - -'
+    create: yes
   when: ansible_service_mgr == 'systemd'

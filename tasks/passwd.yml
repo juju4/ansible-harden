@@ -33,7 +33,10 @@
   file:
     path: /usr/share/dict/.ansible_cracklib_update
     state: touch
-  when: (ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)) and not cracklibrefresh.stat.exists
+  when: >
+    (ansible_os_family == 'Debian' or
+      (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)
+    ) and not cracklibrefresh.stat.exists
 
 - block:
 # complexity... do we still want that?

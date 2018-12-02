@@ -31,8 +31,10 @@
     mode: '0700'
     owner: root
     backup: yes
-## FIXME: The control file '/home/vagrant/.ansible/tmp/ansible-tmp-1513601819.61-207005098620159/source' must be owned by you.
-##  => monit requires file to be owned by root which is not the case before validation. ansible not supporting multiple commands in validation
+## FIXME: The control file '/home/vagrant/.ansible/tmp/ansible-tmp-1513601819.61-207005098620159/source'
+##      must be owned by you.
+##  => monit requires file to be owned by root which is not the case before validation. ansible not
+##      supporting multiple commands in validation
 #    validate: 'monit -t -c %s'
 #    validate: 'chown root %s; monit -t -c %s'
   with_items: "{{ daemons }}"

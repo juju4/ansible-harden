@@ -3,16 +3,25 @@
 - name: Ubuntu | Enable backports (replace)
   replace:
 ## can be archive, or us-east-1.ec2.archive if amazon, or others
-    dest='/etc/apt/sources.list' regexp='^# deb http://(.*)/ubuntu([/]*) {{ ansible_distribution_release }}-backports' replace='deb http://\1/ubuntu\2 {{ ansible_distribution_release }}-backports' backup=yes
+    dest: '/etc/apt/sources.list'
+    regexp: '^# deb http://(.*)/ubuntu([/]*) {{ ansible_distribution_release }}-backports'
+    replace: 'deb http://\1/ubuntu\2 {{ ansible_distribution_release }}-backports'
+    backup: yes
   when: ansible_distribution == "Ubuntu"
 
 ## some providers haven't the commented line
 ## FIXME! Not working
-##  ex: "deb http://mirrors.digitalocean.com/ubuntu xenial-backports main restricted universe multiverse" should be unchanged
+##  ex: "deb http://mirrors.digitalocean.com/ubuntu xenial-backports main restricted universe multiverse"
+##      should be unchanged
 #- name: Ubuntu | Enable backports (line)
 #  lineinfile:
-##    dest='/etc/apt/sources.list' regexp='^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
-#    dest='/etc/apt/sources.list' regexp='^deb http://(.*)/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' line='deb http://\1/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse' backup=yes
+#    dest: '/etc/apt/sources.list'
+##    regexp: '^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse'
+##    line: 'deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted
+##      universe multiverse'
+#    regexp: '^deb http://(.*)/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse'
+#    line: 'deb http://\1/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse'
+#    backup=yes
 #  when: ansible_distribution == "Ubuntu"
 
 ## https://github.com/chef/bento/issues/592

@@ -6,11 +6,17 @@
   register: sshkey
 - name: Generate any missing SSH host key
   command: ssh-keygen -A
-  when: not sshkey.stat.exists and ((ansible_os_family == "RedHat" and ansible_distribution_major_version == '7') or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == "Alpine")
+  when: >
+    not sshkey.stat.exists and
+    ((ansible_os_family == "RedHat" and ansible_distribution_major_version == '7') or
+      ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == "Alpine"
+    )
 
 - name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)
   lineinfile: dest=/etc/tmpfiles.d/sshd.conf line='    d    /run/sshd   0755 root root - -' create=yes
-  when: ansible_service_mgr == 'systemd' and (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+  when: >
+    ansible_service_mgr == 'systemd' and
+    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
 
 - name: ensure privsep directory for sshd
   file:
@@ -53,7 +59,10 @@
   # just remove weak ones
   shell: "awk '$5 >= 2000' /etc/ssh/moduli > /etc/ssh/moduli.strong && mv /etc/ssh/moduli.strong /etc/ssh/moduli"
   # re-generate. much longer
-  #shell: "ssh-keygen -G /etc/ssh/moduli.all -b 4096 && ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all && mv /etc/ssh/moduli.safe /etc/ssh/moduli"
+#  shell: >
+#    ssh-keygen -G /etc/ssh/moduli.all -b 4096 &&
+#    ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all &&
+#    mv /etc/ssh/moduli.safe /etc/ssh/moduli"
   when: moduli.stdout != 0
 
 - name: Ensure sshd groups exist

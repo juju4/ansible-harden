@@ -10,7 +10,8 @@
   seboolean: name={{ item }} state=no persistent=yes
   with_items:
     - allow_execheap
-## vagrant/Centos7: "msg": "SELinux boolean allow_execmem does not exist.", but https://wiki.centos.org/TipsAndTricks/SelinuxBooleans
+## vagrant/Centos7: "msg": "SELinux boolean allow_execmem does not exist.",
+##      but https://wiki.centos.org/TipsAndTricks/SelinuxBooleans
 #    - allow_execmem
     - allow_execstack
     - secure_mode_insmod

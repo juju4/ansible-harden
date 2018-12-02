@@ -12,7 +12,12 @@
 ## Note: can't do before full end of provisioning else might break other things...
 - block:
     - name: Restrict compiler tools to group {{ harden_restrict_compiler_group }}
-      file: path={{ item }} owner=root group={{ harden_restrict_compiler_group }} mode={{ harden_restrict_compiler_umask }} follow=yes
+      file:
+        path: "{{ item }}"
+        owner: root
+        group: "{{ harden_restrict_compiler_group }}"
+        mode: "{{ harden_restrict_compiler_umask }}"
+        follow: yes
       with_items:
 #        - /usr/bin/gcc-{{ gcc_v }}
         - /usr/bin/cc
@@ -30,7 +35,12 @@
 - block:
 ## https://github.com/ansible/ansible/issues/13652
     - name: Alpine | Restrict compiler tools to group {{ harden_restrict_compiler_group }}
-      file: dest={{ item }} owner=root group={{ harden_restrict_compiler_group }} mode={{ harden_restrict_compiler_umask }} state=file
+      file:
+        path: "{{ item }}"
+        owner: root
+        group: "{{ harden_restrict_compiler_group }}"
+        mode: "{{ harden_restrict_compiler_umask }}"
+        state: file
       with_items:
         - /usr/bin/gcc
         - /usr/bin/gcc-ar

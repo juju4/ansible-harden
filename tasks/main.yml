@@ -11,7 +11,7 @@
   when: ansible_distribution == 'Debian'
 - name: Include version-specific variables for RedHat
   include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 - name: Include version-specific variables for Alpine
   include_vars: "Alpine.yml"
   when: ansible_os_family == "Alpine"
@@ -22,7 +22,8 @@
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages! (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
+## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages!
+##    (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
 ## https://groups.google.com/forum/#!topic/beagleboard/jXb9KhoMOsk  = Not that, settings non-existent
 - name: Install some hardening packages
   package: name={{ item }} state=present update_cache=yes
@@ -39,12 +40,20 @@
       package: name=arpwatch state=present
     - name: Ensure arpwatch service is enabled and started
       service: name=arpwatch state=started enabled=yes
-  when: harden_arpwatch and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: >
+    harden_arpwatch and
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )
 - name: Install arpwatch
   package:
     name: arpwatch
     state: absent
-  when: not harden_arpwatch or (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: >
+    not harden_arpwatch or
+    (ansible_virtualization_type is defined and
+      (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    )
 
 - include: linux.yml
   when: ansible_system == 'Linux'
@@ -55,7 +64,7 @@
 
 - name: Redhat | Harden
   include: redhat.yml
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 
 - name: Alpine | Harden
   include: alpine.yml

@@ -69,15 +69,26 @@
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: set sensible core pattern
       sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
-      when: not (ansible_os_family == 'RedHat' and (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc"))
-  when: ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and harden_linux_disable_bugreport and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+      when: >
+        not (ansible_os_family == 'RedHat' and
+              (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
+            )
+  when: >
+    ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and
+    harden_linux_disable_bugreport and
+    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 #journalctl --disk-usage
 #journalctl --verify
 #journalctl --vacuum-size=800M
 - block:
     - name: configure linux journal
-      ini_file: dest=/etc/systemd/journald.conf section={{ item.s }} option={{ item.o }} value={{ item.v }} backup=yes
+      ini_file:
+        dest: /etc/systemd/journald.conf
+        section: "{{ item.s }}"
+        option: "{{ item.o }}"
+        value: "{{ item.v }}"
+        backup: yes
       with_items:
         - { s: 'Journal', o: 'SystemMaxUse', v: "{{ harden_journald_systemmaxuse }}" }
 #        - { s: 'Journal', o: 'ForwardToSyslog', v: 'yes' }
@@ -103,7 +114,9 @@
   when: ansible_distribution == 'Ubuntu' and harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
 
 - include: redhat-kpatch.yml
-  when: ansible_distribution == 'RedHat Enterprise Linux' and ansible_distribution_version == '7.2' and harden_rhel_kpatch is defined and harden_rhel_kpatch
+  when: >
+    ansible_distribution == 'RedHat Enterprise Linux' and ansible_distribution_version == '7.2' and
+    harden_rhel_kpatch is defined and harden_rhel_kpatch
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 #- include: auditd.yml

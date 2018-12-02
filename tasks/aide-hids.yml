@@ -44,7 +44,10 @@
       with_items:
 ## or 'setfacl -m u:nagios:r-- /var/log/aide/aide.log'
 #        - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
-        - { regexp: 'savelog -t -g adm -m 64? -u root -c 7 "$LOGFILE" > /dev/null$', replace: 'savelog -t -g adm -m 640 -u root -c 7 "$LOGFILE" > /dev/null && setfacl -m u:nagios:r-- "$LOGFILE" 2> /dev/null' }
+        - { regexp: 'savelog -t -g adm -m 64? -u root -c 7 "$LOGFILE" > /dev/null$',
+            replace: 'savelog -t -g adm -m 640 -u root -c 7 "$LOGFILE" > /dev/null &&
+                setfacl -m u:nagios:r-- "$LOGFILE" 2> /dev/null'
+          }
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - block:
@@ -73,6 +76,8 @@
     - "{{ aide_bin }} -i"
     - mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
     - cp /var/lib/aide/aide.db /var/lib/aide/aide.db.origin
-  when: not aidedb.stat.exists and harden_init_aidedb is defined and harden_init_aidedb and (travisci is not defined or not travisci)
+  when: >
+    not aidedb.stat.exists and harden_init_aidedb is defined and harden_init_aidedb and
+    (travisci is not defined or not travisci)
   async: 3600
   poll: 300

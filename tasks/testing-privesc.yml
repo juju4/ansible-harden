@@ -57,7 +57,9 @@
 
 #- debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
-  shell: egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | grep -v "Can't find full path of running program:" | sort | uniq
+  shell: >
+    egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out |
+        grep -v "Can't find full path of running program:" | sort | uniq
   changed_when: false
   ignore_errors: true
   when: upc is succeeded

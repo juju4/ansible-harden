@@ -41,7 +41,10 @@
 - name: Container inside | disable incompatible daemons
   set_fact:
     harden_services_containers: []
-  when: (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: >
+    (ansible_virtualization_type is defined and
+      (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    )
 - name: Redhat | Ensure services are running and enabled on boot.
   service: name={{ item }} state=started enabled=yes
   with_items:
@@ -52,7 +55,10 @@
   command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
 
 - include: selinux.yml
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )
 
 - include: yum-cron.yml
   when: harden_security_update_auto

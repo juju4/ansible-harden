@@ -18,4 +18,7 @@
         regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
         replace: 'GRUB_CMDLINE_LINUX="\1 iommu=force"'
         backup: yes
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and hasgrub.stat.exists and harden_enable_iommu_force
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        ) and hasgrub.stat.exists and harden_enable_iommu_force
