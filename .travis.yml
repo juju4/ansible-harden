@@ -30,8 +30,11 @@ env:
 #  - distribution: ubuntu
 #    version: 12.04
 #    ansible_version: 2.7.0.0
-#  - distribution: alpine
-#    version: 3.9
+  - distribution: alpine
+    version: edge
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
 #  - distribution: debian
 #    version: jessie
 ## past ansible versions
