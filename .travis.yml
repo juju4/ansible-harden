@@ -100,7 +100,7 @@ before_install:
 #  - service --status-all
   - sudo service lxd restart
 # check network state
-  - sudo lxc network show lxdbr0
+#  - sudo lxc network show lxdbr0
 ## ssh key for lxd_cli ?
   - ls ~/.ssh
   - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
