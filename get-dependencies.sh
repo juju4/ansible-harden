@@ -6,9 +6,9 @@ umask 022
 rolesdir=$(dirname $0)/..
 
 [ ! -d $rolesdir/juju4.ipv6 ] && git clone https://github.com/juju4/ansible-ipv6 $rolesdir/juju4.ipv6
-[ ! -d $rolesdir/juju4.redhat-epel ] && git clone https://github.com/juju4/ansible-redhat-epel $rolesdir/juju4.redhat_epel
-[ ! -d $rolesdir/juju4.harden-sysctl ] && git clone https://github.com/juju4/ansible-harden-sysctl $rolesdir/juju4.harden_sysctl
-[ ! -d $rolesdir/juju4.harden-mailserver ] && git clone https://github.com/juju4/ansible-harden-mailserver $rolesdir/juju4.harden_mailserver
+[ ! -d $rolesdir/juju4.redhat_epel ] && git clone https://github.com/juju4/ansible-redhat-epel $rolesdir/juju4.redhat_epel
+[ ! -d $rolesdir/juju4.harden_sysctl ] && git clone https://github.com/juju4/ansible-harden-sysctl $rolesdir/juju4.harden_sysctl
+[ ! -d $rolesdir/juju4.harden_mailserver ] && git clone https://github.com/juju4/ansible-harden-mailserver $rolesdir/juju4.harden_mailserver
 #[ ! -d $rolesdir/kbrebanov.osquery ] && git clone https://github.com/kbrebanov/ansible-osquery.git $rolesdir/kbrebanov.osquery
 [ ! -d $rolesdir/kbrebanov.osquery ] && git clone https://github.com/juju4/ansible-osquery.git $rolesdir/kbrebanov.osquery
 [ ! -d $rolesdir/juju4.auditd ] && git clone https://github.com/juju4/ansible-auditd $rolesdir/juju4.auditd
