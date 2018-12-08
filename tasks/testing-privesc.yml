@@ -27,6 +27,11 @@
   ignore_errors: true
   register: upc
 
+- name: Ensure GNU tar is present
+  package:
+    name: tar
+    state: present
+
 - name: unarchive unix-privesc-check
   unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
@@ -34,16 +39,7 @@
     remote_src: true
   become: yes
   become_user: _test
-  when: not (ansible_distribution == "Alpine" or ansible_distribution == "Debian") and upc is succeeded
-
-- name: Alpine | unarchive unix-privesc-check
-  command: tar xzf /tmp/unix-privesc-check-1.4.tar.gz
-  args:
-    chdir: /tmp
-    creates: /tmp/unix-privesc-check-1.4
-  become: yes
-  become_user: _test
-  when: (ansible_distribution == "Alpine" or ansible_distribution == "Debian") and upc is succeeded
+  when: upc is succeeded
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
