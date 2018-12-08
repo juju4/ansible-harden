@@ -85,7 +85,8 @@
 ## https://wiki.ubuntu.com/Security/Investigation/Setuid
 ## FIXME! same for chroot cap and others
 ## FIXME! not idempotent, https://github.com/ansible/ansible/issues/18911
-## Not setpcap in unprivileged lxc container, https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
+## Not setpcap in unprivileged lxc container,
+##      https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
 - block:
     - debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
