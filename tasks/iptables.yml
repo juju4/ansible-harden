@@ -83,7 +83,7 @@
 
 - block:
     - name: Alpine | Load iptables rules and save for system restore
-      command: "{{ item }}"
+      shell: "{{ item }}"
       with_items:
         - iptables-restore -v < {{ iptables_rulesv4 }}
         - ip6tables-restore -v < {{ iptables_rulesv6 }}
