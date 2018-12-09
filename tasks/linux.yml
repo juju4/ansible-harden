@@ -99,7 +99,7 @@
 ## FIXME! firewall rules
 
 - include: iptables.yml
-  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat"
+  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" or ansible_os_family == "Alpine"
 
 - include: usb.yml
   when: harden_usb_restrict_udev
