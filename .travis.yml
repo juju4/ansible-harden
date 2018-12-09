@@ -191,6 +191,7 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /etc/login.defs"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/login.defs"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /etc"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible -i inventory --connection=local -m setup localhost"
