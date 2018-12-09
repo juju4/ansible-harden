@@ -7,7 +7,7 @@
 
 - block:
     - name: Alpine | copy timezone file
-      file:
+      copy:
         src: "/usr/share/zoneinfo/{{ harden_timezone | default('UTC') }}"
         dest: "/etc/localtime"
     - name: Alpine | set local timezone
