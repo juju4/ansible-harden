@@ -181,7 +181,7 @@ after_script:
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status iptables"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status netfilter-persistent"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/iptables/rules.v4 /etc/sysconfig/iptables"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/iptables/rules.v4 /etc/sysconfig/iptables /etc/iptables.conf"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables -L -vn"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables-save"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables -L -vn"
