@@ -61,3 +61,14 @@
 - name: add logrotate configuration for iptables.log
   template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644 validate='logrotate -dv %s'
   ignore_errors: true
+
+- name: Alpine | Check services status
+  command: "rc-status"
+  changed_when: false
+  when: ansible_os_family == "Alpine"
+- name: Alpine | Ensure iptables starts at boot
+  command: "{{ item }}"
+  with_items:
+    - rc-update add iptables
+    - rc-update add ip6tables
+  when: ansible_os_family == "Alpine"
