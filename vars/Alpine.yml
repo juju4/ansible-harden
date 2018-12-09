@@ -40,6 +40,9 @@ harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
 harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
 harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
 
+iptables_rulesv4: /etc/iptables.conf
+iptables_rulesv6: /etc/ip6tables.conf
+
 monitrc: /etc/monitrc
 monit_confdir: /etc/monit.d
 
