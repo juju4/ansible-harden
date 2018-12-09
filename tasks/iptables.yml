@@ -85,8 +85,8 @@
     - name: Alpine | Load iptables rules and save for system restore
       command: "{{ item }}"
       with_items:
-        - iptables-restore -v < {{ iptables_rulesv4 }}
-        - ip6tables-restore -v < {{ iptables_rulesv6 }}
+        - iptables-restore < {{ iptables_rulesv4 }}
+        - ip6tables-restore < {{ iptables_rulesv6 }}
         - /etc/init.d/iptables save
         - /etc/init.d/ip6tables save
     - name: Alpine | Check services status
