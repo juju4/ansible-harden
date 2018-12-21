@@ -15,4 +15,3 @@
     dest: "{{ ansible_env['HOME'] }}/.vim/swapfiles"
     state: directory
     mode: '0700'
-

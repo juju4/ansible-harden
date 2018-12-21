@@ -66,13 +66,15 @@ harden_services_containers:
     - psacct
     - auditd
 
-harden_sshd_crypto:
-    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms diffie-hellman-group-exchange-sha256' }
-    - { regexp: '^Ciphers ', line: 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' }
-    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512,hmac-sha2-256' }
+harden_sshd_crypto_kex: 'diffie-hellman-group-exchange-sha256'
+harden_sshd_crypto_cipher: 'aes256-ctr,aes192-ctr,aes128-ctr'
+harden_sshd_crypto_mac: 'hmac-sha2-512,hmac-sha2-256'
 
 monitrc: /etc/monit/monitrc
 monit_confdir: /etc/monit/conf.d
+
+iptables_rulesv4: /etc/iptables/rules.v4
+iptables_rulesv6: /etc/iptables/rules.v6
 
 testing_pkgs:
   - ruby

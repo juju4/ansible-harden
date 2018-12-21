@@ -6,7 +6,7 @@ harden_logcheck: true
 harden_logcheck_hours: '6,18'
 harden_use_rpc: false
 harden_use_forwarding: false
-harden_umask: '022'
+harden_umask: '077'
 #harden_umask: '027'
 harden_aide: true
 harden_init_aidedb: false
@@ -26,17 +26,29 @@ harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
 harden_logindefs_pass_warnage: 30
+harden_logindefs_login_retries: 5
+harden_logindefs_login_timeout: 60
+harden_logindefs_env_supath: 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+harden_logindefs_env_path: 'PATH=/usr/local/bin:/usr/bin:/bin'
+harden_rhel_pwquality_with_complexity: true
+harden_rhel_pwquality_minlen: 16
 # seconds
-harden_shell_timeout: 900
+harden_shell_timeout: 3600
 # minutes
 harden_sudo_timeout: 15
+harden_ssh_review: true
+harden_ssh_template: ssh_config.j2
 harden_sshd_review: true
+harden_sshd_template: sshd_config.j2
 harden_sshd_port: 22
+harden_sshd_PermitRootLogin: without-password
+harden_sshd_allowusers: 'vagrant deploy'
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
 harden_sshd_PasswordAuthentication: false
 harden_motd_template: motd.j2
 harden_modprobe_template: modprobe-dev-sec.conf.j2
+harden_securetty: true
 
 harden_journald_systemmaxuse: '1024M'
 harden_logrotate_days: 90
@@ -68,7 +80,7 @@ harden_logcheck_extra_logfiles:
   - /var/log/supervisor/supervisord.log
 
 harden_cracklib_dict:
-  - { u: 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/10_million_password_list_top_10000.txt', h: 'sha256:0279e0e7d854dc40460db18a7cf2e09fb661837dc0ae7d3b8dc6e783ba5d84b4' }
+  - { u: 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt', h: 'sha256:0279e0e7d854dc40460db18a7cf2e09fb661837dc0ae7d3b8dc6e783ba5d84b4' }
 
 harden_fail2ban_ignoreip: 127.0.0.1 192.168.1.0/24 10.0.0.0/8 8.8.8.8 8.8.4.4
 
@@ -108,13 +120,12 @@ harden_apparmor_audit: false
 harden_fw: true
 harden_fw_template: rules.v4.j2
 ## Note: in default config, if you switch default policy to drop, you will lose access...
-#harden_fw_default: DROP
-harden_fw_default: ACCEPT
+harden_fw_default: DROP
+#harden_fw_default: ACCEPT
 harden_fw_gw: 192.168.1.1
 harden_fw_ssh_restricted:
   - 192.168.1.0/24
   - 10.0.0.0/8
-  - 1.1.1.1
 harden_fw_ssh_port: 22
 harden_fw_snmp_restricted:
   - 192.168.1.100
@@ -126,11 +137,27 @@ harden_fw_dnsservers:
 harden_fw_smtpservers:
   - 192.168.1.20
 harden_fw_smtp_port: 25
-harden_fw_open_incoming:
+#harden_fw_open_incoming:
+#  - { proto: 'tcp', port: 8080 }
+#  - { proto: 'tcp', port: 9091 }
+## FIXME! open all or more? security can be split between VA scan, IR, ...
+#harden_fw_security_source:
+harden_fw6_template: rules.v6.j2
+harden_fw6_default: ACCEPT
+harden_fw6_gw: ''
+harden_fw6_ssh_restricted:
+  - fe80::/10
+harden_fw6_ssh_port: 22
+harden_fw6_snmp_restricted: []
+harden_fw6_dnsservers:
+  - 2001:4860:4860::8888
+  - 2001:4860:4860::8844
+harden_fw6_smtpservers: []
+harden_fw6_smtp_port: 25
+harden_fw6_open_incoming:
   - { proto: 'tcp', port: 8080 }
   - { proto: 'tcp', port: 9091 }
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
-#harden_fw_security_source:
 
 ### Monitoring
 ## can use inventory group but
@@ -246,12 +273,12 @@ monit_osqueryd: false
 
 harden_testing: false
 harden_testing_inspec: true
-harden_testing_inspec_paths:
-  - https://github.com/juju4/linux-baseline
-  - https://github.com/juju4/inspec-ntp.git
-  - https://github.com/juju4/inspec-audit.git
-  - https://github.com/juju4/inspec-osquery.git
-  - https://github.com/juju4/inspec-syslog.git
+harden_testing_inspec_paths: []
+#  - { i: 0, u: 'https://github.com/juju4/linux-baseline.git' }
+#  - { i: 1, u: 'https://github.com/juju4/inspec-ntp.git' }
+#  - { i: 2, u: 'https://github.com/juju4/inspec-audit.git' }
+#  - { i: 3, u: 'https://github.com/juju4/inspec-osquery.git' }
+#  - { i: 4, u: 'https://github.com/juju4/inspec-syslog.git' }
 harden_testing_check: true
 harden_testing_privesc: true
 harden_testing_speculative: true

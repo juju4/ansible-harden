@@ -38,18 +38,10 @@
   unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
     dest: /tmp/
+    remote_src: true
   become: yes
   become_user: _test
-  when: not (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
-
-- name: Alpine | unarchive unix-privesc-check
-  command: tar xzf /tmp/unix-privesc-check-1.4.tar.gz
-  args:
-    chdir: /tmp
-    creates: /tmp/unix-privesc-check-1.4
-  become: yes
-  become_user: _test
-  when: (ansible_distribution == "Alpine" or ansible_distribution == "Debian")
+  when: upc is succeeded
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
@@ -59,32 +51,38 @@
     creates: /tmp/unix-privesc-check.out
   become: yes
   become_user: _test
+  when: upc is succeeded
 
 #- debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
-  shell: egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | grep -v "Can't find full path of running program:" | sort | uniq
+  shell: >
+    egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out |
+        grep -v "Can't find full path of running program:" | sort | uniq
   changed_when: false
   ignore_errors: true
+  when: upc is succeeded
 
 ## FIXME: cert issue on ubuntu trusty - hash
+## FIXME: in some case, server returns 206 Partial Content
 - name: retrieve linuxprivchecker
   get_url:
-    url: http://www.securitysift.com/download/linuxprivchecker.py
+    url: https://raw.githubusercontent.com/sleventyeleven/linuxprivchecker/master/linuxprivchecker.py
     dest: /tmp/linuxprivchecker.py
     checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
     mode: '0644'
     validate_certs: false
   become: yes
   become_user: _test
+  ignore_errors: true
 
 - name: execute unix-privesc-check
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
-  ignore_errors: true
   register: linuxprivchecker
   args:
     creates: /tmp/linuxprivchecker.out
   become: yes
   become_user: _test
+  ignore_errors: true
 
 #- debug: var=linuxprivchecker.stdout_lines
 
@@ -117,5 +115,6 @@
   shell: "python3 kernelpop.py -b | tee /tmp/kernelpop.out"
   args:
     chdir: /home/_test/kernelpop
+    creates: /tmp/kernelpop.out
   become: yes
   become_user: _test

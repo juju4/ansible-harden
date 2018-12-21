@@ -16,6 +16,8 @@
     backup: yes
   with_items:
     - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists "1";' }
-    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages', line: 'APT::Periodic::Download-Upgradeable-Packages "1";' }
+    - { regexp: '^APT::Periodic::Download-Upgradeable-Packages',
+        line: 'APT::Periodic::Download-Upgradeable-Packages "1";'
+      }
     - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade "1";' }
     - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval "14";' }

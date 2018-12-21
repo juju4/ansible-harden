@@ -10,6 +10,7 @@
 ## Deny new USB devices when locked?
 ## Note: Alpine has no automount/autofs for storage
 ## https://github.com/probablynotablog/usb-canary
+## (RHEL7.6+) https://access.redhat.com/articles/3230621
 
 - name: USB | Ensure udev & others are present
   package: name={{ item }} state=present
@@ -20,7 +21,8 @@
   until: pkg_result is success
 
 ## FIXME! Currently not working
-## https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1414409       systemd-udevd[257]: specified group 'input' unknown
+## https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1414409
+##      systemd-udevd[257]: specified group 'input' unknown
 ## https://patchwork.ozlabs.org/patch/198234/
 ## https://bugs.freedesktop.org/show_bug.cgi?id=88491
 - name: patch udev init for missing group
@@ -55,4 +57,3 @@
     mode: '0755'
     remote_src: yes
     creates: /usr/local/bin/prevent-ducky.py
-

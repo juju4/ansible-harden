@@ -1,5 +1,8 @@
 ---
-## usual suspect: http://bastille-linux.sourceforge.net/, https://cisofy.com/lynis/, https://fedorahosted.org/aqueduct/wiki,
+## usual suspects:
+#    http://bastille-linux.sourceforge.net/
+#    https://cisofy.com/lynis/
+#    https://fedorahosted.org/aqueduct/wiki
 ## https://github.com/fcaviggia/hardening-script-el6
 ## https://github.com/major/securekickstarts
 
@@ -11,7 +14,7 @@
   when: ansible_distribution == 'Debian'
 - name: Include version-specific variables for RedHat
   include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 - name: Include version-specific variables for Alpine
   include_vars: "Alpine.yml"
   when: ansible_os_family == "Alpine"
@@ -22,7 +25,8 @@
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages! (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
+## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages!
+##    (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
 ## https://groups.google.com/forum/#!topic/beagleboard/jXb9KhoMOsk  = Not that, settings non-existent
 - name: Install some hardening packages
   package: name={{ item }} state=present update_cache=yes
@@ -45,7 +49,11 @@
       until: pkg_result is success
     - name: Ensure arpwatch service is enabled and started
       service: name=arpwatch state=started enabled=yes
-  when: harden_arpwatch and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+  when: >
+    harden_arpwatch and
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )
 - name: Install arpwatch
   package:
     name: arpwatch
@@ -67,7 +75,7 @@
 
 - name: Redhat | Harden
   include: redhat.yml
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 
 - name: Alpine | Harden
   include: alpine.yml
@@ -83,11 +91,12 @@
   when: harden_bash2syslog is defined and harden_bash2syslog
 
 - include: root-forward.yml
-  when: harden_rootforward is defined and harden_rootforward != ""
+  when: harden_rootforward is defined and harden_rootforward
 
 - include: fail2ban.yml
 
 - include: vim-swapfiles.yml
+- include: llmnr-systemd.yml
 
 - include: testing.yml
   when: harden_testing

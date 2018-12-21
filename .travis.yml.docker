@@ -11,23 +11,65 @@ env:
     version: 7
     init: /usr/lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+  - distribution: ubuntu
+    version: 18.04
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
   - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
-    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro' --cap-add LINUX_IMMUTABLE"
-#    run_opts: "--cap-add SYS_ADMIN"
-  - distribution: ubuntu
-    version: 14.04
-    init: /sbin/init
-    run_opts: "--cap-add LINUX_IMMUTABLE"
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+## travis/trusty: stalling... 'No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.'
+#  - distribution: ubuntu
+#    version: 14.04
+#    init: /sbin/init
+#    run_opts: "'--cap-add LINUX_IMMUTABLE'"
   - distribution: alpine
-    version: 3.7
+    version: 3.8
     init: /sbin/init
     run_opts: ""
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
   - distribution: debian
     version: 9
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+# past ansible version
+  - distribution: ubuntu
+    version: 16.04
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.6.5.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+# upcoming ansible version
+#  - distribution: ubuntu
+#    version: 16.04
+#    init: /lib/systemd/systemd
+#    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+#    ansible_version: 2.7.0b1
+#    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+#    suite: default
+  - distribution: ubuntu
+    version: 18.04
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
+    suite: full
 
 services:
   - docker
@@ -44,37 +86,66 @@ before_install:
   # Customize container
   - 'sudo docker build --rm=true --file=test/travis/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:ansible test'
 
-script:
+before_script:
   - container_id=$(mktemp)
     # Run container in detached state
 ## Note: mapping urandom/random to have better entropy. Normally, have rng-tools or haveged to handle that but not running inside docker images we have
   - 'sudo docker run --detach -v /dev/urandom:/dev/random --volume="${PWD%/*}":/etc/ansible/roles:ro ${run_opts} ${distribution}-${version}:ansible "${init}" > "${container_id}"'
 
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm pip install --upgrade pip'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm pip install ansible==${ansible_version}'
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible --version'
 
+script:
   # Ansible syntax check.
-  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml --syntax-check'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml --syntax-check'
 
   # Test role.
-  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml'
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml -vvv ${ansible_extra_vars}'
 
   # Test role idempotence.
 ## known fail (harden-sysctl)
+# https://github.com/travis-ci/travis-ci/issues/8526, https://github.com/travis-ci/travis-ci/issues/6934
+  - travis_wait 15 sleep infinity &
   - >
-    sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/default/default.yml
+    sudo docker exec "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}
     | tee /tmp/idempotency.log
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 0)
 
+after_failure:
+  # Check what happened on systemd systems.
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l --no-pager status'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm journalctl -xe --no-pager'
+
+after_script:
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables -L -vn'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm iptables-save'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables -L -vn'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ip6tables-save'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/openntpd/ntpd.conf'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /var/log/'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /tmp/inspec*.log'
+# Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
+# https://www.centos.org/forums/viewtopic.php?t=50462
+  - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" perl -pi -e "s@platform idref=\"cpe:/o:redhat:enterprise_linux:7\"@platform idref=\"cpe:/o:centos:centos:7\"@" /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
+  - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
+  - '[ "X${distribution}" == "Xcentos" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel7-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml'
+#  - '[ "X${distribution}" == "Xubuntu" -a "X${version}" == "X18.04" ] && docker exec --tty "$(cat ${container_id})" perl -pi -e "s@platform idref=\"cpe:/o:canonical:ubuntu_linux:16.04\"@platform idref=\"cpe:/o:canonical:ubuntu_linux:18.04\"@" /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml'
+  - '[ "X${distribution}" == "Xubuntu" ] && docker exec --tty "$(cat ${container_id})" oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /etc/pam.d/'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/pam.d/system-auth'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/pam.d/password-auth'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -l /boot/grub2/grub.cfg'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/logrotate.conf'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /etc/security/pwquality.conf'
+
   # Clean up
   - 'sudo docker stop "$(cat ${container_id})"'
 
-after_failure:
-  # Check what happened on systemd systems.
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l status'
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm journalctl -xe --no-pager'
-
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
-

@@ -6,7 +6,7 @@
     - name: iptables configuration file update
       template:
         src: "{{ harden_fw_template }}"
-        dest: /etc/iptables/rules.v4
+        dest: "{{ iptables_rulesv4 }}"
         backup: yes
         owner: '0'
         group: '0'
@@ -16,24 +16,85 @@
       notify:
         - restart iptables
         - restart iptables - xenial
+        - restart iptables - redhat|alpine
       register: rulesv4
 ## as validate option seems incorrect
-    - name: ensure rules are correct
-      shell: "iptables-restore -tv < /etc/iptables/rules.v4"
-      when: rulesv4.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker"))
+    - name: ensure iptables v4 rules are correct
+      shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
+      when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw
+
+- block:
+    - name: ensure iptables directory exists
+      file: dest=/etc/iptables state=directory mode=0755
+    - name: iptables configuration file update
+      template:
+        src: "{{ harden_fw6_template }}"
+        dest: "{{ iptables_rulesv6 }}"
+        backup: yes
+        owner: '0'
+        group: '0'
+        mode: '0644'
+## works in ansible 2.2.0.0, nok 2.2.1.0?
+#        validate: 'iptables-restore -tv < %s'
+      notify:
+        - restart iptables
+        - restart iptables - xenial
+        - restart ip6tables - redhat|alpine
+      register: rulesv6
+## as validate option seems incorrect
+    - name: ensure iptables v6 rules are correct
+      shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
+      when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
 - name: get rsyslog version
   command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
   changed_when: false
   register: rsyslog_v
 - name: send iptables log to separate file through rsyslog
-  template: src=rsyslog-iptables.conf.j2 dest=/etc/rsyslog.d/40-iptables.conf mode=0644
+  template:
+    src: rsyslog-iptables.conf.j2
+    dest: /etc/rsyslog.d/40-iptables.conf
+    mode: 0644
+    validate: 'rsyslogd -N2 -f %s'
   notify:
     - restart rsyslog
+  when: ansible_os_family != "Alpine"
+- name: Alpine | send iptables log to separate file through rsyslog
+  blockinfile:
+    path: /etc/rsyslog.conf
+    block: |
+      :msg, contains, "iptables: " -/var/log/iptables/iptables.log
+      & stop
+      :msg, contains, "iptables denied: " -/var/log/iptables/iptables.log
+      & stop
+    mode: '0644'
+    validate: 'rsyslogd -N2 -f %s'
+    backup: yes
+  notify:
+    - restart rsyslog
+  when: ansible_os_family == "Alpine"
 - name: ensure iptables log directory exists
   file: dest=/var/log/iptables state=directory mode=0755 owner=root group=root
 - name: add logrotate configuration for iptables.log
   template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644 validate='logrotate -dv %s'
   ignore_errors: true
 
+- block:
+    - name: Alpine | Load iptables rules and save for system restore
+      shell: "{{ item }}"
+      with_items:
+        - iptables-restore -v < {{ iptables_rulesv4 }}
+        - ip6tables-restore -v < {{ iptables_rulesv6 }}
+        - /etc/init.d/iptables save
+        - /etc/init.d/ip6tables save
+    - name: Alpine | Check services status
+      command: "rc-status"
+      changed_when: false
+    - name: Alpine | Ensure iptables starts at boot
+      command: "{{ item }}"
+      with_items:
+        - rc-update add iptables
+        - rc-update add ip6tables
+  when: ansible_os_family == "Alpine"

@@ -64,14 +64,15 @@ harden_services_containers:
     - psacct
     - auditd
 
-harden_sshd_crypto:
-    - { regexp: '^KexAlgorithms ', line: 'KexAlgorithms curve25519-sha256@libssh.org' }
-    - { regexp: '^Ciphers ', line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr' }
-#    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com' }
-    - { regexp: '^MACs ', line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com' }
+harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
+harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
 
 monitrc: /etc/monit/monitrc
 monit_confdir: /etc/monit/conf-available
+
+iptables_rulesv4: /etc/iptables/rules.v4
+iptables_rulesv6: /etc/iptables/rules.v6
 
 testing_pkgs:
   - ruby

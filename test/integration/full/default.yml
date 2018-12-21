@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+#- hosts: test-kitchen
+  vars:
+#    - harden_upgradeall: true
+    - harden_upgradeall: false
+    - harden_auditd_log_all_execve: true
+    - harden_auditd_log_all_socket: true
+    - harden_auditd_log_all_connect: true
+    - harden_testing: true
+    - ipv6_config: 'harden'
+  roles:
+    - juju4.redhat_epel
+    - juju4.harden_sysctl
+    - juju4.harden_mailserver
+    - juju4.ipv6
+    - juju4.auditd
+    - kbrebanov.osquery
+    - juju4.ntpclient
+    - juju4.syslogclient
+    - juju4.falco
+    - juju4.harden

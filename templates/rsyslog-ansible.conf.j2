@@ -1,12 +1,12 @@
 ## {{ ansible_managed }}
 :msg, contains, "ansible-copy: " -/var/log/ansible/ansible.log
-{% if rsyslog_v.stdout is defined and rsyslog_v.stdout | version_compare('8.0', '<') %}
+{% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
 & ~
 {% else %}
 & stop
 {% endif %}
 :msg, contains, "ansible-async_wrapper.py: " -/var/log/ansible/ansible.log
-{% if rsyslog_v.stdout is defined and rsyslog_v.stdout | version_compare('8.0', '<') %}
+{% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
 & ~
 {% else %}
 & stop

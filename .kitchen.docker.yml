@@ -15,6 +15,7 @@ provisioner:
   ansible_verbose: false
   ansible_verbosity: 4
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
+  ansible_cfg_path: test/vagrant/ansible.cfg
 #  require_chef_omnibus: false
   require_ansible_omnibus: true
 #  require_chef_for_busser: false
@@ -22,6 +23,10 @@ provisioner:
   ansible_connection: ssh
 
 platforms:
+  - name: ubuntu-18.04
+    driver_config:
+# https://github.com/test-kitchen/kitchen-docker/issues/285
+      provision_command: mkdir -p /run/sshd
   - name: ubuntu-16.04
   - name: ubuntu-14.04
   - name: centos-7
@@ -31,4 +36,10 @@ suites:
   - name: default
     run_list:
     attributes:
-
+    verifier:
+        name: inspec
+  - name: full
+    run_list:
+    attributes:
+    verifier:
+        name: inspec

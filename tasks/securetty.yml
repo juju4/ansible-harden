@@ -1,0 +1,16 @@
+---
+
+- name: Clean /etc/securetty configuration
+  lineinfile:
+    dest: /etc/securetty
+    regexp: "{{ item }}"
+    state: absent
+    backup: yes
+  with_items:
+    - '^hvc*'
+    - '^hvs*'
+    - '^xvc*'
+    - '^ttyS*'
+    - '^ttysclp*'
+    - '^sclp_line*'
+    - '^3270/tty*'

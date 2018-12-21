@@ -1,0 +1,48 @@
+login_defs_umask: 077
+login_defs_passmaxdays: '182'
+login_defs_passmindays: '0'
+login_defs_passwarnage: '30'
+sysctl_forwarding: false
+sysctl_ipv6: true
+kernel_modules_disabled: 0
+# Take care of silent arguments and order that might change...
+iptables_input_ports: [
+  '-A INPUT -s 192.168.1.0/24 -p tcp -m tcp --dport 22 -j ACCEPT',
+  '-A INPUT -s 10.0.0.0/8 -p tcp -m tcp --dport 22 -j ACCEPT',
+#  '-A INPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT',
+  '-A INPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT',
+#  '-A INPUT -p icmp -m icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT'
+  '-A INPUT -p icmp -m icmp --icmp-type 0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT'
+]
+iptables_output_ports: [
+  '-A OUTPUT -d 192.168.1.10/32 -p tcp -m tcp --dport 53 -j ACCEPT',
+  '-A OUTPUT -d 192.168.1.10/32 -p udp -m udp --dport 53 -j ACCEPT',
+  '-A OUTPUT -d 8.8.8.8/32 -p tcp -m tcp --dport 53 -j ACCEPT',
+  '-A OUTPUT -d 8.8.8.8/32 -p udp -m udp --dport 53 -j ACCEPT',
+  '-A OUTPUT -p udp -m udp --dport 123 -j ACCEPT',
+  '-A OUTPUT -d 10.0.0.0/8 -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT',
+  '-A OUTPUT -d 172.16.0.0/12 -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT',
+  '-A OUTPUT -d 192.168.0.0/16 -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT',
+  '-A OUTPUT -p tcp -m tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-ou"',
+  '-A OUTPUT -p tcp -m tcp --dport 22 -m owner --uid-owner 0 -j REJECT --reject-with icmp-port-unreachable',
+  '-A OUTPUT -d 192.168.1.20/32 -p tcp -m tcp --dport 25 -j ACCEPT',
+#  '-A OUTPUT -p tcp --dport 80 -j ACCEPT',
+#  '-A OUTPUT -p tcp --dport 443 -j ACCEPT',
+  '-A OUTPUT -p tcp -m multiport --dports 80,443 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT',
+  '-A INPUT -p tcp -m multiport --sports 80,443 -m conntrack --ctstate ESTABLISHED -j ACCEPT',
+#  '-A OUTPUT -p icmp -m icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT',
+  '-A OUTPUT -p icmp -m icmp --icmp-type 0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT',
+#  '-A OUTPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT',
+  '-A OUTPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT',
+#  '-A OUTPUT -p icmp -m icmp --icmp-type 3 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT'
+  '-A OUTPUT -p icmp -m icmp --icmp-type 3 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT'
+]
+#sshd_valid_ciphers:
+sshd_valid_kexs: 'curve25519-sha256@libssh.org'
+sshd_valid_macs: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
+sshd_permittunnel: ["no", "yes", "no"]
+sshd_tcpforwarding: ["no", "yes", "no", "no", "yes", "no"]
+sshd_agentforwarding: ["no", "yes", "no"]
+sshd_gatewayports: ["no", "yes", "no"]
+sshd_x11forwarding: ["no", "yes", "no", "no", "yes", "no"]
+sshd_banner: "/etc/issue.net"

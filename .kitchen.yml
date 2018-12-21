@@ -2,8 +2,8 @@
 driver:
   name: lxd_cli
 
-transport:
-  name: sftp
+#transport:
+#  name: sftp
 
 provisioner:
   name: ansible_playbook
@@ -13,14 +13,15 @@ provisioner:
   ansible_verbose: false
   ansible_verbosity: 3
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
-#  ansible_yum_repo: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+  ansible_cfg_path: test/vagrant/ansible.cfg
+#  require_chef_omnibus: false
   require_ansible_omnibus: true
-  require_chef_omnibus: false
 #  require_chef_for_busser: false
   enable_yum_epel: true
   ansible_connection: ssh
 
 platforms:
+  - name: ubuntu-18.04
   - name: ubuntu-16.04
   - name: ubuntu-14.04
   - name: ubuntu-12.04
@@ -36,6 +37,8 @@ suites:
   - name: default
     run_list:
     attributes:
+    verifier:
+        name: inspec
 ## ansible 2.0/2.1 not supported: fail2ban/ini_file module: create option
 #  - name: default-ansible20
 #    run_list:
@@ -63,5 +66,8 @@ suites:
 #      ansible_version: 1.9.6.0
 #      name: ansible_playbook
 #      playbook: test/integration/default/default.yml
-
-
+  - name: full
+    run_list:
+    attributes:
+    verifier:
+        name: inspec

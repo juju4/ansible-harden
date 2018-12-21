@@ -1,11 +1,9 @@
 ---
 
-## BUG/FIXME! v2: fatal: [vsvn]: FAILED! => {"changed": false, "failed": true, "msg": "line= is required with state=present"} // "null": "VARIABLE IS NOT DEFINED!",
 - debug: var=harden_rootforward
 - name: Forward all root email
   lineinfile:
-    dest=/root/.forward
-    line="{{ harden_rootforward }}"
-    state=present
-    create=True
-
+    dest: /root/.forward
+    line: "{{ harden_rootforward }}"
+    state: present
+    create: True

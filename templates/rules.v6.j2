@@ -1,0 +1,155 @@
+# https://insinuator.net/2017/07/local-packet-filtering-with-ipv6/
+# https://gist.github.com/jirutka/3742890
+# https://www.sixxs.net/wiki/IPv6_Firewalling
+*filter
+:INPUT {{ harden_fw6_default }} [0:0]
+:FORWARD {{ harden_fw6_default }} [0:0]
+:OUTPUT {{ harden_fw6_default }} [0:0]
+:fail2ban-snmpd - [0:0]
+:fail2ban-ssh - [0:0]
+:fail2ban-sshd - [0:0]
+-A INPUT -p tcp -m multiport --dports 22 -j fail2ban-sshd
+-A INPUT -p udp -m multiport --dports 161 -j fail2ban-snmpd
+-A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh
+# Disable processing of any RH0 packet
+# Which could allow a ping-pong of packets
+-A INPUT -m rt --rt-type 0 -j DROP
+-A OUTPUT -m rt --rt-type 0 -j DROP
+-A FORWARD -m rt --rt-type 0 -j DROP
+## local link
+-A INPUT -i lo -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+-A INPUT -m conntrack --ctstate INVALID -j DROP
+-A INPUT -s ::1/128 ! -i lo -j DROP
+## Allow Link-Local addresses
+-A INPUT -s fe80::/10 -j ACCEPT
+-A OUTPUT -s fe80::/10 -j ACCEPT
+## Allow multicast
+-A INPUT -d ff00::/8 -j ACCEPT
+-A OUTPUT -d ff00::/8 -j ACCEPT
+## block noise
+-A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,1900,5666 -j DROP
+{% if harden_fw6_gw is defined and harden_fw6_gw != '' %}
+## Local DHCP?
+-A OUTPUT -o eth0 -p udp --sport 68 -d {{ harden_fw6_gw }} --dport 67 -j ACCEPT
+-A INPUT -m state --state NEW -m udp -p udp -s fe80::/10 --dport 546 -j ACCEPT
+{% endif %}
+## Incoming SSH
+{% if harden_fw6_ssh_restricted is defined and harden_fw6_ssh_restricted != [] %}
+{% for host in harden_fw6_ssh_restricted %}
+-A INPUT -p tcp -s {{ host }} --dport {{ harden_fw6_ssh_port }} -j ACCEPT
+-A OUTPUT -p tcp --sport {{ harden_fw6_ssh_port }} -m conntrack --ctstate ESTABLISHED -j ACCEPT
+{% endfor %}
+{% else %}
+-A INPUT -p tcp --dport {{ harden_fw6_ssh_port }} -j ACCEPT
+{% endif %}
+-A FORWARD -p tcp --dport {{ harden_fw6_ssh_port }} -j ACCEPT
+## Outgoing SSH 
+#-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-out] "
+#-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j REJECT
+-A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+## DNS
+{% if harden_fw6_dnsservers is defined and harden_fw6_dnsservers %}
+{% for host in harden_fw6_dnsservers %}
+-A OUTPUT -p tcp -d {{ host }} --dport 53 -j ACCEPT
+-A OUTPUT -p udp -d {{ host }} --dport 53 -j ACCEPT
+{% endfor %}
+{% else %}
+-A OUTPUT -p tcp --dport 53 -j ACCEPT
+-A OUTPUT -p udp --dport 53 -j ACCEPT
+{% endif %}
+-A FORWARD -p tcp --dport 53 -j ACCEPT
+-A FORWARD -p udp --dport 53 -j ACCEPT
+## NTP
+-A INPUT -p udp --dport 123 -j ACCEPT
+-A OUTPUT -p udp --dport 123 -j ACCEPT
+## ICMP
+# Permit needed ICMP packet types for IPv6 per RFC 4890.
+-A INPUT              -p ipv6-icmp --icmpv6-type 1   -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 2   -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 3   -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 4   -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 128   -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 133 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 134 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 135 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 136 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 137 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 141 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 142 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 130 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 131 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 132 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 143 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 148 -j ACCEPT
+-A INPUT              -p ipv6-icmp --icmpv6-type 149 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 151 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 152 -j ACCEPT
+-A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 153 -j ACCEPT
+## SMTP
+{% if harden_fw6_smtpservers is defined and harden_fw6_smtpservers != [] %}
+{% for host in harden_fw6_smtpservers %}
+-A OUTPUT -p tcp -d {{ host }} --dport {{ harden_fw6_smtp_port }} -j ACCEPT
+{% endfor %}
+{% else %}
+-A OUTPUT -p tcp --dport {{ harden_fw6_smtp_port }} -j ACCEPT
+{% endif %}
+## Monitoring
+{% if 0 == 1 %}
+## only possible if cache facts or talk with host in same play
+## http://docs.ansible.com/ansible/playbooks_variables.html#fact-caching
+{% if groups['monitoring'] is defined and groups['monitoring'] %}
+{% for host in groups['monitoring'] %}
+-A INPUT -p tcp -s {{ hostvars[host].ansible_default_ipv4.address }} --dport 5666 -j ACCEPT
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if harden_fw6_monitoring_source is defined %}
+{% for host in harden_fw6_monitoring_source %}
+-A INPUT -p tcp -s {{ host }} --dport 5666 -j ACCEPT
+{% endfor %}
+{% endif %}
+{% if harden_fw6_snmp_restricted is defined and harden_fw6_snmp_restricted %}
+{% for host in harden_fw6_snmp_restricted %}
+-A INPUT -p udp -s {{ host }} --dport 161 -j ACCEPT
+{% endfor %}
+{% else %}
+-A INPUT -p udp --dport 161 -j ACCEPT
+{% endif %}
+{% if groups['monitoring'] is defined and groups['monitoring'] %}
+## Applications
+{% if inventory_hostname in groups['db_servers'] %}
+-A INPUT -p tcp  --dport 3306 -j ACCEPT
+{% endif %}
+{% endif %}
+{% if groups['http_servers'] is defined and groups['http_servers'] %}
+{% if inventory_hostname in groups['http_servers'] %}
+-A INPUT -p tcp  --dport 80 -j ACCEPT
+{% endif %}
+{% endif %}
+{% if groups['https_servers'] is defined and groups['https_servers'] %}
+{% if inventory_hostname in groups['https_servers'] %}
+-A INPUT -p tcp  --dport 443 -j ACCEPT
+{% endif %}
+{% endif %}
+-A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables6 denied: " --log-level 7
+## Outgoing http, https
+-A OUTPUT -p tcp -m multiport --dport 80,443 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m multiport --sport 80,443 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+{% if harden_fw6_open_incoming is defined and harden_fw6_open_incoming %}
+{% for item in harden_fw6_open_incoming %}
+-A INPUT -p {{ item.proto }} --dport {{ item.port }} -j ACCEPT
+{% endfor %}
+{% endif %}
+## generic rule
+-A OUTPUT -p tcp -m conntrack --ctstate ESTABLISHED -j ACCEPT
+-A INPUT -j LOG --log-prefix "iptables6: [NOMATCH] " --log-level 7
+-A OUTPUT -j LOG --log-prefix "iptables6: [NOMATCH] " --log-level 7
+## fail2ban
+-A fail2ban-snmpd -j RETURN
+-A fail2ban-ssh -j RETURN
+-A fail2ban-sshd -j RETURN
+COMMIT
+# Completed

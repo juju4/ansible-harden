@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: harden
   author: juju4
   description: System Hardening role
   license: BSD
@@ -13,6 +14,7 @@ galaxy_info:
     - all
   - name: Ubuntu
     versions:
+    - bionic
     - xenial
     - trusty
     - precise
@@ -23,12 +25,9 @@ galaxy_info:
     - system
     - security
 dependencies:
-#  - redhat-epel
-#  - harden-sysctl
-#  - ipv6
-  - juju4.redhat-epel
+  - juju4.redhat_epel
 ## harden-sysctl before any other sysctl related tasks. doing some cleaning (centos-6)
-  - juju4.harden-sysctl
+  - juju4.harden_sysctl
   - juju4.ipv6
   - juju4.auditd
 #  - juju4.syslogclient

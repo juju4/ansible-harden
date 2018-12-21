@@ -6,23 +6,50 @@
 
 - name: restart iptables
   service: name=iptables-persistent state=restarted
-  when: (ansible_distribution == 'Debian' or (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int < 16)) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when: >
+    (ansible_distribution == 'Debian' or
+      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 16)
+    ) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart iptables - xenial
   service: name=netfilter-persistent state=restarted
-  when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int >= 16)
+  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16)
+
+- name: restart iptables - redhat|alpine
+  service: name=iptables state=restarted
+  when: >
+    (
+      (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
+      not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+    )
+
+- name: restart ip6tables - redhat|alpine
+  service: name=ip6tables state=restarted
+  when: >
+    (
+      (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
+      not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker") and
+      ipv6_config != 'disable'
+    )
 
 - name: restart auditd
   service: name=auditd state=restarted
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        ) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
 
 ## https://groups.google.com/forum/#!topic/ansible-project/pv1h1Ne7nSk
 ## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-starting_the_audit_service.html
 - name: restart auditd - rhel7
   command: "service auditd restart"
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        ) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
 
-## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...) and cant ssh after... vagrant reload: fine?
+## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...)
+##  and cant ssh after... vagrant reload: fine?
 - name: reload fstab
   shell: "umount -a; mount -a"
 #  shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
@@ -52,3 +79,10 @@
 - name: restart monit
   service: name=monit state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+
+- name: update-initramfs
+  command: update-initramfs -k all -u
+  when: ansible_os_family == "Debian"
+
+- name: enable apparmor audit profile
+  command: aa-complain /etc/apparmor.d/apparmor.audit

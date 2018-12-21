@@ -4,6 +4,8 @@
 
 - name: Run lynis check
   shell: "lynis audit system | tee /tmp/lynis.out"
+  args:
+    creates: /tmp/lynis.out
   ignore_errors: true
   register: lynis
 

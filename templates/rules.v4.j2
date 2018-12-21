@@ -20,8 +20,9 @@
 {% endif %}
 -A INPUT -i lo -j ACCEPT
 -A OUTPUT -o lo -j ACCEPT
+-A INPUT -s 127.0.0.0/8 -j DROP
 ## block noise
--A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,5666 -j DROP
+-A INPUT -i eth0 -p tcp -m multiport --dport 23,25,53,80,443,1900,5666 -j DROP
 {% if harden_fw_gw is defined %}
 ## Local DHCP?
 -A OUTPUT -o eth0 -p udp --sport 68 -d {{ harden_fw_gw }} --dport 67 -j ACCEPT
@@ -30,14 +31,20 @@
 {% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}
 {% for host in harden_fw_ssh_restricted %}
 -A INPUT -p tcp -s {{ host }} --dport {{ harden_fw_ssh_port }} -j ACCEPT
--A OUTPUT -p tcp --sport {{ harden_fw_ssh_port }} -m conntrack --ctstate ESTABLISHED -j ACCEPT
+-A OUTPUT -p tcp --sport {{ harden_fw_ssh_port }} -d {{ host }} -m conntrack --ctstate ESTABLISHED -j ACCEPT
 {% endfor %}
 {% else %}
 -A INPUT -p tcp --dport {{ harden_fw_ssh_port }} -j ACCEPT
 {% endif %}
 -A FORWARD -p tcp --dport {{ harden_fw_ssh_port }} -j ACCEPT
 ## Outgoing SSH 
--A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+# Note: adapt to your environment: most servers should not ssh out at all, jumphost yes maybe only internal or maybe int+ext. reject ssh out by root
+#-A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+#-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-out] "
+#-A OUTPUT -p tcp -m tcp --dport 22 -m owner --uid-owner 0 -j REJECT --reject-with icmp-port-unreachable
+-A OUTPUT -p tcp -d 10.0.0.0/8 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p tcp -d 172.16.0.0/12 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p tcp -d 192.168.0.0/16 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ## DNS
@@ -56,13 +63,13 @@
 -A INPUT -p udp --dport 123 -j ACCEPT
 -A OUTPUT -p udp --dport 123 -j ACCEPT
 ## ICMP
--A INPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -p icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
--A INPUT -p icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -p icmp --icmp-type 3 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A FORWARD -p icmp --icmp-type 0 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
--A FORWARD -p icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp -m icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -m icmp --icmp-type 0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp -m icmp --icmp-type 3 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -p icmp --icmp-type 0 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -p icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
 ## SMTP
 {% if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
 {% for host in harden_fw_smtpservers %}
@@ -102,6 +109,13 @@
 {% if groups['http_servers'] is defined and groups['http_servers'] %}
 {% if inventory_hostname in groups['http_servers'] %}
 -A INPUT -p tcp  --dport 80 -j ACCEPT
+{% if ansible_os_family == 'RedHat' %}
+#-A OUTPUT -p tcp -m owner --uid-owner apache -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
+#-A OUTPUT -p tcp -m owner --uid-owner apache -j REJECT
+{% elif ansible_os_family == 'Debian' %}
+#-A OUTPUT -p tcp -m owner --uid-owner www-user -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
+#-A OUTPUT -p tcp -m owner --uid-owner www-user -j REJECT
+{% endif %}
 {% endif %}
 {% endif %}
 {% if groups['https_servers'] is defined and groups['https_servers'] %}
@@ -120,6 +134,14 @@
 {% endif %}
 ## generic rule
 -A OUTPUT -p tcp -m conntrack --ctstate ESTABLISHED -j ACCEPT
+## CIS 3.6.4
+-A OUTPUT -p tcp -m state --state NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p udp -m state --state NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p icmp -m state --state NEW,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m state --state ESTABLISHED -j ACCEPT
+-A INPUT -p udp -m state --state ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -m state --state ESTABLISHED -j ACCEPT
+#
 -A INPUT -j LOG --log-prefix "iptables: [NOMATCH] " --log-level 7
 -A OUTPUT -j LOG --log-prefix "iptables: [NOMATCH] " --log-level 7
 ## fail2ban

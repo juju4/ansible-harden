@@ -14,7 +14,8 @@
 
 - name: download speculative execution sample code
   get_url:
-    url: https://gist.githubusercontent.com/jedisct1/3bbb6e50b768968c30629bf734ea49c6/raw/6ede3c9a3356a4a55a27febaf38157897c4fed09/spectre.c
+    url: >
+      https://gist.githubusercontent.com/jedisct1/3bbb6e50b768968c30629bf734ea49c6/raw/6ede3c9a3356a4a55a27febaf38157897c4fed09/spectre.c
     dest: /tmp/spectre.c
     owner: nobody
 
@@ -22,11 +23,13 @@
   shell: gcc -std=c99 -O0 spectre.c -o spectre
   args:
     chdir: /tmp
+    creates: /tmp/spectre
 
 - name: run sample code
-  shell: ./spectre
+  shell: ./spectre | tee /tmp/speculative-spectre.log
   args:
     chdir: /tmp
+    creates: /tmp/speculative-spectre.log
   become: yes
   become_user: nobody
   register: spectre
@@ -38,6 +41,7 @@
   git:
     repo: https://github.com/raphaelsc/Am-I-affected-by-Meltdown.git
     dest: /tmp/Am-I-affected-by-Meltdown
+    version: HEAD
     update: no
   become: yes
   become_user: nobody
@@ -50,9 +54,10 @@
 
 # root required as kptr_restrict set to 1
 - name: test Am-I-affected-by-Meltdown
-  shell: ./meltdown-checker
+  shell: ./meltdown-checker | tee /var/log/speculative-meltdown-checker.log
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
+    creates: /var/log/speculative-meltdown-checker.log
   register: meltdown
   ignore_errors: true
 

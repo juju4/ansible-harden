@@ -1,0 +1,194 @@
+## {{ ansible_managed }}
+# Package generated configuration file
+# See the sshd_config(5) manpage for details
+## ssh version: 5.9/precise, 6.6/trusty, 7.2/xenial, 7.5/bionic, 5.3/centos6
+## https://stribika.github.io/2015/01/04/secure-secure-shell.html
+## http://www.ssi.gouv.fr/administration/guide/recommandations-pour-un-usage-securise-dopenssh/
+## http://www.ssi.gouv.fr/uploads/2014/01/NT_OpenSSH_en.pdf
+## https://wiki.mozilla.org/Security/Guidelines/OpenSSH
+## https://github.com/arthepsy/ssh-audit
+
+# What ports, IPs and protocols we listen for
+Port {{ harden_sshd_port }}
+# Use these options to restrict which interfaces/protocols sshd will bind to
+#ListenAddress ::
+AddressFamily any
+ListenAddress 0.0.0.0
+Protocol 2
+# HostKeys for protocol version 2
+HostKey /etc/ssh/ssh_host_rsa_key
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9)) %}
+HostKey /etc/ssh/ssh_host_dsa_key
+{% endif %}
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+#Privilege Separation is turned on for security
+{# OpenSSH 7.5+ deprecates the sshd_config UsePrivilegeSeparation option. https://www.openssh.com/txt/release-7.5 #}
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_distribution == "Alpine" and ansible_distribution_version is version('3.8', '>='))) %}
+{% if ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6 %}
+UsePrivilegeSeparation yes
+{% else %}
+UsePrivilegeSeparation sandbox
+{% endif %}
+{% endif %}
+UseDNS yes
+
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
+# Lifetime and size of ephemeral version 1 server key
+KeyRegenerationInterval 1800
+ServerKeyBits 1024
+
+{% endif %}
+# Logging
+SyslogFacility AUTH
+LogLevel {{ harden_sshd_loglevel | default('VERBOSE') }}
+
+# Authentication:
+LoginGraceTime 30s
+PermitRootLogin {{ harden_sshd_PermitRootLogin | default('no') }}
+StrictModes yes
+
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
+RSAAuthentication yes
+# For this to work you will also need host keys in /etc/ssh_known_hosts
+RhostsRSAAuthentication no
+{% endif %}
+PubkeyAuthentication yes
+#AuthorizedKeysFile	%h/.ssh/authorized_keys
+
+# Don't read the user's ~/.rhosts and ~/.shosts files
+IgnoreRhosts yes
+# similar for protocol version 2
+HostbasedAuthentication no
+# Uncomment if you don't trust ~/.ssh/known_hosts for RhostsRSAAuthentication
+IgnoreUserKnownHosts yes
+
+# To enable empty passwords, change to yes (NOT RECOMMENDED)
+PermitEmptyPasswords no
+
+# Change to yes to enable challenge-response passwords (beware issues with
+# some PAM modules and threads)
+ChallengeResponseAuthentication {{ harden_sshd_PasswordAuthentication | default('no') | ternary('yes','no') }}
+
+# Change to no to disable tunnelled clear text passwords
+PasswordAuthentication {{ harden_sshd_PasswordAuthentication | default('no') | ternary('yes','no') }}
+
+{% if not (ansible_distribution == "Alpine") %}
+# Kerberos options
+KerberosAuthentication no
+#KerberosGetAFSToken no
+KerberosOrLocalPasswd no
+KerberosTicketCleanup yes
+
+# GSSAPI options
+GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
+
+{% endif %}
+X11Forwarding no
+X11DisplayOffset 10
+X11UseLocalhost yes
+PrintMotd no
+{% if not (ansible_distribution == "Alpine") %}
+PrintLastLog no
+{% endif %}
+TCPKeepAlive no
+{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
+UseLogin no
+{% endif %}
+PermitUserEnvironment no
+
+MaxStartups 10:30:100
+MaxAuthTries 2
+MaxSessions 10
+Banner /etc/issue.net
+{% if ansible_os_family == 'Debian' %}
+DebianBanner no
+{% endif %}
+
+# Allow client to pass locale environment variables
+AcceptEnv LANG LC_*
+
+Subsystem sftp /usr/lib/openssh/sftp-server
+## read-only sftp?
+#Subsystem sftp /usr/lib/openssh/sftp-server -R
+
+{% if ansible_os_family != "RedHat" and ansible_distribution != "Alpine" %}
+# Set this to 'yes' to enable PAM authentication, account processing,
+# and session processing. If this is enabled, PAM authentication will
+# be allowed through the ChallengeResponseAuthentication and
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication via ChallengeResponseAuthentication may bypass
+# the setting of "PermitRootLogin without-password".
+# If you just want the PAM account and session checks to run without
+# PAM authentication, then enable this but set PasswordAuthentication
+# and ChallengeResponseAuthentication to 'no'.
+UsePAM no
+
+{% endif %}
+## from ANSSI, http://www.ssi.gouv.fr/IMG/pdf/NP_OpenSSH_NoteTech.pdf
+#Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+MACs {{ harden_sshd_crypto_mac | default('hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha1-96-etm@openssh.com,hmac-sha2-512') }}
+
+## https://wiki.mozilla.org/Security/Guidelines/OpenSSH
+KexAlgorithms {{ harden_sshd_crypto_kex | default('curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256') }}
+Ciphers {{ harden_sshd_crypto_cipher | default('chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr') }}
+#MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+
+ClientAliveInterval 300
+ClientAliveCountMax 3
+
+AllowAgentForwarding no
+AllowTcpForwarding no
+GatewayPorts no
+PermitTunnel no
+
+AllowUsers {{ harden_sshd_allowusers | default('vagrant') }}
+
+## http://askubuntu.com/questions/48129/how-to-create-a-restricted-ssh-user-for-port-forwarding
+## usage: ssh -N or http://tartarus.org/~simon/putty-snapshots/htmldoc/Chapter4.html#config-ssh-noshell or SecureCRT: Session Options: Connection / Port Forwarding: Do not request a shell
+Match User myexampleuser
+    AllowTcpForwarding yes
+    X11Forwarding yes
+    PermitTunnel yes
+    GatewayPorts yes
+    ForceCommand echo 'This account can only be used for tunneling'
+    ChrootDirectory %h
+    PermitTTY no
+## To restrict possible tunnels
+#    PermitOpen host:port
+
+Match User vagrant
+    AllowTcpForwarding no
+    X11Forwarding no
+    PermitTunnel no
+    GatewayPorts no
+
+## chrooted sftp with rsync, 
+## http://www.positon.org/post/SFTP-chroot-rsync
+Match user upload
+    X11Forwarding no
+    AllowTcpForwarding no
+#    ForceCommand /bin/rsync --server -vlogDtprze.iLsf . /path/to/share/
+#    ForceCommand internal-sftp
+## ensure chroot dir is owned by root for security reason
+#    ChrootDirectory %h
+
+Match group sftp-users
+    ForceCommand internal-sftp
+    ChrootDirectory /sftp-home/\%u
+
+Match group forwarding-users
+    AllowTcpForwarding yes
+    X11Forwarding yes
+    AllowAgentForwarding yes
+    #PermitTunnel yes
+    #BatchMode yes
+
+Match group restricted-users
+    AllowTcpForwarding no
+    X11Forwarding no
+    AllowAgentForwarding no
+
+## ensure proper end of Match block. but need conditions with it
+#Match all

@@ -1,0 +1,18 @@
+---
+# https://askubuntu.com/questions/1025309/how-can-i-disable-llmnr-in-systemd-resolved
+# https://www.freedesktop.org/software/systemd/man/systemd-resolved.service.html
+# https://www.blackhillsinfosec.com/how-to-disable-llmnr-why-you-want-to/
+
+- name: check if systemd-resolved is present
+  stat:
+    path: /etc/systemd/resolved.conf
+  register: sysres
+
+- block:
+    - name: Ensure LLMNR is disabled in systemd-resolved
+      lineinfile:
+        dest: /etc/systemd/resolved.conf
+        regexp: '^LLMNR=.*'
+        line: 'LLMNR=no'
+        backup: yes
+  when: sysres.stat.exists

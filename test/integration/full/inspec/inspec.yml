@@ -1,0 +1,26 @@
+name: harden-linux-tests
+title: InSpec Profile for linux hardening
+maintainer: juju4
+license: BSD
+version: 1.0.0
+supports:
+- os-family: unix
+depends:
+- name: linux-baseline
+  url: https://github.com/juju4/linux-baseline/archive/master.tar.gz
+#  url: https://github.com/dev-sec/linux-baseline/archive/master.tar.gz
+- name: ssh-baseline
+#  url: https://github.com/dev-sec/ssh-baseline/archive/master.tar.gz
+  url: https://github.com/juju4/ssh-baseline/archive/master.tar.gz
+- name: osquery-baseline
+  url: https://github.com/juju4/inspec-osquery/archive/master.tar.gz
+- name: ntp-baseline
+  url: https://github.com/juju4/inspec-ntp/archive/master.tar.gz
+- name: audit-baseline
+  url: https://github.com/juju4/inspec-audit/archive/master.tar.gz
+- name: syslog-baseline
+  url: https://github.com/juju4/inspec-syslog/archive/master.tar.gz
+- name: postfix-baseline
+  url: https://github.com/juju4/inspec-postfix/archive/master.tar.gz
+- name: falco-baseline
+  url: https://github.com/juju4/inspec-falco/archive/master.tar.gz

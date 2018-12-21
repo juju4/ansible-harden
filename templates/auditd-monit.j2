@@ -24,8 +24,12 @@ check file auditd_binary
   if failed checksum then alert
 
 check file auditd_conf with path /etc/audit/auditd.conf
+{% if ansible_os_family == 'Debian' %}
   include /etc/monit/templates/rootrc
+{% endif %}
   group auditd
 check file auditd_rules with path /etc/audit/audit.rules
+{% if ansible_os_family == 'Debian' %}
   include /etc/monit/templates/rootrc
+{% endif %}
   group auditd

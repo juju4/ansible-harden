@@ -12,24 +12,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #config.vm.box = "centos/7"
     #config.vm.box = "generic/alpine36"
 
+    # use hostname based on host
+    config.vm.hostname = "#{`hostname`[0..-2]}".sub(/\..*$/,'')+"-harden-vagrant"
+
     config.vm.provision :ansible do |ansible|
        ansible.playbook = "site.yml"
        #ansible.verbose = "vvvv"
        #ansible.host_key_checking = false
        #ansible.limit = 'all'
        ansible.become = true
-       ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
+       ansible.extra_vars = { ansible_ssh_user: 'vagrant', inspec_dir: '/vagrant' }
        ansible.groups = {
           "myrole" => ["harden" ],
        }
     end
 
     config.vm.define "harden" do |harden|
-        harden.vm.hostname = "harden"
         harden.vm.provider "virtualbox" do |v|
           v.memory = 512
         end
     end
 
+    config.vm.synced_folder "../integration/default/inspec", "/vagrant/inspec", disabled: false
 end
 

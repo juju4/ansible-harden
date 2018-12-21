@@ -9,4 +9,3 @@
     - harden_testing: true
   roles:
     - juju4.harden
-

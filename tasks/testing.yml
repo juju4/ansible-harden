@@ -51,13 +51,29 @@
 
     - name: testing | run linux-baseline
 #      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
-      shell: "inspec exec --attrs profile-attributes.yml profile.yml | tee /var/log/inspec.log | sed -r \"s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
+      shell: >
+        inspec exec inspec --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
+            tee {{ log_dir | default('/var/log') }}/inspec.log |
+            sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
       args:
-        chdir: /etc/ansible/roles/juju4.harden/test/integration/default/inspec
+        chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
+        creates: "{{ log_dir | default('/var/log') }}/inspec.log"
       ignore_errors: true
       register: inspeclog
       changed_when: false
     - debug: var=inspeclog.stdout_lines
+
+    - name: testing | run inspec baselines
+      shell: >
+        inspec exec {{ item.u }} --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
+            tee -a {{ log_dir | default('/var/log') }}/inspec-{{ item.i }}.log |
+            sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
+      args:
+        chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
+        creates: "/var/log/inspec-{{ item.i }}.log"
+      with_items: "{{ harden_testing_inspec_paths }}"
+      ignore_errors: true
+      changed_when: false
 
   when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
 

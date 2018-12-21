@@ -2,7 +2,7 @@
 dist: trusty
 sudo: required
 rvm:
-  - 2.4
+  - 2.5
 
 env:
 ## those images need pre-configuration before being usable (openssh...)
@@ -10,28 +10,42 @@ env:
 #    version: 6
   - distribution: centos
     version: 7
-    ansible_version: 2.4.0.0
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+  - distribution: ubuntu
+    version: 18.04
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
   - distribution: ubuntu
     version: 16.04
-    ansible_version: 2.4.0.0
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
 #  - distribution: ubuntu
 #    version: 14.04
-#    ansible_version: 2.3.0.0
+#    ansible_version: 2.7.0.0
 #  - distribution: ubuntu
 #    version: 12.04
-#    ansible_version: 2.3.0.0
+#    ansible_version: 2.7.0.0
 #  - distribution: alpine
-#    version: 3.4
+#    version: 3.9
 #  - distribution: debian
 #    version: jessie
 ## past ansible versions
   - distribution: ubuntu
-    version: 16.04
-    ansible_version: 2.3.0.0
-  - distribution: ubuntu
-    version: 16.04
-    ansible_version: 2.2.1.0
+    version: 18.04
+    ansible_version: 2.6.5.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+# upcoming
+#  - distribution: ubuntu
+#    version: 18.04
+#    ansible_version: 2.7.0b1
+#    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+#    suite: default
 ## ansible2.2+: ini_file create
 #  - distribution: ubuntu
 #    version: 16.04
@@ -40,6 +54,16 @@ env:
 #  - distribution: ubuntu
 #    version: 16.04
 #    ansible_version: 1.9.6.0
+  - distribution: centos
+    version: 7
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
+    suite: full
+  - distribution: ubuntu
+    version: 18.04
+    ansible_version: 2.7.0.0
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
+    suite: full
 
 before_install:
   - env
@@ -60,7 +84,7 @@ before_install:
   - sudo -E su $USER -c "lxc remote list"
   - sudo -E su $USER -c "lxc image list"
 ## pre-download base images
-  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
+  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}-nossh"'
   - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || true'
 ## configure lxd-bridge
   - sudo perl -pi -e 's@^LXD_IPV4_ADDR=""@LXD_IPV4_ADDR="10.252.116.1"@;s@^LXD_IPV4_NETMASK=""@LXD_IPV4_NETMASK="255.255.255.0"@;s@^LXD_IPV4_NETWORK=""@LXD_IPV4_NETWORK="10.252.116.1/24"@;s@^LXD_IPV4_DHCP_RANGE=""@LXD_IPV4_DHCP_RANGE="10.252.116.2,10.252.116.254"@;s@^LXD_IPV4_DHCP_MAX=""@LXD_IPV4_DHCP_MAX="252"@;s@LXD_IPV6_PROXY="true"@LXD_IPV6_PROXY="false"@' /etc/default/lxd-bridge
@@ -70,7 +94,9 @@ before_install:
 ## ssh key for lxd_cli ?
   - ls ~/.ssh
   - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
+  - ssh-agent
 ## sudo/su get us a non-usual PATH ...
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "sh -x ./test/lxd/centos-ssh-image.sh" || true'
   - sudo -E su $USER -c "lxc launch ${distribution}-${version} run-${distribution}-${version//./}"
 #  - sudo -E su $USER -c "lxc start run-${distribution}-${version//./}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- env"
@@ -79,16 +105,17 @@ before_install:
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get update" || true'
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get -y install python python-apt aptitude python-pip libssl-dev python-dev libffi-dev" || true'
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X6" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm" || true'
-  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm" || true'
+  - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X7" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rpm -iUvh https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm" || true'
   - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum update" || true'
-  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip"
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- yum -y install python python2-pip openssl-devel python-devel libffi-devel \"@Development tools\"" || true'
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip" || true
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install ansible==${ansible_version}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible --version"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install ansible-lint"
   - "echo localhost > inventory"
 ## enable ansible profiling (https://github.com/jlafon/ansible-profile)
-#  - "printf '[defaults]\ncallback_whitelist = profile_tasks' > ansible.cfg"
-#  - sudo -E su $USER -c "lxc file push inventory ansible.cfg run-${distribution}-${version//./}/root/"
+  - head -2 ./test/vagrant/ansible.cfg > /tmp/ansible.cfg
+  - sudo -E su $USER -c "lxc file push /tmp/ansible.cfg run-${distribution}-${version//./}/root/"
   - sudo -E su $USER -c "lxc file push inventory run-${distribution}-${version//./}/root/"
 ## these lines are necessary so lxc mount is read-write, https://github.com/lxc/lxd/issues/1879
   - chmod -R go+w $PWD
@@ -104,28 +131,66 @@ before_install:
   - sudo -E su $USER -c "lxc config device add run-${distribution}-${version//./} sharedroles disk path=/etc/ansible/roles source=${PWD%/*}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- mount"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pwd"
+# inspec baseline that can't be set inside containers
+  - sudo sysctl -w net.ipv4.tcp_timestamps=0
+  - sudo sysctl -w net.ipv4.tcp_rfc1337=1
+  - sudo sysctl -w net.ipv4.tcp_syncookies=1
+  - sudo sysctl -w kernel.sysrq=0
+  - sudo sysctl -w kernel.core_pattern='/tmp/cores/core.%e.%p.%h.%t'
 
 script:
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/default/default.yml"
-#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vvvv /etc/ansible/roles/juju4.harden/test/integration/default/default.yml"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vvv /etc/ansible/roles/juju4.harden/test/integration/default/default.yml"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-lint /etc/ansible/roles/juju4.harden/tasks/main.yml"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -vv /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}"
 
 ## FIXME! Travis request: Build config file had a parse error: "mapping values are not allowed in this context at line 72 column 321".
-#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory /etc/ansible/roles/juju4.harden/test/integration/default/default.yml --connection=local --become | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become /etc/ansible/roles/juju4.harden/test/integration/default/default.yml" > /tmp/idempotency.log
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml --connection=local --become | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}" > /tmp/idempotency.log
 ## known fail
   - "grep -q 'changed=0.*failed=0' /tmp/idempotency.log && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 0)"
 
-  - '[ "X${distribution}" != "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/default/serverspec/run-local-tests.sh" || true'
+  - '[ "X${distribution}" != "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- time sh -x /etc/ansible/roles/juju4.harden/test/integration/${suite}/serverspec/run-local-tests.sh" || true'
 
 after_failure:
   # Check what happened on systemd systems.
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager --failed"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- journalctl -xe --no-pager"
 
 after_script:
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /opt/inspec/bin/inspec exec /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec --attrs /etc/ansible/roles/juju4.harden/test/integration/${suite}/inspec/profile-attributes.yml | tee /tmp/inspec.log"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status iptables"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- systemctl -l --no-pager status netfilter-persistent"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/iptables/rules.v4 /etc/sysconfig/iptables"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables -L -vn"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- iptables-save"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables -L -vn"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip6tables-save"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/openntpd/ntpd.conf"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /etc/login.defs"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/login.defs"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
+#  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible -i inventory --connection=local -m setup localhost"
+
+# Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
+# https://www.centos.org/forums/viewtopic.php?t=50462
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- perl -pi -e \"s@platform idref=\\\"cpe:/o:redhat:enterprise_linux:7\\\"@platform idref=\\\"cpe:/o:centos:centos:7\\\"@\" /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml"'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml"'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel7-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml"'
+#  - '[ "X${distribution}" == "Xubuntu" -a "X${version}" == "X18.04" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- perl -pi -e \"s@platform idref=\\\"cpe:/o:canonical:ubuntu_linux:16.04\\\"@platform idref=\\\"cpe:/o:canonical:ubuntu_linux:18.04\\\"@\" /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"'
+  - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"'
+# scap check
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /etc/pam.d/"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/pam.d/system-auth"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/pam.d/password-auth"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /boot/grub2/grub.cfg"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/logrotate.conf"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/security/pwquality.conf"
+
   - sudo -E su $USER -c "lxc stop run-${distribution}-${version//./} --force"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
-

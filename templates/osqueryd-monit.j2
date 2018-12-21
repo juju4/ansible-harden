@@ -23,5 +23,7 @@ check file osqueryd_binary
   if failed checksum then alert
 
 check file osqueryd_conf with path /etc/osquery/osquery.conf
+{% if ansible_os_family == 'Debian' %}
   include /etc/monit/templates/rootrc
+{% endif %}
   group osqueryd
