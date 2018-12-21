@@ -16,6 +16,8 @@
   with_items:
     - udev
     - zenity
+  register: pkg_result
+  until: pkg_result is success
 
 ## FIXME! Currently not working
 ## https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1414409       systemd-udevd[257]: specified group 'input' unknown

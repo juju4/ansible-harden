@@ -4,6 +4,8 @@
   package:
     name: tzdata
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 - block:
     - name: Alpine | copy timezone file

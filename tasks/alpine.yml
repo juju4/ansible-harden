@@ -6,6 +6,8 @@
   poll: 300
   register: distout
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
+  register: pkg_result
+  until: pkg_result is success
 
 - name: Alpine | Ensure services are running and enabled on boot.
   service: name={{ item }} state=started enabled=yes

@@ -2,6 +2,8 @@
 
 - name: Ensure aide package is installed
   package: name=aide state=present
+  register: pkg_result
+  until: pkg_result is success
 
 - block:
     - set_fact:

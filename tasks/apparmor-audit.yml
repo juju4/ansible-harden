@@ -6,6 +6,8 @@
   package:
     name: apparmor-utils
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: install apparmor audit profile
   get_url:

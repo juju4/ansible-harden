@@ -4,6 +4,8 @@
   package:
     name: logrotate
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: review logrotate configuration
   replace:

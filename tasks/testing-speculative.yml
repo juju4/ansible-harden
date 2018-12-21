@@ -9,6 +9,8 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ build_dev_tools }}"
+  register: pkg_result
+  until: pkg_result is success
 
 - name: download speculative execution sample code
   get_url:
@@ -55,3 +57,110 @@
   ignore_errors: true
 
 - debug: var=meltdown
+
+- name: retrieve another meltdown poc
+  git:
+    repo: https://github.com/paboldin/meltdown-exploit.git
+    dest: /tmp/meltdown-exploit
+    version: HEAD
+    update: no
+  become: yes
+  become_user: nobody
+
+- name: build meltdown-exploit
+  shell: make
+  args:
+    chdir: /tmp/meltdown-exploit
+    creates: /tmp/meltdown-exploit/meltdown
+
+# root required as kptr_restrict set to 1
+- name: test meltdown-exploit
+  shell: ./run.sh | tee /var/log/speculative-meltdown-exploit-log
+  args:
+    chdir: /tmp/meltdown-exploit
+    creates: /var/log/speculative-meltdown-exploit-log
+  register: meltdown2
+  ignore_errors: true
+
+- debug: var=meltdown2
+
+- name: retrieve IAIK poc
+  git:
+    repo: https://github.com/IAIK/meltdown.git
+    dest: /tmp/meltdown-iaik
+    version: HEAD
+    update: no
+  become: yes
+  become_user: nobody
+
+- name: ensure IAIK poc dependencies are present
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - glibc-static
+    - util-linux
+  ignore_errors: true
+  register: pkg_result
+  until: pkg_result is success
+
+- name: build IAIK poc
+  shell: make
+  args:
+    chdir: /tmp/meltdown-iaik
+    creates: /tmp/meltdown-iaik/test
+
+- name: test IAIK poc
+  shell: "{{ item }}"
+  with_items:
+    - taskset 0x1 ./test | tee /var/log/speculative-IAIK.log
+  args:
+    chdir: /tmp/meltdown-iaik
+    creates: /var/log/speculative-IAIK.log
+  become: yes
+  become_user: nobody
+  register: iaik1
+  ignore_errors: true
+
+- debug: var=iaik1
+
+#- name: test IAIK poc - root
+#  shell: "{{ item }}"
+#  args:
+#    chdir: /tmp/meltdown-iaik
+#  with_items:
+## FIXME! travis/xenial: produce output with no end = The log length has exceeded the limit of 4 MB
+## FIXME! travis/debian9: No output has been received in the last 10m0s
+##    - taskset 0x1 ./kaslr
+## FIXME! travis/centos7: No output has been received in the last 10m0s
+##    - taskset 0x1 ./reliability 0xffff880000000000
+#    - nohup ./secret
+## FIXME! travis/alpine37: execution seen as not root + No output has been received in the last 10m0s
+##    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
+#  become: yes
+#  become_user: root
+#  register: iaik2
+#  ignore_errors: true
+#
+#- debug: var=iaik2
+
+- name: retrieve another check
+  git:
+    repo: https://github.com/speed47/spectre-meltdown-checker.git
+    dest: /tmp/spectre-meltdown-checker
+    version: HEAD
+    update: no
+  become: yes
+  become_user: nobody
+
+# root required
+- name: run spectre-meltdown-checker
+  shell: ./spectre-meltdown-checker.sh | tee /tmp/speculative-spectre-meltdown-checker.log
+  args:
+    chdir: /tmp/spectre-meltdown-checker
+    creates: /tmp/spectre-meltdown-checker.log
+  register: checker
+  ignore_errors: true
+
+- debug: var=checker.stdout_lines
+  when: checker is defined

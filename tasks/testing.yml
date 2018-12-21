@@ -20,16 +20,34 @@
         dest: "/tmp/{{ inspec_url | basename }}"
         checksum: "{{ inspec_hash }}"
         mode: '0600'
+    - name: Debian | install chef public key for inspec package
+      apt_key:
+        url: https://packages.chef.io/chef.asc
+        state: present
+      when: ansible_os_family == 'Debian'
+      register: pkg_result
+      until: pkg_result is success
     - name: Debian | install inspec package
       apt:
         deb: "/tmp/{{ inspec_url | basename }}"
         state: present
       when: ansible_os_family == 'Debian'
+      register: pkg_result
+      until: pkg_result is success
+    - name: RedHat | install chef public key for inspec package
+      rpm_key:
+        key: https://packages.chef.io/chef.asc
+        state: present
+      when: ansible_os_family == 'RedHat'
+      register: pkg_result
+      until: pkg_result is success
     - name: RedHat | install inspec package
       yum:
         name: "/tmp/{{ inspec_url | basename }}"
         state: present
       when: ansible_os_family == 'RedHat'
+      register: pkg_result
+      until: pkg_result is success
 
     - name: testing | run linux-baseline
 #      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"

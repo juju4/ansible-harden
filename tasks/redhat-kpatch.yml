@@ -6,6 +6,8 @@
   yum:
     name: kpatch
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: check kpatch applied
   command: kpatch --list

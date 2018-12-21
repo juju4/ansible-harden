@@ -4,6 +4,8 @@
   apt:
     name: unattended-upgrades
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 ## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 - name: Debian | enable automatic security updates

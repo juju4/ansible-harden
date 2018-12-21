@@ -23,6 +23,16 @@
     dest: /tmp/unix-privesc-check-1.4.tar.gz
     checksum: 'sha256:e1f85e7f69fabadd23756a3d76a0e3d864b21e28763b60ce2e6181290d1c1969'
     mode: '0644'
+# offline from time to time...
+  ignore_errors: true
+  register: upc
+
+- name: Ensure GNU tar is present
+  package:
+    name: tar
+    state: present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: unarchive unix-privesc-check
   unarchive:
@@ -82,6 +92,8 @@
   package:
     name: git
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 # http://www.kitploit.com/2017/11/kernelpop-kernel-privilege-escalation.html
 # https://github.com/spencerdodd/kernelpop
@@ -98,6 +110,8 @@
   package:
     name: "{{ python3_pkg | default('python3') }}"
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: execute kernelpop
   shell: "python3 kernelpop.py -b | tee /tmp/kernelpop.out"

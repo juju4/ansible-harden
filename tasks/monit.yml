@@ -15,6 +15,9 @@
     name: monit
     state: present
   when: ansible_system == 'Linux'
+  register: pkg_result
+  until: pkg_result is success
+
 - name: ensure monit configuration subdir is present
   file:
     dest: "{{ monit_confdir }}"

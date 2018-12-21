@@ -8,6 +8,8 @@
   poll: 300
   register: distout
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
+  register: pkg_result
+  until: pkg_result is success
 #- debug: var=distout.stdout_lines
 #  when: travisci is not defined or not travisci
 
@@ -19,6 +21,8 @@
   with_items:
     - rpcbind
   when: harden_use_rpc is not defined or not harden_use_rpc
+  register: pkg_result
+  until: pkg_result is success
 
 - name: Debian | Remove container lxc-related packages
   apt:
@@ -31,6 +35,8 @@
     - lxc-common
     - liblxc1
   when: harden_use_containers_lxc is not defined or not harden_use_containers_lxc
+  register: pkg_result
+  until: pkg_result is success
 
 - include: unattended-upgrades.yml
   when: harden_security_update_auto
