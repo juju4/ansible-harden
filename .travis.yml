@@ -1,5 +1,5 @@
 ---
-dist: trusty
+dist: xenial
 sudo: required
 rvm:
   - 2.5
@@ -77,11 +77,8 @@ before_install:
   - find -ls
 ## use appropriate role path and not github name
   - "[ -f get-dependencies.sh ] && sh -x get-dependencies.sh"
-## No Xenial, https://github.com/travis-ci/travis-ci/issues/5821
-#  - sudo apt install lxd
-  - echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/trusty-backports.list
   - sudo apt-get update -qq
-  - sudo apt -t trusty-backports -y install lxd acl rng-tools -q
+  - sudo apt install lxd acl rng-tools -q
 ## change of group implies logout+login to apply... can't do with travis = run as root (sic)    = use 'newgrp lxd' ? = travis stalling all ...
 ## https://github.com/travis-ci/travis-ci/issues/1839   or chain: sudo -E su $USER -c "..."
   - sudo usermod -G lxd travis
