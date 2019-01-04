@@ -99,7 +99,7 @@
   git:
     repo: 'https://github.com/spencerdodd/kernelpop'
     dest: /home/_test/kernelpop
-    version: HEAD
+    version: "{{ harden_kernelpop_version | default('b3467d3c64f9657a822c1f3c0d70769efabebf60') }}"
     update: no
   become: yes
   become_user: _test

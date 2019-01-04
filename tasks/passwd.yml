@@ -1,7 +1,6 @@
 ---
 ## https://jerrygamblin.com/2017/08/24/disallow-million-most-common-passwords/
 ## http://thegarywilson.com/blog/2006/using-cracklib-to-require-stronger-passwords/
-## https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-hardening_your_system_with_tools_and_services#sec-Password_Security pam_cracklib -> pam_pwquality
 
 - name: recover dictionary files
   get_url:

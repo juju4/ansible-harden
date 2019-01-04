@@ -41,7 +41,7 @@
   git:
     repo: https://github.com/raphaelsc/Am-I-affected-by-Meltdown.git
     dest: /tmp/Am-I-affected-by-Meltdown
-    version: HEAD
+    version: "{{ harden_aiabm_version | default('b6f80766da112e3fa09e8c4f73a82f7451f9c8f7') }}"
     update: no
   become: yes
   become_user: nobody
@@ -67,7 +67,7 @@
   git:
     repo: https://github.com/paboldin/meltdown-exploit.git
     dest: /tmp/meltdown-exploit
-    version: HEAD
+    version: "{{ harden_me_version | default('36e17ef649657ff35b76d59e597fdf7f412beb9c') }}"
     update: no
   become: yes
   become_user: nobody
@@ -93,7 +93,7 @@
   git:
     repo: https://github.com/IAIK/meltdown.git
     dest: /tmp/meltdown-iaik
-    version: HEAD
+    version: "{{ harden_mi_version | default('f4f636d9052e729574abfa5cfd251423ac9deca9') }}"
     update: no
   become: yes
   become_user: nobody
@@ -154,6 +154,7 @@
     repo: https://github.com/speed47/spectre-meltdown-checker.git
     dest: /tmp/spectre-meltdown-checker
     version: HEAD
+    version: "{{ harden_smc_version | default('d7d2e6934ba08a2de2e2c80bb42936a60b884b78') }}"
     update: no
   become: yes
   become_user: nobody

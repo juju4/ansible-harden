@@ -108,6 +108,16 @@ $ packer build -var-file=variables.json azure-packer-harden-centos7.json
 * Remove Haveged for RedHat7. Use Jitter Entropy RNG available since 7.4.
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7-Beta/html-single/7.4_Release_Notes/index.html#new_features_kernel
 
+* Redhat7: using service to restart auditd
+  * https://groups.google.com/forum/#!topic/ansible-project/pv1h1Ne7nSk
+  * https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-starting_the_audit_service.html
+
+* Redhat7: pam_pwquality instead of pam_cracklib.
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-hardening_your_system_with_tools_and_services#sec-Password_Security
+
+* sudoers+selinux configuration?
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/selinux_users_and_administrators_guide/sect-security-enhanced_linux-targeted_policy-confined_and_unconfined_users#sect-Security-Enhanced_Linux-Targeted_Policy-Confined_and_Unconfined_Users-sudo_Transition_and_SELinux_Roles
+
 ## Troubleshooting & Known issues
 
 * Tests has been mostly on Ubuntu trusty and xenial so coverage might be not equivalent for other distributions.

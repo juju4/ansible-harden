@@ -15,10 +15,9 @@
       yum: name=* state=latest
       async: 3600
       poll: 300
-      register: distout
       register: pkg_result
       until: pkg_result is success
-    - debug: var=distout.stdout_lines
+    - debug: var=pkg_result.stdout_lines
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 
 - name: set better login.defs - redhat only

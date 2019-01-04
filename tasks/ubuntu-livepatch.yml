@@ -17,6 +17,8 @@
 
 - name: Ensure snapd is installed
   apt: name=snapd state=present
+  register: pkg_result
+  until: pkg_result is success
 
 - name: Ubuntu xenial | Install livepatch
   command: "snap install canonical-livepatch creates=/var/lib/snapd/snaps/canonical-livepatch_17.snap"

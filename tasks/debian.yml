@@ -6,12 +6,9 @@
   apt: upgrade=dist
   async: 3600
   poll: 300
-  register: distout
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
   register: pkg_result
   until: pkg_result is success
-#- debug: var=distout.stdout_lines
-#  when: travisci is not defined or not travisci
 
 - name: Debian | Remove rpc-related packages
   apt:
