@@ -1,17 +1,5 @@
 ---
 
-## Misc Magazine N°50, FR, Jul/Aug 2010
-## https://www.lexsi.com/securityhub/danse-des-canards/
-## https://security.stackexchange.com/questions/64524/how-to-prevent-badusb-attacks-on-linux-desktop
-## https://en.wikibooks.org/wiki/Grsecurity/Appendix/Grsecurity_and_PaX_Configuration_Options#Deny_new_USB_connections_after_toggle
-## https://github.com/dkopecek/usbguard
-## http://www.opensourceforu.com/2012/06/some-nifty-udev-rules-and-examples/
-## http://www.irongeek.com/i.php?page=security/plug-and-prey-malicious-usb-devices
-## Deny new USB devices when locked?
-## Note: Alpine has no automount/autofs for storage
-## https://github.com/probablynotablog/usb-canary
-## (RHEL7.6+) https://access.redhat.com/articles/3230621
-
 - name: USB | Ensure udev & others are present
   package: name={{ item }} state=present
   with_items:

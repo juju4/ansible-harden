@@ -20,7 +20,7 @@
     owner: nobody
 
 - name: compile sample code
-  shell: gcc -std=c99 -O0 spectre.c -o spectre
+  command: gcc -std=c99 -O0 spectre.c -o spectre
   args:
     chdir: /tmp
     creates: /tmp/spectre
@@ -47,7 +47,7 @@
   become_user: nobody
 
 - name: build Am-I-affected-by-Meltdown
-  shell: make
+  command: make
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
     creates: /tmp/Am-I-affected-by-Meltdown/meltdown-checker
@@ -73,7 +73,7 @@
   become_user: nobody
 
 - name: build meltdown-exploit
-  shell: make
+  command: make
   args:
     chdir: /tmp/meltdown-exploit
     creates: /tmp/meltdown-exploit/meltdown
@@ -110,15 +110,13 @@
   until: pkg_result is success
 
 - name: build IAIK poc
-  shell: make
+  command: make
   args:
     chdir: /tmp/meltdown-iaik
     creates: /tmp/meltdown-iaik/test
 
 - name: test IAIK poc
-  shell: "{{ item }}"
-  with_items:
-    - taskset 0x1 ./test | tee /var/log/speculative-IAIK.log
+  shell: taskset 0x1 ./test | tee /var/log/speculative-IAIK.log
   args:
     chdir: /tmp/meltdown-iaik
     creates: /var/log/speculative-IAIK.log
@@ -130,7 +128,7 @@
 - debug: var=iaik1
 
 #- name: test IAIK poc - root
-#  shell: "{{ item }}"
+#  command: "{{ item }}"
 #  args:
 #    chdir: /tmp/meltdown-iaik
 #  with_items:
@@ -153,7 +151,6 @@
   git:
     repo: https://github.com/speed47/spectre-meltdown-checker.git
     dest: /tmp/spectre-meltdown-checker
-    version: HEAD
     version: "{{ harden_smc_version | default('d7d2e6934ba08a2de2e2c80bb42936a60b884b78') }}"
     update: no
   become: yes

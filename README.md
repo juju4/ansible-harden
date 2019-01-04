@@ -118,6 +118,19 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/se
 * sudoers+selinux configuration?
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/selinux_users_and_administrators_guide/sect-security-enhanced_linux-targeted_policy-confined_and_unconfined_users#sect-Security-Enhanced_Linux-Targeted_Policy-Confined_and_Unconfined_Users-sudo_Transition_and_SELinux_Roles
 
+* USB controls
+  * Misc Magazine N°50, FR, Jul/Aug 2010
+  * https://www.lexsi.com/securityhub/danse-des-canards/
+  * https://security.stackexchange.com/questions/64524/how-to-prevent-badusb-attacks-on-linux-desktop
+  * https://en.wikibooks.org/wiki/Grsecurity/Appendix/Grsecurity_and_PaX_Configuration_Options#Deny_new_USB_connections_after_toggle
+  * https://github.com/dkopecek/usbguard
+  * http://www.opensourceforu.com/2012/06/some-nifty-udev-rules-and-examples/
+  * http://www.irongeek.com/i.php?page=security/plug-and-prey-malicious-usb-devices
+  * Deny new USB devices when locked?
+  * Alpine has no automount/autofs for storage
+  * https://github.com/probablynotablog/usb-canary
+  * (RHEL7.6+) https://access.redhat.com/articles/3230621
+
 ## Troubleshooting & Known issues
 
 * Tests has been mostly on Ubuntu trusty and xenial so coverage might be not equivalent for other distributions.
