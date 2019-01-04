@@ -81,6 +81,7 @@ before_install:
   - sudo apt install lxd acl rng-tools -q
 ## change of group implies logout+login to apply... can't do with travis = run as root (sic)    = use 'newgrp lxd' ? = travis stalling all ...
 ## https://github.com/travis-ci/travis-ci/issues/1839   or chain: sudo -E su $USER -c "..."
+  - cat /etc/group
   - sudo usermod -G lxd travis
 #  - newgrp lxd
   # Pull container
@@ -92,12 +93,13 @@ before_install:
   - 'sudo -E su $USER -c "[ ${distribution} == debian ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}"'
   - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || true'
 ## configure lxd-bridge
+  - cat /etc/default/lxd-bridge
   - sudo perl -pi -e 's@^LXD_IPV4_ADDR=""@LXD_IPV4_ADDR="10.252.116.1"@;s@^LXD_IPV4_NETMASK=""@LXD_IPV4_NETMASK="255.255.255.0"@;s@^LXD_IPV4_NETWORK=""@LXD_IPV4_NETWORK="10.252.116.1/24"@;s@^LXD_IPV4_DHCP_RANGE=""@LXD_IPV4_DHCP_RANGE="10.252.116.2,10.252.116.254"@;s@^LXD_IPV4_DHCP_MAX=""@LXD_IPV4_DHCP_MAX="252"@;s@LXD_IPV6_PROXY="true"@LXD_IPV6_PROXY="false"@' /etc/default/lxd-bridge
-#  - cat /etc/default/lxd-bridge
+  - cat /etc/default/lxd-bridge
 #  - service --status-all
-  - sudo service lxd restart
+  - sudo systemctl restart lxd
 # check network state
-#  - sudo lxc network show lxdbr0
+  - sudo lxc network show lxdbr0
 ## ssh key for lxd_cli ?
   - ls ~/.ssh
   - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
@@ -112,6 +114,7 @@ before_install:
 #  - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc file push /tmp/interfaces run-${distribution}-${version//./}/etc/network/interfaces" || true'
   - '[ "X${distribution}" == "Xalpine" -o "X${distribution}" == "Xdebian" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /etc/init.d/networking restart" || true'
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /sbin/ip addr || true"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /sbin/ip route || true"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- /sbin/route -n || true"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 8.8.8.8"
   - '[ "X${distribution}" == "Xubuntu" -o "X${distribution}" == "Xdebian" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apt-get update" || true'
