@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 # /etc/logcheck/logcheck.replace
 s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
 s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Failed \1 for \2 from \3 port N ssh2/

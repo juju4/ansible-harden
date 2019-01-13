@@ -24,6 +24,7 @@ galaxy_info:
   galaxy_tags:
     - system
     - security
+    - logging
 dependencies:
   - juju4.redhat_epel
 ## harden-sysctl before any other sysctl related tasks. doing some cleaning (centos-6)

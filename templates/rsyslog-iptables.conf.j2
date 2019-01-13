@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 :msg, contains, "iptables: " -/var/log/iptables/iptables.log
 {% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
 & ~

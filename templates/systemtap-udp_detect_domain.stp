@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 ## https://serverfault.com/questions/192893/how-i-can-identify-which-process-is-making-udp-traffic-on-linux
 ## $ stap -v udp_detect_domain.stp
 probe udp.sendmsg {

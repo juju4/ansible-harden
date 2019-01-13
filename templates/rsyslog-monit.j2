@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 {% if ansible_distribution == "Alpine" %}
 check process rsyslog matching "rsyslogd"
 {% else %}

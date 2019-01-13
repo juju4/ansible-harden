@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 :msg, contains, "ansible-copy: " -/var/log/ansible/ansible.log
 {% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
 & ~

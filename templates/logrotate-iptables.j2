@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 ## /etc/logrotate.d/iptables
 /var/log/iptables/iptables.log {
     rotate {{ harden_logrotate_days|int }}

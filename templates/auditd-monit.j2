@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 check process auditd
   with pidfile "/var/run/auditd.pid"
   group system
