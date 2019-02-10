@@ -36,7 +36,7 @@
   package:
     name: "{{ harden_pkg_remove }}"
     state: absent
-    purge: yes
+#    purge: yes
   register: pkg_result
   until: pkg_result is success
 
