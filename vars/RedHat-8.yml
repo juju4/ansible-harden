@@ -1,0 +1,69 @@
+---
+
+ssh_svc: sshd
+auditd_pkg: audit
+
+harden_pkg:
+    - openssh-server
+    - rsyslog
+    - git
+    - gnupg
+    - psacct
+    - sysstat
+    - aide
+    - sysstat
+    - iotop
+    - sysdig
+    - tcpdump
+    - yum-utils
+#    - setroubleshoot
+    - systemtap
+    - sudo
+    - iptables-services
+    - perf              # perf /FlameGraph
+    - openscap-scanner
+    - scap-security-guide
+    - libpwquality
+# EPEL?
+#    - fail2ban
+#    - rkhunter
+#    - lynis
+#    - jitterentropy-rngd
+#    - libsemanage-python
+
+harden_pkg_remove: []
+
+harden_services: []
+#    - jitterentropy-rngd
+harden_services_containers:
+#    - psacct
+    - auditd
+
+syslog_mainfile: /var/log/messages
+syslog_authfile: /var/log/secure
+
+harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
+harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
+
+monitrc: /etc/monitrc
+monit_confdir: /etc/monit.d
+
+iptables_rulesv4: /etc/sysconfig/iptables
+iptables_rulesv6: /etc/sysconfig/ip6tables
+
+testing_pkgs:
+  - ruby
+  - ruby-devel
+  - rubygems
+  - libffi-devel
+
+python3_pkg: python36
+
+build_dev_tools:
+  - gcc
+  - gcc-c++
+  - make
+
+inspec_url: https://packages.chef.io/files/stable/inspec/3.3.14/el/7/inspec-3.3.14-1.el7.x86_64.rpm
+inspec_hash: 'sha256:86d9fc9557493b9f49ca3d6cd1a746d7119380335a312b288c02ee329e69d112'

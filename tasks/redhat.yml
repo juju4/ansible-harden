@@ -38,9 +38,13 @@
     state: present
   register: pkg_result
   until: pkg_result is success
+  when: >
+    not (ansible_distribution_major_version|int == 8)
 
 - name: password set for single mode
   lineinfile: dest=/etc/sysconfig/init regexp='^SINGLE=' line='SINGLE=/sbin/sulogin'
+  when: >
+    not (ansible_distribution_major_version|int == 8)
 
 - debug: var=ansible_virtualization_type
 - name: Container inside | disable incompatible daemons
@@ -58,15 +62,20 @@
 
 - name: initialize rootkithunter db
   command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
+  when: >
+    not (ansible_distribution_major_version|int == 8)
 
 - include: selinux.yml
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        )
+        ) and
+    not (ansible_distribution_major_version|int == 8)
 
 - include: yum-cron.yml
-  when: harden_security_update_auto
+  when: >
+    harden_security_update_auto and
+    not (ansible_distribution_major_version|int == 8)
 
 - name: Ensure YUM Removes Previous Package Versions
   lineinfile:

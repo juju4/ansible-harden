@@ -92,6 +92,8 @@
   when: harden_rootforward is defined and harden_rootforward
 
 - include: fail2ban.yml
+  when: >
+    not (ansible_distribution == 'RedHat' and ansible_distribution_major_version|int >= 8)
 
 - include: vim-swapfiles.yml
 - include: llmnr-systemd.yml

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - /etc/securetty: remove some lines (openscap)
 - ssh/moduli: cleaning
 - packer: Azure, Virtualbox, Vmware configurations
+- Initial RedHat-8 (beta) support
 
 ### Changed
 - Heavy lint following galaxy new rules following adoption of ansible-lint

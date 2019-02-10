@@ -12,6 +12,26 @@
       ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == "Alpine"
     )
 
+- name: Ensure sshd groups exist
+  group:
+    name: "{{ item }}"
+    state: present
+    system: yes
+  with_items:
+    - sftp-users
+    - forwarding-users
+    - restricted-users
+  when: ansible_distribution != "Alpine"
+
+- name: Alpine | Ensure sshd groups exist
+  command: "addgroup {{ item }}"
+  with_items:
+    - sftp-users
+    - forwarding-users
+    - restricted-users
+  ignore_errors: true
+  when: ansible_distribution == "Alpine"
+
 - name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)
   lineinfile: dest=/etc/tmpfiles.d/sshd.conf line='    d    /run/sshd   0755 root root - -' create=yes
   when: >
@@ -64,21 +84,3 @@
 #    ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all &&
 #    mv /etc/ssh/moduli.safe /etc/ssh/moduli"
   when: moduli.stdout != 0
-
-- name: Ensure sshd groups exist
-  group:
-    name: "{{ item }}"
-    state: present
-    system: yes
-  with_items:
-    - sftp-users
-    - forwarding-users
-  when: ansible_distribution != "Alpine"
-
-- name: Alpine | Ensure sshd groups exist
-  command: "addgroup {{ item }}"
-  with_items:
-    - sftp-users
-    - forwarding-users
-  ignore_errors: true
-  when: ansible_distribution == "Alpine"

@@ -114,6 +114,8 @@
   args:
     chdir: /tmp/meltdown-iaik
     creates: /tmp/meltdown-iaik/test
+  when: >
+    not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8)
 
 - name: test IAIK poc
   shell: taskset 0x1 ./test | tee /var/log/speculative-IAIK.log
@@ -124,6 +126,8 @@
   become_user: nobody
   register: iaik1
   ignore_errors: true
+  when: >
+    not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8)
 
 - debug: var=iaik1
 
