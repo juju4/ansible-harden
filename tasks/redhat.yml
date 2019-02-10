@@ -1,9 +1,9 @@
 ---
 
 - name: Redhat| Remove some packages
-  yum: name={{ item }} state=absent
-  with_items:
-    - rpcbind
+  yum:
+    name: rpcbind
+    state: absent
   when: harden_use_rpc is not defined or not harden_use_rpc
   register: pkg_result
   until: pkg_result is success

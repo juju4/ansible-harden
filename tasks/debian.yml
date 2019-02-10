@@ -12,25 +12,18 @@
 
 - name: Debian | Remove rpc-related packages
   apt:
-    name: "{{ item }}"
+    name: rpcbind
     state: absent
     purge: yes
-  with_items:
-    - rpcbind
   when: harden_use_rpc is not defined or not harden_use_rpc
   register: pkg_result
   until: pkg_result is success
 
 - name: Debian | Remove container lxc-related packages
   apt:
-    name: "{{ item }}"
+    name: ['lxd', 'lxcfs', 'lxc-common', 'liblxc1']
     state: absent
     purge: yes
-  with_items:
-    - lxd
-    - lxcfs
-    - lxc-common
-    - liblxc1
   when: harden_use_containers_lxc is not defined or not harden_use_containers_lxc
   register: pkg_result
   until: pkg_result is success
