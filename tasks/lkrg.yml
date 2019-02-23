@@ -49,6 +49,13 @@
   become: yes
   become_user: nobody
 
+- name: Debian | fix systemd service file destination path
+  replace:
+    dest: "{{ install_archives }}/lkrg-0.6/scripts/bootup/systemd/lkrg-systemd.sh"
+    regex: -f5
+    replace: -f7
+  when: ansible_distribution_release == 'xenial'
+
 - include: "immutable.yml target_dir=/lib/modules state=pre"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
