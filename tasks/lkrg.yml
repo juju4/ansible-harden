@@ -49,10 +49,16 @@
   become: yes
   become_user: nobody
 
+- include: "immutable.yml target_dir=/lib/modules state=pre"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 - name: install lkrg
   command: make install
   args:
     chdir: "{{ install_archives }}/lkrg-0.6"
+
+- include: "immutable.yml target_dir=/lib/modules state=post"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: start lkrg if not container
   systemd:
