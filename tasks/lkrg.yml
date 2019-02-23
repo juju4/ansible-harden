@@ -8,7 +8,7 @@
     dest: "{{ install_archives }}/{{ item.u | basename }}"
     owner: root
     mode: "{{ item.m }}"
-    checksum: "{{ item.c | omit }}"
+    checksum: "{{ item.c | default(omit) }}"
   with_items:
     - { u: 'https://www.openwall.com/lkrg/lkrg-0.6.tar.gz', m: '0600' }
     - { u: 'https://www.openwall.com/lkrg/lkrg-0.6.tar.gz.sign', m: '0600' }
