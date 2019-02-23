@@ -1,5 +1,6 @@
 ---
 
+install_archives: /var/_install
 harden_timezone: UTC
 harden_logcheck: true
 #harden_logcheck_hours: '*'
@@ -270,6 +271,12 @@ harden_usb_inputdevice_whitelist:
 
 monit_auditd: false
 monit_osqueryd: false
+
+# if hardensysctl_kernel_modules, add p_lkrg to the list
+harden_lkrg: false
+harden_lkrg_sysctl:
+ - { n: block_modules, v: 0 }
+ - { n: ci_panic, v: 0 }
 
 harden_testing: false
 harden_testing_inspec: true

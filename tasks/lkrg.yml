@@ -1,0 +1,78 @@
+---
+# https://www.openwall.com/lkrg/
+# https://openwall.info/wiki/p_lkrg/Main
+
+- name: Download lkrg files
+  get_url:
+    url: "{{ item.u }}"
+    dest: "{{ install_archives }}/{{ item.u | basename }}"
+    owner: root
+    mode: "{{ item.m }}"
+    checksum: "{{ item.c | omit }}"
+  with_items:
+    - { u: 'https://www.openwall.com/lkrg/lkrg-0.6.tar.gz', m: '0600' }
+    - { u: 'https://www.openwall.com/lkrg/lkrg-0.6.tar.gz.sign', m: '0600' }
+    - { u: 'https://www.openwall.com/signatures/openwall-offline-signatures.asc',
+        c: 'sha256:8807d12ff271891e21491552880541aed0fa525d30cfec0df0e8fcfe56f46cd8',
+        m: '0600'
+      }
+
+- name: Import openwall gpg key
+  command: >
+    gpg --import {{ install_archives }}/openwall-offline-signatures.asc
+
+- name: Validate lkrg hash signature
+  command: >
+    gpg --verify {{ install_archives }}/lkrg-0.6.tar.gz.sign {{ install_archives }}/lkrg-0.6.tar.gz
+  ignore_errors: true
+
+- name: lkrg dependencies install
+  package:
+    name: "{{ lkrg_dep_pkgs }}"
+    state: present
+    update_cache: yes
+  register: pkg_result
+  until: pkg_result is success
+
+- name: uncompress lkrg
+  unarchive:
+    src: "{{ install_archives }}/lkrg-0.6.tar.gz"
+    dest: "{{ install_archives }}"
+    creates: "{{ install_archives }}/lkrg-0.6/INSTALL"
+  become: yes
+  become_user: nobody
+
+- name: build lkrg
+  command: make -j8
+  args:
+    chdir: "{{ install_archives }}/lkrg-0.6"
+  become: yes
+  become_user: nobody
+
+- name: install lkrg
+  command: make install
+  args:
+    chdir: "{{ install_archives }}/lkrg-0.6"
+
+- name: start lkrg if not container
+  systemd:
+    name: lkrg
+    state: started
+    enabled: yes
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )
+
+- name: Configure lkrg sysctl
+  sysctl:
+    name: "lkrg.{{ item.n }}"
+    value: "{{ item.v }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_items: "{{ harden_lkrg_sysctl | default([]) }}"
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )

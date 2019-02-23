@@ -154,3 +154,6 @@
     mode: '0644'
     backup: yes
   when: harden_modprobe_template is defined
+
+- include: lkrg.yml
+  when: harden_lkrg
