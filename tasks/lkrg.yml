@@ -39,15 +39,11 @@
     src: "{{ install_archives }}/lkrg-0.6.tar.gz"
     dest: "{{ install_archives }}"
     creates: "{{ install_archives }}/lkrg-0.6/INSTALL"
-  become: yes
-  become_user: nobody
 
 - name: build lkrg
   command: make -j8
   args:
     chdir: "{{ install_archives }}/lkrg-0.6"
-  become: yes
-  become_user: nobody
 
 - name: Debian | fix systemd service file destination path
   replace:
