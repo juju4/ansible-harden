@@ -22,6 +22,12 @@
 - include: travis.yml
   when: ansible_os_family != "Windows"
 
+- name: Ensure archives folder exists
+  file:
+    dest: "{{ install_archives }}"
+    state: directory
+    mode: '0755'
+
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
