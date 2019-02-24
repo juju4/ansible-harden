@@ -68,10 +68,6 @@
     name: lkrg
     state: started
     enabled: yes
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        )
 
 - name: Configure lkrg sysctl
   sysctl:
@@ -81,7 +77,3 @@
     state: present
     reload: yes
   with_items: "{{ harden_lkrg_sysctl | default([]) }}"
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        )
