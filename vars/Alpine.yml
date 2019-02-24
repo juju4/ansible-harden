@@ -46,6 +46,11 @@ iptables_rulesv6: /etc/ip6tables.conf
 monitrc: /etc/monitrc
 monit_confdir: /etc/monit.d
 
+lkrg_dep_pkgs:
+  - linux-headers
+  - make
+  - gcc
+
 testing_pkgs:
   - ruby
   - ruby-devel
