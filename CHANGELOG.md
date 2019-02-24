@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - optional openwall lkrg
 https://www.openwall.com/lkrg/
+- Travis: switch dist to Xenial + lxd3
 
 ## [0.9.0] - 2019-02-17
 
