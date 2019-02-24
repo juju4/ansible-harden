@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2019-02-17
+
 ### Added
 - test/full: add falco, ntpclient, osquery, harden-mailserver, auditd roles
 - test: add openscap check on centos/redhat and ubuntu
