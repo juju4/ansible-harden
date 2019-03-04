@@ -160,7 +160,7 @@
   ],
   "post-processors": [
     {
-      "output": "builds/{{.Provider}}-harden-ubuntu16.04-{{isotime \"2006-01-02\"}}.box",
+      "output": "builds/{{.Provider}}-juju4.harden-ubuntu16.04-{{isotime \"2006-01-02\"}}.box",
       "type": "vagrant"
     }
   ]
