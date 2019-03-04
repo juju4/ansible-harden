@@ -78,6 +78,8 @@ $ cd /path/to/roles/juju4.harden
 $ kitchen verify
 $ kitchen login
 $ KITCHEN_YAML=".kitchen.vagrant.yml" kitchen verify
+$ . ~/.azure/credentials
+$ KITCHEN_YAML=".kitchen.azure.yml" kitchen verify
 ```
 or
 ```
@@ -149,6 +151,10 @@ Message: SSH command failed (could not settle on kex algorithm)
 Implementation have older compatibility list. See
 https://security.stackexchange.com/questions/90503/metasploit-ssh-error-could-not-settle-on-kex-algorithm
 Normal ssh command line with recent releases should not be impacted. If required, review sshd cryptographic functions definitions inside vars/
+
+* Kitchen Azure
+  * above net-ssh issue with kex and hmac
+  * Net::SSH:AuthenticationFailed: Authentication failed for user azure@xxx
 
 ## License
 

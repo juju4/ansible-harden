@@ -15,7 +15,7 @@
       "inline": [
         "whoami",
         "env",
-        "sudo yum -y update",
+        "sudo apt-get update && sudo apt-get -y upgrade",
         "echo Packer template generated on `date +'%Y%m%d_%H:%M'` > /root/template.txt"
       ]
     },
@@ -39,12 +39,12 @@
       "vm_size": "Standard_D1",
 
       "managed_image_resource_group_name": "Testing",
-      "managed_image_name": "juju4.harden-centos7-{{isotime \"2006-01-02\"}}",
+      "managed_image_name": "juju4.harden-bionic-{{isotime \"2006-01-02\"}}",
 
       "os_type": "Linux",
-      "image_publisher": "OpenLogic",
-      "image_offer": "CentOS",
-      "image_sku": "7.5",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
       "image_version": "latest"
     }
   ]

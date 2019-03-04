@@ -1,0 +1,55 @@
+---
+# https://github.com/test-kitchen/kitchen-azurerm
+driver:
+  name: azurerm
+  subscription_id: 'xxxx'
+  location: 'eastus'
+  machine_size: 'Standard_D1'
+
+transport:
+  ssh_key: ~/.ssh/id_kitchen-azurerm
+
+provisioner:
+  name: ansible_playbook
+  roles_path: ../
+  hosts: test-kitchen
+#  ansible_verbose: true
+  ansible_verbose: false
+  ansible_verbosity: 4
+  ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
+  ansible_cfg_path: test/vagrant/ansible.cfg
+#  require_chef_omnibus: false
+  require_ansible_omnibus: true
+#  require_chef_for_busser: false
+  enable_yum_epel: true
+  ansible_connection: ssh
+
+platforms:
+  - name: ubuntu-18.04
+    driver:
+      image_urn: Canonical:UbuntuServer:18.04-LTS:latest
+      vm_name: bionic-test-kitchen
+      vm_tags:
+        ostype: linux
+        distro: ubuntu
+        role: testing
+  - name: centos75
+    driver_config:
+      image_urn: OpenLogic:CentOS:7.5:latest
+      vm_name: centos75-test-kitchen
+      vm_tags:
+        ostype: linux
+        distro: centos
+        role: testing
+
+suites:
+  - name: default
+    run_list:
+    attributes:
+    verifier:
+        name: inspec
+  - name: full
+    run_list:
+    attributes:
+    verifier:
+        name: inspec

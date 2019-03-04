@@ -1,0 +1,46 @@
+---
+dist: xenial
+sudo: required
+rvm:
+  - 2.6
+
+env:
+  matrix:
+    - distribution: centos
+      version: 7
+      suite: full
+      distro: centos7
+    - distribution: ubuntu
+      version: 18.04
+      suite: full
+      distro: bionic
+
+before_install:
+  - env
+  - pwd
+  - find -ls
+## use appropriate role path and not github name
+  - "[ -f get-dependencies.sh ] && sh -x get-dependencies.sh"
+
+  - sudo pip install ansible
+  - gem install kitchen
+  - gem install kitchen-ansible
+  - gem install kitchen-azurerm
+  - gem install kitchen-inspec
+  - gem list
+  - which kitchen
+## ssh key for lxd_cli ?
+  - ls ~/.ssh
+  - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
+  - KITCHEN_LOCAL_YAML=.kitchen.azure.yml kitchen diagnose --all
+
+script:
+  - KITCHEN_LOCAL_YAML=.kitchen.azure.yml kitchen verify ${suite}-${distribution}-${version//./}
+  - cd packer && packer build azure-packer-harden-$distro.json
+
+after_script:
+  # Clean up
+  - KITCHEN_LOCAL_YAML=.kitchen.azure.yml kitchen destroy ${suite}-${distribution}-${version//./}
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
