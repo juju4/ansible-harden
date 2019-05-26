@@ -1,0 +1,32 @@
+---
+# user/pass processed differently depending on family
+# don't expect it for system configuration and updates
+
+- name: Ensure apt is configured with proxy
+  lineinfile:
+    dest: /etc/apt/apt.conf.d/10proxy
+    regexp: '^Acquire::http::Proxy ".*";'
+    line: "Acquire::http::Proxy \"{{ harden_proxy }}\";"
+    backup: yes
+
+- name: RedHat | Ensure dnf is configured with proxy
+  ini_file:
+    dest: /etc/dnf/dnf.conf
+    section: main
+    option: proxy
+    value: "{{ harden_proxy }}"
+    mode: '0600'
+    backup: yes
+  with_items:
+    - { o: proxy, v: "{{ harden_proxy }}" }
+    - { o: proxy_username, v: "{{ harden_proxy_user | default(omit) }}" }
+    - { o: proxy_password, v: "{{ harden_proxy_pass | default(omit) }}" }
+
+- name: Update /etc/environment with proxy
+  lineinfile:
+    dest: /etc/environment
+    regexp: "{{ item.re }}"
+    line: "{{ item.l }}"
+  with_items:
+    - { re: ^http_proxy=.*, l: "http_proxy={{ harden_proxy }}" }
+    - { re: ^https_proxy=.*, l: "http_proxy={{ harden_proxy }}" }

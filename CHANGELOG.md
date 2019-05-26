@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- proxy system configuration (apt, dnf, /etc/environment)
 - optional openwall lkrg
 https://www.openwall.com/lkrg/
 - Travis: switch dist to Xenial + lxd3
