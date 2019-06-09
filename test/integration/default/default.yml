@@ -1,7 +1,6 @@
 ---
 
 - hosts: all
-#- hosts: test-kitchen
   vars:
 #    - harden_upgradeall: false
     - harden_auditd_log_all_execve: true
