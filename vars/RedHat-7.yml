@@ -52,8 +52,8 @@ testing_pkgs:
   - rubygems
   - libffi-devel
 
-python3_pkg: python34
-python3_bin: python3.4
+python3_pkg: python36
+python3_bin: python3
 
 build_dev_tools:
   - gcc
