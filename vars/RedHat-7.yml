@@ -53,6 +53,7 @@ testing_pkgs:
   - libffi-devel
 
 python3_pkg: python34
+python3_bin: python3.4
 
 build_dev_tools:
   - gcc
