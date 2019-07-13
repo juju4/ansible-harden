@@ -114,7 +114,7 @@
 - name: execute kernelpop
   shell: |
     set -o pipefail
-    python3 kernelpop.py -b | tee /tmp/kernelpop.out
+    {{ python3_pkg | default('python3') }} kernelpop.py -b | tee /tmp/kernelpop.out
   args:
     executable: /bin/bash
     chdir: /home/_test/kernelpop
