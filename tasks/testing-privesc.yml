@@ -112,8 +112,11 @@
   until: pkg_result is success
 
 - name: execute kernelpop
-  shell: "python3 kernelpop.py -b | tee /tmp/kernelpop.out"
+  shell: |
+    set -o pipefail
+    python3 kernelpop.py -b | tee /tmp/kernelpop.out
   args:
+    executable: /bin/bash
     chdir: /home/_test/kernelpop
     creates: /tmp/kernelpop.out
   become: yes

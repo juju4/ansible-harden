@@ -24,7 +24,7 @@
 - name: Validate lkrg hash signature
   command: >
     gpg --verify {{ install_archives }}/lkrg-0.6.tar.gz.sign {{ install_archives }}/lkrg-0.6.tar.gz
-  ignore_errors: true
+  changed_when: false
 
 - name: lkrg dependencies install
   package:
