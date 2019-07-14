@@ -10,7 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - proxy system configuration (apt, dnf, /etc/environment)
 - optional openwall lkrg
 https://www.openwall.com/lkrg/
+
+### Changed
+- Github: rename tags to match semantic versioning: 0.7.0, 0.8.0
 - Travis: switch dist to Xenial + lxd3
+- Centos7: default to python36 from EPEL
+- more linting
 
 ## [0.9.0] - 2019-02-17
 
