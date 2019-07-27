@@ -20,6 +20,8 @@
         dest: "/tmp/{{ inspec_url | basename }}"
         checksum: "{{ inspec_hash }}"
         mode: '0600'
+      register: dl_result
+      until: dl_result is success
     - name: Debian | install chef public key for inspec package
       apt_key:
         url: https://packages.chef.io/chef.asc
