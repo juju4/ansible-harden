@@ -3,10 +3,6 @@
 ## http://blog.dustinkirkland.com/2016/10/canonical-livepatch.html
 ## Register on https://www.ubuntu.com/server/livepatch
 
-- name: Compatibility check
-  fail: msg="FATAL! Free livepatch available only on Ubuntu xenial."
-  when: ansible_distribution_release != 'xenial'
-
 ## related? https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1590842
 ##  https://bugs.launchpad.net/snapd/+bug/1555217
 - name: Ensure enough /dev/loop devices for snap
@@ -20,11 +16,13 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: Ubuntu xenial | Install livepatch
-  command: "snap install canonical-livepatch creates=/var/lib/snapd/snaps/canonical-livepatch_17.snap"
+- name: Ubuntu | Install livepatch
+  snap:
+    name: "canonical-livepatch"
+    classic: no
   ignore_errors: true
 
-- name: Check livepatch status
+- name: Ubuntu | Check livepatch status
   command: "/snap/bin/canonical-livepatch status --verbose"
   changed_when: false
   register: livepatch
@@ -35,7 +33,7 @@
    livepatch is defined and livepatch.stdout is defined and
    'checkState: check-failed' in livepatch.stdout
 
-- name: Ubuntu xenial | Enable livepatch
+- name: Ubuntu | Enable livepatch
   command: "/snap/bin/canonical-livepatch enable {{ harden_ubuntu_livepatch_token }}"
   no_log: true
   when: livepatch is defined and livepatch.stdout is defined and "Machine is not enabled." in livepatch.stdout

@@ -108,7 +108,12 @@
   when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
 
 - include: ubuntu-livepatch.yml
-  when: ansible_distribution == 'Ubuntu' and harden_ubuntu_livepatch is defined and harden_ubuntu_livepatch
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - '"LTS" in ansible_lsb["description"]'
+    - ansible_distribution_major_version | int >= 16
+    - harden_ubuntu_livepatch is defined
+    - harden_ubuntu_livepatch
 
 - include: redhat-kpatch.yml
   when: >
