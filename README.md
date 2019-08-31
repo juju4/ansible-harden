@@ -171,4 +171,6 @@ BSD 2-clause
 See also
 * https://github.com/dev-sec/ansible-os-hardening/
 * https://docs.openstack.org/developer/ansible-hardening/
+* https://gitlab.com/madaidan/arch-hardening-script
+* https://theprivacyguide1.github.io/linux_hardening_guide.html
 
