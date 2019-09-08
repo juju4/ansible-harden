@@ -173,4 +173,5 @@ See also
 * https://docs.openstack.org/developer/ansible-hardening/
 * https://gitlab.com/madaidan/arch-hardening-script
 * https://theprivacyguide1.github.io/linux_hardening_guide.html
+* https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md
 
