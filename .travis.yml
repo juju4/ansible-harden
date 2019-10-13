@@ -122,7 +122,7 @@ before_install:
   - ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -P ""
   - ssh-agent
 ## sudo/su get us a non-usual PATH ...
-  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "sh -x ./test/lxd/centos-ssh-image.sh" || true'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "sh -x ./test/lxd/centos-ssh-image.sh ${version}" || true'
   - sudo -E su $USER -c "lxc launch ${distribution}-${version} run-${distribution}-${version//./}"
 #  - sudo -E su $USER -c "lxc start run-${distribution}-${version//./}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- env"

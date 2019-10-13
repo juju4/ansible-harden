@@ -1,7 +1,11 @@
 #!/bin/sh
 # add ssh to default lxd image
 
-image=centos-7
+if [ "X$1" == X8 ]; then
+  image=centos-8
+else
+  image=centos-7
+fi
 guest=default-$image
 template="$image"-nossh
 publishalias="$image"
