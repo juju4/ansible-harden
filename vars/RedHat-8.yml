@@ -13,9 +13,9 @@ harden_pkg:
     - aide
     - sysstat
     - iotop
-    - sysdig
+#    - sysdig
     - tcpdump
-    - yum-utils
+    - dnf-utils
 #    - setroubleshoot
     - systemtap
     - sudo
