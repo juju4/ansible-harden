@@ -1,7 +1,7 @@
 #!/bin/sh
 # add ssh to default lxd image
 
-if [ "X$1" == X8 ]; then
+if [ "X$1" == "X8" ]; then
   image=centos-8
 else
   image=centos-7
