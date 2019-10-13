@@ -123,7 +123,7 @@
 - include: grub.yml
 - include: monit.yml
   when: >
-    not (ansible_distribution == 'RedHat' and ansible_distribution_major_version|int == 8)
+    not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8)
 - include: logrotate.yml
 - include: passwd.yml
 

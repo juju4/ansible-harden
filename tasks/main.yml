@@ -99,7 +99,7 @@
 
 - include: fail2ban.yml
   when: >
-    not (ansible_distribution == 'RedHat' and ansible_distribution_major_version|int >= 8)
+    not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8)
 
 - include: vim-swapfiles.yml
 - include: llmnr-systemd.yml
