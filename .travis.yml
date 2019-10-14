@@ -216,6 +216,7 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -l /etc/login.defs"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/login.defs"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /etc"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /etc/ssh/"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ps axu"
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rc-status" || true'
