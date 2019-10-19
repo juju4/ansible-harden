@@ -231,9 +231,11 @@ after_script:
 
 # Note: Those profiles are for RHEL and need cpe review if used on Centos. Without that, results will be in notapplicable state.
 # https://www.centos.org/forums/viewtopic.php?t=50462
-  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- perl -pi -e \"s@platform idref=\\\"cpe:/o:redhat:enterprise_linux:7\\\"@platform idref=\\\"cpe:/o:centos:centos:7\\\"@\" /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml"'
-  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml"'
-  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel7-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml"'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /usr/share/xml/scap/ssg/content/"'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- perl -pi -e \"s@platform idref=\\\"cpe:/o:redhat:enterprise_linux:${version}\\\"@platform idref=\\\"cpe:/o:centos:centos:${version}\\\"@\" /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"'
+  - '[ "X${distribution}" == "Xcentos" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel${version}-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"'
+  - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /usr/share/scap-security-guide/"'
 #  - '[ "X${distribution}" == "Xubuntu" -a "X${version}" == "X18.04" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- perl -pi -e \"s@platform idref=\\\"cpe:/o:canonical:ubuntu_linux:16.04\\\"@platform idref=\\\"cpe:/o:canonical:ubuntu_linux:18.04\\\"@\" /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"'
   - '[ "X${distribution}" == "Xubuntu" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"'
 # scap check
