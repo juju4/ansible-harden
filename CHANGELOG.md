@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- RHEL/Centos8 support
+
+### Changed
+- update ansible to 2.8.3/2.7.12
+- update lkrg to 0.7
+
 ## [1.0.0] - 2019-07-20
 
 ### Added
