@@ -229,7 +229,7 @@ after_script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /etc"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /etc/ssh/"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /var/log"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ps axu"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ps axuw"
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- rc-status" || true'
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /tmp/inspec.log"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible -i inventory --connection=local -m setup localhost"
