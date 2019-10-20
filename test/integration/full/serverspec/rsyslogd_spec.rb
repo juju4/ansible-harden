@@ -19,6 +19,6 @@ end
 #end
 
 describe file('/etc/rsyslog.conf') do
-  it { should contain '$IncludeConfig /etc/rsyslog.d/*.conf' }
+  it { should match /\$IncludeConfig \/etc\/rsyslog.d\/\*.conf|include\(file="\/etc\/rsyslog.d\/\*.conf" mode="optional"\)/ }
 end
 
