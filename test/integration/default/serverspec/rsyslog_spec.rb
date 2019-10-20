@@ -40,5 +40,6 @@ end
 
 describe file('/var/log/messages'), :if => os[:family] == 'redhat' do
   it { should be_file }
+  its(:content) { should_not match /open error: Permission denied/ }
 end
 
