@@ -27,7 +27,7 @@ describe file('/etc/monit.d/sshd'), :if => os[:family] == 'redhat' && os[:releas
   it { should be_file }
 end
 
-describe command('monit status'), :if => os[:family] != 'redhat' || os[:release] != '8' do
+describe command("monit status (#{os[:family]}, #{os[:release]})"), :if => os[:family] != 'redhat' || os[:release] != '8' do
   its(:stdout) { should match /monitoring status.*Monitored/ }
   its(:stdout) { should_not match /monitoring status.*Not Monitored/ }
   its(:exit_status) { should eq 0 }
