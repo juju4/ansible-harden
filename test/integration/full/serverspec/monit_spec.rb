@@ -5,7 +5,7 @@ require 'serverspec'
 # Required by serverspec
 set :backend, :exec
 
-describe service('monit'), :if => os[:family] != 'redhat' || os[:release] != '8' do
+describe service('monit'), :if => os[:family] != 'redhat' || !os[:release].match(/^8\./) do
   it { should be_enabled }
   it { should be_running }
 end
@@ -22,7 +22,7 @@ end
 describe file('/etc/monit/conf.d/sshd'), :if => os[:family] == 'ubuntu' && os[:release] == '12.04' do
   it { should be_file }
 end
-describe file('/etc/monitrc'), :if => os[:family] == 'redhat' && !os[:release].match(/^8\./)  do
+describe file('/etc/monitrc'), :if => os[:family] == 'redhat' && !os[:release].match(/^8\./) do
   it { should be_file }
 end
 describe file('/etc/monit.d/sshd'), :if => os[:family] == 'redhat' && !os[:release].match(/^8\./) do
