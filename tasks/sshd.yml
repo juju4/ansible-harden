@@ -49,8 +49,8 @@
     src: "{{ harden_sshd_template }}"
     dest: /etc/ssh/sshd_config
     mode: '0600'
-    owner: 0
-    group: 0
+    owner: '0'
+    group: '0'
     backup: yes
     validate: 'sshd -f %s -T'
   notify:
@@ -62,8 +62,8 @@
     src: "{{ harden_sshd_template }}"
     dest: /etc/ssh/sshd_config
     mode: '0600'
-    owner: 0
-    group: 0
+    owner: '0'
+    group: '0'
     backup: yes
     validate: 'sshd -f %s -T -C user=nobody'
   notify:
