@@ -168,4 +168,4 @@
         )
 
 - include: proxy.yml
-  when: harden_proxy
+  when: harden_proxy|bool

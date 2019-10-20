@@ -50,8 +50,8 @@ harden_sshd_PasswordAuthentication: false
 harden_motd_template: motd.j2
 harden_modprobe_template: modprobe-dev-sec.conf.j2
 harden_securetty: true
-harden_proxy: ''
-#harden_proxy: 'http://yourproxyaddress:proxyport'
+harden_proxy: false
+harden_proxy_url: 'http://yourproxyaddress:proxyport'
 harden_proxy_user: ''
 harden_proxy_pass: ''
 

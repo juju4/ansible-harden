@@ -6,7 +6,7 @@
   lineinfile:
     dest: /etc/apt/apt.conf.d/10proxy
     regexp: '^Acquire::http::Proxy ".*";'
-    line: "Acquire::http::Proxy \"{{ harden_proxy }}\";"
+    line: "Acquire::http::Proxy \"{{ harden_proxy_url }}\";"
     backup: yes
 
 - name: RedHat | Ensure dnf is configured with proxy
@@ -14,11 +14,11 @@
     dest: /etc/dnf/dnf.conf
     section: main
     option: proxy
-    value: "{{ harden_proxy }}"
+    value: "{{ harden_proxy_url }}"
     mode: '0600'
     backup: yes
   with_items:
-    - { o: proxy, v: "{{ harden_proxy }}" }
+    - { o: proxy, v: "{{ harden_proxy_url }}" }
     - { o: proxy_username, v: "{{ harden_proxy_user | default(omit) }}" }
     - { o: proxy_password, v: "{{ harden_proxy_pass | default(omit) }}" }
 
@@ -28,5 +28,5 @@
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
   with_items:
-    - { re: ^http_proxy=.*, l: "http_proxy={{ harden_proxy }}" }
-    - { re: ^https_proxy=.*, l: "http_proxy={{ harden_proxy }}" }
+    - { re: ^http_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }
+    - { re: ^https_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }
