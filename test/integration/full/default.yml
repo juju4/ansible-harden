@@ -10,6 +10,10 @@
     - harden_auditd_log_all_connect: true
     - harden_testing: true
     - ipv6_config: 'harden'
+  pre_tasks:
+    - set_fact:
+        ntpclient_listen: [ 127.0.0.1, ::1 ]
+      when: ansible_os_family == "RedHat"
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
