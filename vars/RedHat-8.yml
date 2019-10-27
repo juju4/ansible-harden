@@ -66,5 +66,10 @@ build_dev_tools:
   - gcc-c++
   - make
 
+lkrg_dep_pkgs:
+  - kernel-devel
+  - make
+  - gcc
+
 inspec_url: https://packages.chef.io/files/stable/inspec/3.3.14/el/7/inspec-3.3.14-1.el7.x86_64.rpm
 inspec_hash: 'sha256:86d9fc9557493b9f49ca3d6cd1a746d7119380335a312b288c02ee329e69d112'
