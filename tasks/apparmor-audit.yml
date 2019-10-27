@@ -15,7 +15,7 @@
     dest: /etc/apparmor.d/apparmor.audit
     mode: '0644'
     backup: yes
-    checksum: 'sha256:aaaaa'
+    checksum: 'sha256:d97de7268381e779a1783f9b615437d8939bd21ae819c522a049d370c9ca40df.'
   register: apparmoraudit
   notify:
     - enable apparmor audit profile
