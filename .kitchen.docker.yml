@@ -21,6 +21,8 @@ provisioner:
 #  require_chef_for_busser: false
   enable_yum_epel: true
   ansible_connection: ssh
+  http_proxy: <%= ENV['http_proxy'] %>
+  https_proxy: <%= ENV['https_proxy'] %>
 
 platforms:
   - name: ubuntu-18.04
