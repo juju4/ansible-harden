@@ -58,7 +58,7 @@
 #       - kvm
 #       - kvm_intel
 ## openwall lkrg
-         - 'p_lkrg p_init_log_level=3'
+       - 'p_lkrg p_init_log_level=3'
     - harden_lkrg: true
     - harden_testing: true
   roles:
