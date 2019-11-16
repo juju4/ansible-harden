@@ -3,7 +3,11 @@
 
 umask 022
 
+if [ $# != 0 ]; then
+rolesdir=$1
+else
 rolesdir=$(dirname $0)/..
+fi
 
 [ ! -d $rolesdir/juju4.ipv6 ] && git clone https://github.com/juju4/ansible-ipv6 $rolesdir/juju4.ipv6
 [ ! -d $rolesdir/juju4.redhat_epel ] && git clone https://github.com/juju4/ansible-redhat-epel $rolesdir/juju4.redhat_epel
