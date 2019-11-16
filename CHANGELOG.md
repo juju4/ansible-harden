@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - proxy support for kitchen-test through environment variables
 
 ### Changed
+- update inspec to 4.18
 - update ansible to 2.9.1/2.8.3
 - update ansible to 2.8.3/2.7.12
 - update lkrg to 0.7
