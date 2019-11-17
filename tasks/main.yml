@@ -103,6 +103,8 @@
 
 - include: vim-swapfiles.yml
 - include: llmnr-systemd.yml
+  when: >
+    not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8)
 
 - include: testing.yml
   when: harden_testing
