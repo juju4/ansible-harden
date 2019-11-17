@@ -82,9 +82,9 @@ iptables_rulesv4: /etc/iptables/rules.v4
 iptables_rulesv6: /etc/iptables/rules.v6
 
 testing_pkgs:
-  - ruby
-  - ruby-dev
-  - libffi-dev
+  - curl
+  - dnsutils
+
 python3_pkg: python3
 
 build_dev_tools:

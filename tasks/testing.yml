@@ -1,5 +1,10 @@
 ---
 
+- name: Testing | Ensure testing packages are present
+  package:
+     name: "{{ testing_pkgs }}"
+     state: present
+
 - block:
 #    - name: testing | Ensure ruby and dependencies are present
 #      package:

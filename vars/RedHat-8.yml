@@ -54,10 +54,8 @@ iptables_rulesv4: /etc/sysconfig/iptables
 iptables_rulesv6: /etc/sysconfig/ip6tables
 
 testing_pkgs:
-  - ruby
-  - ruby-devel
-  - rubygems
-  - libffi-devel
+  - curl
+  - bind-utils
 
 python3_pkg: python36
 
