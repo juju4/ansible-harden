@@ -56,6 +56,19 @@
       register: pkg_result
       until: pkg_result is success
 
+    - name: testing | accept inspec license - directory
+      file:
+        path: /etc/chef/accepted_licenses
+        state: directory
+        mode: '0755'
+
+    # https://github.com/chef/automate/issues/83
+    # https://github.com/chef/automate/pull/95 (alternative with ENV)
+    - name: testing | accept inspec license
+      file:
+        path: /etc/chef/accepted_licenses/inspec
+        state: touch
+
     - name: testing | run linux-baseline
 #      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
       shell: >
