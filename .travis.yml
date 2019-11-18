@@ -187,9 +187,8 @@ before_install:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip addr"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip route"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/resolv.conf"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- host www.google.com"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 www.google.com"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 8.8.8.8"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 www.google.com"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- curl -v https://packages.chef.io/"
 
 script:
@@ -218,9 +217,8 @@ after_failure:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip addr"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ip route"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- cat /etc/resolv.conf"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- host www.google.com"
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 www.google.com"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 8.8.8.8"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ping -c 1 www.google.com"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- curl -v https://packages.chef.io/"
   - ip addr
   - ip route
