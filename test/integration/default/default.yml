@@ -12,6 +12,7 @@
     - harden_auditd_log_all_connect: true
     - harden_testing: true
     - ipv6_config: 'harden'
+    - harden_fw: false
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
