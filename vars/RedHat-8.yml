@@ -42,6 +42,7 @@ harden_services_containers:
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/secure
+syslog_user: root
 
 harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
 harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'

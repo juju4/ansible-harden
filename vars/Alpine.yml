@@ -34,6 +34,7 @@ harden_services_containers: []
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/messages
+syslog_user: root
 
 ## Alpine3.4/ssh7.2
 harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'

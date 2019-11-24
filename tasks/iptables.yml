@@ -76,7 +76,12 @@
     - restart rsyslog
   when: ansible_os_family == "Alpine"
 - name: ensure iptables log directory exists
-  file: dest=/var/log/iptables state=directory mode=0755 owner=root group=root
+  file:
+    dest: /var/log/iptables
+    state: directory
+    mode: '0755'
+    owner: "{{ syslog_user }}"
+    group: root
 - name: add logrotate configuration for iptables.log
   template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644 validate='logrotate -dv %s'
   ignore_errors: true
