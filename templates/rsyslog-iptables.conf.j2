@@ -11,3 +11,15 @@
 {% else %}
 & stop
 {% endif %}
+:msg, contains, "ip6tables: " -/var/log/iptables/ip6tables.log
+{% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
+& ~
+{% else %}
+& stop
+{% endif %}
+:msg, contains, "ip6tables denied: " -/var/log/iptables/ip6tables.log
+{% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
+& ~
+{% else %}
+& stop
+{% endif %}

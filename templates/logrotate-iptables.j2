@@ -12,3 +12,15 @@
         invoke-rc.d rsyslog rotate > /dev/null
     endscript
 }
+/var/log/iptables/ip6tables.log {
+    rotate {{ harden_logrotate_days|int }}
+    daily
+    missingok
+    notifempty
+    delaycompress
+    compress
+    create 640 root adm
+    postrotate
+        invoke-rc.d rsyslog rotate > /dev/null
+    endscript
+}
