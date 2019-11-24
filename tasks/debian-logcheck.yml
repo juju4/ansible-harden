@@ -40,7 +40,6 @@
   lineinfile: dest=/etc/logcheck/logcheck.logfiles line={{ item }} backup=yes
   with_items: "{{ harden_logcheck_extra_logfiles }}"
 
-
 - name: check if logcheck patched
   stat: path=/usr/sbin/.logcheck-ansible-harden-patch
   register: lpatch
