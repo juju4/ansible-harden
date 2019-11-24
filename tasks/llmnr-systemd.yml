@@ -15,4 +15,6 @@
         regexp: '^LLMNR=.*'
         line: 'LLMNR=no'
         backup: yes
+      notify:
+        - restart systemd-resolved
   when: sysres.stat.exists
