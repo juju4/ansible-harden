@@ -22,7 +22,7 @@
     - juju4.redhat_epel
     - juju4.harden_sysctl
     - juju4.harden_mailserver
-    - juju4.ipv6
+    - { role: juju4.ipv6, when: not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8) }
     - juju4.auditd
     - kbrebanov.osquery
     - juju4.ntpclient
