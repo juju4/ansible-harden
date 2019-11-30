@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- RHEL/Centos8 support
+- RHEL/Centos8 support, packer config
 - proxy support for kitchen-test through environment variables
 
 ### Changed
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update ansible to 2.9.1/2.8.3
 - update ansible to 2.8.3/2.7.12
 - update lkrg to 0.7
+- fix ansible syntax for rsyslog tasks and templates
 
 ## [1.0.0] - 2019-07-20
 
