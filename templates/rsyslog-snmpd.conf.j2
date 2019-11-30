@@ -1,7 +1,0 @@
-{{ ansible_managed | comment }}
-:msg, contains, "snmpd" -/var/log/snmpd/snmpd.log
-{% if rsyslog_v.stdout is defined and rsyslog_v.stdout|string is version_compare('8.0', '<') %}
-& ~
-{% else %}
-& stop
-{% endif %}

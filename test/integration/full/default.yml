@@ -18,7 +18,6 @@
         - 49-bash2syslog.conf
         - rsyslog-ansible.conf
         - rsyslog-iptables.conf
-        - rsyslog-monit.conf
         - rsyslog-snmpd.conf
     - rsyslog_conf_d_extradirs:
         - { d: /var/log/ansible }
