@@ -3,6 +3,8 @@
 /var/log/osquery/osqueryd.results.log {
     rotate {{ harden_logrotate_days|int }}
     daily
+    dateext
+    dateformat {{ syslogclient_logrotate_datformat | default('-%Y-%m-%d.log') }}
     missingok
     notifempty
     delaycompress
