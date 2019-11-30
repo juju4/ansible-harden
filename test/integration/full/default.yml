@@ -21,9 +21,9 @@
         - rsyslog-monit.conf
         - rsyslog-snmpd.conf
     - rsyslog_conf_d_extradirs:
-        - /var/log/ansible
-        - /var/log/iptables
-        - /var/log/snmpd
+        - { d: /var/log/ansible }
+        - { d: /var/log/iptables }
+        - { d: /var/log/snmpd }
     - syslogclient_logrotate_syslog_template_extras:
         - logrotate-iptables
         - logrotate-osquery
