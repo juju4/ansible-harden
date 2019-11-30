@@ -148,9 +148,10 @@ before_install:
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X8" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- dnf -y install python3 python3-pip openssl-devel python36-devel libffi-devel \"@Development tools\"" || true'
   - '[ "X${distribution}" == "Xcentos" -a "X${version}" == "X8" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ln -s /usr/bin/pip3 /usr/bin/pip" || true'
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apk update" || true'
-  - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apk add python3 python3-dev openssl openssl-dev libffi-dev alpine-sdk ansible bash" || true'
+  - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- apk add python3 python3-dev openssl openssl-dev libffi-dev alpine-sdk bash" || true'
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip install --upgrade pip" || true
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip3 install ansible-lint" || true'
+  - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pip3 install ansible" || true'
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- install -d -m 777 /dev/shm" || true'
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- mount -t tmpfs shm /dev/shm -o mode=1777,nosuid,nodev" || true'
   - '[ "X${distribution}" == "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ln -s /usr/bin/python3 /usr/bin/python" || true'
