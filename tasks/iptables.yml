@@ -49,7 +49,7 @@
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
 - name: get rsyslog version
-  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
+  shell: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
   changed_when: false
   register: rsyslog_v
 - name: send iptables log to separate file through rsyslog
