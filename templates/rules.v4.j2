@@ -91,6 +91,7 @@
 -A INPUT -p tcp -s {{ hostvars[host].ansible_default_ipv4.address }} --dport 5666 -j ACCEPT
 {% endfor %}
 {% endif %}
+{% endif %}
 {% if harden_fw_monitoring_source is defined %}
 {% for host in harden_fw_monitoring_source %}
 -A INPUT -p tcp -s {{ host }} --dport 5666 -j ACCEPT
