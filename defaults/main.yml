@@ -68,6 +68,9 @@ harden_upgradeall: true
 harden_security_update_auto: true
 harden_use_containers_lxc: false
 
+harden_rsyslog_extradir:
+  - /var/log/ansible
+  - /var/log/snmpd
 harden_rsyslog_extraconf:
   - rsyslog-ansible.conf
   - rsyslog-snmpd.conf
