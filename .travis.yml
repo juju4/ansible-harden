@@ -9,24 +9,24 @@ env:
   - distribution: centos
     version: 8
     ansible_version: 2.9.1.0
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: centos
     version: 7
     ansible_version: 2.9.1.0
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 #  - distribution: centos
 #    version: 6
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.9.1.0
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: ubuntu
     version: 16.04
     ansible_version: 2.9.1.0
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
 #  - distribution: ubuntu
@@ -38,7 +38,7 @@ env:
   - distribution: alpine
     version: edge
     ansible_version: 2.9.1.0
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 #  - distribution: debian
 #    version: stretch
@@ -49,7 +49,7 @@ env:
   - distribution: ubuntu
     version: 18.04
     ansible_version: 2.8.7.0
-    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 # upcoming
 #  - distribution: ubuntu
@@ -187,7 +187,7 @@ before_install:
 script:
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --syntax-check /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml"
   - '[ "X${distribution}" != "Xalpine" ] && sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-lint /etc/ansible/roles/juju4.harden/tasks/main.yml" || true'
-  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become -v /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory --connection=local --become /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml ${ansible_extra_vars}"
 
 ## FIXME! Travis request: Build config file had a parse error: "mapping values are not allowed in this context at line 72 column 321".
 #  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ansible-playbook -i inventory /etc/ansible/roles/juju4.harden/test/integration/${suite}/default.yml --connection=local --become | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)"
