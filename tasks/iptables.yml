@@ -48,44 +48,6 @@
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
-- name: get rsyslog version
-  shell: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
-  changed_when: false
-  register: rsyslog_v
-- name: send iptables log to separate file through rsyslog
-  template:
-    src: rsyslog-iptables.conf.j2
-    dest: /etc/rsyslog.d/40-iptables.conf
-    mode: 0644
-    validate: 'rsyslogd -N2 -f %s'
-  notify:
-    - restart rsyslog
-  when: ansible_os_family != "Alpine"
-- name: Alpine | send iptables log to separate file through rsyslog
-  blockinfile:
-    path: /etc/rsyslog.conf
-    block: |
-      :msg, contains, "iptables: " -/var/log/iptables/iptables.log
-      & stop
-      :msg, contains, "iptables denied: " -/var/log/iptables/iptables.log
-      & stop
-    mode: '0644'
-    validate: 'rsyslogd -N2 -f %s'
-    backup: yes
-  notify:
-    - restart rsyslog
-  when: ansible_os_family == "Alpine"
-- name: ensure iptables log directory exists
-  file:
-    dest: /var/log/iptables
-    state: directory
-    mode: '0755'
-    owner: "{{ syslog_user }}"
-    group: root
-- name: add logrotate configuration for iptables.log
-  template: src=logrotate-iptables.j2 dest=/etc/logrotate.d/iptables mode=0644 validate='logrotate -dv %s'
-  ignore_errors: true
-
 - block:
     - name: Alpine | Load iptables rules - v4
       shell: >

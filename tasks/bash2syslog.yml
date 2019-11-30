@@ -52,17 +52,3 @@
       trap log2syslog DEBUG
       fi
   tags: bash
-
-- name: Check if rsyslog is present
-  stat: path=/etc/rsyslog.d
-  register: rsyslog
-- name: get rsyslog version
-  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
-  changed_when: false
-  register: rsyslog_v
-- name: add rsyslog configuration to filter to a specific file
-  template: src=49-bash2syslog.conf.j2 dest=/etc/rsyslog.d/49-bash2syslog.conf mode=0644 backup=yes
-  notify:
-    - restart rsyslog
-  when: rsyslog.stat.exists
-  tags: bash

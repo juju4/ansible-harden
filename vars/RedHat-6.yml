@@ -31,7 +31,6 @@ harden_services_containers: []
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/secure
-syslog_user: root
 
 harden_sshd_crypto_kex: 'diffie-hellman-group-exchange-sha256'
 harden_sshd_crypto_cipher: 'aes256-ctr,aes192-ctr,aes128-ctr'

@@ -14,6 +14,19 @@
     - harden_auditd_log_all_connect: true
     - harden_testing: true
     - ipv6_config: 'harden'
+    - rsyslog_conf_d:
+        - 49-bash2syslog.conf
+        - rsyslog-ansible.conf
+        - rsyslog-iptables.conf
+        - rsyslog-monit.conf
+        - rsyslog-snmpd.conf
+    - rsyslog_conf_d_extradirs:
+        - /var/log/ansible
+        - /var/log/iptables
+        - /var/log/snmpd
+    - syslogclient_logrotate_syslog_template_extras:
+        - logrotate-iptables
+        - logrotate-osquery
   pre_tasks:
     - set_fact:
         ntpclient_listen: [ '127.0.0.1', '::1' ]

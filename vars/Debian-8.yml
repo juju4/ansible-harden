@@ -57,7 +57,6 @@ harden_pkg_remove:
 
 syslog_mainfile: /var/log/syslog
 syslog_authfile: /var/log/auth.log
-syslog_user: root
 
 harden_services:
     - rng-tools
