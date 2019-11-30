@@ -61,12 +61,13 @@
       file: dest=/usr/sbin/.logcheck-ansible-harden-patch state=touch
   when: not lpatch.stat.exists
 
-- name: Add support for fail2ban date format to syslog-summary
-  lineinfile:
-    dest: /usr/bin/syslog-summary
-    line: '\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),'
-    insertbefore: '^\]$'
-    backup: yes
+# FIXME!
+#- name: Add support for fail2ban date format to syslog-summary
+#  lineinfile:
+#    dest: /usr/bin/syslog-summary
+#    line: '\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),'
+#    insertbefore: '^\]$'
+#    backup: yes
 
 - name: Review logcheck frequency
   replace:
