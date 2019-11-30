@@ -71,12 +71,16 @@
 -A FORWARD -p icmp --icmp-type 0 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
 -A FORWARD -p icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
 ## SMTP
+{% if harden_fw_smtp_ports is defined and harden_fw_smtp_ports != [] %}
+{% for port in harden_fw_smtp_ports %}
 {% if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
 {% for host in harden_fw_smtpservers %}
--A OUTPUT -p tcp -d {{ host }} --dport {{ harden_fw_smtp_port }} -j ACCEPT
+-A OUTPUT -p tcp -d {{ host }} --dport {{ port }} -j ACCEPT
 {% endfor %}
 {% else %}
--A OUTPUT -p tcp --dport {{ harden_fw_smtp_port }} -j ACCEPT
+-A OUTPUT -p tcp --dport {{ port }} -j ACCEPT
+{% endif %}
+{% endfor %}
 {% endif %}
 ## Monitoring
 {% if 0 == 1 %}
@@ -86,7 +90,6 @@
 {% for host in groups['monitoring'] %}
 -A INPUT -p tcp -s {{ hostvars[host].ansible_default_ipv4.address }} --dport 5666 -j ACCEPT
 {% endfor %}
-{% endif %}
 {% endif %}
 {% if harden_fw_monitoring_source is defined %}
 {% for host in harden_fw_monitoring_source %}
