@@ -6,9 +6,14 @@
 /var/crash$ VarDir
 /var/crash/.lock$ VarFile
 !/var/run
+/var/lib/apt/listchanges.db$ VarFile
 !/var/lib/dhcp
 !/var/lib/dhcp3
+/var/lib/grafana/grafana.db$ VarFile
+/var/lib/lxd/database/global/logs.db$ VarFile
 /var/lib/monit/state$ VarFile
+/var/lib/rkhunter/db/rkhunter.dat$ VarFile
+/var/lib/rkhunter/db/rkhunter.dat.old$ VarFile
 !/var/tmp
 /var/cache/apt/pkgcache.bin$ VarFile
 /var/cache/apt/srcpkgcache.bin$ VarFile
@@ -25,6 +30,7 @@
 !/var/lib/logcheck/offset\.var\.log\..*\.log
 !/var/spool/postfix
 /var/spool/openoffice/uno_packages/cache$ VarDir
+/var/spool/squid/swap.state.last-clean$ VarFile
 !/tmp
 !/dev/shm
 !/dev/char
