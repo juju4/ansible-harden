@@ -1,5 +1,13 @@
 ---
 
+# agetty(8), https://twitter.com/renard_0/status/1207077535013654528, https://jpmens.net/2019/12/18/ip-address-of-machine-on-console/
+- name: Configure /etc/issue
+  lineinfile:
+    dest: /etc/issue
+    regexp: "{{ item.re }}"
+    line: "{{ item.l }}"
+  with_items: "{{ harden_issue_lines | default([]) }}"
+
 - name: set better login.defs
   lineinfile: "dest=/etc/login.defs regexp={{ item.r }} line={{ item.l }}"
   with_items:

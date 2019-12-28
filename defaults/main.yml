@@ -55,6 +55,12 @@ harden_proxy_url: 'http://yourproxyaddress:proxyport'
 harden_proxy_user: ''
 harden_proxy_pass: ''
 
+# Custom /etc/issue. lines to be added.
+harden_issue_lines:
+  - { re: '^Kernel.*', l: 'Kernel: \r' }
+  - { re: '^IPv4.*', l: 'IPv4: \4{eth0}' }
+  - { re: '^IPv6.*', l: 'IPv6: \6{eth0}' }
+
 harden_journald_systemmaxuse: '1024M'
 harden_logrotate_days: 90
 

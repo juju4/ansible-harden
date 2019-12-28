@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - RHEL/Centos8 support, packer config
 - proxy support for kitchen-test through environment variables
+- custom /etc/issue
 
 ### Changed
 - update inspec to 4.18
