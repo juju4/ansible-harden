@@ -21,7 +21,6 @@ check process rsyslog
 {% endif %}
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert
-  if loadavg(15min) greater than 10 for 50 cycles then alert
   if 5 restarts with 5 cycles then alert
   depends on rsyslog_binary
   depends on rsyslog_conf

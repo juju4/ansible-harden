@@ -12,7 +12,6 @@ check process auditd
 {% endif %}
   if cpu > 90% for 15 cycles then alert
   if totalmem > 90% for 15 cycles then alert
-  if loadavg(15min) greater than 10 for 50 cycles then alert
   if 5 restarts with 5 cycles then alert
   depends on auditd_binary
   depends on auditd_conf
