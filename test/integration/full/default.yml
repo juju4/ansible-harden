@@ -16,9 +16,10 @@
     - ipv6_config: 'harden'
     - rsyslog_conf_d:
         - 49-bash2syslog.conf
-        - rsyslog-ansible.conf
-        - rsyslog-iptables.conf
-        - rsyslog-snmpd.conf
+        # must be before 50-* else duplicate in main syslog/messages and separate
+        - 30-ansible.conf
+        - 30-iptables.conf
+        - 30-snmpd.conf
     - rsyslog_conf_d_extradirs:
         - { d: /var/log/ansible }
         - { d: /var/log/iptables }
