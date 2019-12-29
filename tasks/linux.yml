@@ -86,24 +86,6 @@
     harden_linux_disable_bugreport and
     not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-#journalctl --disk-usage
-#journalctl --verify
-#journalctl --vacuum-size=800M
-- block:
-    - name: configure linux journal
-      ini_file:
-        dest: /etc/systemd/journald.conf
-        section: "{{ item.s }}"
-        option: "{{ item.o }}"
-        value: "{{ item.v }}"
-        backup: yes
-      with_items:
-        - { s: 'Journal', o: 'SystemMaxUse', v: "{{ harden_journald_systemmaxuse }}" }
-#        - { s: 'Journal', o: 'ForwardToSyslog', v: 'yes' }
-      notify:
-        - restart journald
-  when: ansible_service_mgr == "systemd"
-
 ## FIXME! firewall rules
 
 - include: iptables.yml

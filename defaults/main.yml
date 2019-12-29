@@ -61,9 +61,6 @@ harden_issue_lines:
   - { re: '^IPv4.*', l: 'IPv4: \4{eth0}' }
   - { re: '^IPv6.*', l: 'IPv6: \6{eth0}' }
 
-harden_journald_systemmaxuse: '1024M'
-harden_logrotate_days: 90
-
 harden_disable_usb: true
 harden_enable_iommu_force: false
 
