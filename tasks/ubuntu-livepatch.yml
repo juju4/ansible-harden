@@ -17,13 +17,9 @@
   until: pkg_result is success
 
 - name: Ubuntu | Install livepatch
-#  snap:
-#    name: "canonical-livepatch"
-#    classic: no
-  command: "snap install canonical-livepatch"
-  args:
-    creates: /var/lib/snapd/snaps/canonical-livepatch_81.snap
-  ignore_errors: true
+  snap:
+    name: "canonical-livepatch"
+    classic: no
 
 - name: Ubuntu | Check livepatch status
   command: "/snap/bin/canonical-livepatch status --verbose"
