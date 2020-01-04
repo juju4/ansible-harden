@@ -6,7 +6,7 @@
     dest: '/etc/apt/sources.list'
     regexp: '^# deb http://(.*)/ubuntu([/]*) {{ ansible_distribution_release }}-backports'
     replace: 'deb http://\1/ubuntu\2 {{ ansible_distribution_release }}-backports'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   when: ansible_distribution == "Ubuntu"
 
 ## some providers haven't the commented line

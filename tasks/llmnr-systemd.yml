@@ -14,7 +14,7 @@
         dest: /etc/systemd/resolved.conf
         regexp: '^LLMNR=.*'
         line: 'LLMNR=no'
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
       notify:
         - restart systemd-resolved
   when: sysres.stat.exists

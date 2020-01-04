@@ -2,12 +2,20 @@
 
 - block:
     - name: enable fail2ban for sshd
-      template: src=fail2ban-jail.d-sshd.conf dest=/etc/fail2ban/jail.d/sshd.conf mode=0644 backup=yes
+      template:
+        src: fail2ban-jail.d-sshd.conf
+        dest: /etc/fail2ban/jail.d/sshd.conf
+        mode: 0644
+        backup: "{{ harden_backup | default(false) }}"
       notify:
         - restart fail2ban
 
     - name: configure fail2ban for snmpd
-      template: "src={{ item.t }} dest={{ item.d }} mode=0644 backup=yes"
+      template:
+        src: "{{ item.t }}"
+        dest: "{{ item.d }}"
+        mode: '0644'
+        backup: "{{ harden_backup | default(false) }}"
       with_items:
         - { t: 'fail2ban-filter.d-snmpd.conf', d: '/etc/fail2ban/filter.d/snmpd.conf' }
         - { t: 'fail2ban-jail.d-snmpd.conf', d: '/etc/fail2ban/jail.d/snmpd.conf' }
@@ -21,7 +29,7 @@
         option: ignoreip
         value: "{{ harden_fail2ban_ignoreip }}"
         mode: '0640'
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
         create: yes
       notify:
         - restart fail2ban
@@ -34,7 +42,7 @@
         option: ignoreip
         value: "{{ fail2ban_ignoreips | join(' ') }}"
         mode: '0640'
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
         create: yes
       notify:
         - restart fail2ban

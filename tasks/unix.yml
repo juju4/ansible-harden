@@ -34,6 +34,7 @@
     marker: "### {mark} ANSIBLE MANAGED BLOCK: shell timeout ###"
     content: |
       readonly TMOUT={{ harden_shell_timeout | default(3600) }}
+    backup: "{{ harden_backup | default(false) }}"
   tags: bash
 
 - name: configure motd
@@ -41,7 +42,7 @@
     src: "{{ harden_motd_template }}"
     dest: "{{ item }}"
     mode: '0644'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   with_items:
     - /etc/motd
     - /etc/issue.net

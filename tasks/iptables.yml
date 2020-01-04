@@ -7,7 +7,7 @@
       template:
         src: "{{ harden_fw_template }}"
         dest: "{{ iptables_rulesv4 }}"
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
         owner: '0'
         group: '0'
         mode: '0644'
@@ -31,7 +31,7 @@
       template:
         src: "{{ harden_fw6_template }}"
         dest: "{{ iptables_rulesv6 }}"
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
         owner: '0'
         group: '0'
         mode: '0644'

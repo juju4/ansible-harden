@@ -51,7 +51,7 @@
     mode: '0600'
     owner: '0'
     group: '0'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
     validate: 'sshd -f %s -T'
   notify:
     - restart sshd
@@ -64,7 +64,7 @@
     mode: '0600'
     owner: '0'
     group: '0'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
     validate: 'sshd -f %s -T -C user=nobody'
   notify:
     - restart sshd
@@ -79,17 +79,24 @@
   changed_when: false
   register: moduli
 
-- name: Clean /etc/ssh/moduli
-  # just remove weak ones
-  shell: |
-    set -o pipefail
-    awk '$5 >= 2000' /etc/ssh/moduli > /etc/ssh/moduli.strong
-    mv /etc/ssh/moduli.strong /etc/ssh/moduli
-  args:
-    executable: /bin/bash
+- block:
+    - name: Clean /etc/ssh/moduli
+      # just remove weak ones
+      shell: |
+        set -o pipefail
+        awk '$5 >= 2000' /etc/ssh/moduli > /etc/ssh/moduli.strong
+      args:
+        executable: /bin/bash
+        creates: /etc/ssh/moduli.strong
+    - name: Use /etc/ssh/moduli.strong
+      copy:
+        src: /etc/ssh/moduli.strong
+        dest: /etc/ssh/moduli
+        mode: '0644'
+        remote_src: true
   # re-generate. much longer
 #  shell: >
 #    ssh-keygen -G /etc/ssh/moduli.all -b 4096 &&
 #    ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all &&
 #    mv /etc/ssh/moduli.safe /etc/ssh/moduli"
-  when: moduli.stdout != 0
+  when: moduli.stdout|int != 0

@@ -23,6 +23,7 @@ harden_aide_extra_conf:
   - 99_aide_local_composer
   - 99_aide_local_osquery
   - 99_aide_local_netdata
+  - 99_aide_local_prometheus
 harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
@@ -54,6 +55,15 @@ harden_proxy: false
 harden_proxy_url: 'http://yourproxyaddress:proxyport'
 harden_proxy_user: ''
 harden_proxy_pass: ''
+
+harden_cap_test_bin: /usr/sbin/tcpdump
+harden_cap_test_bincap: 'cap_net_admin+eip,cap_net_raw+ep'
+harden_cap_list:
+  - { bin: /bin/ping, cap: 'cap_net_raw+pe' }
+  # - { bin: /bin/ping6, cap: 'cap_net_raw+pe' }
+  - { bin: /usr/bin/traceroute6.iputils, cap: 'cap_net_raw+pe' }
+  - { bin: /usr/bin/mtr, cap: 'cap_net_raw+pe' }
+  - { bin: /usr/sbin/tcpdump, cap: 'cap_net_raw,cap_net_admin=eip' }
 
 # Custom /etc/issue. lines to be added.
 harden_issue_lines:

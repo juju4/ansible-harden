@@ -17,11 +17,11 @@
     - block:
 ## FIXME! patch module not idempotent so adding file marker
         - name: Patch cron.daily/aide to rotate database
-          patch: >
-            src=/root/patch-cron.daily-aide
-            dest=/etc/cron.daily/aide
-            remote_src=yes
-            backup=yes
+          patch:
+            src: /root/patch-cron.daily-aide
+            dest: /etc/cron.daily/aide
+            remote_src: yes
+            backup: "{{ harden_backup | default(false) }}"
         - file: dest=/etc/cron.daily/.aide-harden-patch state=touch
       when: not aidepatch.stat.exists
     - name: Review Aide configuration
@@ -57,7 +57,11 @@
       set_fact:
         aide_bin: aide
     - name: review aide settings
-      replace: "dest=/etc/aide.conf regexp={{ item.re }} replace={{ item.rep }} backup=yes"
+      replace:
+        dest: /etc/aide.conf
+        regexp: "{{ item.re }}"
+        replace: "{{ item.rep }}"
+        backup: "{{ harden_backup | default(false) }}"
       with_items:
         - { re: '^gzip_dbout=.*', rep: 'gzip_dbout=no' }
         - { re: '^database=file:.*', rep: 'database=file:@@{DBDIR}/aide.db' }

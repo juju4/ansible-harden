@@ -103,7 +103,7 @@
   template:
     src: "rhel-{{ item }}.j2"
     dest: "/etc/pam.d/{{ item }}"
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   with_items:
     - password-auth-local
     - system-auth-local

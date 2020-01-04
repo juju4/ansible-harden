@@ -5,4 +5,4 @@
     src: "{{ harden_ssh_template }}"
     dest: /etc/ssh/ssh_config
     mode: '0644'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"

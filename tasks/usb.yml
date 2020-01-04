@@ -18,7 +18,7 @@
     dest: /etc/init.d/udev
     regexp: ' /sbin/udevd$'
     replace: ' /sbin/udevd --resolve-names=never'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   when: ansible_os_family == 'Alpine'
 
 - name: USB | add restriction rules
@@ -26,7 +26,7 @@
     src: 000_usbfilter.rules.j2
     dest: /etc/udev/rules.d/000_usbfilter.rules
     mode: '0644'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   notify:
     - reload udev
 

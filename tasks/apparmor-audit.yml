@@ -14,7 +14,7 @@
     url: https://raw.githubusercontent.com/maestretti/AWS_IR/master/apparmor.audit
     dest: /etc/apparmor.d/apparmor.audit
     mode: '0644'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
     checksum: 'sha256:d97de7268381e779a1783f9b615437d8939bd21ae819c522a049d370c9ca40df.'
   register: apparmoraudit
   notify:

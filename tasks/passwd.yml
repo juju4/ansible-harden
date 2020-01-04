@@ -46,7 +46,7 @@
         dest: /etc/security/pwquality.conf
         regexp: "{{ item.re }}"
         line: "{{ item.l }}"
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
       with_items:
         - { re: '^dcredit=.*', l: 'dcredit=1' }
         - { re: '^ucredit=.*', l: 'ucredit=1' }
@@ -57,5 +57,5 @@
         dest: /etc/security/pwquality.conf
         regexp: '^minlen=.*'
         line: "minlen={{ harden_rhel_pwquality_minlen | default(16) }}"
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7

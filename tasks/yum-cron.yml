@@ -15,7 +15,7 @@
     dest: /etc/yum/yum-cron-hourly.conf
     regexp: "{{ item.re }}"
     replace: "{{ item.rep }}"
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   with_items:
     - { re: '^update_cmd = .*', rep: 'update_cmd = security' }
     - { re: '^update_messages = .*', rep: 'update_messages = yes' }

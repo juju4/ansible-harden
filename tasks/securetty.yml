@@ -5,7 +5,7 @@
     dest: /etc/securetty
     regexp: "{{ item }}"
     state: absent
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   with_items:
     - '^hvc*'
     - '^hvs*'

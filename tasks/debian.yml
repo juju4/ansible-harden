@@ -58,8 +58,11 @@
 ## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
 - block:
     - name: Ubuntu | Disable automatic report of debsecan
-      replace: dest=/etc/default/debsecan regexp='^REPORT=.*' replace='REPORT=false' backup=yes
-#      replace: dest=/etc/default/debsecan regexp='^SUITE=.*' replace='SUITE=sid' backup=yes
+      replace:
+        dest: /etc/default/debsecan
+        regexp: '^REPORT=.*'
+        replace: 'REPORT=false'
+        backup: "{{ harden_backup | default(false) }}"
     - name: Ubuntu | Disable debsecan cron
       replace:
         dest: /etc/cron.d/debsecan
@@ -71,7 +74,7 @@
     dest: /etc/default/debsecan
     regexp: '^SUITE=.*'
     replace: 'SUITE={{ ansible_distribution_release }}'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   when: ansible_distribution == 'Debian'
 
 ## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
@@ -83,36 +86,31 @@
 ## FIXME! not idempotent, https://github.com/ansible/ansible/issues/18911
 ## Not setpcap in unprivileged lxc container,
 ##      https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
+- name: Check if capabilities are set
+  shell: >
+    getcap {{ harden_cap_test_bin | default('/usr/sbin/tcpdump') }} | awk -F' = ' '{ gsub(" ", ",", $2); print $2 }'
+  register: getcap1
+  changed_when: false
+  ignore_errors: true
+- debug: var=getcap1.stdout
 - block:
     - debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
       capabilities:
-        path: "{{ item }}"
+        path: "{{ item.bin }}"
         capability: 'cap_net_raw+pe'
         state: present
-      with_items:
-        - /bin/ping
-        - /bin/ping6
-        - /usr/bin/traceroute6.iputils
-        - /usr/bin/mtr
-      ignore_errors: true
+      with_items: "{{ harden_cap_list }}"
     - name: ensure permissions are not setuid - using capabilities
       file:
-        path: "{{ item }}"
-        mode: '0755'
-      with_items:
-        - /bin/ping
-        - /bin/ping6
-        - /usr/bin/traceroute6.iputils
-        - /usr/bin/mtr
-      ignore_errors: true
-    - name: Capabilities Hardening - tcpdump
-      capabilities: "path=/usr/sbin/tcpdump capability='cap_net_raw,cap_net_admin=eip' state=present"
+        path: "{{ item.bin }}"
+        mode: "{{ item.mode | default('0755') }}"
+      with_items: "{{ harden_cap_list }}"
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
-
+    and getcap1.stdout is defined and getcap1.stdout != harden_cap_test_bincap
 
 - name: check if /etc/init.d/rc exists
   stat: path=/etc/init.d/rc

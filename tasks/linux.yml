@@ -35,7 +35,11 @@
       stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
-      replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1nousb\2' backup=yes
+      replace:
+        dest: /etc/default/grub
+        regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
+        replace: '\1nousb\2'
+        backup: "{{ harden_backup | default(false) }}"
     ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: harden_disable_usb is defined and harden_disable_usb
@@ -46,7 +50,11 @@
       stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
-      replace: dest=/etc/default/grub regexp='GRUB_CMDLINE_LINUX="(.*)nousb(.*)"' replace='\1\2' backup=yes
+      replace:
+        dest: /etc/default/grub
+        regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
+        replace: '\1\2'
+        backup: "{{ harden_backup | default(false) }}"
     ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: not (harden_disable_usb is defined and harden_disable_usb)
@@ -128,7 +136,7 @@
         dest: /etc/rsyslog.conf
         regexp: '^\$IncludeConfig /etc/.*'
         line: '$IncludeConfig /etc/rsyslog.d/*.conf'
-        backup: yes
+        backup: "{{ harden_backup | default(false) }}"
   when: ansible_distribution == "Alpine"
 
 - name: Disable unused filesystems modules
@@ -136,7 +144,7 @@
     src: "{{ harden_modprobe_template }}"
     dest: /etc/modprobe.d/dev-sec.conf
     mode: '0644'
-    backup: yes
+    backup: "{{ harden_backup | default(false) }}"
   when: harden_modprobe_template is defined
 
 - include: lkrg.yml

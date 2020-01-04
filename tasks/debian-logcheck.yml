@@ -37,7 +37,10 @@
     - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
 
 - name: Add log files for logcheck to check
-  lineinfile: dest=/etc/logcheck/logcheck.logfiles line={{ item }} backup=yes
+  lineinfile:
+    dest: /etc/logcheck/logcheck.logfiles
+    line: "{{ item }}"
+    backup: "{{ harden_backup | default(false) }}"
   with_items: "{{ harden_logcheck_extra_logfiles }}"
 
 - name: check if logcheck patched
@@ -45,11 +48,11 @@
   register: lpatch
 - block:
     - name: Patch logcheck to do replacement
-      patch: >
-        src=patch-logcheck-replace
-        dest=/usr/sbin/logcheck
-        remote_src=no
-        backup=yes
+      patch:
+        src: patch-logcheck-replace
+        dest: /usr/sbin/logcheck
+        remote_src: no
+        backup: "{{ harden_backup | default(false) }}"
       ignore_errors: true
     - name: Backup patched logcheck
       copy:
