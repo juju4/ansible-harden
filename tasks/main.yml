@@ -26,7 +26,7 @@
   file:
     dest: "{{ install_archives }}"
     state: directory
-    mode: '0755'
+    mode: '0700'
 
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
