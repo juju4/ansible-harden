@@ -19,7 +19,11 @@
       export HISTIGNORE=
       export HISTSIZE={{ harden_bash_histsize | default(5000) }}
       export HISTTIMEFORMAT="{{ harden_bash_histtimeformat | default('%a %b %Y %T %z') }}"
-      export PS1="{{ harden_bash_ps1 | default('[\A] \u@\h {\W}\\$ ') }}"
+      if [ "`id -u`" -eq 0 ]; then
+        export PS1="{{ harden_bash_ps1_root | default('[\A] \u@\h {\W}\\# ') }}"
+      else
+        export PS1="{{ harden_bash_ps1 | default('[\A] \u@\h {\W}\\$ ') }}"
+      fi
       if [ "X$SHELL" = '/bin/bash' ]; then
       typeset -r HISTCONTROL
       typeset -r HISTFILE
