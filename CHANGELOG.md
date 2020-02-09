@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2020-02-01
+
 ### Added
 - RHEL/Centos8 support, packer config
 - proxy support for kitchen-test through environment variables
