@@ -1,0 +1,7 @@
+/var/spool/squid$ VarDir
+/var/spool/squid/netdb.state$ VarFile
+/var/spool/squid/ad_block.txt$ VarFile
+!/var/lib/squid/ssl_db/certs
+/var/lib/squid/ssl_db/index.txt$ VarFile
+/var/lib/squid/ssl_db/size$ VarFile
+/var/lib/sarg$ VarDir

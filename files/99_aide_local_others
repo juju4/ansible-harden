@@ -9,6 +9,7 @@
 /var/lib/apt/listchanges.db$ VarFile
 !/var/lib/dhcp
 !/var/lib/dhcp3
+/var/lib/grafana$ VarDir
 /var/lib/grafana/grafana.db$ VarFile
 /var/lib/lxd/database/global/logs.db$ VarFile
 /var/lib/monit/state$ VarFile
@@ -24,10 +25,13 @@
 !/var/cache/fontconfig
 !/var/cache/nfdump
 !/var/cache
-!/var/lib/ucf/cache
 !/var/lib/gdm/\.fontconfig/.*\.cache-([0-9]+)$
 !/var/lib/lightdm/.fontconfig
 !/var/lib/logcheck/offset\.var\.log\..*\.log
+/var/lib/ucf$ VarDir
+!/var/lib/ucf/cache
+!/var/lib/ucf/hashfile*
+!/var/lib/ucf/registry*
 !/var/spool/postfix
 /var/spool/openoffice/uno_packages/cache$ VarDir
 /var/spool/squid/swap.state.last-clean$ VarFile
@@ -47,6 +51,8 @@
 /etc/cups/printers.conf$ VarInode
 /etc/cups/printers.conf.O$ VarInode
 /etc/motd$ VarFile
+/etc/openvpn/ipp.txt$ VarFile
+/etc/openvpn/openvpn-status.log$ VarFile
 /etc/samba$ VarDirTime
 /etc/samba/dhcp.conf$ VarInode
 /etc/snort/rules/.*\.rules VarFile
@@ -144,6 +150,11 @@
 /var/lib/arpwatch/arp.dat$ VarFile
 /var/lib/arpwatch/arp.dat-$ VarFile
 /var/lib/bindgraph/bindgraph.rrd$ VarFile
+/opt/dnscrypt-proxy2/linux-x86_64$ VarDir
+/opt/dnscrypt-proxy2/linux-x86_64/public-resolvers.md$ VarFile
+/opt/dnscrypt-proxy2/linux-x86_64/public-resolvers.md.minisig$ VarFile
+/opt/dnscrypt-proxy2/linux-x86_64/relays.md$ VarFile
+/opt/dnscrypt-proxy2/linux-x86_64/relays.md.minisig$ VarFile
 ## 201405 plunk
 #!/opt/splunk/var/lib/splunk/_internaldb/db
 #!/opt/splunk/var/lib/splunk/_introspection/db
@@ -169,8 +180,11 @@
 /var/backups/@@{BACKUPFILES7R}\.[3-6]\.gz$ SerMemberLog
 /var/backups/@@{BACKUPFILES7R}\.7\.gz$ HiSerMemberLog
 /var/lib/snapd$ VarDirTime
-/var/lib/snapd/state.json$ InodeData
+/var/lib/snapd/state.json$ VarFile
 /var/lib/systemd/timers/stamp-apt-daily.timer$ VarFile
 /var/lib/systemd/timers/stamp-snapd.refresh.timer$ VarFile
+/var/lib/systemd/timers/stamp-motd-news.timer$ VarFile
+/var/lib/systemd/timers/stamp-fstrim.timer$ VarFile
 ## 201603 mailing-list: [Aide] Monitoring authorized_keys = v0.16b1+ (xenial has 0.16~a2.git20130520-3)
 #/home/.*/.ssh/authorized_keys
+/var/snap/canonical-livepatch/common/last-check$ VarFile
