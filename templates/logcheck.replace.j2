@@ -1,4 +1,4 @@
-{{ ansible_managed | comment }}
+#{{ ansible_managed | comment }}
 # /etc/logcheck/logcheck.replace
 s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
 s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Failed \1 for \2 from \3 port N ssh2/
@@ -12,6 +12,7 @@ s/sshd\[[0-9]*\]: Connection reset by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Conn
 s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from \1 port N on \2 port \3/
 #s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from <IP> port N on \2 port \3/
 s/sshd\[[0-9]*\]: Disconnected from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 port N/
+s/sshd\[[0-9]*\]: Disconnected from user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 \2 port N/
 s/sshd\[[0-9]*\]: Received disconnect from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Received disconnect from \1 port N/
 s/sshd\[[0-9]*\]: Starting session: command for \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd: Starting session: command for \1 from \2 port N/
 s/sshd\[[0-9]*\]: Starting session: command on \(.*\) for \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd: Starting session: command on \1 for \2 from \3 port N/
@@ -25,6 +26,8 @@ s/sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]
 s/sshd\[[0-9]*\]: fatal: no matching mac found: client .* \[preauth\]/sshd: fatal: no matching mac found: client XXXXXX [preauth]/
 s/sshd\[[0-9]*\]: message repeated [0-9]* times: \[ Starting session: command for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]*\]/sshd: message repeated N times: [ Starting session: command for \1 from \2 port N]/
 s/sshd\[[0-9]*\]: error: maximum authentication attempts exceeded for root from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: error: maximum authentication attempts exceeded for root from \1 port N ssh2/
+s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
+s/sshd\[[0-9]*\]: Starting session: subsystem '\(.*\)' for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* id [0-9]*/sshd: Starting session: subsystem '\1' for \2 from \3 port N id X/
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
@@ -93,3 +96,5 @@ s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" le
 ### digitalocean
 s/do-agent\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* /do-agent: YYY\/MM\/DD HH:MM:SS /
 
+s/canonical-livepatch: Retrying request in [0-9]* seconds./canonical-livepatch: Retrying request in X seconds./
+s/zed: eid=[0-9]* class=\(.*\) pool_guid=0x[0-9A-F]*/zed: eid=X class=\1 pool_guid=0xNNNNNNN/
