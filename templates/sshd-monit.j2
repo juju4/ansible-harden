@@ -32,3 +32,5 @@ check file sshd_conf with path /etc/ssh/sshd_config
   include /etc/monit/templates/rootrc
 {% endif %}
   group sshd
+  if not exist then alert
+  if changed checksum then alert
