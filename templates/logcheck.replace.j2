@@ -28,6 +28,8 @@ s/sshd\[[0-9]*\]: message repeated [0-9]* times: \[ Starting session: command fo
 s/sshd\[[0-9]*\]: error: maximum authentication attempts exceeded for root from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: error: maximum authentication attempts exceeded for root from \1 port N ssh2/
 s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
 s/sshd\[[0-9]*\]: Starting session: subsystem '\(.*\)' for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* id [0-9]*/sshd: Starting session: subsystem '\1' for \2 from \3 port N id X/
+s/sshd\[[0-9]*\]: Connection closed by authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by authenticating user \1 \2 port X/
+s/systemd: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
@@ -92,9 +94,11 @@ s/osqueryd\[[0-9]*\]: I1221 [0-9]*:[0-9]*:[0-9]*\.[0-9]* 25046 rocksdb.cpp:133\]
 s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=info msg="libcontainerd: new containerd process, pid: [0-9]*"/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=info msg="libcontainerd: new containerd process, pid: N"/
 s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=error msg="containerd: deleting container" error="exit status 1: \"container .* does not exist\\\\none or more of the container deletions failed\\\\n\\""/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=error msg="containerd: deleting container" error="exit status 1: \"container XXXXXXXX does not exist\\\\none or more of the container deletions failed\\\\n\\""/
 s/docker\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=/docker: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=/
+s/containerd\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z" level=/containerd: time="YYYY-MM-DDTHH:MM:SS.NNNNNNZ" level=/
 
 ### digitalocean
 s/do-agent\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* /do-agent: YYY\/MM\/DD HH:MM:SS /
 
 s/canonical-livepatch: Retrying request in [0-9]* seconds./canonical-livepatch: Retrying request in X seconds./
 s/zed: eid=[0-9]* class=\(.*\) pool_guid=0x[0-9A-F]*/zed: eid=X class=\1 pool_guid=0xNNNNNNN/
+s/grafana-server\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+([0-9]*)" level=/grafana-server: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
