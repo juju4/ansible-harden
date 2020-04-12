@@ -40,5 +40,5 @@
     - kbrebanov.osquery
     - juju4.ntpclient
     - juju4.syslogclient
-    - juju4.falco
+    - { role: juju4.falco, when: not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8) }
     - juju4.harden
