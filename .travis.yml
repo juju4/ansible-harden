@@ -20,6 +20,7 @@ env:
 #    version: 6
   - distribution: ubuntu
     version: 20.04
+    release: focal
     ansible_version: 2.9.1.0
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
@@ -101,7 +102,7 @@ before_install:
   - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] || lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}-nossh"'
   - 'sudo -E su $USER -c "[ ${distribution} == alpine ] && lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}" || true'
   - 'sudo -E su $USER -c "[ ${distribution} == debian ] && lxc image copy images:${distribution}/${version}/amd64 local: --alias=${distribution}-${version}" || true'
-  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || true'
+  - 'sudo -E su $USER -c "[ ${distribution} == ubuntu ] && lxc image copy ubuntu:${version} local: --alias=${distribution}-${version}" || lxc image copy images:${distribution}/${release}/amd64 local: --alias=${distribution}-${version}" || true'
   - sudo -E su $USER -c "lxc image list"
 ## configure network
   - ifconfig -a
