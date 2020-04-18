@@ -1,0 +1,103 @@
+---
+
+ssh_svc: ssh
+aide_bin: aide.wrapper
+auditd_pkg: auditd
+immutable_testfile: /etc/init.d/rc
+
+harden_pkg:
+    - openssh-server
+    - rsyslog
+#    - harden       ## exist in precise/trusty/vivid, not wily+
+    - unzip
+    - rkhunter
+    - chkrootkit
+    - openntpd
+    - acct
+    - aide
+    - logcheck
+    - syslog-summary
+    - apparmor-profiles
+    - apparmor-utils
+    - acl
+    - sysstat
+    - systemtap-sdt-dev
+    - iotop
+    - sysdig
+    - tcpdump
+    - libcap2-bin
+    - ldnsutils
+    - update-notifier-common
+    - gnupg
+    - libpam-cracklib
+    - debsums
+#    - apt-show-versions
+    - lynis
+    - libpam-tmpdir
+    - debian-goodies
+    - debsecan
+    - fail2ban
+#    - linux-tools-generic   # perf /FlameGraph
+    - rng-tools
+    - iptables-persistent
+    - netfilter-persistent
+    - apt-transport-https
+## requested by https://github.com/awailly/cis-ubuntu-ansible
+    - aptitude
+## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
+#    - tracker-utils
+    - systemtap
+    - sudo
+    - ecryptfs-utils
+#    - apt-listbugs
+    - apt-listchanges
+    - libopenscap8
+    - ssg-debderived
+    - ssg-applications
+#    - libpam-pwquality     # conflicting with cracklib
+
+harden_pkg_remove:
+    - avahi-daemon
+    - xinetd
+    - inetd
+    - telnet-server
+    - rsh-server
+    - open-iscsi
+
+syslog_mainfile: /var/log/syslog
+syslog_authfile: /var/log/auth.log
+
+harden_services:
+    - rng-tools
+harden_services_containers:
+    - psacct
+    - auditd
+
+harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
+harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
+
+monitrc: /etc/monit/monitrc
+monit_confdir: /etc/monit/conf-available
+
+iptables_rulesv4: /etc/iptables/rules.v4
+iptables_rulesv6: /etc/iptables/rules.v6
+
+testing_pkgs:
+  - curl
+  - dnsutils
+
+python3_pkg: python3
+
+build_dev_tools:
+  - gcc
+  - g++
+  - make
+
+lkrg_dep_pkgs:
+  - "linux-headers-{{ ansible_kernel }}"
+  - make
+  - gcc
+
+inspec_url: https://packages.chef.io/files/stable/inspec/4.18.39/ubuntu/18.04/inspec_4.18.39-1_amd64.deb
+inspec_hash: 'sha256:303a8dbe90dfa45857dd315ad3f970ddd528a46efcd25bf27dc5affd03e35005'

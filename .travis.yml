@@ -19,6 +19,11 @@ env:
 #  - distribution: centos
 #    version: 6
   - distribution: ubuntu
+    version: 20.04
+    ansible_version: 2.9.1.0
+    ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
+  - distribution: ubuntu
     version: 18.04
     ansible_version: 2.9.1.0
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
