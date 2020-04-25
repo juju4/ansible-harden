@@ -36,7 +36,7 @@
 
       "cloud_environment_name": "AzurePublicCloud",
       "location": "eastus",
-      "vm_size": "Standard_D1",
+      "vm_size": "Standard_D1_v2",
 
       "managed_image_resource_group_name": "Testing",
       "managed_image_name": "juju4.harden-bionic-{{isotime \"2006-01-02\"}}",
