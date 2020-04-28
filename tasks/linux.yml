@@ -89,6 +89,10 @@
         not (ansible_os_family == 'RedHat' and
               (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
             )
+        and not (
+              (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 20) and
+              (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
+            )
   when: >
     ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and
     harden_linux_disable_bugreport and
