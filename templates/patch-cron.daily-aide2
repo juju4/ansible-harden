@@ -1,0 +1,17 @@
+--- /etc/cron.daily/aide.orig   2020-04-28 01:09:18.970962619 +0000
++++ /etc/cron.daily/aide        2020-04-28 01:11:18.736770853 +0000
+@@ -776,11 +776,13 @@
+     printf >> "$POSTRUNLOG" "no significant changes detected.\\n"
+ fi
+
+-if [ "$COPYNEWDB" = "yes" ]; then
++if [ "$COPYNEWDB" = "yes" -o "$COPYNEWDB" = "rotate" ]; then
+     COPYDB=1
+ fi
+
+ if [ "$COPYDB" = "1" ] && [ "$COMMAND" = "update" ]; then
++    [ "$COPYNEWDB" = "rotate" ] && savelog -c {{ harden_aidedb_rotatedays }} "$DATABASE" > /dev/null
++#    setfacl -m "u:_backup:r--" -- $DATABASE*
+     cp -f "$DATABASE_OUT" "$DATABASE"
+     printf >> "$POSTRUNLOG" "output database %s was copied to %s as requested by cron job configuration\\n" "$DATABASE_OUT" "$DATABASE"
+ fi

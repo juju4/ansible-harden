@@ -10,7 +10,10 @@
       set_fact:
         aide_bin: aide.wrapper
     - name: copy patch for aide
-      template: src=patch-cron.daily-aide dest=/root/patch-cron.daily-aide mode=0400
+      template:
+        src: "{{ aide_hids_cron_patch | default('patch-cron.daily-aide') }}"
+        dest: /root/patch-cron.daily-aide
+        mode: '0400'
     - name: Check if aide cron has been already patched
       stat: path=/etc/cron.daily/.aide-harden-patch
       register: aidepatch

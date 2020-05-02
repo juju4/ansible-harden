@@ -35,9 +35,22 @@
 ##    (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
 ## https://groups.google.com/forum/#!topic/beagleboard/jXb9KhoMOsk  = Not that, settings non-existent
 - name: Install some hardening packages
-  package: name={{ harden_pkg }} state=present update_cache=yes
+  package:
+    name: "{{ harden_pkg }}"
+    state: present
+    update_cache: yes
   register: pkg_result
   until: pkg_result is success
+- name: Install some hardening packages - not in container
+  package:
+    name: "{{ harden_pkg_not_container | default('') }}"
+    state: present
+    update_cache: yes
+  register: pkg_result
+  until: pkg_result is success
+  when: not (ansible_virtualization_type is defined and
+              (ansible_virtualization_type == 'lxc' or ansible_virtualization_type == 'docker')
+            )
 - name: Remove some packages
   package:
     name: "{{ harden_pkg_remove }}"
