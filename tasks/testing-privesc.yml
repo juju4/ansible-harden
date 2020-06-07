@@ -126,7 +126,7 @@
   get_url:
     url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
     dest: /tmp/linux-exploit-suggester.sh
-    checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
+    checksum: 'sha256:59707b3122acd9e870bba689d7ccb78679b162a7d61af5cb859b2ec8cd881817'
     mode: '0644'
     validate_certs: false
   become: yes
@@ -146,7 +146,7 @@
   get_url:
     url: https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
     dest: /tmp/linux-exploit-suggester-2.pl
-    checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
+    checksum: 'sha256:25059d8478d020509ed498f54668dad1dd1b382988c8f015e04b4635c468e428'
     mode: '0644'
     validate_certs: false
   become: yes
