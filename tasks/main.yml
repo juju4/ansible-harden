@@ -43,7 +43,7 @@
   until: pkg_result is success
 - name: Install some hardening packages - not in container
   package:
-    name: "{{ harden_pkg_not_container | default('') }}"
+    name: "{{ harden_pkg_not_container | default([]) }}"
     state: present
     update_cache: yes
   register: pkg_result
