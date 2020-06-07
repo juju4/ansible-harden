@@ -121,3 +121,43 @@
     creates: /tmp/kernelpop.out
   become: yes
   become_user: _test
+
+- name: retrieve linux-exploit-suggester.sh
+  get_url:
+    url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
+    dest: /tmp/linux-exploit-suggester.sh
+    checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
+    mode: '0644'
+    validate_certs: false
+  become: yes
+  become_user: _test
+  ignore_errors: true
+
+- name: execute linux-exploit-suggester.sh
+  shell: "bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out"
+  register: les
+  args:
+    creates: /tmp/linux-exploit-suggester.out
+  become: yes
+  become_user: _test
+  ignore_errors: true
+
+- name: retrieve linux-exploit-suggester-2.pl
+  get_url:
+    url: https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
+    dest: /tmp/linux-exploit-suggester-2.pl
+    checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
+    mode: '0644'
+    validate_certs: false
+  become: yes
+  become_user: _test
+  ignore_errors: true
+
+- name: execute linux-exploit-suggester-2.pl
+  shell: "perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out"
+  register: les
+  args:
+    creates: /tmp/linux-exploit-suggester-2.out
+  become: yes
+  become_user: _test
+  ignore_errors: true
