@@ -3,8 +3,13 @@
 ## https://blog.rootshell.be/2009/02/28/bash-history-to-syslog/
 ## Syslog option is a compile option in bash, mostly not enabled
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1323808
+## https://lists.gnu.org/archive/html/bug-bash/2017-01/msg00053.html
+## https://tiswww.case.edu/php/chet/bash/NEWS   5.0
+##      aa. There is a new (disabled by default, undocumented) shell option to enable
+##          and disable sending history to syslog at runtime.
 ## https://www.scip.ch/en/?labs.20150604 = auditd, rootsh, pam_tty_audit.so, sudo
 ## FIXME! activity from screen not logged (tmux OK), neither after sudo -s
+## https://debian-administration.org/article/88/Monitoring_user_activity_via_snoopy https://github.com/a2o/snoopy
 
 ## https://administratosphere.wordpress.com/2011/05/20/logging-every-shell-command/
 ## https://stackoverflow.com/questions/15753234/scoping-anomalies-with-typeset-r-and-readonly-keywords-in-ksh
@@ -49,9 +54,7 @@
       {
          declare command
          command=$(fc -ln -0)
-         #[ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command
-         #[ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command -- `env -0`
-         [ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER : $command --- $PWD, $OLDPWD, $SSH_CLIENT
+         [ "X$command" != "X" ] && logger -p local1.notice -t bash -i -- $USER[PWD: $PWD] from $SSH_CLIENT: $command
       }
       trap log2syslog DEBUG
       fi
