@@ -90,6 +90,7 @@
 /var/lib/apt/periodic/update-success-stamp$ VarFile
 /var/lib/apt/periodic/update-stamp$ VarFile
 /var/lib/apt/periodic/upgrade-stamp$ VarTime
+/var/lib/apt/periodic/autoclean-stamp$ VarTime
 /var/lib/apt/periodic/unattended-upgrades-stamp$ VarTime
 /var/lib/ubuntu-release-upgrader/release-upgrade-available$ VarTime
 /var/lib/update-manager/meta-release-lts$ VarFile
@@ -181,6 +182,12 @@
 /var/backups/@@{BACKUPFILES7R}\.7\.gz$ HiSerMemberLog
 /var/lib/snapd$ VarDirTime
 /var/lib/snapd/state.json$ VarFile
+/var/snap/canonical-livepatch/common$ VarDir
+/var/snap/canonical-livepatch/common/payload$ VarDir
+/var/snap/canonical-livepatch/common/payload/changelog$ VarFile
+/var/snap/canonical-livepatch/common/payload/copyright$ VarFile
+/var/snap/canonical-livepatch/common/payload/cvelist.yaml$ VarFile
+/var/snap/canonical-livepatch/common/payload/meta$ VarFile
 /var/lib/systemd/timers/stamp-apt-daily.timer$ VarFile
 /var/lib/systemd/timers/stamp-snapd.refresh.timer$ VarFile
 /var/lib/systemd/timers/stamp-motd-news.timer$ VarFile
