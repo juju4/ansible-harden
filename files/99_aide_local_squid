@@ -1,6 +1,7 @@
 /var/spool/squid$ VarDir
 /var/spool/squid/netdb.state$ VarFile
 /var/spool/squid/ad_block.txt$ VarFile
+/var/spool/squid/swap.state.last-clean$ VarFile
 !/var/lib/squid/ssl_db/certs
 /var/lib/squid/ssl_db/index.txt$ VarFile
 /var/lib/squid/ssl_db/size$ VarFile
