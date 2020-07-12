@@ -99,6 +99,8 @@ s/containerd\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z
 ### digitalocean
 s/do-agent\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* /do-agent: YYY\/MM\/DD HH:MM:SS /
 
-s/canonical-livepatch: Retrying request in [0-9]* seconds./canonical-livepatch: Retrying request in X seconds./
+s/canonical-livepatch\[[0-9]*\]: Retrying request in [0-9]* seconds./canonical-livepatch: Retrying request in X seconds./
 s/zed: eid=[0-9]* class=\(.*\) pool_guid=0x[0-9A-F]*/zed: eid=X class=\1 pool_guid=0xNNNNNNN/
 s/grafana-server\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/grafana-server: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
+/grafana-server\[[0-9]*\]: .*lvl=info.*/d
+s/grafana-server\[[0-9]*\]: t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\+\([0-9]*\)/grafana-server: t=YYYY-MM-DDTHH:MM:SS+\1/
