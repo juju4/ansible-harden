@@ -39,6 +39,7 @@
     name: "{{ harden_pkg }}"
     state: present
     update_cache: yes
+    cache_valid_time: 3600
   register: pkg_result
   until: pkg_result is success
 - name: Install some hardening packages - not in container
@@ -46,6 +47,7 @@
     name: "{{ harden_pkg_not_container | default([]) }}"
     state: present
     update_cache: yes
+    cache_valid_time: 3600
   register: pkg_result
   until: pkg_result is success
   when: not (ansible_virtualization_type is defined and
