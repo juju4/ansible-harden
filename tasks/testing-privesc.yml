@@ -41,6 +41,7 @@
   become: yes
   become_user: _test
   when: upc is succeeded
+  ignore_errors: true
 
 - name: execute unix-privesc-check
   shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
