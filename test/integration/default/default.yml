@@ -10,6 +10,9 @@
     - harden_auditd_log_all_execve: true
     - harden_auditd_log_all_socket: true
     - harden_auditd_log_all_connect: true
+    - harden_sshd_ca_gen: true
+    - harden_sshd_ca_path: /tmp/ssh-ca
+    - harden_sshd_host_key_opath: /tmp
     - harden_testing: true
     - ipv6_config: 'harden'
   roles:

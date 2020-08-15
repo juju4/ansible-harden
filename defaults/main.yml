@@ -46,6 +46,18 @@ harden_sshd_template: sshd_config.j2
 harden_sshd_port: 22
 harden_sshd_PermitRootLogin: without-password
 harden_sshd_allowusers: 'vagrant deploy'
+# Use SSH certificates:
+#  * should this role manage CA on orchestrator
+#  * path to public CA key on ansible target(s)
+#  * public key to sign on orchestrator
+# In initial setup, CA private key on orchestrator.
+# For regular operations, recommend to move to separated system, ideally isolated.
+harden_sshd_ca_gen: false
+harden_sshd_ca_path: '/orchestrator/path/to/ssh-ca'
+harden_sshd_trusteduserca: '/etc/ssh/ssh-ca.pub'
+# identifier and serial will appear in connection logs along hash
+harden_sshd_ca_signing_userkeys: []
+#  - { pubkey: '/path/pubkey', identifier: 'example_pubkey', principals: 'user1,user2', validity: '+1d', serial: '000001' }
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
 harden_sshd_PasswordAuthentication: false

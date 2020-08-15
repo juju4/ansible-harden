@@ -44,6 +44,9 @@
     state: directory
   when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
 
+- include: sshd-certificates.yml
+  when: harden_sshd_ca_gen
+
 - name: Configure sshd_config
   template:
     src: "{{ harden_sshd_template }}"

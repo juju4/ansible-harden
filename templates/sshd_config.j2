@@ -108,6 +108,12 @@ Banner /etc/issue.net
 DebianBanner no
 {% endif %}
 
+{% if harden_sshd_trusteduserca is defined and harden_sshd_trusteduserca %}
+# Using SSH Certificates
+TrustedUserCAKeys {{ harden_sshd_trusteduserca | default('/etc/ssh/ca.pub') }}
+HostCertificate {{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}
+
+{% endif %}
 # Allow client to pass locale environment variables
 AcceptEnv LANG LC_*
 
