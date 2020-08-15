@@ -23,9 +23,8 @@
     dest: /tmp/unix-privesc-check-1.4.tar.gz
     checksum: 'sha256:e1f85e7f69fabadd23756a3d76a0e3d864b21e28763b60ce2e6181290d1c1969'
     mode: '0644'
-# offline from time to time...
-  ignore_errors: true
   register: upc
+  until: upc is success
 
 - name: Ensure GNU tar is present
   package:
@@ -73,7 +72,8 @@
     validate_certs: false
   become: yes
   become_user: _test
-  ignore_errors: true
+  register: dl_result
+  until: dl_result is success
 
 - name: execute unix-privesc-check
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
@@ -131,7 +131,8 @@
     validate_certs: false
   become: yes
   become_user: _test
-  ignore_errors: true
+  register: dl_result
+  until: dl_result is success
 
 - name: execute linux-exploit-suggester.sh
   shell: "bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out"
@@ -151,7 +152,8 @@
     validate_certs: false
   become: yes
   become_user: _test
-  ignore_errors: true
+  register: dl_result
+  until: dl_result is success
 
 - name: execute linux-exploit-suggester-2.pl
   shell: "perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out"
