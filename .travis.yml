@@ -8,29 +8,29 @@ env:
 ## those images need pre-configuration before being usable (openssh...)
   - distribution: centos
     version: 8
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: centos
     version: 7
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 #  - distribution: centos
 #    version: 6
   - distribution: ubuntu
     version: 20.04
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: ubuntu
     version: 18.04
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
   - distribution: ubuntu
     version: 16.04
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 ## travis/trusty, precise: stalling, https://travis-ci.org/juju4/ansible-harden/builds/224999348
@@ -48,38 +48,35 @@ env:
 ## past ansible versions
   - distribution: ubuntu
     version: 18.04
-    ansible_version: 2.8.7.0
+    ansible_version: 2.8.14
     ansible_extra_vars: "'-vv -e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: default
 # upcoming
-#  - distribution: ubuntu
-#    version: 18.04
-#    ansible_version: 2.7.0b1
-#    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
-#    suite: default
-## ansible2.2+: ini_file create
-#  - distribution: ubuntu
-#    version: 16.04
-#    ansible_version: 2.1.2.0
-## ansible2.0+: block
-#  - distribution: ubuntu
-#    version: 16.04
-#    ansible_version: 1.9.6.0
+  - distribution: ubuntu
+    version: 18.04
+    ansible_version: 2.10.0a9
+    ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
+    suite: default
   - distribution: centos
     version: 8
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/default -e log_dir=/tmp'"
     suite: full
   - distribution: centos
     version: 7
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
     suite: full
   - distribution: ubuntu
     version: 18.04
-    ansible_version: 2.9.1.0
+    ansible_version: 2.9.12
     ansible_extra_vars: "'-e inspec_dir=/etc/ansible/roles/juju4.harden/test/integration/full -e log_dir=/tmp'"
     suite: full
+
+jobs:
+  exclude:
+    - if: branch = master
+      env: ansible_version=2.10.0a9
 
 before_install:
   - env
