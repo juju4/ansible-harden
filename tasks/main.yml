@@ -31,6 +31,12 @@
 - include: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: Debian | update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
 ## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages!
 ##    (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
 ## https://groups.google.com/forum/#!topic/beagleboard/jXb9KhoMOsk  = Not that, settings non-existent
@@ -38,16 +44,12 @@
   package:
     name: "{{ harden_pkg }}"
     state: present
-    update_cache: yes
-    cache_valid_time: 3600
   register: pkg_result
   until: pkg_result is success
 - name: Install some hardening packages - not in container
   package:
     name: "{{ harden_pkg_not_container | default([]) }}"
     state: present
-    update_cache: yes
-    cache_valid_time: 3600
   register: pkg_result
   until: pkg_result is success
   when: not (ansible_virtualization_type is defined and
