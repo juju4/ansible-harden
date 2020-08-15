@@ -10,10 +10,10 @@
   connection: local
 
 - name: Orchestrator | Generate SSH CA
-  command: "ssh-keygen -t rsa -f {{ harden_sshd_ca_path }}"
-  args:
-    # Testing public key file to allow move of private one elsewhere
-    creates: "{{ harden_sshd_ca_path }}.pub"
+  openssh_keypair:
+    path: "{{ harden_sshd_ca_path }}"
+    type: "{{ harden_sshd_ca_type | default('ed25519') }}"
+    mode: '0400'
   connection: local
 
 - name: Ensure SSH CA public key is present on target
