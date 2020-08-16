@@ -123,6 +123,7 @@
     creates: /tmp/kernelpop.out
   become: yes
   become_user: _test
+  ignore_errors: true
 
 - name: retrieve linux-exploit-suggester.sh
   get_url:
