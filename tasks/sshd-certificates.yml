@@ -9,12 +9,21 @@
     mode: '0700'
   connection: local
 
+- name: Check if SSH CA exists (pubkey)
+  stat:
+    path: "{{ harden_sshd_ca_path }}.pub"
+  register: sshca
+  connection: local
+
 - name: Orchestrator | Generate SSH CA
   openssh_keypair:
     path: "{{ harden_sshd_ca_path }}"
     type: "{{ harden_sshd_ca_type | default('ed25519') }}"
-    mode: '0400'
+    mode: "{{ harden_sshd_ca_mode | default('0440') }}"
+    owner: "{{ harden_sshd_ca_user | default('root') }}"
+    group: "{{ harden_sshd_ca_group | default('user') }}"
   connection: local
+  when: not sshca.stat.exists
 
 - name: Ensure SSH CA public key is present on target
   copy:
@@ -51,6 +60,7 @@
         mode: '0444'
   when: not sshhost_signed.stat.exists
 
+# FIXME! file created as root?
 - name: Sign SSH user keys on orchestrator
   command: >
     ssh-keygen -s {{ harden_sshd_ca_path }} \
