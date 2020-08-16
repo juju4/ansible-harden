@@ -175,6 +175,7 @@ before_install:
   - sudo -E su $USER -c "lxc config device add run-${distribution}-${version//./} sharedroles disk path=/etc/ansible/roles source=${PWD%/*}"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- mount"
   - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- pwd"
+  - sudo -E su $USER -c "lxc exec run-${distribution}-${version//./} -- ls -la /tmp/"
 # inspec baseline that can't be set inside containers
   - sudo sysctl -w net.ipv4.tcp_timestamps=0
   - sudo sysctl -w net.ipv4.tcp_rfc1337=1
