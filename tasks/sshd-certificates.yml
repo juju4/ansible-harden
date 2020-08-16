@@ -22,7 +22,7 @@
     type: "{{ harden_sshd_ca_type | default('ed25519') }}"
     mode: "{{ harden_sshd_ca_mode | default('0440') }}"
     owner: "{{ harden_sshd_ca_user | default('root') }}"
-    group: "{{ harden_sshd_ca_group | default('user') }}"
+    group: "{{ harden_sshd_ca_group | default('root') }}"
   connection: local
   when: not sshca.stat.exists
 
