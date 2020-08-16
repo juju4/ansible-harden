@@ -8,6 +8,7 @@
     state: directory
     mode: '0700'
   connection: local
+  when: harden_sshd_ca_path | dirname != '/tmp'
 
 - name: Check if SSH CA exists (pubkey)
   stat:
