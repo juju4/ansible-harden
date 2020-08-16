@@ -68,7 +68,7 @@
   get_url:
     url: https://raw.githubusercontent.com/sleventyeleven/linuxprivchecker/master/linuxprivchecker.py
     dest: /tmp/linuxprivchecker.py
-    checksum: 'sha256:d5002d499e3b3653a9505b2781f51d6d38507816b7eb9e9367d2c59fadfcac8c'
+    checksum: 'sha256:5803b49fe825c62221caf3004dc70e50a744480677f8989ef51ec6e175f5eedc'
     mode: '0644'
     validate_certs: false
   become: yes
