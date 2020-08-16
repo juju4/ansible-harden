@@ -75,6 +75,7 @@
   become_user: _test
   register: dl_result
   until: dl_result is success
+  ignore_errors: true
 
 - name: execute unix-privesc-check
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
@@ -134,6 +135,7 @@
   become_user: _test
   register: dl_result
   until: dl_result is success
+  ignore_errors: true
 
 - name: execute linux-exploit-suggester.sh
   shell: "bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out"
@@ -155,6 +157,7 @@
   become_user: _test
   register: dl_result
   until: dl_result is success
+  ignore_errors: true
 
 - name: execute linux-exploit-suggester-2.pl
   shell: "perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out"
