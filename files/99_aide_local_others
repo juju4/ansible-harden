@@ -76,6 +76,7 @@
 /var/lib/NetworkManager$ VarDirTime
 /var/lib/dpkg$ VarDirTime
 /var/lib/dpkg/triggers/Lock$ VarFile
+/var/lib/dpkg/updates$ VarDir
 !/var/lib/ntop/rrd/interfaces
 /var/lib/ntop/rrd/graphics$ VarDir
 /var/lib/ntop/fingerprint.db$ VarFile
