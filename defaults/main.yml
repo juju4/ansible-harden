@@ -268,7 +268,7 @@ _ubuntu_sysctl:
 ## define in vars/{{ distribution }}*.yml
 harden_debian_pkg: []
 harden_debian_remove: []
-harden_debsig_enable: true
+harden_debsig_enable: false
 
 ## maybe override in vars/{{ distribution }}*.yml and disabled on lxc as parts are not permitted
 harden_distribution_sysctl:
