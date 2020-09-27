@@ -69,6 +69,14 @@ harden_proxy_url: 'http://yourproxyaddress:proxyport'
 harden_proxy_user: ''
 harden_proxy_pass: ''
 
+# make immutable?
+harden_immutable_apt_dirs:
+  - /lib
+  - /etc/init.d
+  - /boot
+harden_immutable_others: []
+#harden_immutable_others: ['/etc/resolv.conf']
+
 harden_cap_test_bin: /usr/sbin/tcpdump
 harden_cap_test_bincap: 'cap_net_admin+eip,cap_net_raw+ep'
 harden_cap_list:

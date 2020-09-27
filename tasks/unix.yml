@@ -51,3 +51,9 @@
 
 - include: securetty.yml
   when: harden_securetty
+
+- name: Set immutable attribute for chosen files
+  file:
+    path: "{{ item }}"
+    attributes: +i
+  with_items: "{{ harden_immutable_others }}"

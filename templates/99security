@@ -12,7 +12,7 @@ DPkg
 {% endif %}
 {% endfor %}
 {% endif %}
-		"chattr -R -i /lib /etc/init.d /boot > /tmp/apt.tmp 2>&1; true";
+		"chattr -R -i {{ harden_immutable_apt_dirs | join(' ') }} > /tmp/apt.tmp 2>&1; true";
 	};
 	Post-Invoke  { 
 {% if ansible_mounts is defined %}
@@ -24,7 +24,7 @@ DPkg
 {% endif %}
 		"if [ -x /usr/bin/rkhunter ] && ( ! grep -q -E '^DISABLE_TESTS=.*(hashes.*attributes|attributes.*hashes|properties)' /etc/rkhunter.conf || grep -q -E '^ENABLE_TESTS=.*(hashes|attributes|properties)' /etc/rkhunter.conf); then /usr/bin/rkhunter --propupd --nolog; fi";
 ## https://isc.sans.edu/diary/XOR+DDOS+Mitigation+and+Analysis/19827
-		"chattr -R +i /lib /etc/init.d /boot > /tmp/apt2.tmp 2>&1; true";
+		"chattr -R +i {{ harden_immutable_apt_dirs | join(' ') }} > /tmp/apt2.tmp 2>&1; true";
 	};
 };
 
