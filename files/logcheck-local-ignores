@@ -195,3 +195,4 @@ named\[[0-9]*\]: automatic empty zone: .*.IN-ADDR.ARPA
 falco: Falco initialized with configuration file /etc/falco.yaml
 falco: Parsed rules from file /etc/falco_rules.yaml
 
+containerd: time=".*" level=info msg=
