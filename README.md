@@ -1,5 +1,5 @@
-[![Build Status - Master](https://travis-ci.org/juju4/ansible-harden.svg?branch=master)](https://travis-ci.org/juju4/ansible-harden)
-[![Build Status - Devel](https://travis-ci.org/juju4/ansible-harden.svg?branch=devel)](https://travis-ci.org/juju4/ansible-harden/branches)
+[![Build Status - Master](https://travis-ci.com/juju4/ansible-harden.svg?branch=master)](https://travis-ci.com/juju4/ansible-harden)
+[![Build Status - Devel](https://travis-ci.com/juju4/ansible-harden.svg?branch=devel)](https://travis-ci.com/juju4/ansible-harden/branches)
 # harden ansible role
 
 Ansible role to harden system and make it more forensics friendly (linux only). Few task example below.
