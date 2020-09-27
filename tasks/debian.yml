@@ -1,5 +1,12 @@
 ---
 
+- name: Configure Debian Signature check
+  replace:
+    dest: /etc/dpkg/dpkg.cfg
+    regexp: "^{% if not harden_debsig_enable %}#{%endif %}no-debsig"
+    replace: "{% if harden_debsig_enable %}#{%endif %}no-debsig"
+    backup: "{{ harden_backup | default(false) }}"
+
 ## FIXME! kitchen OK, travis NOK
 ## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
 - name: Debian | upgrade all packages to the latest version
