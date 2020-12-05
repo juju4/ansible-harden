@@ -36,6 +36,12 @@
 /var/spool/openoffice/uno_packages/cache$ VarDir
 /var/spool/squid/swap.state.last-clean$ VarFile
 !/tmp
+/boot/grub/menu\.lst*$ VarTime
+/boot/grub/.*\.pf2$ VarTime
+/boot/grub/i386-pc/.*\.lst$ VarTime
+/boot/grub/i386-pc/.*\.mod$ VarTime
+/boot/grub/x86_64-efi/.*\.lst$ VarTime
+/boot/grub/x86_64-efi/.*\.mod$ VarTime
 !/dev/shm
 !/dev/char
 !/dev/bus
@@ -56,6 +62,18 @@
 /etc/samba$ VarDirTime
 /etc/samba/dhcp.conf$ VarInode
 /etc/snort/rules/.*\.rules VarFile
+/lib/modules/.*/modules.alias$ VarTime
+/lib/modules/.*/modules.alias.bin$ VarTime
+/lib/modules/.*/modules.builtin.bin$ VarTime
+/lib/modules/.*/modules.dep$ VarTime
+/lib/modules/.*/modules.dep.bin$ VarTime
+/lib/modules/.*/modules.devname$ VarTime
+/lib/modules/.*/modules.softdep$ VarTime
+/lib/modules/.*/modules.symbols$ VarTime
+/lib/modules/.*/modules.symbols.bin$ VarTime
+/lib/modules/.*/.*.ko$ VarTime
+# all subdirs as VarDir
+!/lib/modules/.*-generic/kernel
 !/run/shm
 !/run/udev
 !/run/console
@@ -189,6 +207,7 @@
 /var/snap/canonical-livepatch/common/payload/copyright$ VarFile
 /var/snap/canonical-livepatch/common/payload/cvelist.yaml$ VarFile
 /var/snap/canonical-livepatch/common/payload/meta$ VarFile
+!/var/snap/.*/[0-9]+/logs
 /var/lib/systemd/timers/stamp-apt-daily.timer$ VarFile
 /var/lib/systemd/timers/stamp-snapd.refresh.timer$ VarFile
 /var/lib/systemd/timers/stamp-motd-news.timer$ VarFile
