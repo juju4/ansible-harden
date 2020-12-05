@@ -68,7 +68,7 @@
     dest: "{{ monitrc }}"
     regexp: "{{ item.re }}"
     replace: "{{ item.rep }}"
-    mode: '0644'
+    mode: '0700'
   with_items:
     - { re: '^# set httpd port 2812 and', rep: ' set httpd port 2812 and' }
     - { re: '^#    \s*use address localhost', rep: '     use address localhost' }
