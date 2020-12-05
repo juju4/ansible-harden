@@ -113,7 +113,7 @@ jobs:
           ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/ || true
           ls -l /boot/grub2/grub.cfg || true
           ls -l /var/lib/aide/
-          ls -la /tmp/
-          rpm -Va | grep '^..5'
-          ls -l /tmp/cadir/ssh-ca*
+          ls -la /tmp/ || true
+          sudo rpm -Va | grep '^..5' || true
+          sudo ls -l /tmp/cadir/* || true
         continue-on-error: true
