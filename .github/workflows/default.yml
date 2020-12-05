@@ -90,26 +90,28 @@ jobs:
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel${version}-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"
         continue-on-error: true
-      - name: After script - files
+      - name: After script - etc
         run: |
           cat /etc/passwd
           cat /etc/rsyslog.conf
           find /etc/rsyslog.d -type f -exec cat {} \;
           cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp /etc/chrony.conf || true
           cat /etc/openntpd/ntpd.conf /etc/ntpd.conf || true
-          ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd || true
-          ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/ || true
           ls -l /etc/login.defs
           cat /etc/login.defs
           ls -la /etc
           ls -la /etc/ssh/
-          ls -la /var/log
           ls -l /etc/pam.d/
           cat /etc/pam.d/system-auth || true
           cat /etc/pam.d/password-auth || true
-          ls -l /boot/grub2/grub.cfg
-          cat /etc/logrotate.conf
+          cat /etc/logrotate.conf || true
           cat /etc/security/pwquality.conf || true
+        continue-on-error: true
+      - name: After script - files
+        run: |
+          ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd || true
+          ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/ || true
+          ls -l /boot/grub2/grub.cfg || true
           ls -l /var/lib/aide/
           ls -la /tmp/
           rpm -Va | grep '^..5'
