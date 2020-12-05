@@ -26,6 +26,11 @@
   connection: local
   when: not sshca.stat.exists
 
+- name: debug
+  command: "ls -la {{ harden_sshd_ca_path | dirname }}"
+  ignore_errors: true
+  changed_when: false
+
 - name: Ensure SSH CA public key is present on target
   copy:
     src: "{{ harden_sshd_ca_path }}.pub"
