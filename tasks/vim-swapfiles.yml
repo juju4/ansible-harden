@@ -7,6 +7,7 @@
     dest: "{{ ansible_env['HOME'] }}/.vimrc"
     regexp: "^set directory=.*"
     line: "set directory=$HOME/.vim/swapfiles"
+    mode: '0600'
     backup: "{{ harden_backup | default(false) }}"
     create: yes
 

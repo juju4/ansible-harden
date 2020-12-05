@@ -33,7 +33,7 @@
         create: yes
       notify:
         - restart fail2ban
-## avoid conflict with role tersmitten.fail2ban
+      ## avoid conflict with role tersmitten.fail2ban
       when: fail2ban_ignoreips is not defined
     - name: extend whitelist for fail2ban - tersmitten.fail2ban
       ini_file:
@@ -47,9 +47,9 @@
       notify:
         - restart fail2ban
       when: fail2ban_ignoreips is defined
-## avoid conflict with role tersmitten.fail2ban
+      ## avoid conflict with role tersmitten.fail2ban
   when: ansible_distribution_release != 'precise'
-## ubuntu precise has no jail.d
+  ## ubuntu precise has no jail.d
 
 - block:
     - name: ensure aide HIDS directory tree exists

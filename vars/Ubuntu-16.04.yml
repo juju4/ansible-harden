@@ -6,71 +6,71 @@ auditd_pkg: auditd
 immutable_testfile: /etc/init.d/rc
 
 harden_pkg:
-    - openssh-server
-    - rsyslog
-#    - harden       ## exist in precise/trusty/vivid, not wily+
-    - unzip
-    - rkhunter
-    - chkrootkit
-    - openntpd
-    - acct
-    - aide
-    - logcheck
-    - syslog-summary
-    - apparmor-profiles
-    - apparmor-utils
-    - acl
-    - sysstat
-    - systemtap-sdt-dev
-    - iotop
-    - sysdig
-    - tcpdump
-    - libcap2-bin
-    - ldnsutils
-    - update-notifier-common
-    - gnupg
-    - gnupg-curl
-    - libpam-cracklib
-    - debsums
-#    - apt-show-versions
-    - lynis
-    - libpam-tmpdir
-    - debian-goodies
-    - debsecan
-    - fail2ban
-    - linux-tools-generic   # perf /FlameGraph
-    - rng-tools
-    - iptables-persistent
-    - netfilter-persistent
-    - apt-transport-https
-## requested by https://github.com/awailly/cis-ubuntu-ansible
-    - aptitude
-## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
-#    - tracker-utils
-    - systemtap
-    - sudo
-    - ecryptfs-utils
-#    - apt-listbugs
-    - apt-listchanges
-    - libopenscap8
-#    - ssg-debderived
+  - openssh-server
+  - rsyslog
+  # - harden       ## exist in precise/trusty/vivid, not wily+
+  - unzip
+  - rkhunter
+  - chkrootkit
+  - openntpd
+  - acct
+  - aide
+  - logcheck
+  - syslog-summary
+  - apparmor-profiles
+  - apparmor-utils
+  - acl
+  - sysstat
+  - systemtap-sdt-dev
+  - iotop
+  - sysdig
+  - tcpdump
+  - libcap2-bin
+  - ldnsutils
+  - update-notifier-common
+  - gnupg
+  - gnupg-curl
+  - libpam-cracklib
+  - debsums
+  # - apt-show-versions
+  - lynis
+  - libpam-tmpdir
+  - debian-goodies
+  - debsecan
+  - fail2ban
+  - linux-tools-generic   # perf /FlameGraph
+  - rng-tools
+  - iptables-persistent
+  - netfilter-persistent
+  - apt-transport-https
+  ## requested by https://github.com/awailly/cis-ubuntu-ansible
+  - aptitude
+  ## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
+  # - tracker-utils
+  - systemtap
+  - sudo
+  - ecryptfs-utils
+  # - apt-listbugs
+  - apt-listchanges
+  - libopenscap8
+  # - ssg-debderived
 
 harden_pkg_remove:
-    - avahi-daemon
-    - xinetd
-    - inetd
-    - telnet-server
-    - rsh-server
-    - open-iscsi
+  - avahi-daemon
+  - xinetd
+  - inetd
+  - telnet-server
+  - rsh-server
+  - open-iscsi
 
 syslog_mainfile: /var/log/syslog
 syslog_authfile: /var/log/auth.log
 
 harden_services:
-    - rng-tools
+  - rng-tools
 harden_services_containers:
-    - psacct
-    - auditd
+  - psacct
+  - auditd
 
 harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
 harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'

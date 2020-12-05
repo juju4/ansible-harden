@@ -34,12 +34,12 @@
     mode: '0700'
     owner: root
     backup: "{{ harden_backup | default(false) }}"
-## FIXME: The control file '/home/vagrant/.ansible/tmp/ansible-tmp-1513601819.61-207005098620159/source'
-##      must be owned by you.
-##  => monit requires file to be owned by root which is not the case before validation. ansible not
-##      supporting multiple commands in validation
-#    validate: 'monit -t -c %s'
-#    validate: 'chown root %s; monit -t -c %s'
+    ## FIXME: The control file '/home/vagrant/.ansible/tmp/ansible-tmp-1513601819.61-207005098620159/source'
+    ##      must be owned by you.
+    ##  => monit requires file to be owned by root which is not the case before validation. ansible not
+    ##      supporting multiple commands in validation
+    # validate: 'monit -t -c %s'
+    # validate: 'chown root %s; monit -t -c %s'
   with_items: "{{ daemons }}"
   notify:
     - restart monit
@@ -64,12 +64,16 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: allow monit status/summary from localhost
-  replace: dest={{ monitrc }} regexp={{ item.re }} replace={{ item.rep }}
+  replace:
+    dest: "{{ monitrc }}"
+    regexp: "{{ item.re }}"
+    replace: "{{ item.rep }}"
+    mode: '0644'
   with_items:
     - { re: '^# set httpd port 2812 and', rep: ' set httpd port 2812 and' }
     - { re: '^#    \s*use address localhost', rep: '     use address localhost' }
     - { re: '^#    \s*allow localhost', rep: '     allow localhost' }
-#    - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
+    # - { re: '^#     allow admin:monit', rep: '     allow admin:monit' }
     - { re: '^#  include /etc/monit.d/*', rep: '  include /etc/monit.d/*' }
   notify:
     - restart monit

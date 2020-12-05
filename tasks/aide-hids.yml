@@ -18,7 +18,7 @@
       stat: path=/etc/cron.daily/.aide-harden-patch
       register: aidepatch
     - block:
-## FIXME! patch module not idempotent so adding file marker
+        ## FIXME! patch module not idempotent so adding file marker
         - name: Patch cron.daily/aide to rotate database
           patch:
             src: /root/patch-cron.daily-aide
@@ -29,11 +29,17 @@
       when: not aidepatch.stat.exists
     - name: Review Aide configuration
       lineinfile:
-    #    dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
-        dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=rotate'
+        # dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
+        dest: '/etc/default/aide'
+        regexp: '^COPYNEWDB='
+        line: 'COPYNEWDB=rotate'
+        mode: '0644'
     - name: Review Aide configuration
       replace:
-        dest='/etc/default/aide' regexp='^FILTERUPDATES=no' replace='FILTERUPDATES=yes'
+        dest: '/etc/default/aide'
+        regexp: '^FILTERUPDATES=no'
+        replace: 'FILTERUPDATES=yes'
+        mode: '0644'
     - name: Add custom configuration for aide HIDS
       copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
       with_items: "{{ harden_aide_extra_conf }}"
@@ -45,14 +51,17 @@
 
     - name: Review Aide cron configuration
       replace:
-        "dest='/etc/cron.daily/aide' regexp='{{ item.regexp }}' replace='{{ item.replace }}'"
+        dest: '/etc/cron.daily/aide'
+        regexp: "{{ item.regexp }}"
+        replace: "{{ item.replace }}"
+        mode: '0644'
       with_items:
-## or 'setfacl -m u:nagios:r-- /var/log/aide/aide.log'
-#        - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
+        ## or 'setfacl -m u:nagios:r-- /var/log/aide/aide.log'
+        # - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
         - { regexp: 'savelog -t -g adm -m 64? -u root -c 7 "$LOGFILE" > /dev/null$',
             replace: 'savelog -t -g adm -m 640 -u root -c 7 "$LOGFILE" > /dev/null &&
                 setfacl -m u:nagios:r-- "$LOGFILE" 2> /dev/null'
-          }
+        }
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - block:
@@ -64,6 +73,7 @@
         dest: /etc/aide.conf
         regexp: "{{ item.re }}"
         replace: "{{ item.rep }}"
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
       with_items:
         - { re: '^gzip_dbout=.*', rep: 'gzip_dbout=no' }

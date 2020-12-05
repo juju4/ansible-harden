@@ -3,12 +3,12 @@
 install_archives: /var/_install
 harden_timezone: UTC
 harden_logcheck: true
-#harden_logcheck_hours: '*'
+# harden_logcheck_hours: '*'
 harden_logcheck_hours: '6,18'
 harden_use_rpc: false
 harden_use_forwarding: false
 harden_umask: '077'
-#harden_umask: '027'
+# harden_umask: '027'
 harden_aide: true
 harden_init_aidedb: false
 harden_aidedb_rotatedays: 14
@@ -24,7 +24,7 @@ harden_aide_extra_conf:
   - 99_aide_local_osquery
   - 99_aide_local_netdata
   - 99_aide_local_prometheus
-#  - 99_aide_local_squid
+  # - 99_aide_local_squid
 harden_arpwatch: true
 harden_unix_fstab_flags: false
 harden_logindefs_pass_maxdays: 182
@@ -75,7 +75,7 @@ harden_immutable_apt_dirs:
   - /etc/init.d
   - /boot
 harden_immutable_others: []
-#harden_immutable_others: ['/etc/resolv.conf']
+# harden_immutable_others: ['/etc/resolv.conf']
 
 harden_cap_test_bin: /usr/sbin/tcpdump
 harden_cap_test_bincap: 'cap_net_admin+eip,cap_net_raw+ep'
@@ -103,17 +103,17 @@ harden_security_update_auto: true
 harden_use_containers_lxc: false
 
 ## add email to /root/.forward?
-#harden_rootforward: email
+# harden_rootforward: email
 
 harden_restrict_compiler: true
 harden_restrict_compiler_umask: '0700'
-#harden_restrict_compiler_umask: '0750'
+# harden_restrict_compiler_umask: '0750'
 harden_restrict_compiler_group: 'root'
 
 ## only include existing files, else report will fail
 harden_logcheck_extra_logfiles:
   - /var/log/fail2ban.log
-#  - /var/log/supervisor/supervisord.log
+  # - /var/log/supervisor/supervisord.log
 
 harden_cracklib_dict:
   - { u: 'https://raw.githubusercontent.com/danielmiessler/SecLists/2018.3/Passwords/Common-Credentials/10-million-password-list-top-10000.txt', h: 'sha256:0279e0e7d854dc40460db18a7cf2e09fb661837dc0ae7d3b8dc6e783ba5d84b4' }
@@ -137,8 +137,8 @@ harden_auditd_sensitive_files:
   - /etc/password
   - /etc/sudoers
   - /etc/resolv.conf
-## file must exist
-#  - /data/topsecret.data
+  ## file must exist
+  # - /data/topsecret.data
 harden_auditd_extra_rules: []
 harden_auditd_exclusions: []
 ## https://access.redhat.com/solutions/2477471
@@ -152,12 +152,12 @@ harden_auditd_exclusions: []
 harden_apparmor_audit: false
 
 ## firewall rules? avoid to lock yourself
-#harden_fw: false
+# harden_fw: false
 harden_fw: true
 harden_fw_template: rules.v4.j2
 ## Note: in default config, if you switch default policy to drop, you will lose access...
 harden_fw_default: DROP
-#harden_fw_default: ACCEPT
+# harden_fw_default: ACCEPT
 harden_fw_gw: 192.168.1.1
 harden_fw_ssh_restricted:
   - 192.168.1.0/24
@@ -176,11 +176,11 @@ harden_fw_smtpservers_v6: []
 harden_fw_smtp_ports:
   - 25
   - 587
-#harden_fw_open_incoming:
-#  - { proto: 'tcp', port: 8080 }
-#  - { proto: 'tcp', port: 9091 }
+# harden_fw_open_incoming:
+#   - { proto: 'tcp', port: 8080 }
+#   - { proto: 'tcp', port: 9091 }
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
-#harden_fw_security_source:
+# harden_fw_security_source:
 harden_fw6_template: rules.v6.j2
 harden_fw6_default: ACCEPT
 harden_fw6_gw: ''
@@ -203,7 +203,7 @@ harden_fw6_open_incoming:
 ##  only possible if cache facts or talk with host in same play
 ##  http://docs.ansible.com/ansible/playbooks_variables.html#fact-caching
 ## OR define here
-#harden_fw_monitoring_source:
+# harden_fw_monitoring_source:
 ## also review templates/rules.v4 as you might need specific flows for your setup
 
 ## Apport has been found to many vulnerabilities. Same for Fedora abrt
@@ -228,7 +228,7 @@ harden_osquery_packs:
   - "osquery-monitoring"
   - "incident-response"
   - "it-compliance"
-#  - "osx-attacks"
+  # - "osx-attacks"
   - "ossec-rootkit"
   - "vuln-management"
   - "hardware-monitoring"
@@ -238,7 +238,7 @@ harden_osquery_flags: []
 ## if using zentral, kolide or else
 ## https://github.com/zentralopensource/zentral/blob/f460b10a95d4ea1e515aea3363f55733465d1d9c/zentral/contrib/osquery/deb_script/template.sh
 ## https://docs.kolide.co/kolide/current/infrastructure/adding-hosts-to-kolide.html
-#harden_osquery_flags:
+# harden_osquery_flags:
 #    - { re: '^--enroll_secret_env=.*', l: '--enroll_secret_env=OSQUERY_ENROLL_SECRET' }
 #    - { re: '^--tls_server_certs=.*', l: '--tls_server_certs=/etc/osquery/kolide.crt' }
 #    - { re: '^--tls_hostname=.*', l: '--tls_hostname=acme.kolide.co' }
@@ -273,39 +273,39 @@ harden_debsig_enable: false
 ## maybe override in vars/{{ distribution }}*.yml and disabled on lxc as parts are not permitted
 harden_distribution_sysctl:
 
-#harden_mount_options: []
+# harden_mount_options: []
 harden_mount_options:
-    - { mount: "/", opts: "defaults" }
-    - { mount: "/boot", opts: "defaults,nosuid,nodev,noexec" }
-    - { mount: "/home", opts: "defaults,nosuid,nodev" }
-    - { mount: "/tmp", opts: "defaults,nosuid,nodev,noexec" }
-    - { mount: "/usr", opts: "defaults,ro,nodev" }
-    - { mount: "/var/log/audit", opts: "defaults,nosuid,nodev,noexec" }
-    - { mount: "/var/log", opts: "defaults,nosuid,nodev,noexec" }
-    - { mount: "/var/tmp", opts: "defaults,nosuid,nodev,noexec" }
-    - { mount: "/var", opts: "defaults,nosuid" }
-    - { mount: "/dev/shm", opts: "defaults,nosuid,nodev,noexec" }
-    - { mount: "/run/shm", opts: "defaults,nosuid,nodev,noexec" }
-## https://linux-audit.com/linux-system-hardening-adding-hidepid-to-proc/
-#    - { mount: "/proc", opts: "rw,nosuid,nodev,noexec,relatime,hidepid=2" }
-    - { mount: "/opt", opts: "defaults,nosuid,nodev" }
+  - { mount: "/", opts: "defaults" }
+  - { mount: "/boot", opts: "defaults,nosuid,nodev,noexec" }
+  - { mount: "/home", opts: "defaults,nosuid,nodev" }
+  - { mount: "/tmp", opts: "defaults,nosuid,nodev,noexec" }
+  - { mount: "/usr", opts: "defaults,ro,nodev" }
+  - { mount: "/var/log/audit", opts: "defaults,nosuid,nodev,noexec" }
+  - { mount: "/var/log", opts: "defaults,nosuid,nodev,noexec" }
+  - { mount: "/var/tmp", opts: "defaults,nosuid,nodev,noexec" }
+  - { mount: "/var", opts: "defaults,nosuid" }
+  - { mount: "/dev/shm", opts: "defaults,nosuid,nodev,noexec" }
+  - { mount: "/run/shm", opts: "defaults,nosuid,nodev,noexec" }
+  ## https://linux-audit.com/linux-system-hardening-adding-hidepid-to-proc/
+  # - { mount: "/proc", opts: "rw,nosuid,nodev,noexec,relatime,hidepid=2" }
+  - { mount: "/opt", opts: "defaults,nosuid,nodev" }
 
 harden_mount_options_aptpre:
-    "/tmp": "exec"
-    "/var/tmp": "exec"
-    "/usr": "rw"
+  "/tmp": "exec"
+  "/var/tmp": "exec"
+  "/usr": "rw"
 
 harden_mount_options_aptpost:
-    "/tmp": "noexec"
-    "/var/tmp": "noexec"
-    "/usr": "ro"
+  "/tmp": "noexec"
+  "/var/tmp": "noexec"
+  "/usr": "ro"
 
 ## Experimental
 harden_usb_restrict_udev: false
 harden_usb_blockdevice_whitelist:
   - 'ATTR{idVendor}=="5572",ATTR{idProduct}=="123456",ATTR{serial}=="XXX"'
 harden_usb_inputdevice_whitelist:
-## Microsoft Wired keyboard 400
+  ## Microsoft Wired keyboard 400
   - 'ATTR{idVendor}=="045e",ATTR{idProduct}=="0752",ATTR{urbnum}=="2175"'
 
 monit_auditd: false
@@ -315,17 +315,17 @@ monit_osqueryd: false
 harden_lkrg: false
 harden_lkrg_version: '0.7'
 harden_lkrg_sysctl:
- - { n: block_modules, v: 0 }
- - { n: ci_panic, v: 0 }
+  - { n: block_modules, v: 0 }
+  - { n: ci_panic, v: 0 }
 
 harden_testing: false
 harden_testing_inspec: true
 harden_testing_inspec_paths: []
-#  - { i: 0, u: 'https://github.com/juju4/linux-baseline.git' }
-#  - { i: 1, u: 'https://github.com/juju4/inspec-ntp.git' }
-#  - { i: 2, u: 'https://github.com/juju4/inspec-audit.git' }
-#  - { i: 3, u: 'https://github.com/juju4/inspec-osquery.git' }
-#  - { i: 4, u: 'https://github.com/juju4/inspec-syslog.git' }
+# - { i: 0, u: 'https://github.com/juju4/linux-baseline.git' }
+# - { i: 1, u: 'https://github.com/juju4/inspec-ntp.git' }
+# - { i: 2, u: 'https://github.com/juju4/inspec-audit.git' }
+# - { i: 3, u: 'https://github.com/juju4/inspec-osquery.git' }
+# - { i: 4, u: 'https://github.com/juju4/inspec-syslog.git' }
 harden_testing_check: true
 harden_testing_privesc: true
 harden_testing_speculative: true

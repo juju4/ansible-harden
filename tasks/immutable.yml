@@ -3,11 +3,11 @@
 ## requires target_dir, state=pre/post
 
 - block:
-## Ansible 2.3+ for get_attributes
+    ## Ansible 2.3+ for get_attributes
     - name: check target_dir {{ target_dir }} attributes
-#     stat:
-#       path: "{{ target_dir }}"
-#       get_attributes: yes
+      # stat:
+      #   path: "{{ target_dir }}"
+      #   get_attributes: yes
       command: "lsattr -d '{{ target_dir }}'"
       register: dir
       changed_when: false
@@ -21,8 +21,8 @@
 
 - name: Reestablish immutable attribute
   command: "chattr +i '{{ target_dir }}'"
-#  file:
-#    dest: "{{ target_dir }}"
-#    attributes: '----i-----I--e--'
+  # file:
+  #   dest: "{{ target_dir }}"
+  #   attributes: '----i-----I--e--'
   when: state == 'post'
   ignore_errors: true

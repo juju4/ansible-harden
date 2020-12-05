@@ -11,14 +11,14 @@
         owner: '0'
         group: '0'
         mode: '0644'
-## works in ansible 2.2.0.0, nok 2.2.1.0?
-#        validate: 'iptables-restore -tv < %s'
+        ## works in ansible 2.2.0.0, nok 2.2.1.0?
+        # validate: 'iptables-restore -tv < %s'
       notify:
         - restart iptables
         - restart iptables - xenial
         - restart iptables - redhat|alpine
       register: rulesv4
-## as validate option seems incorrect
+    ## as validate option seems incorrect
     - name: ensure iptables v4 rules are correct
       shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
       when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
@@ -35,14 +35,13 @@
         owner: '0'
         group: '0'
         mode: '0644'
-## works in ansible 2.2.0.0, nok 2.2.1.0?
-#        validate: 'iptables-restore -tv < %s'
+        ## works in ansible 2.2.0.0, nok 2.2.1.0?
+        # validate: 'iptables-restore -tv < %s'
       notify:
         - restart iptables
         - restart iptables - xenial
         - restart ip6tables - redhat|alpine
       register: rulesv6
-## as validate option seems incorrect
     - name: ensure iptables v6 rules are correct
       shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")

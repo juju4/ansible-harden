@@ -37,6 +37,7 @@
   unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
     dest: /tmp/
+    mode: '0755'
     remote_src: true
   become: yes
   become_user: _test
@@ -53,7 +54,7 @@
   become_user: _test
   when: upc is succeeded
 
-#- debug: var=privcheck.stdout_lines
+# - debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
   shell: >
     egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out |
@@ -85,7 +86,7 @@
   become_user: _test
   ignore_errors: true
 
-#- debug: var=linuxprivchecker.stdout_lines
+# - debug: var=linuxprivchecker.stdout_lines
 
 - name: Ensure git is present
   package:

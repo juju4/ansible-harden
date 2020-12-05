@@ -12,7 +12,7 @@
 ## FIXME! slow... even when rerun
 - block:
     - name: yum | upgrade all packages to the latest version
-      yum: name=* state=latest
+      yum: name=* state=latest  # noqa 403
       async: 3600
       poll: 300
       register: pkg_result
@@ -21,7 +21,11 @@
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 
 - name: set better login.defs - redhat only
-  lineinfile: "dest=/etc/login.defs regexp={{ item.r }} line={{ item.l }}"
+  lineinfile:
+    dest: /etc/login.defs
+    regexp: "{{ item.r }}"
+    line: "{{ item.l }}"
+    mode: '0644'
   with_items:
     - { r: '^PASS_MIN_LEN', l: 'PASS_MIN_LEN    10' }
 
@@ -42,7 +46,11 @@
     not (ansible_distribution_major_version|int == 8)
 
 - name: password set for single mode
-  lineinfile: dest=/etc/sysconfig/init regexp='^SINGLE=' line='SINGLE=/sbin/sulogin'
+  lineinfile:
+    dest: /etc/sysconfig/init
+    regexp: '^SINGLE='
+    line: 'SINGLE=/sbin/sulogin'
+    mode: '0644'
   when: >
     not (ansible_distribution_major_version|int == 8)
 
@@ -82,12 +90,14 @@
     dest: /etc/yum.conf
     regexp: '^clean_requirements_on_remove=.*'
     line: 'clean_requirements_on_remove=1'
+    mode: '0644'
 
 - name: Ensure gpgcheck Enabled for Local Packages
   lineinfile:
     dest: /etc/yum.conf
     regexp: '^localpkg_gpgcheck=.*'
     line: 'localpkg_gpgcheck=1'
+    mode: '0644'
 
 - name: Disable the Automounter
   service:
@@ -103,6 +113,7 @@
   template:
     src: "rhel-{{ item }}.j2"
     dest: "/etc/pam.d/{{ item }}"
+    mode: '0644'
     backup: "{{ harden_backup | default(false) }}"
   with_items:
     - password-auth-local
@@ -112,6 +123,7 @@
   file:
     src: "{{ item }}-local"
     dest: "/etc/pam.d/{{ item }}"
+    mode: '0644'
     state: link
   with_items:
     - password-auth

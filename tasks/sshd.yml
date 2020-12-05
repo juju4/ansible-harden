@@ -33,7 +33,11 @@
   when: ansible_distribution == "Alpine"
 
 - name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)
-  lineinfile: dest=/etc/tmpfiles.d/sshd.conf line='    d    /run/sshd   0755 root root - -' create=yes
+  lineinfile:
+    dest: /etc/tmpfiles.d/sshd.conf
+    line: '    d    /run/sshd   0755 root root - -'
+    mode: '0644'
+    create: yes
   when: >
     ansible_service_mgr == 'systemd' and
     (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
@@ -41,6 +45,7 @@
 - name: ensure privsep directory for sshd
   file:
     dest: /run/sshd
+    mode: '0755'
     state: directory
   when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
 
@@ -92,14 +97,14 @@
         executable: /bin/bash
         creates: /etc/ssh/moduli.strong
     - name: Use /etc/ssh/moduli.strong
+      # re-generate. much longer
+      # shell: >
+      #   ssh-keygen -G /etc/ssh/moduli.all -b 4096 &&
+      #   ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all &&
+      #   mv /etc/ssh/moduli.safe /etc/ssh/moduli"
       copy:
         src: /etc/ssh/moduli.strong
         dest: /etc/ssh/moduli
         mode: '0644'
         remote_src: true
-  # re-generate. much longer
-#  shell: >
-#    ssh-keygen -G /etc/ssh/moduli.all -b 4096 &&
-#    ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all &&
-#    mv /etc/ssh/moduli.safe /etc/ssh/moduli"
   when: moduli.stdout|int != 0

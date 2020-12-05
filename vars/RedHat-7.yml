@@ -4,34 +4,34 @@ ssh_svc: sshd
 auditd_pkg: audit
 
 harden_pkg:
-    - openssh-server
-    - rsyslog
-    - git
-    - gnupg
-    - jitterentropy-rngd
-    - psacct
-    - sysstat
-    - aide
-    - rkhunter
-    - lynis
-    - yum-utils
-    - fail2ban
-#    - setroubleshoot
-    - systemtap
-    - sudo
-    - iptables-services
-    - perf              # perf /FlameGraph
-    - openscap-scanner
-    - scap-security-guide
-    - libpwquality
+  - openssh-server
+  - rsyslog
+  - git
+  - gnupg
+  - jitterentropy-rngd
+  - psacct
+  - sysstat
+  - aide
+  - rkhunter
+  - lynis
+  - yum-utils
+  - fail2ban
+  # - setroubleshoot
+  - systemtap
+  - sudo
+  - iptables-services
+  - perf              # perf /FlameGraph
+  - openscap-scanner
+  - scap-security-guide
+  - libpwquality
 
 harden_pkg_remove: []
 
 harden_services:
-    - jitterentropy-rngd
+  - jitterentropy-rngd
 harden_services_containers:
-    - psacct
-    - auditd
+  - psacct
+  - auditd
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/secure

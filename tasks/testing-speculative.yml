@@ -131,11 +131,11 @@
 
 - debug: var=iaik1
 
-#- name: test IAIK poc - root
-#  command: "{{ item }}"
-#  args:
-#    chdir: /tmp/meltdown-iaik
-#  with_items:
+# - name: test IAIK poc - root
+#   command: "{{ item }}"
+#   args:
+#     chdir: /tmp/meltdown-iaik
+#   with_items:
 ## FIXME! travis/xenial: produce output with no end = The log length has exceeded the limit of 4 MB
 ## FIXME! travis/debian9: No output has been received in the last 10m0s
 ##    - taskset 0x1 ./kaslr
@@ -144,12 +144,12 @@
 #    - nohup ./secret
 ## FIXME! travis/alpine37: execution seen as not root + No output has been received in the last 10m0s
 ##    - taskset 0x1 ./physical_reader 0x390fff400 0xffff880000000000
-#  become: yes
-#  become_user: root
-#  register: iaik2
-#  ignore_errors: true
+#   become: yes
+#   become_user: root
+#   register: iaik2
+#   ignore_errors: true
 #
-#- debug: var=iaik2
+# - debug: var=iaik2
 
 - name: retrieve another check
   git:

@@ -2,23 +2,23 @@
 
 - name: Testing | Ensure testing packages are present
   package:
-     name: "{{ testing_pkgs }}"
-     state: present
+    name: "{{ testing_pkgs }}"
+    state: present
 
 - block:
-#    - name: testing | Ensure ruby and dependencies are present
-#      package:
-#        name: "{{ item }}"
-#        state: present
-#      with_items: "{{ testing_pkgs }}"
-#    - name: testing | Ensure inspec is present
-#      gem:
-#        name: "{{ item }}"
-#        state: present
-#        user_install: no
-#      with_items:
-#        - rake
-#        - inspec
+    # - name: testing | Ensure ruby and dependencies are present
+    #   package:
+    #     name: "{{ item }}"
+    #     state: present
+    #   with_items: "{{ testing_pkgs }}"
+    # - name: testing | Ensure inspec is present
+    #   gem:
+    #     name: "{{ item }}"
+    #     state: present
+    #     user_install: no
+    #   with_items:
+    #     - rake
+    #     - inspec
     - name: download inspec package
       get_url:
         url: "{{ inspec_url }}"
@@ -67,10 +67,11 @@
     - name: testing | accept inspec license
       file:
         path: /etc/chef/accepted_licenses/inspec
+        mode: '0644'
         state: touch
 
     - name: testing | run linux-baseline
-#      shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
+      # shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
       shell: >
         inspec exec inspec --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee {{ log_dir | default('/var/log') }}/inspec.log |

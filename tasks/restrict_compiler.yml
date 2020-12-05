@@ -19,7 +19,7 @@
         mode: "{{ harden_restrict_compiler_umask }}"
         follow: yes
       with_items:
-#        - /usr/bin/gcc-{{ gcc_v }}
+        # - /usr/bin/gcc-{{ gcc_v }}
         - /usr/bin/cc
         - /usr/bin/gcc
         - /usr/bin/gcc-ar
@@ -28,12 +28,12 @@
         - /usr/bin/make
         - /usr/bin/g++
         - /usr/bin/c++
+      ## Note: ignore errors as compiler tools may not be installed...
       ignore_errors: true
-## Note: ignore errors as compiler tools may not be installed...
   when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
 
 - block:
-## https://github.com/ansible/ansible/issues/13652
+    ## https://github.com/ansible/ansible/issues/13652
     - name: Alpine | Restrict compiler tools to group {{ harden_restrict_compiler_group }}
       file:
         path: "{{ item }}"

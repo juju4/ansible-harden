@@ -40,7 +40,7 @@
         ) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
 
 # See README.md FAQ why using service
-- name: restart auditd - rhel7
+- name: restart auditd - rhel7  # noqa 303
   command: "service auditd restart"
   when: >
     not (ansible_virtualization_type is defined and
@@ -51,7 +51,7 @@
 ##  and cant ssh after... vagrant reload: fine?
 - name: reload fstab
   shell: "umount -a; mount -a"
-#  shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
+  # shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
   ignore_errors: true
   when: ansible_os_family != 'RedHat'
 

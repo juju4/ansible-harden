@@ -12,6 +12,7 @@
       copy:
         src: "/usr/share/zoneinfo/{{ harden_timezone | default('UTC') }}"
         dest: "/etc/localtime"
+        mode: '0644'
     - name: Alpine | set local timezone
       lineinfile:
         dest: /etc/timezone

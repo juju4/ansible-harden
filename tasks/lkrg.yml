@@ -15,9 +15,9 @@
     - { u: 'https://www.openwall.com/signatures/openwall-offline-signatures.asc',
         c: 'sha256:8807d12ff271891e21491552880541aed0fa525d30cfec0df0e8fcfe56f46cd8',
         m: '0600'
-      }
+    }
 
-- name: Import openwall gpg key
+- name: Import openwall gpg key  # noqa 301
   command: >
     gpg --import {{ install_archives }}/openwall-offline-signatures.asc
 
@@ -38,10 +38,11 @@
   unarchive:
     src: "{{ install_archives }}/lkrg-0.6.tar.gz"
     dest: "{{ install_archives }}"
+    mode: '0755'
     creates: "{{ install_archives }}/lkrg-0.6/INSTALL"
 
 - name: build lkrg
-  command: make -j8
+  command: make -j8  # noqa 301
   args:
     chdir: "{{ install_archives }}/lkrg-0.6"
 
@@ -50,13 +51,14 @@
     dest: "{{ install_archives }}/lkrg-0.6/scripts/bootup/systemd/lkrg-systemd.sh"
     regex: -f5
     replace: -f7
+    mode: '0644'
   when: ansible_distribution_release == 'xenial'
 
 - include: "immutable.yml target_dir=/lib/modules state=pre"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: install lkrg
-  command: make install
+  command: make install  # noqa 301
   args:
     chdir: "{{ install_archives }}/lkrg-0.6"
 

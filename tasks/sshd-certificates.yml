@@ -30,6 +30,7 @@
   copy:
     src: "{{ harden_sshd_ca_path }}.pub"
     dest: "{{ harden_sshd_trusteduserca }}"
+    mode: '0644'
 
 - name: Check if SSH host key is signed
   stat:

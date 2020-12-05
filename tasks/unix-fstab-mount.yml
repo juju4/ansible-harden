@@ -3,8 +3,8 @@
 - name: Secure Mount options
   mount:
     name: "{{ outer_item.mount }}"
-#    src: "{{ item.device }}"
-#    src: "UUID={{ item.uuid }}"
+    # src: "{{ item.device }}"
+    # src: "UUID={{ item.uuid }}"
     src: >-
       {% if ansible_virtualization_type is defined and ansible_virtualization_type == 'lxc' %}{{ item.device }}
       {% else %}UUID={{ item.uuid }}{% endif %}
@@ -13,9 +13,9 @@
     opts: "{{ outer_item.opts | default(item.options) | regex_replace('^rw,seclabel,relatime,attr2,inode64,noquota$', 'defaults') }}"
   when: item.mount == outer_item.mount
   with_items: "{{ ansible_mounts }}"
-## Note: better to use notify than state=mounted which is immediate. other part of role might conflict else
-#  notify:
-#    - reload fstab
+  ## Note: better to use notify than state=mounted which is immediate. other part of role might conflict else
+  # notify:
+  #   - reload fstab
   register: mountopts
 
 - debug: var=mountopts
@@ -23,6 +23,6 @@
 ## man 8 mount: 'After this call mount reads fstab (or mtab) and merges these options with options
 ##      from command line ( -o ).'
 - name: remount changed mount points
-  command: "mount -o remount {{ item.item.mount }}"
+  command: "mount -o remount {{ item.item.mount }}"  # noqa 503 303
   when: item.changed
   with_items: "{{ mountopts.results }}"

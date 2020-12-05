@@ -2,21 +2,21 @@
 driver:
   name: lxd_cli
 
-#transport:
-#  name: sftp
+# transport:
+#   name: sftp
 
 provisioner:
   name: ansible_playbook
   roles_path: ../
   hosts: all
-#  ansible_verbose: true
+  # ansible_verbose: true
   ansible_verbose: false
   ansible_verbosity: 3
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   ansible_cfg_path: test/vagrant/ansible.cfg
-#  require_chef_omnibus: false
+  # require_chef_omnibus: false
   require_ansible_omnibus: true
-#  require_chef_for_busser: false
+  # require_chef_for_busser: false
   enable_yum_epel: true
   ansible_connection: ssh
 
@@ -26,47 +26,19 @@ platforms:
   - name: ubuntu-16.04
   - name: centos-8
   - name: centos-7
-## capability required for some packages upgrade: ping
+    ## capability required for some packages upgrade: ping
     driver:
       config:
         security.privileged: true
-#  - name: alpine-3.4
 
 suites:
   - name: default
     run_list:
     attributes:
     verifier:
-        name: inspec
-## ansible 2.0/2.1 not supported: fail2ban/ini_file module: create option
-#  - name: default-ansible20
-#    run_list:
-#    includes:
-#      - ubuntu-16.04
-##      - ubuntu-14.04
-##      - centos-7
-##      - centos-6
-#    provisioner:
-### 1.9.6.0 NOK as blockinfile module or include manually https://github.com/yaegashi/ansible-role-blockinfile
-##      ansible_version: 1.9.6.0
-#      ansible_version: 2.0.0.2
-#      name: ansible_playbook
-#      playbook: test/integration/default/default.yml
-## ansible 1.9 not supported: block, blockinfile module
-#  - name: default-ansible19
-#    run_list:
-#    includes:
-#      - ubuntu-16.04
-##      - ubuntu-14.04
-##      - centos-7
-##      - centos-6
-#    provisioner:
-### 1.9.6.0 NOK as blockinfile module or include manually https://github.com/yaegashi/ansible-role-blockinfile
-#      ansible_version: 1.9.6.0
-#      name: ansible_playbook
-#      playbook: test/integration/default/default.yml
+      name: inspec
   - name: full
     run_list:
     attributes:
     verifier:
-        name: inspec
+      name: inspec

@@ -38,8 +38,8 @@
   when: livepatch is defined and livepatch.stdout is defined and "Machine is not enabled." in livepatch.stdout
 
 ## Note: display token
-#- name: Check status
-#  command: "/snap/bin/canonical-livepatch status --verbose"
-#  changed_when: false
-#  register: livepatchstatus
-#- debug: var=livepatchstatus
+# - name: Check status
+#   command: "/snap/bin/canonical-livepatch status --verbose"
+#   changed_when: false
+#   register: livepatchstatus
+# - debug: var=livepatchstatus

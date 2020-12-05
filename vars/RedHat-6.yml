@@ -3,31 +3,31 @@
 ssh_svc: sshd
 
 harden_pkg:
-    - openssh-server
-    - rsyslog
-    - git
-    - gnupg
-    - haveged
-    - psacct
-    - sysstat
-    - aide
-    - rkhunter
-    - lynis
-    - yum-utils
-    - audit
-    - fail2ban
-    - systemtap
-#    - setroubleshoot
-    - sudo
-    - iptables-ipv6
+  - openssh-server
+  - rsyslog
+  - git
+  - gnupg
+  - haveged
+  - psacct
+  - sysstat
+  - aide
+  - rkhunter
+  - lynis
+  - yum-utils
+  - audit
+  - fail2ban
+  - systemtap
+  # - setroubleshoot
+  - sudo
+  - iptables-ipv6
 
 harden_pkg_remove: []
 
 harden_services:
-    - haveged
+  - haveged
 harden_services_containers: []
-#    - psacct
-#    - auditd
+#  - psacct
+#  - auditd
 
 syslog_mainfile: /var/log/messages
 syslog_authfile: /var/log/secure

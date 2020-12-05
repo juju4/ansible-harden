@@ -6,7 +6,7 @@
     https_proxy: "{{ lookup('env', 'https_proxy') }}"
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
   vars:
-#    - harden_upgradeall: false
+    # - harden_upgradeall: false
     - harden_auditd_log_all_execve: true
     - harden_auditd_log_all_socket: true
     - harden_auditd_log_all_connect: true
@@ -18,5 +18,5 @@
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
-#    - kbrebanov.osquery
+    # - kbrebanov.osquery
     - juju4.harden

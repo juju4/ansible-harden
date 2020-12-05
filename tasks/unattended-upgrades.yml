@@ -13,11 +13,12 @@
     dest: "{{ aptconf_unattended | default('/etc/apt/apt.conf.d/10periodic') }}"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
+    mode: '0644'
     backup: "{{ harden_backup | default(false) }}"
   with_items:
     - { regexp: '^APT::Periodic::Update-Package-Lists', line: 'APT::Periodic::Update-Package-Lists "1";' }
     - { regexp: '^APT::Periodic::Download-Upgradeable-Packages',
         line: 'APT::Periodic::Download-Upgradeable-Packages "1";'
-      }
+    }
     - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade "1";' }
     - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval "14";' }

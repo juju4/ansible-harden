@@ -18,21 +18,22 @@
 - block:
     - name: Debian | create cracklib database
       command: "create-cracklib-dict /usr/share/dict/*"
-## just a refresh = not idempotent
-#      args:
-#        creates: /var/cache/cracklib/cracklib_dict.pwd
+      ## just a refresh = not idempotent
+      # args:
+      #   creates: /var/cache/cracklib/cracklib_dict.pwd
   when: ansible_os_family == 'Debian' and not cracklibrefresh.stat.exists
 - block:
     - name: RedHat | create cracklib database
       shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"
-#      args:
-#        creates: /usr/lib/cracklib_dict.pwd
+      # args:
+      #   creates: /usr/lib/cracklib_dict.pwd
   when: >
     (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7) and
     not cracklibrefresh.stat.exists
 - name: add cracklib refresh marker
   file:
     path: /usr/share/dict/.ansible_cracklib_update
+    mode: '0600'
     state: touch
   when: >
     (ansible_os_family == 'Debian' or
@@ -40,12 +41,13 @@
     ) and not cracklibrefresh.stat.exists
 
 - block:
-# complexity... do we still want that?
+    # complexity... do we still want that?
     - name: RedHat | Set Password Strength complexity
       lineinfile:
         dest: /etc/security/pwquality.conf
         regexp: "{{ item.re }}"
         line: "{{ item.l }}"
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
       with_items:
         - { re: '^dcredit=.*', l: 'dcredit=1' }
@@ -57,5 +59,6 @@
         dest: /etc/security/pwquality.conf
         regexp: '^minlen=.*'
         line: "minlen={{ harden_rhel_pwquality_minlen | default(16) }}"
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7

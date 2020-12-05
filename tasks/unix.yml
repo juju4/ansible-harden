@@ -22,7 +22,7 @@
   environment:
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   when: not pacct.stat.exists
-## FIXME! not working on centos-6
+  ## FIXME! not working on centos-6
   ignore_errors: true
 
 - include: unix-fstab.yml
@@ -53,7 +53,7 @@
   when: harden_securetty
 
 - name: Set immutable attribute for chosen files
-  file:
+  file:  # noqa 208
     path: "{{ item }}"
     attributes: +i
   with_items: "{{ harden_immutable_others }}"

@@ -5,5 +5,6 @@
   lineinfile:
     dest: /root/.forward
     line: "{{ harden_rootforward }}"
+    mode: '0600'
     state: present
     create: True

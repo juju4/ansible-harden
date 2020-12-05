@@ -6,10 +6,15 @@
     dest: /etc/issue
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
+    mode: '0644'
   with_items: "{{ harden_issue_lines | default([]) }}"
 
 - name: set better login.defs
-  lineinfile: "dest=/etc/login.defs regexp={{ item.r }} line={{ item.l }}"
+  lineinfile:
+    dest: /etc/login.defs
+    regexp: "{{ item.r }}"
+    line: "{{ item.l }}"
+    mode: '0644'
   with_items:
     - { r: '^PASS_MAX_DAYS', l: "PASS_MAX_DAYS   {{ harden_logindefs_pass_maxdays }}" }
     - { r: '^PASS_WARN_AGE', l: "PASS_WARN_AGE    {{ harden_logindefs_pass_warnage }}" }
@@ -25,12 +30,17 @@
     dest: /etc/default/useradd
     regexp: '^INACTIVE=.*'
     line: 'INACTIVE=90'
+    mode: '0644'
   when: ansible_os_family != "Alpine"
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - block:
     - name: disable usb storage drivers - modprobe
-      lineinfile: dest=/etc/modprobe.d/no-usb.conf line='install usb-storage /bin/true' create=yes
+      lineinfile:
+        dest: /etc/modprobe.d/no-usb.conf
+        line: 'install usb-storage /bin/true'
+        mode: '0644'
+        create: yes
     - name: Check if grub is present
       stat: path=/etc/default/grub
       register: defgrub
@@ -39,8 +49,9 @@
         dest: /etc/default/grub
         regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
         replace: '\1nousb\2'
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
-    ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
+      ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: harden_disable_usb is defined and harden_disable_usb
 - block:
@@ -54,8 +65,9 @@
         dest: /etc/default/grub
         regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
         replace: '\1\2'
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
-    ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
+      ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: not (harden_disable_usb is defined and harden_disable_usb)
 
@@ -63,6 +75,7 @@
   lineinfile:
     dest: /etc/modprobe.d/no-firewire.conf
     line: "{{ item }}"
+    mode: '0644'
     create: yes
   with_items:
     - 'blacklist ohci1394'
@@ -81,7 +94,11 @@
       register: defapport
       when: ansible_distribution == 'Ubuntu'
     - name: Ubuntu | ensure Apport crash report is disabled
-      replace: dest=/etc/default/apport regexp='^enabled=.*$' replace='enabled=0'
+      replace:
+        dest: /etc/default/apport
+        regexp: '^enabled=.*$'
+        replace: 'enabled=0'
+        mode: '0644'
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: set sensible core pattern
       sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
@@ -140,6 +157,7 @@
         dest: /etc/rsyslog.conf
         regexp: '^\$IncludeConfig /etc/.*'
         line: '$IncludeConfig /etc/rsyslog.d/*.conf'
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
   when: ansible_distribution == "Alpine"
 

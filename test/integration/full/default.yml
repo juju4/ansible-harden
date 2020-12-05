@@ -5,13 +5,14 @@
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
     https_proxy: "{{ lookup('env', 'https_proxy') }}"
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
-#- hosts: test-kitchen
   vars:
-#    - harden_upgradeall: true
-    - harden_upgradeall: false
+    # - harden_upgradeall: false
     - harden_auditd_log_all_execve: true
     - harden_auditd_log_all_socket: true
     - harden_auditd_log_all_connect: true
+    - harden_sshd_ca_gen: true
+    - harden_sshd_ca_path: /tmp/cadir/ssh-ca
+    - harden_sshd_host_key_opath: /tmp/ofiles
     - harden_testing: true
     - ipv6_config: 'harden'
     - rsyslog_conf_d:
@@ -29,7 +30,7 @@
         - logrotate-osquery
   pre_tasks:
     - set_fact:
-        ntpclient_listen: [ '127.0.0.1', '::1' ]
+        ntpclient_listen: ['127.0.0.1', '::1']
       when: ansible_os_family == "RedHat"
   roles:
     - juju4.redhat_epel

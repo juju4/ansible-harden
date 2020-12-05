@@ -6,26 +6,26 @@ aide_bin: ''
 auditd_pkg: audit@testing
 
 harden_pkg:
-    - openssh
-    - rsyslog
-    - unzip
-    - openntpd
-    - acct
-#    - aide
-    - logcheck
-    - acl
-    - sysstat
-    - tcpdump
-    - libcap
-    - ldns-tools
-    - gnupg
-    - fail2ban
-#    - linux-tools-generic   # perf /FlameGraph
-    - haveged
-#    - rng-tools
-    - git
-#    - systemtap
-    - sudo
+  - openssh
+  - rsyslog
+  - unzip
+  - openntpd
+  - acct
+  # - aide
+  - logcheck
+  - acl
+  - sysstat
+  - tcpdump
+  - libcap
+  - ldns-tools
+  - gnupg
+  - fail2ban
+  # - linux-tools-generic   # perf /FlameGraph
+  - haveged
+  # - rng-tools
+  - git
+  # - systemtap
+  - sudo
 
 harden_pkg_remove: []
 harden_services:

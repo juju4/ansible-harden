@@ -7,6 +7,7 @@
     dest: /etc/apt/apt.conf.d/10proxy
     regexp: '^Acquire::http::Proxy ".*";'
     line: "Acquire::http::Proxy \"{{ harden_proxy_url }}\";"
+    mode: '0644'
     backup: "{{ harden_backup | default(false) }}"
 
 - name: RedHat | Ensure dnf is configured with proxy
@@ -27,6 +28,7 @@
     dest: /etc/environment
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
+    mode: '0644'
   with_items:
     - { re: ^http_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }
     - { re: ^https_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }

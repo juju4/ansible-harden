@@ -1,12 +1,13 @@
 ---
 
-#- debug: var=ansible_mounts
-#- debug: var=harden_mount_options
+# - debug: var=ansible_mounts
+# - debug: var=harden_mount_options
 
 - name: backup fstab
   copy:
     src: /etc/fstab
     dest: "/etc/fstab.{{ ansible_date_time.date }}"
+    mode: '0644'
     remote_src: true
 
 ## https://groups.google.com/forum/#!msg/ansible-project/7MhOICPWkaI/rADYaeaRDlsJ
