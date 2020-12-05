@@ -43,18 +43,17 @@ jobs:
           cd $GITHUB_WORKSPACE/juju4.harden && ansible-lint
       - name: run test
         run: |
-          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml
+          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml || true
+          systemctl -l --no-pager status monit
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-        continue-on-error: true
       # - name: idempotency run
       #   run: |
       #     cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0)  || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)
       - name: On failure
         run: |
           ansible -i inventory --connection=local -m setup localhost
-          systemctl -l --no-pager status monit
           systemctl -l --no-pager status
           systemctl -l --no-pager --failed
           ls -l /usr/bin/ | egrep '(python|pip|ansible)'
@@ -65,7 +64,7 @@ jobs:
           host www.google.com
           ping -c 1 www.google.com
           ping -c 1 8.8.8.8
-        if: env.WORKFLOW_CONCLUSION == 'failure'  # notify only if failure
+        if: ${{ failure() }}
       - name: After script - systemd
         run: |
           systemctl -l --no-pager status iptables
@@ -73,6 +72,7 @@ jobs:
           systemctl -l --no-pager status openntpd
           systemctl -l --no-pager status ntpd
           systemctl -l --no-pager status chronyd
+          systemctl -l --no-pager status monit
           systemd-analyze security
           rsyslogd -v
         continue-on-error: true
@@ -97,7 +97,7 @@ jobs:
       - name: After script - files
         run: |
           cat /etc/passwd
-          cat /etc/rsyslog.conf"
+          cat /etc/rsyslog.conf
           find /etc/rsyslog.d -type f -exec cat {} \;
           cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp /etc/chrony.conf
           cat /etc/openntpd/ntpd.conf /etc/ntpd.conf
@@ -114,7 +114,7 @@ jobs:
           ls -l /boot/grub2/grub.cfg
           cat /etc/logrotate.conf
           cat /etc/security/pwquality.conf
-          ls -l /var/lib/aide/"
+          ls -l /var/lib/aide/
           ls -la /tmp/
           rpm -Va | grep '^..5'
         continue-on-error: true
