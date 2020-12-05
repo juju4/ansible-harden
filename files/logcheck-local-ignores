@@ -196,3 +196,20 @@ falco: Falco initialized with configuration file /etc/falco.yaml
 falco: Parsed rules from file /etc/falco_rules.yaml
 
 containerd: time=".*" level=info msg=
+
+## nextcloud.logrotate snap and others
+.*\.logrotate\[[0-9]*\]: Allocating hash table for state file, size [0-9]* entries
+.*\.logrotate\[[0-9]*\]: Creating new state
+.*\.logrotate\[[0-9]*\]: empty log files are not rotated, old logs are removed
+.*\.logrotate\[[0-9]*\]: Handling [0-9]* logs
+.*\.logrotate\[[0-9]*\]:   Last rotated at [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*
+.*\.logrotate\[[0-9]*\]:   Now: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*
+.*\.logrotate\[[0-9]*\]:   log does not need rotating
+.*\.logrotate\[[0-9]*\]:   log .* does not exist -- skipping
+.*\.logrotate\[[0-9]*\]: message repeated [0-9]* times: \[ Creating new state\]
+.*\.logrotate\[[0-9]*\]:  Now: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*
+.*\.logrotate\[[0-9]*\]: Reading state from file: \/var\/snap\/.*\/[0-9]*\/logrotate\/status
+.*\.renew-certs\[[0-9]*\]: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+.*\.renew-certs\[[0-9]*\]: No hooks were run.
+.*\.renew-certs\[[0-9]*\]: No renewals were attempted.
+.*\.renew-certs\[[0-9]*\]: Saving debug log to \/var\/snap\/.*\/current\/certs\/certbot\/logs\/letsencrypt.log
