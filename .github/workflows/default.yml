@@ -1,0 +1,117 @@
+---
+name: AnsibleCI
+
+on:
+  push:
+  pull_request:
+  schedule:  # run weekly, every Wednesday 03:00
+    - cron: '0 3 * * 3'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+    env:
+      ANSIBLE_CALLBACK_WHITELIST: profile_tasks
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: juju4.harden
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install ansible-lint flake8 yamllint
+          ansible --version
+          cd $GITHUB_WORKSPACE/juju4.harden
+          [ -f get-dependencies.sh ] && sh -x get-dependencies.sh
+          { echo '[defaults]'; echo 'callback_whitelist = profile_tasks, timer'; echo 'roles_path = ../'; echo 'ansible_python_interpreter: /usr/bin/python3'; } >> ansible.cfg
+      - name: yamllint
+        run: |
+          pwd
+          find -ls
+          cd $GITHUB_WORKSPACE/juju4.harden && yamllint .
+      - name: ansible-lint
+        run: |
+          cd $GITHUB_WORKSPACE/juju4.harden && ansible-lint
+      - name: run test
+        run: |
+          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+      # - name: idempotency run
+      #   run: |
+      #     cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0)  || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)
+      - name: On failure
+        run: |
+          ansible -i inventory --connection=local -m setup localhost
+          systemctl -l --no-pager status
+          systemctl -l --no-pager --failed
+          ls -l /usr/bin/ | egrep '(python|pip|ansible)'
+          pip freeze
+          pip3 freeze
+          ip addr
+          cat /etc/resolv.conf
+          host www.google.com
+          ping -c 1 www.google.com
+          ping -c 1 8.8.8.8
+        if: env.WORKFLOW_CONCLUSION == 'failure'  # notify only if failure
+      - name: After script - systemd
+        run: |
+          systemctl -l --no-pager status iptables
+          systemctl -l --no-pager status netfilter-persistent
+          systemctl -l --no-pager status openntpd
+          systemctl -l --no-pager status ntpd
+          systemctl -l --no-pager status chronyd
+          systemd-analyze security
+          rsyslogd -v
+      - name: After script - network
+        run: |
+          iptables -L -vn
+          iptables-save
+          ip6tables -L -vn
+          ip6tables-save
+          systemctl -l --no-pager status ntpd
+          systemctl -l --no-pager status chronyd
+          systemd-analyze security
+        continue-on-error: true
+      - name: After script - scap
+        run: |
+          ls -la /usr/share/xml/scap/ssg/content/
+          perl -pi -e \"s@platform idref=\\\"cpe:/o:redhat:enterprise_linux:${version}\\\"@platform idref=\\\"cpe:/o:centos:centos:${version}\\\"@\" /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"
+          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"
+          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel${version}-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"
+          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"
+        continue-on-error: true
+      - name: After script - files
+        run: |
+          cat /etc/passwd
+          cat /etc/rsyslog.conf"
+          find /etc/rsyslog.d -type f -exec cat {} \;
+          cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp /etc/chrony.conf
+          cat /etc/openntpd/ntpd.conf /etc/ntpd.conf
+          ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd
+          ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/
+          ls -l /etc/login.defs
+          cat /etc/login.defs
+          ls -la /etc
+          ls -la /etc/ssh/
+          ls -la /var/log
+          ls -l /etc/pam.d/
+          cat /etc/pam.d/system-auth
+          cat /etc/pam.d/password-auth
+          ls -l /boot/grub2/grub.cfg
+          cat /etc/logrotate.conf
+          cat /etc/security/pwquality.conf
+          ls -l /var/lib/aide/"
+          ls -la /tmp/
+          rpm -Va | grep '^..5'
+        continue-on-error: true
