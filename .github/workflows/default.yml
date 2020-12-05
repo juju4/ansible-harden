@@ -44,7 +44,6 @@ jobs:
       - name: run test
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml || true
-          systemctl -l --no-pager status monit
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
@@ -67,24 +66,21 @@ jobs:
         if: ${{ failure() }}
       - name: After script - systemd
         run: |
-          systemctl -l --no-pager status iptables
-          systemctl -l --no-pager status netfilter-persistent
-          systemctl -l --no-pager status openntpd
-          systemctl -l --no-pager status ntpd
-          systemctl -l --no-pager status chronyd
+          systemctl -l --no-pager status iptables || true
+          systemctl -l --no-pager status netfilter-persistent || true
+          systemctl -l --no-pager status openntpd || true
+          systemctl -l --no-pager status ntpd || true
+          systemctl -l --no-pager status chronyd || true
           systemctl -l --no-pager status monit
-          systemd-analyze security
+          systemd-analyze security || true
           rsyslogd -v
         continue-on-error: true
       - name: After script - network
         run: |
-          iptables -L -vn
-          iptables-save
-          ip6tables -L -vn
-          ip6tables-save
-          systemctl -l --no-pager status ntpd
-          systemctl -l --no-pager status chronyd
-          systemd-analyze security
+          sudo iptables -L -vn
+          sudo iptables-save
+          sudo ip6tables -L -vn
+          sudo ip6tables-save
         continue-on-error: true
       - name: After script - scap
         run: |
@@ -99,10 +95,10 @@ jobs:
           cat /etc/passwd
           cat /etc/rsyslog.conf
           find /etc/rsyslog.d -type f -exec cat {} \;
-          cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp /etc/chrony.conf
+          cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp /etc/chrony.conf || true
           cat /etc/openntpd/ntpd.conf /etc/ntpd.conf
-          ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd
-          ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/
+          ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd || true
+          ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/ || true
           ls -l /etc/login.defs
           cat /etc/login.defs
           ls -la /etc
@@ -117,4 +113,5 @@ jobs:
           ls -l /var/lib/aide/
           ls -la /tmp/
           rpm -Va | grep '^..5'
+          ls -l /tmp/cadir/ssh-ca*
         continue-on-error: true
