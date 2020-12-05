@@ -96,7 +96,7 @@ jobs:
           cat /etc/rsyslog.conf
           find /etc/rsyslog.d -type f -exec cat {} \;
           cat /etc/ntp.conf /etc/sysconfig/ntpd /etc/default/ntp /etc/chrony.conf || true
-          cat /etc/openntpd/ntpd.conf /etc/ntpd.conf
+          cat /etc/openntpd/ntpd.conf /etc/ntpd.conf || true
           ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd || true
           ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/ || true
           ls -l /etc/login.defs
@@ -105,11 +105,11 @@ jobs:
           ls -la /etc/ssh/
           ls -la /var/log
           ls -l /etc/pam.d/
-          cat /etc/pam.d/system-auth
-          cat /etc/pam.d/password-auth
+          cat /etc/pam.d/system-auth || true
+          cat /etc/pam.d/password-auth || true
           ls -l /boot/grub2/grub.cfg
           cat /etc/logrotate.conf
-          cat /etc/security/pwquality.conf
+          cat /etc/security/pwquality.conf || true
           ls -l /var/lib/aide/
           ls -la /tmp/
           rpm -Va | grep '^..5'
