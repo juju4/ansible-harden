@@ -47,12 +47,14 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+        continue-on-error: true
       # - name: idempotency run
       #   run: |
       #     cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0)  || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)
       - name: On failure
         run: |
           ansible -i inventory --connection=local -m setup localhost
+          systemctl -l --no-pager status monit
           systemctl -l --no-pager status
           systemctl -l --no-pager --failed
           ls -l /usr/bin/ | egrep '(python|pip|ansible)'
@@ -73,6 +75,7 @@ jobs:
           systemctl -l --no-pager status chronyd
           systemd-analyze security
           rsyslogd -v
+        continue-on-error: true
       - name: After script - network
         run: |
           iptables -L -vn
