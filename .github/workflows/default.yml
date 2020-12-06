@@ -115,5 +115,5 @@ jobs:
           ls -l /var/lib/aide/
           ls -la /tmp/ || true
           sudo rpm -Va | grep '^..5' || true
-          sudo ls -l /tmp/cadir/* || true
+          sudo ls -la /tmp/cadir/ || true
         continue-on-error: true
