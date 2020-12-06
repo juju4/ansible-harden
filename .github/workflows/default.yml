@@ -44,7 +44,7 @@ jobs:
           cd $GITHUB_WORKSPACE/juju4.harden && ansible-lint
       - name: run test
         run: |
-          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS} || true
+          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS}
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
