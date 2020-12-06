@@ -16,6 +16,7 @@ jobs:
       max-parallel: 4
     env:
       ANSIBLE_CALLBACK_WHITELIST: profile_tasks
+      ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes"
 
     steps:
       - uses: actions/checkout@v2
@@ -43,13 +44,13 @@ jobs:
           cd $GITHUB_WORKSPACE/juju4.harden && ansible-lint
       - name: run test
         run: |
-          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml || true
+          cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS} || true
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
       # - name: idempotency run
       #   run: |
-      #     cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0)  || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)
+      #     cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS} | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0)  || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)
       - name: On failure
         run: |
           ansible -i inventory --connection=local -m setup localhost

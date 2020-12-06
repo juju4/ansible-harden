@@ -36,6 +36,7 @@
     src: "{{ harden_sshd_ca_path }}.pub"
     dest: "{{ harden_sshd_trusteduserca }}"
     mode: '0644'
+    remote_src: "{{ harden_sshd_remote_src | default('no') }}"
 
 - name: Check if SSH host key is signed
   stat:
