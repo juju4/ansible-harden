@@ -77,7 +77,7 @@
   register: dl_result
   until: dl_result is success
 
-- name: execute unix-privesc-check
+- name: execute linuxprivchecker
   shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
   register: linuxprivchecker
   args:
@@ -85,6 +85,7 @@
   become: yes
   become_user: _test
   ignore_errors: true
+  when: harden_testing_privesc_lpc|bool
 
 # - debug: var=linuxprivchecker.stdout_lines
 

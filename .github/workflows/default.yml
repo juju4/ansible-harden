@@ -16,7 +16,7 @@ jobs:
       max-parallel: 4
     env:
       ANSIBLE_CALLBACK_WHITELIST: profile_tasks
-      ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes -e harden_testing_privesc_upc=false"
+      ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes -e harden_testing_privesc_upc=false -e harden_testing_privesc_lpc=false"
 
     steps:
       - uses: actions/checkout@v2
