@@ -33,7 +33,7 @@ UsePrivilegeSeparation yes
 UsePrivilegeSeparation sandbox
 {% endif %}
 {% endif %}
-UseDNS yes
+UseDNS {{ harden_sshd_usedns | default('yes') }}
 
 {% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
 # Lifetime and size of ephemeral version 1 server key
