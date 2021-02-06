@@ -1,7 +1,7 @@
 {{ ansible_managed | comment }}
 
 check process sshd
-  with pidfile "/var/run/sshd.pid"
+  with pidfile "/var/run/sshd.pid" every 5 cycles
   group system
   group sshd
 {% if ansible_service_mgr == 'systemd' %}
