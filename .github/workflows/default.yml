@@ -62,9 +62,10 @@ jobs:
           ip addr
           cat /etc/resolv.conf
           host www.google.com
-          ping -c 1 www.google.com
-          ping -c 1 8.8.8.8
+          ping -c 1 www.google.com || true
+          ping -c 1 8.8.8.8 || true
         if: ${{ failure() }}
+        continue-on-error: true
       - name: After script - systemd
         run: |
           systemctl -l --no-pager status iptables || true
@@ -75,6 +76,7 @@ jobs:
           systemctl -l --no-pager status monit
           systemd-analyze security || true
           rsyslogd -v
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - network
         run: |
@@ -82,6 +84,7 @@ jobs:
           sudo iptables-save
           sudo ip6tables -L -vn
           sudo ip6tables-save
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - scap
         run: |
@@ -90,6 +93,7 @@ jobs:
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_pci-dss --results-arf arf-pci.xml --report report-pci.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig-rhel${version}-disa --results-arf arf-disa.xml --report report-disa.html /usr/share/xml/scap/ssg/content/ssg-rhel${version}-ds.xml"
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_anssi_np_nt28_restrictive --results-arf arf.xml --report report.html /usr/share/scap-security-guide/ssg-ubuntu1604-ds.xml"
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - etc
         run: |
@@ -107,6 +111,7 @@ jobs:
           cat /etc/pam.d/password-auth || true
           cat /etc/logrotate.conf || true
           cat /etc/security/pwquality.conf || true
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - files
         run: |
@@ -117,4 +122,5 @@ jobs:
           ls -la /tmp/ || true
           sudo rpm -Va | grep '^..5' || true
           sudo ls -la /tmp/cadir/ || true
+        if: ${{ always() }}
         continue-on-error: true
