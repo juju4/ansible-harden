@@ -126,11 +126,12 @@
   become: yes
   become_user: _test
 
+# https://github.com/mzet-/linux-exploit-suggester/
 - name: retrieve linux-exploit-suggester.sh
   get_url:
     url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
     dest: /tmp/linux-exploit-suggester.sh
-    checksum: 'sha256:76fe6e088e5b0c3d228c38312a8b6520306a4cb46e45012074a09487e7eb2fd5'
+    checksum: 'sha256:0f8821896e35457f1ca5c76b3bd1ece0fee400ac777dede8a4f46a8ceaa0f528'
     mode: '0644'
     validate_certs: false
   become: yes
@@ -147,6 +148,7 @@
   become_user: _test
   ignore_errors: true
 
+# https://github.com/jondonas/linux-exploit-suggester-2/
 - name: retrieve linux-exploit-suggester-2.pl
   get_url:
     url: https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
