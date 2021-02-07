@@ -25,6 +25,7 @@
     mode: '0644'
   register: upc
   until: upc is success
+  ignore_errors: true
 
 - name: Ensure GNU tar is present
   package:
