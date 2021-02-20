@@ -1,6 +1,3 @@
-[![Build Status - Master](https://travis-ci.com/juju4/ansible-harden.svg?branch=master)](https://travis-ci.com/juju4/ansible-harden)
-[![Build Status - Devel](https://travis-ci.com/juju4/ansible-harden.svg?branch=devel)](https://travis-ci.com/juju4/ansible-harden/branches)
-
 [![Actions Status - Master](https://github.com/juju4/ansible-harden/workflows/AnsibleCI/badge.svg)](https://github.com/juju4/ansible-harden/actions?query=branch%3Amaster)
 [![Actions Status - Devel](https://github.com/juju4/ansible-harden/workflows/AnsibleCI/badge.svg?branch=devel)](https://github.com/juju4/ansible-harden/actions?query=branch%
 3Adevel)
