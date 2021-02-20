@@ -8,3 +8,34 @@
     mode: '0440'
     backup: "{{ harden_backup | default(false) }}"
     validate: 'visudo -cf %s'
+
+- name: Collect packages information
+  package_facts:
+    manager: auto
+
+- name: get sudo version
+  set_fact:
+    sudo_v: "{{ ansible_facts.packages['sudo'][0]['version'] }}"
+
+# sudo 1.9.4+, json logs
+# https://blog.sudo.ws/posts/2020/12/sudo-1.9.4-new-options-for-logging/
+- name: Gather package facts
+- name: Configure sudo log_format
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^Defaults        log_format=.*"
+    line: "Defaults        log_format=json"
+    mode: '0440'
+    backup: "{{ harden_backup | default(false) }}"
+    validate: 'visudo -cf %s'
+  when: sudo_v|string is version_compare('1.9.4', '>=')
+
+- name: Configure sudo remote syslog
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^Defaults        log_servers=.*"
+    line: "Defaults        log_servers={{ harden_sudo_remotesyslog }}"
+    mode: '0440'
+    backup: "{{ harden_backup | default(false) }}"
+    validate: 'visudo -cf %s'
+  when: sudo_v|string is version_compare('1.9.4', '>=') and harden_sudo_remotesyslog|string
