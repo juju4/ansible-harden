@@ -26,6 +26,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+      - name: ACL
+        run: |
+          sudo apt-get install -y acl || true
+          mount
+          sudo mount -o remount,acl / || true
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
@@ -40,10 +45,13 @@ jobs:
           cd $GITHUB_WORKSPACE/juju4.harden
           [ -f get-dependencies.sh ] && sh -x get-dependencies.sh
           { echo '[defaults]'; echo 'callback_whitelist = profile_tasks, timer'; echo 'roles_path = ../'; echo 'ansible_python_interpreter: /usr/bin/python3'; } >> ansible.cfg
-      - name: yamllint
+      - name: Environment
         run: |
           pwd
+          env
           find -ls
+      - name: yamllint
+        run: |
           cd $GITHUB_WORKSPACE/juju4.harden && yamllint .
       - name: ansible-lint
         run: |
