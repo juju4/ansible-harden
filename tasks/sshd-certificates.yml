@@ -66,6 +66,7 @@
         src: "{{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}/{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
         dest: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
         mode: '0444'
+      when: inventory_hostname != 'localhost'
   when: not sshhost_signed.stat.exists
 
 # FIXME! file created as root?
