@@ -19,7 +19,6 @@
 
 # sudo 1.9.4+, json logs
 # https://blog.sudo.ws/posts/2020/12/sudo-1.9.4-new-options-for-logging/
-- name: Gather package facts
 - name: Configure sudo log_format
   lineinfile:
     dest: /etc/sudoers
