@@ -177,3 +177,4 @@ See also
 * https://theprivacyguide1.github.io/linux_hardening_guide.html
 * https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md
 * https://github.com/konstruktoid/hardening
+* [Ansible Role for the DISA STIG](https://www.ansible.com/security-stig)
