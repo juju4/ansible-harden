@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - sshd certificates configuration
+- Github Action
+- sudo 1.9.4+ option: json logs, remote syslog
+- sshd_config: UsedDNS option
+- support for Ubuntu 20.04
+
+### Changed
+- Update tools and hashes
+- lint
+- Update to configuration of: logcheck, aide hids
+
+### Removed
+- Travis-ci
 
 ## [1.1.0] - 2020-02-01
 
