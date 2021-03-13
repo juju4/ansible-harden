@@ -111,7 +111,8 @@
 - name: Debug | getcap1 var
   debug: var=getcap1.stdout
 - block:
-    - debug: var=ansible_virtualization_type
+    - name: Debug | ansible_virtualization_type var
+      debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
       capabilities:
         path: "{{ item.bin }}"
