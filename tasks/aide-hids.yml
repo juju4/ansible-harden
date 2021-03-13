@@ -88,7 +88,8 @@
 - name: Check if aide database exists
   stat: path=/var/lib/aide/aide.db
   register: aidedb
-- debug: var=aidedb
+- name: Debug | aidedb var
+  debug: var=aidedb
 - name: Generating initial Aide database and backup
   command: "{{ item }}"
   with_items:

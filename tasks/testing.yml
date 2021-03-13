@@ -82,7 +82,8 @@
       ignore_errors: true
       register: inspeclog
       changed_when: false
-    - debug: var=inspeclog.stdout_lines
+    - name: Debug | inspec output
+      debug: var=inspeclog.stdout_lines
 
     - name: testing | run inspec baselines
       shell: >

@@ -9,4 +9,5 @@
   ignore_errors: true
   register: lynis
 
-- debug: var=lynis.stdout_lines
+- name: Debug | lynis output
+  debug: var=lynis.stdout_lines

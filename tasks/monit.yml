@@ -82,6 +82,7 @@
   service: name=monit state=started enabled=yes
   when: ansible_system == 'Linux' and ansible_distribution != "Alpine"
 
-- meta: flush_handlers
+- name: Flush handlers
+  meta: flush_handlers
 - include: "monit-checkmonitor.yml daemon={{ item }}"
   with_items: "{{ daemons }}"

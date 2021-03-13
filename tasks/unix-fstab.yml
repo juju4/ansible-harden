@@ -21,4 +21,5 @@
   changed_when: false
   ignore_errors: true
   register: diff
-- debug: var=diff.stdout_lines
+- name: Debug | fstab changes
+  debug: var=diff.stdout_lines

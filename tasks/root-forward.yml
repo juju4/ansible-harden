@@ -1,6 +1,7 @@
 ---
 
-- debug: var=harden_rootforward
+- name: Debug | harden_rootforward var
+  debug: var=harden_rootforward
 - name: Forward all root email
   lineinfile:
     dest: /root/.forward

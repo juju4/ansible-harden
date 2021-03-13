@@ -35,7 +35,8 @@
   register: spectre
   ignore_errors: true
 
-- debug: var=spectre
+- name: Debug | spectre output
+  debug: var=spectre
 
 - name: retrieve Am-I-affected-by-Meltdown
   git:
@@ -61,7 +62,8 @@
   register: meltdown
   ignore_errors: true
 
-- debug: var=meltdown
+- name: Debug | meltdown output
+  debug: var=meltdown
 
 - name: retrieve another meltdown poc
   git:
@@ -87,7 +89,8 @@
   register: meltdown2
   ignore_errors: true
 
-- debug: var=meltdown2
+- name: Debug | meltdown2 output
+  debug: var=meltdown2
 
 - name: retrieve IAIK poc
   git:
@@ -129,7 +132,8 @@
   when: >
     not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8)
 
-- debug: var=iaik1
+- name: Debug | IAIK output
+  debug: var=iaik1
 
 # - name: test IAIK poc - root
 #   command: "{{ item }}"
@@ -169,5 +173,6 @@
   register: checker
   ignore_errors: true
 
-- debug: var=checker.stdout_lines
+- name: Debug | spectre-meltdown-checker output
+  debug: var=checker.stdout_lines
   when: checker is defined

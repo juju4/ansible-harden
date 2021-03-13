@@ -17,7 +17,8 @@
       poll: 300
       register: pkg_result
       until: pkg_result is success
-    - debug: var=pkg_result.stdout_lines
+    - name: Debug | pkg_result var
+      debug: var=pkg_result.stdout_lines
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 
 - name: set better login.defs - redhat only
@@ -54,7 +55,8 @@
   when: >
     not (ansible_distribution_major_version|int == 8)
 
-- debug: var=ansible_virtualization_type
+- name: Debug | ansible_virtualization_type var
+  debug: var=ansible_virtualization_type
 - name: Container inside | disable incompatible daemons
   set_fact:
     harden_services_containers: []
