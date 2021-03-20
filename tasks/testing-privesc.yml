@@ -131,7 +131,7 @@
   get_url:
     url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
     dest: /tmp/linux-exploit-suggester.sh
-    checksum: 'sha256:c5eef572fbf41b339691f690886356b4861c13d7f838a7cfe3c0d16646ea637b'
+    checksum: 'sha256:26e04b5aa8f93a392046546c5b7f6270a9195b1a528430fc08359e94f6a5b1c4'
     mode: '0644'
     validate_certs: false
   become: yes
