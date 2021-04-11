@@ -55,6 +55,7 @@ harden_pkg:
   - ssg-debderived
   - ssg-applications
   # - libpam-pwquality     # conflicting with cracklib
+  - ubuntu-dbgsym-keyring
 
 harden_pkg_remove:
   - avahi-daemon
