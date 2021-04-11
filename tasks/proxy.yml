@@ -1,14 +1,14 @@
 ---
-# user/pass processed differently depending on family
-# don't expect it for system configuration and updates
 
-- name: Ensure apt is configured with proxy
+- name: Debian | Ensure apt is configured with proxy
   lineinfile:
     dest: /etc/apt/apt.conf.d/10proxy
     regexp: '^Acquire::http::Proxy ".*";'
     line: "Acquire::http::Proxy \"{{ harden_proxy_url }}\";"
     mode: '0644'
+    create: yes
     backup: "{{ harden_backup | default(false) }}"
+  when: ansible_os_family == "Debian"
 
 - name: RedHat | Ensure dnf is configured with proxy
   ini_file:
@@ -22,8 +22,9 @@
     - { o: proxy, v: "{{ harden_proxy_url }}" }
     - { o: proxy_username, v: "{{ harden_proxy_user | default(omit) }}" }
     - { o: proxy_password, v: "{{ harden_proxy_pass | default(omit) }}" }
+  when: ansible_os_family == "RedHat"
 
-- name: Update /etc/environment with proxy
+- name: Linux | Update /etc/environment with proxy
   lineinfile:
     dest: /etc/environment
     regexp: "{{ item.re }}"
@@ -31,4 +32,6 @@
     mode: '0644'
   with_items:
     - { re: ^http_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }
-    - { re: ^https_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }
+    - { re: ^https_proxy=.*, l: "https_proxy={{ harden_proxy_url }}" }
+    - { re: ^no_proxy=.*, l: "no_proxy={{ harden_no_proxy | default('127.0.0.1,::1,localhost,10.0.0.0/8,192.168.0.0/16') }}" }
+  when: ansible_system == 'Linux'
