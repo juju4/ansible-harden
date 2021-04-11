@@ -54,7 +54,7 @@
         dest: '/etc/cron.daily/aide'
         regexp: "{{ item.regexp }}"
         replace: "{{ item.replace }}"
-        mode: '0644'
+        mode: '0755'
       with_items:
         ## or 'setfacl -m u:nagios:r-- /var/log/aide/aide.log'
         # - { regexp: 'savelog -t -g adm -m 640', replace: 'savelog -t -g adm -m 644' }
