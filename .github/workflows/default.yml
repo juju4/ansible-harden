@@ -82,7 +82,7 @@ jobs:
           systemctl -l --no-pager status ntpd || true
           systemctl -l --no-pager status chronyd || true
           systemctl -l --no-pager status monit
-          systemd-analyze security || true
+          systemd-analyze --no-pager security || true
           rsyslogd -v
         if: ${{ always() }}
         continue-on-error: true
