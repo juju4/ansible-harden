@@ -6,7 +6,7 @@ ntpd\[[0-9]+\]: adjusting clock frequency by [0-9]+\.[0-9]+ to -[0-9]+\.[0-9]+pp
 ntpd\[[0-9]+\]: adjusting clock frequency by -[0-9]+\.[0-9]+ to [0-9]+\.[0-9]+ppm
 ntpd\[[0-9]+\]: adjusting clock frequency by -[0-9]+\.[0-9]+ to -[0-9]+\.[0-9]+ppm
 ntpd\[[0-9]+\]: adjusting local clock by [-]*[0-9]+\.[0-9]+s
-ntpd\[[0-9]+\]: bad peer from pool [0-9]+.debian.pool.ntp.org 
+ntpd\[[0-9]+\]: bad peer from pool [0-9]+.debian.pool.ntp.org
 ntpd\[[0-9]+\]: [0-9]+ out of [0-9]+ peers valid
 ntpd\[[0-9]+\]: reply from [\.0-9]+: not synced, next query [0-9]+s
 auditd\[[0-9]+\]: Audit daemon rotating log files
@@ -48,7 +48,7 @@ sshd\[[[:digit:]]+\]: error: Received disconnect from [:.[:xdigit:]]+: 3: com.jc
 sshd\[[[:digit:]]+\]: Received disconnect from [\.0-9]+: 11: Bye Bye \[preauth\]$
 sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: Goodbye \[preauth\]$
 sshd\[[[:digit:]]+\]: Received disconnect from [:.[:xdigit:]]+: 11: PECL/ssh2 \(http://pecl.php.net/packages/ssh2\) \[preauth\]$
-sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching 
+sshd\[[0-9]*\]: fatal: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: no matching
 sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)
 sshd\[[0-9]*\]: User child is on pid [0-9]*
 ##
