@@ -29,4 +29,3 @@ if [ "X$USER" != "Xroot" -a "X$USER" != "X" ]; then
 else
     bash -l -c "bundle exec rake spec"
 fi
-

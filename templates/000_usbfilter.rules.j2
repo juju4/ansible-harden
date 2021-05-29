@@ -37,5 +37,3 @@ ACTION=="add", SUBSYSTEM=="input",{{ dev }},RUN+="/bin/sh -c 'echo 1 >/sys$DEVPA
 ## 20140716 Rubber Ducky (keyboard attack)
 ## FIXME! execute only if not blacklist/whitelist...
 ACTION=="add", ENV{DEVTYPE}=="usb_device",SUBSYSTEM=="usb",RUN+="/usr/local/bin/prevent-ducky.py %k '%E{DEVNAME}' '$attr{manufacturer}' '$attr{idVendor}' '$attr{idProduct}' '$attr{serial}'"
-
-

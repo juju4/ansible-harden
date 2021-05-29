@@ -10,4 +10,3 @@ for p in pkg_list do
       it { should be_installed }
     end
 end
-

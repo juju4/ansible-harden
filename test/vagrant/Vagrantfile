@@ -37,4 +37,3 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.synced_folder "../integration/default/inspec", "/vagrant/inspec", disabled: false
 end
-

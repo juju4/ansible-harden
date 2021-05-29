@@ -21,4 +21,3 @@ end
 describe file('/etc/rsyslog.conf') do
   it { should contain '$IncludeConfig /etc/rsyslog.d/*.conf' }
 end
-

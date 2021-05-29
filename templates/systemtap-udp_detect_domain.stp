@@ -6,4 +6,3 @@ probe udp.sendmsg {
     printf ("PID %5d (%s) sent UDP to %15s 53\n", pid(), execname(), daddr)
   }
 }
-

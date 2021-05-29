@@ -4,7 +4,7 @@
 ## http://wiki.itadmins.net/doku.php?id=debian:apt-xtras
 DPkg
 {
-	Pre-Invoke  { 
+	Pre-Invoke  {
 {% if ansible_mounts is defined %}
 {% for item in ansible_mounts %}
 {% if harden_mount_options_aptpre[item.mount] is defined %}
@@ -14,7 +14,7 @@ DPkg
 {% endif %}
 		"chattr -R -i {{ harden_immutable_apt_dirs | join(' ') }} > /tmp/apt.tmp 2>&1; true";
 	};
-	Post-Invoke  { 
+	Post-Invoke  {
 {% if ansible_mounts is defined %}
 {% for item in ansible_mounts %}
 {% if harden_mount_options_aptpost[item.mount] is defined %}
@@ -27,4 +27,3 @@ DPkg
 		"chattr -R +i {{ harden_immutable_apt_dirs | join(' ') }} > /tmp/apt2.tmp 2>&1; true";
 	};
 };
-

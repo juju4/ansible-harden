@@ -45,7 +45,7 @@
 -A INPUT -p tcp --dport {{ harden_fw6_ssh_port }} -j ACCEPT
 {% endif %}
 -A FORWARD -p tcp --dport {{ harden_fw6_ssh_port }} -j ACCEPT
-## Outgoing SSH 
+## Outgoing SSH
 #-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j LOG --log-prefix "iptables denied: [root-ssh-out] "
 #-A OUTPUT -p tcp --dport 22 -m owner --uid-owner 0 -j REJECT
 -A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT

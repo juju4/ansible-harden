@@ -19,4 +19,3 @@ if ENV['SERVERSPEC_CHECK_AIDEDB']
       it { should be_file }
     end
 end
-

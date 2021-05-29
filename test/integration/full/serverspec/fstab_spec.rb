@@ -10,4 +10,3 @@ set :backend, :exec
 #describe command('mount') do
 #  its(:stdout) { should contain '/boot.*nodev' }
 #end
-
