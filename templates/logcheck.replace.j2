@@ -83,7 +83,7 @@ s/sysdig_probe: adding new consumer [0-9a-f]*/sysdig_probe: adding new consumer 
 #falco: Sun Oct  2 15:31:52 2016: Falco initialized with configuration file /etc/falco.yaml
 #falco: Sun Oct  2 15:31:52 2016: Parsed rules from file /etc/falco_rules.yaml
 s/falco: [A-Z][a-z]* [A-Z][a-z]*[ ]* [0-9]* [0-9]*:[0-9]*:[0-9]* [0-9]*: /falco: /
-#falco: 00:36:05.999146634: Warning Shell spawned by untrusted binary 
+#falco: 00:36:05.999146634: Warning Shell spawned by untrusted binary
 s/falco: [0-9]*:[0-9]*:[0-9]*\.[0-9]*: /falco: N:N:N.N: /
 
 ### ansible
@@ -118,3 +118,7 @@ s/\(.*\)\.logrotate\[[0-9]*\]: old log \/var\/snap\/\(.*\)\.[0-9]*\.gz does not 
 
 ## rsyslog
 s/, next retry is \(.*\) \(.*\) \([0-9]*\) [0-9]*:[0-9]*:[0-9]* \([0-9]*\), retry nbr /, next retry is \1 \2 \3 HH:MM:SS \4, retry nbr /
+
+## networkd-dispatcher
+s/networkd-dispatcher\[[0-9]*\]: ERROR:Unknown interface index [0-9]* seen even after reload/networkd-dispatcher: ERROR:Unknown interface index X seen even after reload/
+s/networkd-dispatcher\[[0-9]*\]: WARNING:Unknown index [0-9]* seen, reloading interface list/networkd-dispatcher: WARNING:Unknown index X seen, reloading interface list/
