@@ -212,6 +212,7 @@
 /var/lib/systemd/timers/stamp-snapd.refresh.timer$ VarFile
 /var/lib/systemd/timers/stamp-motd-news.timer$ VarFile
 /var/lib/systemd/timers/stamp-fstrim.timer$ VarFile
+/var/lib/systemd/timers/stamp-certbot.timer$ VarFile
 ## 201603 mailing-list: [Aide] Monitoring authorized_keys = v0.16b1+ (xenial has 0.16~a2.git20130520-3)
 #/home/.*/.ssh/authorized_keys
 /var/snap/canonical-livepatch/common/last-check$ VarFile
