@@ -1,6 +1,12 @@
 ---
 
 - block:
+    - name: Configure fail2ban logrotate
+      template:
+        src: logrotate-fail2ban.conf.j2
+        dest: /etc/logrotate.d/fail2ban
+        mode: '0644'
+
     - name: enable fail2ban for sshd
       template:
         src: fail2ban-jail.d-sshd.conf
