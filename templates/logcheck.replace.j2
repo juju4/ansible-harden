@@ -86,6 +86,8 @@ s/sysdig_probe: adding new consumer [0-9a-f]*/sysdig_probe: adding new consumer 
 s/falco: [A-Z][a-z]* [A-Z][a-z]*[ ]* [0-9]* [0-9]*:[0-9]*:[0-9]* [0-9]*: /falco: /
 #falco: 00:36:05.999146634: Warning Shell spawned by untrusted binary
 s/falco: [0-9]*:[0-9]*:[0-9]*\.[0-9]*: /falco: N:N:N.N: /
+s/falco: adding new consumer [0-9a-f]*/falco: adding new consumer HHHHHH/
+s/falco: deallocating consumer [0-9a-f]*/falco: deallocating consumer HHHHHH/
 
 ### ansible
 s/ansible-async_wrapper: Invoked with [0-9]* [0-9]* \(.*\)\/.ansible\/tmp\/ansible-tmp-[0-9]*.[0-9]*-[0-9]*\/\(.*\)/ansible-async_wrapper: Invoked with N N \1\/.ansible\/tmp\/ansible-tmp-N.N-N\/\2/
