@@ -1,6 +1,8 @@
 ---
 
 - block:
+    - import_tasks: iptables-ipset.yml
+      when: harden_ipset_enable
     - name: ensure iptables directory exists
       file: dest=/etc/iptables state=directory mode=0755
     - name: iptables configuration file update

@@ -1,0 +1,25 @@
+{{ ansible_managed | comment }}
+# https://confluence.jaytaala.com/display/TKB/Using+ipset+to+block+IP+addresses+-+firewall
+[Unit]
+Description=ipset persistancy service
+DefaultDependencies=no
+Requires=netfilter-persistent.service
+#Requires=ufw.service
+Before=network.target
+Before=netfilter-persistent.service
+#Before=ufw.service
+ConditionFileNotEmpty=/etc/ipsets.conf
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/ipset restore -f -! /etc/ipsets.conf
+
+# save on service stop, system shutdown etc.
+ExecStop=/sbin/ipset save -f /etc/ipsets.conf
+
+[Install]
+WantedBy=multi-user.target
+
+RequiredBy=netfilter-persistent.service
+#RequiredBy=ufw.service

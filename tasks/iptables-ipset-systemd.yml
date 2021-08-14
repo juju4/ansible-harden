@@ -1,0 +1,53 @@
+---
+
+- name: Debug | ansible_service_mgr
+  debug: var=ansible_service_mgr
+
+- block:
+
+    - name: install systemd configuration
+      template:
+        src: systemd-ipset-persistence.service.j2
+        dest: /lib/systemd/system/ipset-persistence.service
+        mode: '0644'
+        backup: yes
+      register: systemd
+      ignore_errors: true
+      notify:
+        - reload systemd
+        - restart ipset-persistence
+
+    - block:
+        - include: "immutable.yml target_dir=/lib/systemd/system state=pre"
+        - include: "immutable.yml target_dir=/lib/systemd/system/ipset-persistence.service state=pre"
+        - name: install systemd configuration
+          template:
+            src: systemd-ipset-persistence.service.j2
+            dest: /lib/systemd/system/ipset-persistence.service
+            mode: '0644'
+            backup: yes
+          register: systemd
+          notify:
+            - reload systemd
+            - restart ipset-persistence
+        - include: "immutable.yml target_dir=/lib/systemd/system state=post"
+      when: systemd is failed
+
+  # when: ansible_service_mgr == 'systemd'
+  when: >
+    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16) or
+    (ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or
+    (ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7)
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: enable and start ipset-persistence systemd service
+  service:
+    name: ipset-persistence
+    enabled: "{{ ipsetpersistence_svc_enable | default(true) }}"
+    state: "{{ ipsetpersistence_svc_state | default('started') }}"
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+        )

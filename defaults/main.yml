@@ -201,6 +201,15 @@ harden_fw6_open_incoming:
   - { proto: 'tcp', port: 9091 }
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
 
+harden_ipset_enable: true
+harden_iptables_ipset_template: ipsets.conf.j2
+harden_ipset_list:
+  - { n: blacklist_cidr, t: nethash }
+harden_ipset_list_data: []
+#  - n: blacklist_cidr
+#    list:
+#      - a.b.c.d
+
 ### Monitoring
 ## can use inventory group but
 ##  only possible if cache facts or talk with host in same play

@@ -1,0 +1,30 @@
+---
+# warning: required kernel modules ip_set, ip_set*
+# https://linux-audit.com/blocking-ip-addresses-in-linux-with-iptables/
+# https://confluence.jaytaala.com/display/TKB/Using+ipset+to+block+IP+addresses+-+firewall
+
+- name: Ensure ipset package is present
+  package:
+    name: 'ipset'
+    state: present
+
+- name: Set ipset configuration
+  template:
+    src: ipsets.conf.j2
+    dest: /etc/ipsets.conf
+    mode: '0644'
+
+- name: Check existing lists
+  command: "ipset list"
+  changed_when: false
+  register: ipset
+
+- name: Configure ipsets
+  template:
+    src: "{{ harden_iptables_ipset_template | default('ipsets.conf.j2') }}"
+    dest: /etc/ipsets.conf
+    mode: '0644'
+  notify:
+    - ipset restore
+
+- import_tasks: iptables-ipset-systemd.yml
