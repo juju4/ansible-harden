@@ -129,8 +129,8 @@
 {% endif %}
 {% if harden_ipset_enable is defined and harden_ipset_enable %}
 ## msteams via ipset as example
--I OUTPUT -p tcp -m multiport -m set --match-set msteams_tcp dst -j ACCEPT
--I OUTPUT -p udp -m multiport -m set --match-set msteams_udp dst -j ACCEPT
+-I OUTPUT -p tcp -m set --match-set msteams_tcp dst -j ACCEPT
+-I OUTPUT -p udp -m set --match-set msteams_udp dst -j ACCEPT
 {% endif %}
 -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: " --log-level 7
 ## Outgoing http, https
