@@ -60,23 +60,9 @@
     owner: '0'
     group: '0'
     backup: "{{ harden_backup | default(false) }}"
-    validate: 'sshd -f %s -T'
+    validate: "{{ sshd_validate | default('sshd -f %s -T') }}"
   notify:
     - restart sshd
-  when: not (ansible_distribution == "Alpine")
-
-- name: Alpine | Configure sshd_config
-  template:
-    src: "{{ harden_sshd_template }}"
-    dest: /etc/ssh/sshd_config
-    mode: '0600'
-    owner: '0'
-    group: '0'
-    backup: "{{ harden_backup | default(false) }}"
-    validate: 'sshd -f %s -T -C user=nobody'
-  notify:
-    - restart sshd
-  when: (ansible_distribution == "Alpine")
 
 - name: Check /etc/ssh/moduli for weak values
   shell: |
