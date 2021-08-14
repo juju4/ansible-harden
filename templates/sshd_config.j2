@@ -151,7 +151,13 @@ AllowTcpForwarding no
 GatewayPorts no
 PermitTunnel no
 
-AllowUsers {{ harden_sshd_allowusers | default('vagrant ' + ansible_user) }}
+{% if harden_sshd_allowusers is defined and harden_sshd_allowusers|string %}
+AllowUsers {{ harden_sshd_allowusers }}
+{% elif ansible_user is defined and ansible_user|string %}
+AllowUsers {{ ansible_user }}
+{% else %}
+# AllowUsers TBD
+{% endif %}
 
 ## http://askubuntu.com/questions/48129/how-to-create-a-restricted-ssh-user-for-port-forwarding
 ## usage: ssh -N or http://tartarus.org/~simon/putty-snapshots/htmldoc/Chapter4.html#config-ssh-noshell or SecureCRT: Session Options: Connection / Port Forwarding: Do not request a shell
