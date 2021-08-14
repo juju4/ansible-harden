@@ -19,7 +19,24 @@
         replace: 'GRUB_CMDLINE_LINUX="\1 iommu=force"'
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
+      when: harden_enable_iommu_force
+    - name: Enable grub password
+      lineinfile:
+        dest: /etc/grub.d/45_password
+        regexp: '^password --md5 .*'
+        line: "password --md5 {{ harden_grub_md5password }}"
+        create: yes
+      notify:
+        - refresh grub config
+      when: ansible_os_family == 'Debian' and harden_grub_md5password|string
+    - name: Enable grub password
+      lineinfile:
+        dest: /boot/grub/grub.cfg
+        regexp: '^password --md5 .*'
+        line: "password --md5 {{ harden_grub_md5password }}"
+        create: yes
+      when: ansible_os_family == "RedHat" and harden_grub_md5password|string
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and hasgrub.stat.exists and harden_enable_iommu_force
+        ) and hasgrub.stat.exists

@@ -102,6 +102,8 @@ harden_upgradeall: true
 harden_security_update_auto: true
 harden_use_containers_lxc: false
 
+# harden_grub_md5password: ''
+
 ## add email to /root/.forward?
 # harden_rootforward: email
 
