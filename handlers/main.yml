@@ -37,15 +37,15 @@
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
+        ) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
 
 # See README.md FAQ why using service
-- name: restart auditd - rhel7  # noqa 303
+- name: restart auditd - rhel7+  # noqa 303
   command: "service auditd restart"
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
+        ) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
 
 ## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...)
 ##  and cant ssh after... vagrant reload: fine?
