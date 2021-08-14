@@ -24,6 +24,7 @@ harden_aide_extra_conf:
   - 99_aide_local_osquery
   - 99_aide_local_netdata
   - 99_aide_local_prometheus
+  - 99_aide_local_web
   # - 99_aide_local_squid
 harden_arpwatch: true
 harden_unix_fstab_flags: false
