@@ -1,5 +1,13 @@
 ---
 
+- name: reload systemd
+  systemd:
+    daemon_reload: true
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+        )
+
 - name: restart sshd
   service: name={{ ssh_svc }} state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
