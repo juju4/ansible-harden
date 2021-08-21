@@ -53,7 +53,7 @@ harden_pkg:
   - systemtap
   - sudo
   - ecryptfs-utils
-  - apt-listbugs
+  # - apt-listbugs
   - apt-listchanges
   - libopenscap8
   # - ssg-debian
