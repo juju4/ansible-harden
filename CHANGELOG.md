@@ -7,19 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- iptables ipset
+- grub md5 password
+- vars/Debian-10
+- repository: pre-commit config, detect-secrets, lint
+
+### Changed
+- misc: logcheck, aide-hids, hash updates
+- github action: lint as separated workflow
+
+### Removed
+
+## [1.3.1] - 2021-03-13
+
+### Changed
+- misc: hash updates
+- repository: lint
+
+## [1.3.0] - 2021-02-27
+
+### Added
 - sshd certificates configuration
-- Github Action
-- sudo 1.9.4+ option: json logs, remote syslog
-- sshd_config: UsedDNS option
+- sudo 1.9.4+ options: json logs, remote syslog
+- github workflow
+- allow custom immutable apt directories and alternate file list
+
+### Changed
+- misc: hash updates, logcheck
+- sshd_config: allow to customize UseDNS
+- sshd-monit: decrease check frequency
+- s/travis-ci.org/travis-ci.com/
+
+### Removed
+- Travis-ci
+
+## [1.2.0] - 2020-07-12
+
+### Added
 - support for Ubuntu 20.04
 
 ### Changed
 - Update tools and hashes
 - lint
 - Update to configuration of: logcheck, aide hids
-
-### Removed
-- Travis-ci
 
 ## [1.1.0] - 2020-02-01
 
