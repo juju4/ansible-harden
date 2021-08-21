@@ -74,6 +74,8 @@ s/lxdbr0: port [0-9]*(veth[A-Za-z0-9]*) entered disabled state/lxdbr0: port N(ve
 ### ansible
 s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N still running (N)/
 s/ansible-async_wrapper.py: [0-9]* still running ([0-9]*)/ansible-async_wrapper.py: N still running (N)/
+s/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-xxxxxx ;/
+s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 
 ### ptrace
 s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
@@ -121,6 +123,8 @@ s/\(.*\)\.logrotate\[[0-9]*\]: old log \/var\/snap\/\(.*\)\.[0-9]*\.gz does not 
 
 ## rsyslog
 s/, next retry is \(.*\) \(.*\) \([0-9]*\) [0-9]*:[0-9]*:[0-9]* \([0-9]*\), retry nbr /, next retry is \1 \2 \3 HH:MM:SS \4, retry nbr /
+s/rsyslogd\[[0-9]*\]: imjournal: [0-9]* messages lost due to rate-limiting/rsyslogd: imjournal: N messages lost due to rate-limiting/
+s/rsyslogd: imjournal: [0-9]* messages lost due to rate-limiting/rsyslogd: imjournal: N messages lost due to rate-limiting/
 
 ## networkd-dispatcher
 s/networkd-dispatcher\[[0-9]*\]: ERROR:Unknown interface index [0-9]* seen even after reload/networkd-dispatcher: ERROR:Unknown interface index X seen even after reload/
