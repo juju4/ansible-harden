@@ -103,7 +103,7 @@
   git:
     repo: 'https://github.com/spencerdodd/kernelpop'
     dest: /home/_test/kernelpop
-    version: "{{ harden_kernelpop_version | default('b3467d3c64f9657a822c1f3c0d70769efabebf60') }}"
+    version: "{{ harden_testing_kernelpop_version }}"
     update: no
   become: yes
   become_user: _test
@@ -131,7 +131,7 @@
   get_url:
     url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
     dest: /tmp/linux-exploit-suggester.sh
-    checksum: "{{ harden_testing_les_checksum | default ('sha256:26e04b5aa8f93a392046546c5b7f6270a9195b1a528430fc08359e94f6a5b1c4') }}"
+    checksum: "{{ harden_testing_les_checksum }}"
     mode: '0644'
     validate_certs: false
   become: yes
@@ -153,7 +153,7 @@
   get_url:
     url: https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
     dest: /tmp/linux-exploit-suggester-2.pl
-    checksum: "{{ harden_testing_les2_checksum | default ('sha256:51589b6b7f3d0ebe06cdec01c7e4b5f8c4a49df154b2b7013ba74cdbfba3e030') }}"
+    checksum: "{{ harden_testing_les2_checksum }}"
     mode: '0644'
     validate_certs: false
   become: yes
