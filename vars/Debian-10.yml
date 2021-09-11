@@ -40,7 +40,7 @@ harden_pkg:
   - lynis
   - libpam-tmpdir
   - debian-goodies
-  - debsecan
+  # - debsecan
   - fail2ban
   # - linux-tools-generic   # perf /FlameGraph
   - rng-tools
