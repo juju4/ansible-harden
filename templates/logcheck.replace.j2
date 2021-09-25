@@ -29,6 +29,10 @@ s/sshd\[[0-9]*\]: error: maximum authentication attempts exceeded for root from 
 s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
 s/sshd\[[0-9]*\]: Starting session: subsystem '\(.*\)' for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* id [0-9]*/sshd: Starting session: subsystem '\1' for \2 from \3 port N id X/
 s/sshd\[[0-9]*\]: Connection closed by authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by authenticating user \1 \2 port X/
+s/sshd\[[0-9]*\]: Unable to negotiate with \([0-9a-fA-F\.:]*\) port [0-9]*: /sshd: Unable to negotiate with \1 port N: /
+s/sshd\[[0-9]*\]: Did not receive identification string from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Did not receive identification string from \1 port N/
+s/sshd\[[0-9]*\]: Connection closed by invalid user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by invalid user \1 \2 port N/
+s/sshd\[[0-9]*\]: Disconnected from authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from authenticating user \1 \2 port N/
 s/systemd: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
 
 ### kernel
@@ -45,8 +49,8 @@ s/kernel: \[[0-9N]*\.[0-9N]*\] init: \(.*\) main process ([0-9]*) terminated wit
 s/kernel: \[[0-9]*\.[0-9]*\] Out of memory: Kill process [0-9]* (\(.*\)) score [0-9]* or sacrifice child/kernel: [N.N] Out of memory: Kill process X (\1) score X or sacrifice child/
 s/kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*.*//
 s/kernel: \[[0-9N]*\.[0-9N]*\] audit: audit_lost=[0-9]* audit_rate_limit=\([0-9]*\) audit_backlog_limit=\([0-9]*\)/kernel: [N.N] audit: audit_lost=X audit_rate_limit=\1 audit_backlog_limit=\2/
-s/kernel: \[[0-9N]*\.[0-9N]*\] audit_log_start: [0-9]* callbacks suppressed/kernel: [N.N] audit_log_start: X callbacks suppressed/
-s/kernel: \[[0-9N]*\.[0-9N]*\] net_ratelimit: [0-9]* callbacks suppressed/kernel: [N.N] net_ratelimit: X callbacks suppressed/
+s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit_log_start: [0-9]* callbacks suppressed/kernel: [N.N] audit_log_start: X callbacks suppressed/
+s/kernel: \[[ 0-9N]*\.[0-9N]*\] net_ratelimit: [0-9]* callbacks suppressed/kernel: [N.N] net_ratelimit: X callbacks suppressed/
 
 ### iptables
 s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8/
