@@ -28,7 +28,7 @@
 
 - name: debug
   command: "ls -la {{ harden_sshd_ca_path | dirname }}"
-  ignore_errors: true
+  failed_when: false
   changed_when: false
 
 - name: Ensure SSH CA public key is present on target
@@ -48,12 +48,12 @@
       fetch:
         src: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}"
         dest: "{{ harden_sshd_host_key_opath | default('/tmp') }}"
-        mode: '0400'
+        mode: '0600'
 
     - name: Ensure SSH keys have right permissions
       file:
         dest: "{{ item }}"
-        mode: '0400'
+        mode: '0600'
         owner: "{{ lookup('env', 'USER') }}"
       with_items:
         - "{{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}"
