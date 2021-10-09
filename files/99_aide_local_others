@@ -222,3 +222,5 @@
 ## 201603 mailing-list: [Aide] Monitoring authorized_keys = v0.16b1+ (xenial has 0.16~a2.git20130520-3)
 #/home/.*/.ssh/authorized_keys
 /var/snap/canonical-livepatch/common/last-check$ VarFile
+/etc/letsencrypt$ VarDir
+/var/lib/letsencrypt$ VarDir
