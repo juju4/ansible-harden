@@ -17,7 +17,6 @@
         # validate: 'iptables-restore -tv < %s'
       notify:
         - restart iptables
-        - restart iptables - xenial
         - restart iptables - redhat|alpine
       register: rulesv4
     ## as validate option seems incorrect
@@ -41,7 +40,6 @@
         # validate: 'iptables-restore -tv < %s'
       notify:
         - restart iptables
-        - restart iptables - xenial
         - restart ip6tables - redhat|alpine
       register: rulesv6
     - name: ensure iptables v6 rules are correct

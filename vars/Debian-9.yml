@@ -80,6 +80,7 @@ monit_confdir: /etc/monit/conf-available
 
 iptables_rulesv4: /etc/iptables/rules.v4
 iptables_rulesv6: /etc/iptables/rules.v6
+iptables_persistent_svc: netfilter-persistent
 
 testing_pkgs:
   - curl

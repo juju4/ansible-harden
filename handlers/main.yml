@@ -13,11 +13,9 @@
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart iptables
-  service: name=iptables-persistent state=restarted
+  service: name={{ iptables_persistent_svc }} state=restarted
   when: >
-    (ansible_distribution == 'Debian' or
-      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 16)
-    ) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart ipset-persistence
   service: name=ipset-persistence state=restarted
@@ -28,10 +26,6 @@
 
 - name: ipset restore
   command: /sbin/ipset restore -f -! /etc/ipsets.conf
-
-- name: restart iptables - xenial
-  service: name=netfilter-persistent state=restarted
-  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16)
 
 - name: restart iptables - redhat|alpine
   service: name=iptables state=restarted
