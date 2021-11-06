@@ -13,6 +13,7 @@
     owner: "{{ harden_aide_user }}"
     mode: "{{ item.m }}"
     recurse: "{{ item.recurse }}"
+    state: "{{ item.s | default('directory') }}"
   loop:
     - { n: /var/log/aide, m: '0755', recurse: no }
     - { n: /run/aide, m: '0700', recurse: no }
