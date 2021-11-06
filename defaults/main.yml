@@ -330,6 +330,8 @@ harden_lkrg_sysctl:
   - { n: block_modules, v: 0 }
   - { n: ci_panic, v: 0 }
 
+harden_aide_user: _aide
+
 harden_testing: false
 harden_testing_inspec: true
 harden_testing_inspec_paths: []

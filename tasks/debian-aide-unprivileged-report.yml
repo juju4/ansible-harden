@@ -1,0 +1,45 @@
+---
+
+- name: adding aide user
+  user:
+    name: "{{ harden_aide_user }}"
+    system: yes
+    home: /nonexistent
+    create_home: no
+
+- name: Ensure permissions are correct
+  file:
+    name: "{{ item.n }}"
+    owner: "{{ harden_aide_user }}"
+    mode: "{{ item.m }}"
+    recurse: "{{ item.recurse }}"
+  loop:
+    - { n: /var/log/aide, m: '0755', recurse: no }
+    - { n: /run/aide, m: '0700', recurse: no }
+
+- name: Ensure sudo config for unprivileged aide cron.daily
+  template:
+    src: sudoers.d-aide.j2
+    dest: /etc/sudoers.d/aide-unprivileged
+    mode: '0440'
+    owner: root
+
+- name: Have custom aide cron.daily script
+  template:
+    src: cron.daily-aide.j2
+    dest: /usr/local/scripts/cron.daily-aide
+    mode: '0755'
+
+- name: Scheduled unprivileged daily script
+  cron:
+    name: aide hids unprivileged cron.daily
+    minute: "0"
+    hour: "6"
+    user: "{{ harden_aide_user }}"
+    job: "/usr/local/scripts/cron.daily-aide"
+    cron_file: ansible_cron_daily_aide
+
+- name: Remove original privileged cron.daily aide
+  file:
+    path: /etc/cron.daily/aide
+    state: absent
