@@ -34,6 +34,8 @@
 !/var/lib/ucf/registry*
 !/var/spool/postfix
 /var/spool/openoffice/uno_packages/cache$ VarDir
+/var/spool/rsyslog$ VarDir
+/var/spool/rsyslog/imjournal.state$ VarFile
 /var/spool/squid/swap.state.last-clean$ VarFile
 !/tmp
 /boot/grub/menu\.lst*$ VarTime
