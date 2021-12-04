@@ -31,6 +31,8 @@ harden_pkg:
   # - lynis
   # - jitterentropy-rngd
   # - libsemanage-python
+  # audit2why
+  - policycoreutils-python-utils
 
 harden_pkg_remove: []
 
