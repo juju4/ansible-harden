@@ -201,7 +201,7 @@ onexit() {
     # Do the full works.
 
     if [ "$USE_SAVELOG" = "1" ] || [ "$USE_SAVELOG" = "yes" ]; then
-      savelog -t -g adm -m 640 -u _aide -c 7 "$LOGFILE" > /dev/null
+      savelog -t -m 640 -c 7 "$LOGFILE" > /dev/null
     else
       LOGFILEWDATE="${LOGFILE}-$(date +%Y%m%d-%H%M%S)"
       ln -sf $LOGFILEWDATE $LOGFILE
