@@ -52,6 +52,8 @@ s/kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*
 s/kernel: \[[0-9N]*\.[0-9N]*\] audit: audit_lost=[0-9]* audit_rate_limit=\([0-9]*\) audit_backlog_limit=\([0-9]*\)/kernel: [N.N] audit: audit_lost=X audit_rate_limit=\1 audit_backlog_limit=\2/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit_log_start: [0-9]* callbacks suppressed/kernel: [N.N] audit_log_start: X callbacks suppressed/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] net_ratelimit: [0-9]* callbacks suppressed/kernel: [N.N] net_ratelimit: X callbacks suppressed/
+s/kernel: \[[ 0-9N]*\.[0-9N]*\] \(.*\)\[[0-9]*\]: segfault at \(.*\) ip \([0-9a-f]*\) sp [0-9a-f]* error \([0-9]*\) in \(.*\) \[[0-9a-f]*\+[0-9a-f]*\]/kernel: [N.N] \1: segfault at \2 ip \3 sp HHHH error \4 in \5 [HH+HH]/
+s/kernel: \[[ 0-9N]*\.[0-9N]*\] \(.*\)\[[0-9]*\]: segfault at \(.*\) ip \([0-9a-f]*\) sp [0-9a-f]* error \([0-9]*\) in \(.*\)/kernel: [N.N] \1: segfault at \2 ip \3 sp HHHH error \4 in \5/
 
 ### iptables
 s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8/
@@ -137,3 +139,14 @@ s/networkd-dispatcher\[[0-9]*\]: ERROR:Unknown interface index [0-9]* seen even 
 s/networkd-dispatcher\[[0-9]*\]: WARNING:Unknown index [0-9]* seen, reloading interface list/networkd-dispatcher: WARNING:Unknown index X seen, reloading interface list/
 
 s/hostapd\[[0-9]*\]: \(.*\): STA \([0-9a-f:]*\) RADIUS: starting accounting session [A-F0-9]*/hostapd: \1: STA \2 RADIUS: starting accounting session HHHH/
+
+## dbus
+s/dbus-daemon\[[0-9]*\]: \[system\] The maximum number of pending replies for ":[0-9.]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)/dbus-daemon: [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)/
+s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: \[ \[system\] The maximum number of pending replies for ":[0-9.]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)\]/dbus-daemon: message repeated X times: [ [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)]/
+s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: /dbus-daemon: message repeated X times: /
+
+## *exporter
+s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/exporter: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
+s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z" level=/exporter: time="YYYY-MM-DDTHH:MM:SSZ" level=/
+s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: level=\1 caller=/
+s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
