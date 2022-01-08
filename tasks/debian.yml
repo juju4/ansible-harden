@@ -116,7 +116,7 @@
     - name: Capabilities Hardening - default network tools
       capabilities:
         path: "{{ item.bin }}"
-        capability: 'cap_net_raw+pe'
+        capability: "{{ item.cap }}"
         state: present
       with_items: "{{ harden_cap_list }}"
     - name: ensure permissions are not setuid - using capabilities

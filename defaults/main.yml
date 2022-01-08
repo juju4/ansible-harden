@@ -81,11 +81,11 @@ harden_immutable_others: []
 harden_cap_test_bin: /usr/sbin/tcpdump
 harden_cap_test_bincap: 'cap_net_admin+eip,cap_net_raw+ep'
 harden_cap_list:
-  - { bin: /bin/ping, cap: 'cap_net_raw+pe' }
-  # - { bin: /bin/ping6, cap: 'cap_net_raw+pe' }
-  - { bin: /usr/bin/traceroute6.iputils, cap: 'cap_net_raw+pe' }
-  - { bin: /usr/bin/mtr, cap: 'cap_net_raw+pe' }
-  - { bin: /usr/sbin/tcpdump, cap: 'cap_net_raw,cap_net_admin=eip' }
+  - { bin: /bin/ping, cap: 'cap_net_raw+ep' }
+  # - { bin: /bin/ping6, cap: 'cap_net_raw+ep' }
+  - { bin: /usr/bin/traceroute6.iputils, cap: 'cap_net_raw+ep' }
+  - { bin: /usr/bin/mtr, cap: 'cap_net_raw+ep' }
+  - { bin: /usr/sbin/tcpdump, cap: 'cap_net_admin,cap_net_raw+eip' }
 
 # Custom /etc/issue. lines to be added.
 harden_issue_lines:
