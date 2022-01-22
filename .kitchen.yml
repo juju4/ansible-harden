@@ -21,6 +21,7 @@ provisioner:
   ansible_connection: ssh
 
 platforms:
+  - name: ubuntu-22.04
   - name: ubuntu-20.04
   - name: ubuntu-18.04
   - name: ubuntu-16.04
