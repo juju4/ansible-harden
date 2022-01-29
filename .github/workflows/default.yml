@@ -50,6 +50,7 @@ jobs:
           pwd
           env
           find -ls
+          lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-1
       - name: run test
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS}
@@ -127,6 +128,7 @@ jobs:
         continue-on-error: true
       - name: After script - files
         run: |
+          set -x
           ls -lR /var/lib/ntp /var/ntp/drift /var/lib/openntpd || true
           ls -l /var/db/ntp.drift /var/ntp/drift/ /var/lib/ntp/ /var/lib/openntpd/db/ /var/lib/chrony/ || true
           ls -l /boot/grub2/grub.cfg || true
@@ -134,5 +136,7 @@ jobs:
           ls -la /tmp/ || true
           sudo rpm -Va | grep '^..5' || true
           sudo ls -la /tmp/cadir/ || true
+          lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-2 || true
+          sdiff /tmp/lsattr-i-* || true
         if: ${{ always() }}
         continue-on-error: true
