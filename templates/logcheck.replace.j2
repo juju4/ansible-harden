@@ -34,7 +34,7 @@ s/sshd\[[0-9]*\]: Did not receive identification string from \([0-9a-fA-F\.:]*\)
 s/sshd\[[0-9]*\]: Connection closed by invalid user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by invalid user \1 \2 port N/
 s/sshd\[[0-9]*\]: Disconnected from authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from authenticating user \1 \2 port N/
 s/sshd\[[0-9]*\]: Closing connection to \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Closing connection to \1 port N/
-s/systemd: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
+s/systemd\[[0-9]*\]: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
@@ -150,3 +150,5 @@ s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\
 s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z" level=/exporter: time="YYYY-MM-DDTHH:MM:SSZ" level=/
 s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: level=\1 caller=/
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
+
+s/postfix\/master\[[0-9]*\]: warning: process \(.*\) pid [0-9]* exit status \([0-9]*\)/postfix\/master: warning: process \1 pid X exit status \2/
