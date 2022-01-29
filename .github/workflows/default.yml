@@ -54,7 +54,7 @@ jobs:
       - name: lsattr
         run: |
           set -x
-          sudo apt-get install -y e2fsprogs || true
+          sudo apt-get install -y e2fsprogs || true
           sudo lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-1 || true
       - name: run test
         run: |
@@ -146,7 +146,7 @@ jobs:
       - name: lsattr2
         run: |
           set -x
-          sudo lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-2 || true
+          sudo lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-2 || true
           sdiff /tmp/lsattr-i-* || true
         if: ${{ always() }}
         continue-on-error: true
