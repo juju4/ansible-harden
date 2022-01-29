@@ -51,8 +51,11 @@ jobs:
           pwd
           env
           find -ls
-          apt-get install -y e2fsprogs || true
-          lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-1 || true
+      - name: lsattr
+        run: |
+          set -x
+          sudo apt-get install -y e2fsprogs || true
+          sudo lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-1 || true
       - name: run test
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS}
@@ -138,7 +141,12 @@ jobs:
           ls -la /tmp/ || true
           sudo rpm -Va | grep '^..5' || true
           sudo ls -la /tmp/cadir/ || true
-          lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-2 || true
+        if: ${{ always() }}
+        continue-on-error: true
+      - name: lsattr2
+        run: |
+          set -x
+          sudo lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-2 || true
           sdiff /tmp/lsattr-i-* || true
         if: ${{ always() }}
         continue-on-error: true
