@@ -114,7 +114,10 @@
 /var/lib/apt/periodic/upgrade-stamp$ VarTime
 /var/lib/apt/periodic/autoclean-stamp$ VarTime
 /var/lib/apt/periodic/unattended-upgrades-stamp$ VarTime
+/var/lib/ubuntu-advantage$ VarDir
 /var/lib/ubuntu-advantage/messages$ VarTime
+/var/lib/ubuntu-advantage/jobs-status.json$ VarFile
+/var/lib/ubuntu-advantage/private$ VarTime
 /var/lib/ubuntu-release-upgrader/release-upgrade-available$ VarTime
 /var/lib/update-manager/meta-release-lts$ VarFile
 /var/lib/update-notifier$ VarDirTime
@@ -205,6 +208,7 @@
 /var/backups/@@{BACKUPFILES7R}\.7\.gz$ HiSerMemberLog
 /var/lib/snapd$ VarDirTime
 /var/lib/snapd/state.json$ VarFile
+/var/mail/_aide$ VarFile
 /var/snap/canonical-livepatch/common$ VarDir
 /var/snap/canonical-livepatch/common/client-info$ VarFile
 /var/snap/canonical-livepatch/common/payload$ VarDir
