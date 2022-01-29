@@ -23,7 +23,7 @@
 
 - name: Validate lkrg hash signature
   command: >
-    gpg --verify {{ install_archives }}/lkrg-0.6.tar.gz.sign {{ install_archives }}/lkrg-0.6.tar.gz
+    gpg --verify {{ install_archives }}/lkrg-{{ harden_lkrg_version }}.tar.gz.sign {{ install_archives }}/lkrg-{{ harden_lkrg_version }}.tar.gz
   changed_when: false
 
 - name: lkrg dependencies install
@@ -36,19 +36,19 @@
 
 - name: uncompress lkrg
   unarchive:
-    src: "{{ install_archives }}/lkrg-0.6.tar.gz"
+    src: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}.tar.gz"
     dest: "{{ install_archives }}"
     mode: '0755'
-    creates: "{{ install_archives }}/lkrg-0.6/INSTALL"
+    creates: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}/INSTALL"
 
 - name: build lkrg
   command: make -j8  # noqa 301
   args:
-    chdir: "{{ install_archives }}/lkrg-0.6"
+    chdir: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}"
 
 - name: Debian | fix systemd service file destination path
   replace:
-    dest: "{{ install_archives }}/lkrg-0.6/scripts/bootup/systemd/lkrg-systemd.sh"
+    dest: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}/scripts/bootup/systemd/lkrg-systemd.sh"
     regex: -f5
     replace: -f7
     mode: '0644'
@@ -60,7 +60,7 @@
 - name: install lkrg
   command: make install  # noqa 301
   args:
-    chdir: "{{ install_archives }}/lkrg-0.6"
+    chdir: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}"
 
 - include: "immutable.yml target_dir=/lib/modules state=post"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

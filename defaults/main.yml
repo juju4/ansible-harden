@@ -325,7 +325,7 @@ monit_osqueryd: false
 
 # if hardensysctl_kernel_modules, add p_lkrg to the list
 harden_lkrg: false
-harden_lkrg_version: '0.7'
+harden_lkrg_version: '0.9.2'
 harden_lkrg_sysctl:
   - { n: block_modules, v: 0 }
   - { n: ci_panic, v: 0 }
