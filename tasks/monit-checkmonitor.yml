@@ -1,10 +1,10 @@
 ---
 
 - name: check monit status
-  command: "monit status {{ daemon }}"
+  command: "monit status {{ item }}"
   register: monitstatus
   changed_when: false
   ignore_errors: true
-- name: force monitor of {{ daemon }}
+- name: force monitor of {{ item }}
   command: "monit monitor {{ item }}"
   when: "'unmonitor' in monitstatus.stdout"
