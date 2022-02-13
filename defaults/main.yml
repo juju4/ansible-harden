@@ -45,7 +45,7 @@ harden_ssh_template: ssh_config.j2
 harden_sshd_review: true
 harden_sshd_template: sshd_config.j2
 harden_sshd_port: 22
-harden_sshd_PermitRootLogin: without-password
+harden_sshd_permitrootlogin: without-password
 harden_sshd_allowusers: 'vagrant deploy'
 # Use SSH certificates:
 #  * should this role manage CA on orchestrator
@@ -61,7 +61,7 @@ harden_sshd_ca_signing_userkeys: []
 #  - { pubkey: '/path/pubkey', identifier: 'example_pubkey', principals: 'user1,user2', validity: '+1d', serial: '000001' }
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
-harden_sshd_PasswordAuthentication: false
+harden_sshd_passwordauthentication: false
 harden_motd_template: motd.j2
 harden_modprobe_template: modprobe-dev-sec.conf.j2
 harden_securetty: true

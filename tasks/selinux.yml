@@ -16,7 +16,7 @@
     - allow_execstack
     - secure_mode_insmod
     - ssh_sysadm_login
-  ignore_errors: true
+  failed_when: false
 
 # user custom path for ssh?
 # https://bugzilla.redhat.com/show_bug.cgi?id=499343

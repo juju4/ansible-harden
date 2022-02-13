@@ -69,7 +69,7 @@
         dest: /usr/sbin/logcheck
         remote_src: no
         backup: "{{ harden_backup | default(false) }}"
-      ignore_errors: true
+      failed_when: false
     - name: Backup patched logcheck
       copy:
         src: /usr/sbin/logcheck

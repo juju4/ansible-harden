@@ -10,11 +10,11 @@
 - name: Alpine | Add _test user
   command: "adduser -D _test creates=/home/_test"
   become: yes
-  ignore_errors: true
+  failed_when: false
   when: ansible_os_family == "Alpine"
 - name: Alpine | Unlock user
   command: "passwd -u _test"
-  ignore_errors: true
+  failed_when: false
   when: ansible_os_family == "Alpine"
 
 - name: retrieve unix-privesc-check
@@ -25,7 +25,7 @@
     mode: '0644'
   register: upc
   until: upc is success
-  ignore_errors: true
+  failed_when: false
 
 - name: Ensure GNU tar is present
   package:
@@ -43,25 +43,31 @@
   become: yes
   become_user: _test
   when: upc is succeeded
-  ignore_errors: true
+  failed_when: false
 
 - name: execute unix-privesc-check
-  shell: "/tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out"
-  ignore_errors: true
+  shell: |
+    set -o pipefail
+    /tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out
+  failed_when: false
   register: privcheck
   args:
     creates: /tmp/unix-privesc-check.out
+    executable: /bin/bash
   become: yes
   become_user: _test
   when: upc is succeeded and harden_testing_privesc_upc|bool
 
 # - debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
-  shell: >
-    egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out |
+  shell: |
+    set -o pipefail
+    egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | \
         grep -v "Can't find full path of running program:" | sort | uniq
+  args:
+    executable: /bin/bash
   changed_when: false
-  ignore_errors: true
+  failed_when: false
   when: upc is succeeded
 
 ## FIXME: cert issue on ubuntu trusty - hash
@@ -79,13 +85,16 @@
   until: dl_result is success
 
 - name: execute linuxprivchecker
-  shell: "python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out"
+  shell: |
+    set -o pipefail
+    python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out
   register: linuxprivchecker
   args:
     creates: /tmp/linuxprivchecker.out
+    executable: /bin/bash
   become: yes
   become_user: _test
-  ignore_errors: true
+  failed_when: false
   when: harden_testing_privesc_lpc|bool
 
 # - debug: var=linuxprivchecker.stdout_lines
@@ -140,13 +149,16 @@
   until: dl_result is success
 
 - name: execute linux-exploit-suggester.sh
-  shell: "bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out"
+  shell: |
+    set -o pipefail
+    bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out
   register: les
   args:
     creates: /tmp/linux-exploit-suggester.out
+    executable: /bin/bash
   become: yes
   become_user: _test
-  ignore_errors: true
+  failed_when: false
 
 # https://github.com/jondonas/linux-exploit-suggester-2/
 - name: retrieve linux-exploit-suggester-2.pl
@@ -162,10 +174,13 @@
   until: dl_result is success
 
 - name: execute linux-exploit-suggester-2.pl
-  shell: "perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out"
+  shell: |
+    set -o pipefail
+    perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out
   register: les
   args:
     creates: /tmp/linux-exploit-suggester-2.out
+    executable: /bin/bash
   become: yes
   become_user: _test
-  ignore_errors: true
+  failed_when: false

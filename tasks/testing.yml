@@ -79,7 +79,7 @@
       args:
         chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
         creates: "{{ log_dir | default('/var/log') }}/inspec.log"
-      ignore_errors: true
+      failed_when: false
       register: inspeclog
       changed_when: false
     - name: Debug | inspec output
@@ -94,7 +94,7 @@
         chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
         creates: "/var/log/inspec-{{ item.i }}.log"
       with_items: "{{ harden_testing_inspec_paths }}"
-      ignore_errors: true
+      failed_when: false
       changed_when: false
 
   when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")

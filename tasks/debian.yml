@@ -103,11 +103,14 @@
 ## Not setpcap in unprivileged lxc container,
 ##      https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
 - name: Check if capabilities are set
-  shell: >
+  shell: |
+    set -o pipefail
     getcap {{ harden_cap_test_bin | default('/usr/sbin/tcpdump') }} | awk -F' = ' '{ gsub(" ", ",", $2); print $2 }'
+  args:
+    executable: /bin/bash
   register: getcap1
   changed_when: false
-  ignore_errors: true
+  failed_when: false
 - name: Debug | getcap1 var
   debug: var=getcap1.stdout
 - block:
@@ -157,7 +160,7 @@
       when: >
         rclsattr.stdout.find("----i-") == -1 and
         not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
-      ignore_errors: true
+      failed_when: false
   when: rcfile.stat.exists
 
 - import_tasks: apparmor-audit.yml

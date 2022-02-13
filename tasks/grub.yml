@@ -25,6 +25,7 @@
         dest: /etc/grub.d/45_password
         regexp: '^password --md5 .*'
         line: "password --md5 {{ harden_grub_md5password }}"
+        mode: '0644'
         create: yes
       notify:
         - refresh grub config
@@ -34,6 +35,7 @@
         dest: /boot/grub/grub.cfg
         regexp: '^password --md5 .*'
         line: "password --md5 {{ harden_grub_md5password }}"
+        mode: '0644'
         create: yes
       when: ansible_os_family == "RedHat" and harden_grub_md5password is defined and harden_grub_md5password|string
   when: >

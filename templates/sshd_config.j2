@@ -47,7 +47,7 @@ LogLevel {{ harden_sshd_loglevel | default('VERBOSE') }}
 
 # Authentication:
 LoginGraceTime 30s
-PermitRootLogin {{ harden_sshd_PermitRootLogin | default('no') }}
+PermitRootLogin {{ harden_sshd_permitrootlogin | default('no') }}
 StrictModes yes
 
 {% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
@@ -70,10 +70,10 @@ PermitEmptyPasswords no
 
 # Change to yes to enable challenge-response passwords (beware issues with
 # some PAM modules and threads)
-ChallengeResponseAuthentication {{ harden_sshd_PasswordAuthentication | default('no') | ternary('yes','no') }}
+ChallengeResponseAuthentication {{ harden_sshd_passwordauthentication | default('no') | ternary('yes','no') }}
 
 # Change to no to disable tunnelled clear text passwords
-PasswordAuthentication {{ harden_sshd_PasswordAuthentication | default('no') | ternary('yes','no') }}
+PasswordAuthentication {{ harden_sshd_passwordauthentication | default('no') | ternary('yes','no') }}
 
 {% if not (ansible_distribution == "Alpine") %}
 # Kerberos options

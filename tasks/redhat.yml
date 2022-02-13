@@ -106,7 +106,7 @@
     name: autofs
     enabled: no
     state: stopped
-  ignore_errors: true
+  failed_when: false
 
 # password-auth: Set Deny For Failed Password Attempts - CCE-27350-8, CCE-26884-7
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-hardening_your_system_with_tools_and_services#sect-Security_Guide-Workstation_Security-Account_Locking = Keeping Custom Settings with authconfig
@@ -130,4 +130,4 @@
   with_items:
     - password-auth
     - system-auth
-  ignore_errors: true
+  failed_when: false

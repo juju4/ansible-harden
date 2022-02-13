@@ -48,14 +48,14 @@
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
 - block:
-    - name: Alpine | Load iptables rules - v4
+    - name: Alpine | Load iptables rules - v4  # noqa no-changed-when
       shell: >
         iptables-restore -v < {{ iptables_rulesv4 }}
-    - name: Alpine | Load iptables rules - v6
+    - name: Alpine | Load iptables rules - v6  # noqa no-changed-when
       shell: >
         ip6tables-restore -v < {{ iptables_rulesv6 }}
     - name: Alpine | Save iptables rules for system restore
-      command: "{{ item }}"
+      command: "{{ item }}"  # noqa no-changed-when
       with_items:
         - /etc/init.d/iptables save
         - /etc/init.d/ip6tables save
@@ -63,7 +63,7 @@
       command: "rc-status"
       changed_when: false
     - name: Alpine | Ensure iptables starts at boot
-      command: "{{ item }}"
+      command: "{{ item }}"  # noqa no-changed-when
       with_items:
         - rc-update add iptables
         - rc-update add ip6tables

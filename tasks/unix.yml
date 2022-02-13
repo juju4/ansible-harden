@@ -23,7 +23,7 @@
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   when: not pacct.stat.exists
   ## FIXME! not working on centos-6
-  ignore_errors: true
+  failed_when: false
 
 - import_tasks: unix-fstab.yml
   when: harden_unix_fstab_flags is defined and harden_unix_fstab_flags and harden_mount_options != []

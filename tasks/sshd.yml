@@ -29,7 +29,7 @@
     - sftp-users
     - forwarding-users
     - restricted-users
-  ignore_errors: true
+  failed_when: false
   when: ansible_distribution == "Alpine"
 
 - name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)

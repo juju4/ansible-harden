@@ -64,7 +64,7 @@
 - name: reload fstab
   shell: "umount -a; mount -a"
   # shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
-  ignore_errors: true
+  failed_when: false
   when: ansible_os_family != 'RedHat'
 
 - name: restart sysstat
