@@ -18,8 +18,14 @@
         - restart ipset-persistence
 
     - block:
-        - include: "immutable.yml target_dir=/lib/systemd/system state=pre"
-        - include: "immutable.yml target_dir=/lib/systemd/system/ipset-persistence.service state=pre"
+        - include_tasks: immutable.yml
+          vars:
+            target_dir: /lib/systemd/system
+            state: pre
+        - include_tasks: immutable.yml
+          vars:
+            target_dir: /lib/systemd/system/ipset-persistence
+            state: pre
         - name: install systemd configuration
           template:
             src: systemd-ipset-persistence.service.j2
@@ -30,7 +36,10 @@
           notify:
             - reload systemd
             - restart ipset-persistence
-        - include: "immutable.yml target_dir=/lib/systemd/system state=post"
+        - include_tasks: immutable.yml
+          vars:
+            target_dir: /lib/systemd/system
+            state: post
       when: systemd is failed
 
   # when: ansible_service_mgr == 'systemd'

@@ -11,7 +11,7 @@
     remote_src: true
 
 ## https://groups.google.com/forum/#!msg/ansible-project/7MhOICPWkaI/rADYaeaRDlsJ
-- include: unix-fstab-mount.yml
+- include_tasks: unix-fstab-mount.yml
   with_items: "{{ harden_mount_options }}"
   loop_control:
     loop_var: outer_item

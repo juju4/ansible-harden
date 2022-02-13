@@ -36,7 +36,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- include: unattended-upgrades.yml
+- import_tasks: unattended-upgrades.yml
   when: harden_security_update_auto
 
 - name: Debug | ansible_mounts var
@@ -44,7 +44,7 @@
 - name: add apt hardening with somme immutable directories
   template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
 
-- include: debian-logcheck.yml
+- import_tasks: debian-logcheck.yml
   when: harden_logcheck is defined and harden_logcheck
 
 - name: Enable sysstat sar collection
@@ -160,5 +160,5 @@
       ignore_errors: true
   when: rcfile.stat.exists
 
-- include: apparmor-audit.yml
+- import_tasks: apparmor-audit.yml
   when: harden_apparmor_audit

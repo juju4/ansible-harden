@@ -19,7 +19,7 @@
   include_vars: "Alpine.yml"
   when: ansible_os_family == "Alpine"
 
-- include: travis.yml
+- import_tasks: travis.yml
   when: ansible_os_family != "Windows"
 
 - name: Ensure archives folder exists
@@ -28,7 +28,7 @@
     state: directory
     mode: '0700'
 
-- include: debian-apt-source.yml
+- import_tasks: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Debian | update apt cache
@@ -87,39 +87,39 @@
   register: pkg_result
   until: pkg_result is success
 
-- include: linux.yml
+- import_tasks: linux.yml
   when: ansible_system == 'Linux'
 
 - name: Debian | Harden
-  include: debian.yml
+  import_tasks: debian.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Redhat | Harden
-  include: redhat.yml
+  import_tasks: redhat.yml
   when: ansible_os_family == "RedHat"
 
 - name: Alpine | Harden
-  include: alpine.yml
+  import_tasks: alpine.yml
   when: ansible_os_family == "Alpine"
 
-- include: unix.yml
+- import_tasks: unix.yml
   when: ansible_system == 'Linux' or ansible_distribution == 'OpenBSD'
 
-- include: restrict_compiler.yml
+- import_tasks: restrict_compiler.yml
   when: harden_restrict_compiler is defined and harden_restrict_compiler
 
-- include: bash2syslog.yml
+- import_tasks: bash2syslog.yml
   when: harden_bash2syslog is defined and harden_bash2syslog
 
-- include: root-forward.yml
+- import_tasks: root-forward.yml
   when: harden_rootforward is defined and harden_rootforward
 
-- include: fail2ban.yml
+- import_tasks: fail2ban.yml
   when: >
     not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8)
 
-- include: vim-swapfiles.yml
-- include: llmnr-systemd.yml
+- import_tasks: vim-swapfiles.yml
+- import_tasks: llmnr-systemd.yml
 
-- include: testing.yml
+- import_tasks: testing.yml
   when: harden_testing

@@ -117,16 +117,16 @@
 
 ## FIXME! firewall rules
 
-- include: iptables.yml
+- import_tasks: iptables.yml
   when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" or ansible_os_family == "Alpine"
 
-- include: usb.yml
+- import_tasks: usb.yml
   when: harden_usb_restrict_udev
 
-- include: aide-hids.yml
+- import_tasks: aide-hids.yml
   when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
 
-- include: ubuntu-livepatch.yml
+- import_tasks: ubuntu-livepatch.yml
   when:
     - ansible_distribution == 'Ubuntu'
     - '"LTS" in ansible_lsb["description"]'
@@ -134,16 +134,16 @@
     - harden_ubuntu_livepatch is defined
     - harden_ubuntu_livepatch
 
-- include: redhat-kpatch.yml
+- import_tasks: redhat-kpatch.yml
   when: >
     ansible_distribution == 'RedHat Enterprise Linux' and ansible_distribution_version == '7.2' and
     harden_rhel_kpatch is defined and harden_rhel_kpatch
 
-- include: grub.yml
-- include: monit.yml
+- import_tasks: grub.yml
+- import_tasks: monit.yml
   when: >
     not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8)
-- include: passwd.yml
+- import_tasks: passwd.yml
 
 - block:
     - name: Alpine | Ensure /etc/rsyslog.d exists
@@ -169,12 +169,12 @@
     backup: "{{ harden_backup | default(false) }}"
   when: harden_modprobe_template is defined
 
-- include: lkrg.yml
+- import_tasks: lkrg.yml
   when: >
     harden_lkrg and
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
 
-- include: proxy.yml
+- import_tasks: proxy.yml
   when: harden_proxy|bool

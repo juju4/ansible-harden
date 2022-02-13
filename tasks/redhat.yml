@@ -75,14 +75,14 @@
   when: >
     not (ansible_distribution_major_version|int == 8)
 
-- include: selinux.yml
+- import_tasks: selinux.yml
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         ) and
     not (ansible_distribution_major_version|int == 8)
 
-- include: yum-cron.yml
+- import_tasks: yum-cron.yml
   when: >
     harden_security_update_auto and
     not (ansible_distribution_major_version|int == 8)

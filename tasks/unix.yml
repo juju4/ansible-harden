@@ -1,10 +1,10 @@
 ---
 
-- include: timezone.yml
+- import_tasks: timezone.yml
 
-- include: sshd.yml
+- import_tasks: sshd.yml
   when: harden_sshd_review
-- include: ssh.yml
+- import_tasks: ssh.yml
   when: harden_ssh_review
 
 ## Bash history to syslog (since 4.1) but need re-compile for most distributions
@@ -25,7 +25,7 @@
   ## FIXME! not working on centos-6
   ignore_errors: true
 
-- include: unix-fstab.yml
+- import_tasks: unix-fstab.yml
   when: harden_unix_fstab_flags is defined and harden_unix_fstab_flags and harden_mount_options != []
 
 - name: Enforce shell timeout
@@ -47,9 +47,9 @@
     - /etc/motd
     - /etc/issue.net
 
-- include: sudo.yml
+- import_tasks: sudo.yml
 
-- include: securetty.yml
+- import_tasks: securetty.yml
   when: harden_securetty
 
 - name: Set immutable attribute for chosen files

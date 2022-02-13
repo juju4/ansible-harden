@@ -99,11 +99,11 @@
 
   when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
 
-- include: testing-check.yml
+- import_tasks: testing-check.yml
   when: harden_testing_check
 
-- include: testing-privesc.yml
+- import_tasks: testing-privesc.yml
   when: harden_testing_privesc
 
-- include: testing-speculative.yml
+- import_tasks: testing-speculative.yml
   when: harden_testing_speculative

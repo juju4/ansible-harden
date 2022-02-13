@@ -84,5 +84,7 @@
 
 - name: Flush handlers
   meta: flush_handlers
-- include: "monit-checkmonitor.yml daemon={{ item }}"
+- include_tasks: monit-checkmonitor.yml
+  args:
+    daemon: "{{ item }}"
   with_items: "{{ daemons }}"
