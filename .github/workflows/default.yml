@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
     env:
-      ANSIBLE_CALLBACK_ENABLED: profile_tasks
+      ANSIBLE_CALLBACKS_ENABLED: profile_tasks
       ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes -e harden_testing_privesc_upc=false -e harden_testing_privesc_lpc=false"
 
     steps:

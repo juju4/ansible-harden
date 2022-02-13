@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
     env:
-      ANSIBLE_CALLBACK_WHITELIST: profile_tasks
+      ANSIBLE_CALLBACKS_ENABLED: profile_tasks
       ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes -e harden_testing_privesc_upc=false -e harden_testing_privesc_lpc=false"
 
     steps:
@@ -39,7 +39,7 @@ jobs:
           ansible --version
           cd $GITHUB_WORKSPACE/juju4.harden
           [ -f get-dependencies.sh ] && sh -x get-dependencies.sh
-          { echo '[defaults]'; echo 'callback_whitelist = profile_tasks, timer'; echo 'roles_path = ../'; echo 'ansible_python_interpreter: /usr/bin/python3'; } >> ansible.cfg
+          { echo '[defaults]'; echo 'callbacks_enabled = profile_tasks, timer'; echo 'roles_path = ../'; echo 'ansible_python_interpreter: /usr/bin/python3'; } >> ansible.cfg
       - name: Environment
         run: |
           pwd
