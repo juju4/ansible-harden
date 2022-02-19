@@ -192,6 +192,7 @@ AllowUsers {{ ansible_user }}
 Match group sftp-users
     ForceCommand internal-sftp
     ChrootDirectory /sftp-home/\%u
+    PermitTTY no
 
 Match group forwarding-users
     AllowTcpForwarding yes
