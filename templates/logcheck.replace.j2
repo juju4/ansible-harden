@@ -143,7 +143,9 @@ s/hostapd\[[0-9]*\]: \(.*\): STA \([0-9a-f:]*\) RADIUS: starting accounting sess
 ## dbus
 s/dbus-daemon\[[0-9]*\]: \[system\] The maximum number of pending replies for ":[0-9.]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)/dbus-daemon: [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)/
 s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: \[ \[system\] The maximum number of pending replies for ":[0-9.]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)\]/dbus-daemon: message repeated X times: [ [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)]/
+s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: \[ \[system\] The maximum number of pending replies for ":[0-9]*\.[0-9]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)\]/dbus-daemon: message repeated X times: [ [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)]/
 s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: /dbus-daemon: message repeated X times: /
+s/\[system\] The maximum number of pending replies for ":[0-9]*\.[0-9]*" /[system] The maximum number of pending replies for ":N.NNN" /
 
 ## *exporter
 s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/exporter: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
