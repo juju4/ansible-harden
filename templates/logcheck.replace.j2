@@ -120,6 +120,10 @@ s/zed: eid=[0-9]* class=\(.*\) pool_guid=0x[0-9A-F]*/zed: eid=X class=\1 pool_gu
 s/grafana-server\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/grafana-server: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
 /grafana-server\[[0-9]*\]: .*lvl=info.*/d
 s/grafana-server\[[0-9]*\]: t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\+\([0-9]*\)/grafana-server: t=YYYY-MM-DDTHH:MM:SS+\1/
+#s/grafana-server\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\) /grafana-server: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NN+\4 /
+s/grafana-server\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana-server: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NN/
+s/grafana-server\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*/grafana-server: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS/
+s/grafana-server\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana-server: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NN/
 
 ## snap
 s/\(.*\)\.logrotate\[[0-9]*\]: reading config file \/tmp\/tmp\..*/\1.logrotate: reading config file \/tmp\/tmp.XXXXX/
