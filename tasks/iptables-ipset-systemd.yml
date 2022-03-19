@@ -5,19 +5,19 @@
 
 - block:
 
-    - name: install systemd configuration
-      template:
-        src: systemd-ipset-persistence.service.j2
-        dest: /lib/systemd/system/ipset-persistence.service
-        mode: '0644'
-        backup: yes
-      register: systemd
-      ignore_errors: true
-      notify:
-        - reload systemd
-        - restart ipset-persistence
-
     - block:
+        - name: install systemd configuration
+          template:
+            src: systemd-ipset-persistence.service.j2
+            dest: /lib/systemd/system/ipset-persistence.service
+            mode: '0644'
+            backup: yes
+          register: systemd
+          notify:
+            - reload systemd
+            - restart ipset-persistence
+
+      rescue:
         - include_tasks: immutable.yml
           vars:
             target_dir: /lib/systemd/system
@@ -32,7 +32,6 @@
             dest: /lib/systemd/system/ipset-persistence.service
             mode: '0644'
             backup: yes
-          register: systemd
           notify:
             - reload systemd
             - restart ipset-persistence
@@ -40,7 +39,6 @@
           vars:
             target_dir: /lib/systemd/system
             state: post
-      when: systemd is failed
 
   # when: ansible_service_mgr == 'systemd'
   when: >
