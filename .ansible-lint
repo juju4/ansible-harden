@@ -1,4 +1,7 @@
 ---
 skip_list:
-  - '106'  # Role name {} does not match ``^[a-z][a-z0-9_]+$`` pattern'
-  - '204'  # Lines should be no longer than 160 chars'
+  - fqcn-builtins  # implicit in 6.0.0
+opt-in:  # Rules that are not used unless manually added to `enable_list`
+  - empty-string-compare
+  - no-log-password
+  - no-same-owner
