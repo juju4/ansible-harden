@@ -105,5 +105,5 @@ lkrg_dep_pkgs:
   - make
   - gcc
 
-inspec_url: https://packages.chef.io/files/stable/inspec/4.18.39/ubuntu/18.04/inspec_4.18.39-1_amd64.deb
-inspec_hash: 'sha256:303a8dbe90dfa45857dd315ad3f970ddd528a46efcd25bf27dc5affd03e35005'
+inspec_url: https://packages.chef.io/files/stable/inspec/5.10.5/ubuntu/18.04/inspec_5.10.5-1_amd64.deb
+inspec_hash: 'sha256:71e0a77ea844a014504e0d85f4481661bafcda8b010a304e66b918b8c846daef'
