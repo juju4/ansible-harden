@@ -30,19 +30,3 @@
     backup: "{{ harden_backup | default(false) }}"
   notify:
     - reload udev
-
-- name: USB | download Lexsi prevent-ducky script
-  ansible.builtin.get_url:
-    url: https://www.lexsi.fr/sites/default/files/prevent-ducky.zip
-    dest: /usr/local/bin
-    mode: 0644
-    checksum: 'sha256:d76ad1f85fbca88515ddec2b7124fababbe45420a5ce34c0dc1b1f33fedbdded'
-    validate_certs: false
-
-- name: USB | uncompress prevent-ducky
-  ansible.builtin.unarchive:
-    src: /usr/local/bin/prevent-ducky.zip
-    dest: /usr/local/bin
-    mode: '0755'
-    remote_src: yes
-    creates: /usr/local/bin/prevent-ducky.py
