@@ -10,8 +10,8 @@
     mode: "{{ item.m }}"
     checksum: "{{ item.c | default(omit) }}"
   with_items:
-    - { u: "https://www.openwall.com/download/lkrg-{{ harden_lkrg_version }}.tar.gz", m: '0600' }
-    - { u: "https://www.openwall.com/download/lkrg-{{ harden_lkrg_version }}.tar.gz.sign", m: '0600' }
+    - { u: "https://lkrg.org/download/lkrg-{{ harden_lkrg_version }}.tar.gz", m: '0600' }
+    - { u: "https://lkrg.org/download/lkrg-{{ harden_lkrg_version }}.tar.gz.sign", m: '0600' }
     - { u: 'https://www.openwall.com/signatures/openwall-offline-signatures.asc',
         c: 'sha256:8807d12ff271891e21491552880541aed0fa525d30cfec0df0e8fcfe56f46cd8',
         m: '0600'
