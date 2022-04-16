@@ -40,6 +40,7 @@
     dest: "{{ install_archives }}"
     mode: '0755'
     creates: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}/INSTALL"
+    remote_src: true
 
 - name: build lkrg
   command: make -j8  # noqa 301
