@@ -1,7 +1,7 @@
 ---
 
 - name: reload systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
   when: >
     not (ansible_virtualization_type is defined and
@@ -9,26 +9,26 @@
         )
 
 - name: restart sshd
-  service: name={{ ssh_svc }} state=restarted
+  ansible.builtin.service: name={{ ssh_svc }} state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart iptables
-  service: name={{ iptables_persistent_svc }} state=restarted
+  ansible.builtin.service: name={{ iptables_persistent_svc }} state=restarted
   when: >
     not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart ipset-persistence
-  service: name=ipset-persistence state=restarted
+  ansible.builtin.service: name=ipset-persistence state=restarted
   when: >
     (ansible_distribution == 'Debian' or
       (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 16)
     ) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: ipset restore
-  command: /sbin/ipset restore -f -! /etc/ipsets.conf
+  ansible.builtin.command: /sbin/ipset restore -f -! /etc/ipsets.conf
 
 - name: restart iptables - redhat|alpine
-  service: name=iptables state=restarted
+  ansible.builtin.service: name=iptables state=restarted
   when: >
     (
       (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
@@ -36,7 +36,7 @@
     )
 
 - name: restart ip6tables - redhat|alpine
-  service: name=ip6tables state=restarted
+  ansible.builtin.service: name=ip6tables state=restarted
   when: >
     (
       (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
@@ -45,7 +45,7 @@
     )
 
 - name: restart auditd
-  service: name=auditd state=restarted
+  ansible.builtin.service: name=auditd state=restarted
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
@@ -53,7 +53,7 @@
 
 # See README.md FAQ why using service
 - name: restart auditd - rhel7+  # noqa 303
-  command: "service auditd restart"
+  ansible.builtin.command: "service auditd restart"
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
@@ -62,44 +62,44 @@
 ## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...)
 ##  and cant ssh after... vagrant reload: fine?
 - name: reload fstab
-  shell: "umount -a; mount -a"
+  ansible.builtin.shell: "umount -a; mount -a"
   # shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
   failed_when: false
   when: ansible_os_family != 'RedHat'
 
 - name: restart sysstat
-  service: name=sysstat state=restarted
+  ansible.builtin.service: name=sysstat state=restarted
 
 - name: restart rsyslog
-  service: name=rsyslog state=restarted
+  ansible.builtin.service: name=rsyslog state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart fail2ban
-  service: name=fail2ban state=restarted
+  ansible.builtin.service: name=fail2ban state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart osquery
-  service: name=osqueryd state=restarted
+  ansible.builtin.service: name=osqueryd state=restarted
 
 - name: restart journald
-  service: name=systemd-journald state=restarted
+  ansible.builtin.service: name=systemd-journald state=restarted
 
 - name: reload udev
-  command: "udevadm control --reload-rules"
+  ansible.builtin.command: "udevadm control --reload-rules"
 
 - name: restart monit
-  service: name=monit state=restarted
+  ansible.builtin.service: name=monit state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: update-initramfs
-  command: update-initramfs -k all -u
+  ansible.builtin.command: update-initramfs -k all -u
   when: ansible_os_family == "Debian"
 
 - name: enable apparmor audit profile
-  command: aa-complain /etc/apparmor.d/apparmor.audit
+  ansible.builtin.command: aa-complain /etc/apparmor.d/apparmor.audit
 
 - name: restart systemd-resolved
-  service: name=systemd-resolved state=restarted
+  ansible.builtin.service: name=systemd-resolved state=restarted
 
 - name: refresh grub config
-  command: update-grub
+  ansible.builtin.command: update-grub

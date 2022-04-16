@@ -1,7 +1,7 @@
 ---
 
 - name: Configure sudo password timeout
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: "^Defaults        .*"
     line: "Defaults        env_reset,timestamp_timeout={{ harden_sudo_timeout | default(15) }}"
@@ -10,17 +10,17 @@
     validate: 'visudo -cf %s'
 
 - name: Collect packages information
-  package_facts:
+  ansible.builtin.package_facts:
     manager: auto
 
 - name: get sudo version
-  set_fact:
+  ansible.builtin.set_fact:
     sudo_v: "{{ ansible_facts.packages['sudo'][0]['version'] }}"
 
 # sudo 1.9.4+, json logs
 # https://blog.sudo.ws/posts/2020/12/sudo-1.9.4-new-options-for-logging/
 - name: Configure sudo log_format
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: "^Defaults        log_format=.*"
     line: "Defaults        log_format=json"
@@ -30,7 +30,7 @@
   when: sudo_v|string is version_compare('1.9.4', '>=')
 
 - name: Configure sudo remote syslog
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: "^Defaults        log_servers=.*"
     line: "Defaults        log_servers={{ harden_sudo_remotesyslog }}"

@@ -3,7 +3,7 @@
 # https://openwall.info/wiki/p_lkrg/Main
 
 - name: Download lkrg files
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ item.u }}"
     dest: "{{ install_archives }}/{{ item.u | basename }}"
     owner: root
@@ -18,16 +18,16 @@
     }
 
 - name: Import openwall gpg key  # noqa 301
-  command: >
+  ansible.builtin.command: >
     gpg --import {{ install_archives }}/openwall-offline-signatures.asc
 
 - name: Validate lkrg hash signature
-  command: >
+  ansible.builtin.command: >
     gpg --verify {{ install_archives }}/lkrg-{{ harden_lkrg_version }}.tar.gz.sign {{ install_archives }}/lkrg-{{ harden_lkrg_version }}.tar.gz
   changed_when: false
 
 - name: lkrg dependencies install
-  package:
+  ansible.builtin.package:
     name: "{{ lkrg_dep_pkgs }}"
     state: present
     update_cache: yes
@@ -35,7 +35,7 @@
   until: pkg_result is success
 
 - name: uncompress lkrg
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}.tar.gz"
     dest: "{{ install_archives }}"
     mode: '0755'
@@ -43,12 +43,12 @@
     remote_src: true
 
 - name: build lkrg
-  command: make -j8  # noqa 301
+  ansible.builtin.command: make -j8  # noqa 301
   args:
     chdir: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}"
 
 - name: Debian | fix systemd service file destination path
-  replace:
+  ansible.builtin.replace:
     dest: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}/scripts/bootup/systemd/lkrg-systemd.sh"
     regex: -f5
     replace: -f7
@@ -62,7 +62,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: install lkrg
-  command: make install  # noqa 301
+  ansible.builtin.command: make install  # noqa 301
   args:
     chdir: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}"
 
@@ -73,7 +73,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: start lkrg if not container
-  systemd:
+  ansible.builtin.systemd:
     name: lkrg
     state: started
     enabled: yes

@@ -4,11 +4,11 @@
 ## Travis error: "asn1 encoding routines:ASN1_mbstring_ncopy:string too longi:a_mbstr.c:154:maxsize=64"
 ##      as cn=testing-gce-4d114f77-0ff1-41fb-bd33-22879d3249da.c.eco-emissary-99515.internal
 - name: Default | set certificate_cn to ansible_fqdn
-  set_fact:
+  ansible.builtin.set_fact:
     certificate_cn: "{{ ansible_fqdn }}"
 
 - name: Travis | set certificate_cn to shorter name to avoid openssl error
-  set_fact:
+  ansible.builtin.set_fact:
     certificate_cn: "testing-travis.internal"
     travisci: true
   when: ansible_env['TRAVIS'] is defined and ansible_env['TRAVIS'] == 'true'

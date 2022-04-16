@@ -1,7 +1,7 @@
 ---
 
 - name: Debian | ensure unattended-upgrades is installed
-  apt:
+  ansible.builtin.apt:
     name: unattended-upgrades
     state: present
   register: pkg_result
@@ -9,7 +9,7 @@
 
 ## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 - name: Debian | enable automatic security updates
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ aptconf_unattended | default('/etc/apt/apt.conf.d/10periodic') }}"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"

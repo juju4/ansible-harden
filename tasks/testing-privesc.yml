@@ -2,23 +2,23 @@
 # https://isc.sans.edu/forums/diary/Finding+Privilege+Escalation+Flaws+in+Linux/19207
 
 - name: Ensure user _test is present
-  user:
+  ansible.builtin.user:
     name: _test
     state: present
   when: ansible_os_family != "Alpine"
 
 - name: Alpine | Add _test user
-  command: "adduser -D _test creates=/home/_test"
+  ansible.builtin.command: "adduser -D _test creates=/home/_test"
   become: yes
   failed_when: false
   when: ansible_os_family == "Alpine"
 - name: Alpine | Unlock user
-  command: "passwd -u _test"
+  ansible.builtin.command: "passwd -u _test"
   failed_when: false
   when: ansible_os_family == "Alpine"
 
 - name: retrieve unix-privesc-check
-  get_url:
+  ansible.builtin.get_url:
     url: http://pentestmonkey.net/tools/unix-privesc-check/unix-privesc-check-1.4.tar.gz
     dest: /tmp/unix-privesc-check-1.4.tar.gz
     checksum: 'sha256:e1f85e7f69fabadd23756a3d76a0e3d864b21e28763b60ce2e6181290d1c1969'
@@ -28,14 +28,14 @@
   failed_when: false
 
 - name: Ensure GNU tar is present
-  package:
+  ansible.builtin.package:
     name: tar
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: unarchive unix-privesc-check
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
     dest: /tmp/
     mode: '0755'
@@ -46,7 +46,7 @@
   failed_when: false
 
 - name: execute unix-privesc-check
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     /tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out
   failed_when: false
@@ -60,7 +60,7 @@
 
 # - debug: var=privcheck.stdout_lines
 - name: grep error+warning of unix-privesc
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | \
         grep -v "Can't find full path of running program:" | sort | uniq
@@ -73,7 +73,7 @@
 ## FIXME: cert issue on ubuntu trusty - hash
 ## FIXME: in some case, server returns 206 Partial Content
 - name: retrieve linuxprivchecker
-  get_url:
+  ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/sleventyeleven/linuxprivchecker/master/linuxprivchecker.py
     dest: /tmp/linuxprivchecker.py
     checksum: 'sha256:24d861124682031773ac0f6df9e5011b18a8d925c8c22469330826e64ccc2bab'
@@ -85,7 +85,7 @@
   until: dl_result is success
 
 - name: execute linuxprivchecker
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out
   register: linuxprivchecker
@@ -100,7 +100,7 @@
 # - debug: var=linuxprivchecker.stdout_lines
 
 - name: Ensure git is present
-  package:
+  ansible.builtin.package:
     name: git
     state: present
   register: pkg_result
@@ -109,7 +109,7 @@
 # http://www.kitploit.com/2017/11/kernelpop-kernel-privilege-escalation.html
 # https://github.com/spencerdodd/kernelpop
 - name: retrieve kernelpop
-  git:
+  ansible.builtin.git:
     repo: 'https://github.com/spencerdodd/kernelpop'
     dest: /home/_test/kernelpop
     version: "{{ harden_testing_kernelpop_version }}"
@@ -118,14 +118,14 @@
   become_user: _test
 
 - name: ensure python3 is present
-  package:
+  ansible.builtin.package:
     name: "{{ python3_pkg | default('python3') }}"
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: execute kernelpop
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     {{ python3_bin | default('python3') }} kernelpop.py -b | tee /tmp/kernelpop.out
   args:
@@ -137,7 +137,7 @@
 
 # https://github.com/mzet-/linux-exploit-suggester/
 - name: retrieve linux-exploit-suggester.sh
-  get_url:
+  ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
     dest: /tmp/linux-exploit-suggester.sh
     checksum: "{{ harden_testing_les_checksum }}"
@@ -149,7 +149,7 @@
   until: dl_result is success
 
 - name: execute linux-exploit-suggester.sh
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out
   register: les
@@ -162,7 +162,7 @@
 
 # https://github.com/jondonas/linux-exploit-suggester-2/
 - name: retrieve linux-exploit-suggester-2.pl
-  get_url:
+  ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
     dest: /tmp/linux-exploit-suggester-2.pl
     checksum: "{{ harden_testing_les2_checksum }}"
@@ -174,7 +174,7 @@
   until: dl_result is success
 
 - name: execute linux-exploit-suggester-2.pl
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out
   register: les

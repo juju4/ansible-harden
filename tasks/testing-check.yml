@@ -3,11 +3,11 @@
 # https://github.com/rebootuser/LinEnum
 
 - name: Run lynis check
-  shell: "lynis audit system | tee /tmp/lynis.out"
+  ansible.builtin.shell: "lynis audit system | tee /tmp/lynis.out"
   args:
     creates: /tmp/lynis.out
   ignore_errors: true
   register: lynis
 
 - name: Debug | lynis output
-  debug: var=lynis.stdout_lines
+  ansible.builtin.debug: var=lynis.stdout_lines

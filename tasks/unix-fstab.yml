@@ -4,7 +4,7 @@
 # - debug: var=harden_mount_options
 
 - name: backup fstab
-  copy:
+  ansible.builtin.copy:
     src: /etc/fstab
     dest: "/etc/fstab.{{ ansible_date_time.date }}"
     mode: '0644'
@@ -17,9 +17,9 @@
     loop_var: outer_item
 
 - name: check fstab changes
-  command: "diff /etc/fstab.{{ ansible_date_time.date }} /etc/fstab"
+  ansible.builtin.command: "diff /etc/fstab.{{ ansible_date_time.date }} /etc/fstab"
   changed_when: false
   ignore_errors: true
   register: diff
 - name: Debug | fstab changes
-  debug: var=diff.stdout_lines
+  ansible.builtin.debug: var=diff.stdout_lines

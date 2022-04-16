@@ -4,9 +4,9 @@
     - import_tasks: iptables-ipset.yml
       when: harden_ipset_enable
     - name: ensure iptables directory exists
-      file: dest=/etc/iptables state=directory mode=0755
+      ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
     - name: iptables configuration file update
-      template:
+      ansible.builtin.template:
         src: "{{ harden_fw_template }}"
         dest: "{{ iptables_rulesv4 }}"
         backup: "{{ harden_backup | default(false) }}"
@@ -21,15 +21,15 @@
       register: rulesv4
     ## as validate option seems incorrect
     - name: ensure iptables v4 rules are correct
-      shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
+      ansible.builtin.shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
       when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw
 
 - block:
     - name: ensure iptables directory exists
-      file: dest=/etc/iptables state=directory mode=0755
+      ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
     - name: iptables configuration file update
-      template:
+      ansible.builtin.template:
         src: "{{ harden_fw6_template }}"
         dest: "{{ iptables_rulesv6 }}"
         backup: "{{ harden_backup | default(false) }}"
@@ -43,27 +43,27 @@
         - restart ip6tables - redhat|alpine
       register: rulesv6
     - name: ensure iptables v6 rules are correct
-      shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
+      ansible.builtin.shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
 - block:
     - name: Alpine | Load iptables rules - v4  # noqa no-changed-when
-      shell: >
+      ansible.builtin.shell: >
         iptables-restore -v < {{ iptables_rulesv4 }}
     - name: Alpine | Load iptables rules - v6  # noqa no-changed-when
-      shell: >
+      ansible.builtin.shell: >
         ip6tables-restore -v < {{ iptables_rulesv6 }}
     - name: Alpine | Save iptables rules for system restore
-      command: "{{ item }}"  # noqa no-changed-when
+      ansible.builtin.command: "{{ item }}"  # noqa no-changed-when
       with_items:
         - /etc/init.d/iptables save
         - /etc/init.d/ip6tables save
     - name: Alpine | Check services status
-      command: "rc-status"
+      ansible.builtin.command: "rc-status"
       changed_when: false
     - name: Alpine | Ensure iptables starts at boot
-      command: "{{ item }}"  # noqa no-changed-when
+      ansible.builtin.command: "{{ item }}"  # noqa no-changed-when
       with_items:
         - rc-update add iptables
         - rc-update add ip6tables

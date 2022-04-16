@@ -1,7 +1,7 @@
 ---
 
 - name: Ubuntu | Enable backports (replace)
-  replace:
+  ansible.builtin.replace:
     ## can be archive, or us-east-1.ec2.archive if amazon, or others
     dest: '/etc/apt/sources.list'
     regexp: '^# deb http://(.*)/ubuntu([/]*) {{ ansible_distribution_release }}-backports'
@@ -15,7 +15,7 @@
 ##  ex: "deb http://mirrors.digitalocean.com/ubuntu xenial-backports main restricted universe multiverse"
 ##      should be unchanged
 # - name: Ubuntu | Enable backports (line)
-#   lineinfile:
+#   ansible.builtin.lineinfile:
 #     dest: '/etc/apt/sources.list'
 ##     regexp: '^deb http://.*/ubuntu {{ ansible_distribution_release }}-backports main restricted universe multiverse'
 ##     line: 'deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-backports main restricted
@@ -27,12 +27,12 @@
 
 ## https://github.com/chef/bento/issues/592
 - name: fix Ubuntu network hack
-  file: dest=/etc/udev/rules.d/70-persistent-net.rules state=absent
+  ansible.builtin.file: dest=/etc/udev/rules.d/70-persistent-net.rules state=absent
 
 - block:
     ## http://askubuntu.com/questions/339790/how-can-i-prevent-apt-get-aptitude-from-showing-dialogs-during-installation
     - name: Ubuntu precise | prevent apt module of asking questions for iptables-persistent
-      debconf: name=iptables-persistent question="iptables-persistent/{{ item }}" value=false vtype='boolean'
+      ansible.builtin.debconf: name=iptables-persistent question="iptables-persistent/{{ item }}" value=false vtype='boolean'
       with_items:
         - autosave_v4
         - autosave_v6

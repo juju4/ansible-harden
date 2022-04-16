@@ -4,14 +4,14 @@
 ## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
 
 - name: RedHat | Ensure yum-cron package is present
-  yum:
+  ansible.builtin.yum:
     name: yum-cron
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: RedHat | enable yum-cron hourly security updates
-  replace:
+  ansible.builtin.replace:
     dest: /etc/yum/yum-cron-hourly.conf
     regexp: "{{ item.re }}"
     replace: "{{ item.rep }}"
@@ -24,7 +24,7 @@
     - { re: '^apply_updates = .*', rep: 'apply_updates = yes' }
 
 - name: RedHat | Ensure yum-cron service is enabled and started
-  service:
+  ansible.builtin.service:
     name: yum-cron
     enabled: yes
     state: started

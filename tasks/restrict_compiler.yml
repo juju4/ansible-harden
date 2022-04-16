@@ -1,18 +1,18 @@
 ---
 
 - name: Ubuntu 14.04 | Set gcc 4.8
-  set_fact:
+  ansible.builtin.set_fact:
     gcc_v: 4.8
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0]|int <= 14
 - name: Ubuntu 15.04+ | Set gcc 5
-  set_fact:
+  ansible.builtin.set_fact:
     gcc_v: 5
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0]|int >= 15
 
 ## Note: can't do before full end of provisioning else might break other things...
 - block:
     - name: Restrict compiler tools to group {{ harden_restrict_compiler_group }}
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         owner: root
         group: "{{ harden_restrict_compiler_group }}"
@@ -35,7 +35,7 @@
 - block:
     ## https://github.com/ansible/ansible/issues/13652
     - name: Alpine | Restrict compiler tools to group {{ harden_restrict_compiler_group }}
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         owner: root
         group: "{{ harden_restrict_compiler_group }}"

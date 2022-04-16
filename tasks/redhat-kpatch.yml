@@ -3,13 +3,13 @@
 ## RHEL7.2+
 
 - name: Ensure kpatch is present
-  yum:
+  ansible.builtin.yum:
     name: kpatch
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: check kpatch applied
-  command: kpatch --list
+  ansible.builtin.command: kpatch --list
   changed_when: false
   failed_when: false

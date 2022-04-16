@@ -5,10 +5,10 @@
 - block:
     ## Ansible 2.3+ for get_attributes
     - name: check target_dir {{ target_dir }} attributes
-      # stat:
+      # ansible.builtin.stat:
       #   path: "{{ target_dir }}"
       #   get_attributes: yes
-      command: "lsattr -d '{{ target_dir }}'"
+      ansible.builtin.command: "lsattr -d '{{ target_dir }}'"
       register: dir
       changed_when: false
 
@@ -18,8 +18,8 @@
   when: state == 'pre'
 
 - name: Reestablish immutable attribute
-  command: "chattr +i '{{ target_dir }}'"
-  # file:
+  ansible.builtin.command: "chattr +i '{{ target_dir }}'"
+  # ansible.builtin.file:
   #   dest: "{{ target_dir }}"
   #   attributes: '----i-----I--e--'
   when: state == 'post'

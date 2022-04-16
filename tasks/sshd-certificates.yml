@@ -3,7 +3,7 @@
 # https://smallstep.com/blog/use-ssh-certificates/
 
 - name: Orchestrator | Ensure SSH CA dirname has right permissions
-  file:
+  ansible.builtin.file:
     dest: "{{ harden_sshd_ca_path | dirname }}"
     state: directory
     mode: '0700'
@@ -11,7 +11,7 @@
   when: harden_sshd_ca_path | dirname != '/tmp'
 
 - name: Check if SSH CA exists (pubkey)
-  stat:
+  ansible.builtin.stat:
     path: "{{ harden_sshd_ca_path }}.pub"
   register: sshca
   connection: local
@@ -27,31 +27,31 @@
   when: not sshca.stat.exists
 
 - name: debug
-  command: "ls -la {{ harden_sshd_ca_path | dirname }}"
+  ansible.builtin.command: "ls -la {{ harden_sshd_ca_path | dirname }}"
   failed_when: false
   changed_when: false
 
 - name: Ensure SSH CA public key is present on target
-  copy:
+  ansible.builtin.copy:
     src: "{{ harden_sshd_ca_path }}.pub"
     dest: "{{ harden_sshd_trusteduserca }}"
     mode: '0644'
     remote_src: "{{ harden_sshd_remote_src | default('no') }}"
 
 - name: Check if SSH host key is signed
-  stat:
+  ansible.builtin.stat:
     path: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
   register: sshhost_signed
 
 - block:
     - name: Retrieve SSH host key
-      fetch:
+      ansible.builtin.fetch:
         src: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}"
         dest: "{{ harden_sshd_host_key_opath | default('/tmp') }}"
         mode: '0600'
 
     - name: Ensure SSH keys have right permissions
-      file:
+      ansible.builtin.file:
         dest: "{{ item }}"
         mode: '0600'
         owner: "{{ lookup('env', 'USER') }}"
@@ -61,7 +61,7 @@
       connection: local
 
     - name: Sign SSH host key
-      command: >
+      ansible.builtin.command: >
         ssh-keygen -s {{ harden_sshd_ca_path }} \
           -I "{{ ansible_hostname }}" \
           -h -Z {{ ansible_fqdn }} \
@@ -72,7 +72,7 @@
       connection: local
 
     - name: Return SSH host key signed
-      copy:
+      ansible.builtin.copy:
         src: "{{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}/{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
         dest: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
         mode: '0444'
@@ -81,7 +81,7 @@
 
 # FIXME! file created as root?
 - name: Sign SSH user keys on orchestrator
-  command: >
+  ansible.builtin.command: >
     ssh-keygen -s {{ harden_sshd_ca_path }} \
       -I "{{ item.identifier }}" -n "{{ item.principals }}" \
       {{ item.options | default('-O source-address=10.0.0.0/8') }} \

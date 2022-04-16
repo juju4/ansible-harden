@@ -4,23 +4,23 @@
 # https://confluence.jaytaala.com/display/TKB/Using+ipset+to+block+IP+addresses+-+firewall
 
 - name: Ensure ipset package is present
-  package:
+  ansible.builtin.package:
     name: 'ipset'
     state: present
 
 - name: Set ipset configuration
-  template:
+  ansible.builtin.template:
     src: ipsets.conf.j2
     dest: /etc/ipsets.conf
     mode: '0644'
 
 - name: Check existing lists
-  command: "ipset list"
+  ansible.builtin.command: "ipset list"
   changed_when: false
   register: ipset
 
 - name: Configure ipsets
-  template:
+  ansible.builtin.template:
     src: "{{ harden_iptables_ipset_template | default('ipsets.conf.j2') }}"
     dest: /etc/ipsets.conf
     mode: '0644'

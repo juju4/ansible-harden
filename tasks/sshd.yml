@@ -2,10 +2,10 @@
 ## or separate role like https://github.com/dev-sec/ansible-ssh-hardening
 
 - name: Check if /etc/ssh/ssh_host_ed25519_key exists
-  stat: path=/etc/ssh/ssh_host_ed25519_key
+  ansible.builtin.stat: path=/etc/ssh/ssh_host_ed25519_key
   register: sshkey
 - name: Generate any missing SSH host key
-  command: ssh-keygen -A
+  ansible.builtin.command: ssh-keygen -A
   when: >
     not sshkey.stat.exists and
     ((ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7) or
@@ -13,7 +13,7 @@
     )
 
 - name: Ensure sshd groups exist
-  group:
+  ansible.builtin.group:
     name: "{{ item }}"
     state: present
     system: yes
@@ -24,7 +24,7 @@
   when: ansible_distribution != "Alpine"
 
 - name: Alpine | Ensure sshd groups exist
-  command: "addgroup {{ item }}"
+  ansible.builtin.command: "addgroup {{ item }}"
   with_items:
     - sftp-users
     - forwarding-users
@@ -33,7 +33,7 @@
   when: ansible_distribution == "Alpine"
 
 - name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/tmpfiles.d/sshd.conf
     line: '    d    /run/sshd   0755 root root - -'
     mode: '0644'
@@ -43,7 +43,7 @@
     (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
 
 - name: ensure privsep directory for sshd
-  file:
+  ansible.builtin.file:
     dest: /run/sshd
     mode: '0755'
     state: directory
@@ -53,7 +53,7 @@
   when: harden_sshd_ca_gen
 
 - name: Configure sshd_config
-  template:
+  ansible.builtin.template:
     src: "{{ harden_sshd_template }}"
     dest: /etc/ssh/sshd_config
     mode: '0600'
@@ -65,7 +65,7 @@
     - restart sshd
 
 - name: Check /etc/ssh/moduli for weak values
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     awk '$5 < 2047 && $5 ~ /^[0-9]+$/ { print $5 }' /etc/ssh/moduli | uniq | wc -c
   args:
@@ -76,7 +76,7 @@
 - block:
     - name: Clean /etc/ssh/moduli
       # just remove weak ones
-      shell: |
+      ansible.builtin.shell: |
         set -o pipefail
         awk '$5 >= 2000' /etc/ssh/moduli > /etc/ssh/moduli.strong
       args:
@@ -88,7 +88,7 @@
       #   ssh-keygen -G /etc/ssh/moduli.all -b 4096 &&
       #   ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all &&
       #   mv /etc/ssh/moduli.safe /etc/ssh/moduli"
-      copy:
+      ansible.builtin.copy:
         src: /etc/ssh/moduli.strong
         dest: /etc/ssh/moduli
         mode: '0644'

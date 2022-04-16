@@ -1,20 +1,20 @@
 ---
 - name: Monit | Set default daemons
-  set_fact:
+  ansible.builtin.set_fact:
     daemons:
       - sshd
       - rsyslog
 - name: Monit | Include osqueryd
-  set_fact:
+  ansible.builtin.set_fact:
     daemons: "{{ daemons }} + [ 'osqueryd' ]"
   when: monit_osqueryd
 - name: Monit | Include auditd
-  set_fact:
+  ansible.builtin.set_fact:
     daemons: "{{ daemons }} + [ 'auditd' ]"
   when: monit_auditd
 
 - name: ensure monit package is present
-  package:
+  ansible.builtin.package:
     name: monit
     state: present
   when: ansible_system == 'Linux'
@@ -22,13 +22,13 @@
   until: pkg_result is success
 
 - name: ensure monit configuration subdir is present
-  file:
+  ansible.builtin.file:
     dest: "{{ monit_confdir }}"
     state: directory
     mode: '0755'
 
 - name: set monit configurations
-  template:
+  ansible.builtin.template:
     src: "{{ item }}-monit.j2"
     dest: "{{ monit_confdir }}/{{ item }}"
     mode: '0700'
@@ -47,14 +47,14 @@
 - block:
     - block:
         - name: Trusty+Jessie | enable monit
-          file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf.d/{{ item }} state=link"
+          ansible.builtin.file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf.d/{{ item }} state=link"
           with_items: "{{ daemons }}"
           notify:
             - restart monit
       when: ansible_distribution_release == 'trusty' or ansible_distribution_release == 'jessie'
     - block:
         - name: Debian | enable monit
-          file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf-enabled/{{ item }} state=link"
+          ansible.builtin.file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf-enabled/{{ item }} state=link"
           with_items: "{{ daemons }}"
           notify:
             - restart monit
@@ -64,7 +64,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: allow monit status/summary from localhost
-  replace:
+  ansible.builtin.replace:
     dest: "{{ monitrc }}"
     regexp: "{{ item.re }}"
     replace: "{{ item.rep }}"
@@ -79,10 +79,10 @@
     - restart monit
 
 - name: ensure monit service is enabled and started
-  service: name=monit state=started enabled=yes
+  ansible.builtin.service: name=monit state=started enabled=yes
   when: ansible_system == 'Linux' and ansible_distribution != "Alpine"
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 - include_tasks: monit-checkmonitor.yml
   with_items: "{{ daemons }}"

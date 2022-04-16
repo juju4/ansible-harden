@@ -21,7 +21,7 @@
 # user custom path for ssh?
 # https://bugzilla.redhat.com/show_bug.cgi?id=499343
 - name: Ensure correct selinux type for non-standard homepath
-  file:
+  ansible.builtin.file:
     dest: "{{ item }}/.ssh"
     state: directory
     mode: '0700'

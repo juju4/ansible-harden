@@ -1,7 +1,7 @@
 ---
 
 - name: Check if grub is present
-  stat: path=/etc/default/grub
+  ansible.builtin.stat: path=/etc/default/grub
   register: hasgrub
 
 ## linux.yml: disable usb storage drivers - grub
@@ -13,7 +13,7 @@
 ## http://www.stewin.org/papers/dimvap15-stewin.pdf
 - block:
     - name: Enable IOMMU in grub
-      replace:
+      ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
         replace: 'GRUB_CMDLINE_LINUX="\1 iommu=force"'
@@ -21,7 +21,7 @@
         backup: "{{ harden_backup | default(false) }}"
       when: harden_enable_iommu_force
     - name: Enable grub password
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/grub.d/45_password
         regexp: '^password --md5 .*'
         line: "password --md5 {{ harden_grub_md5password }}"
@@ -31,7 +31,7 @@
         - refresh grub config
       when: ansible_os_family == 'Debian' and harden_grub_md5password is defined and harden_grub_md5password|string
     - name: Enable grub password
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /boot/grub/grub.cfg
         regexp: '^password --md5 .*'
         line: "password --md5 {{ harden_grub_md5password }}"

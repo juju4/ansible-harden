@@ -2,7 +2,7 @@
 
 # agetty(8), https://twitter.com/renard_0/status/1207077535013654528, https://jpmens.net/2019/12/18/ip-address-of-machine-on-console/
 - name: Configure /etc/issue
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/issue
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
@@ -10,7 +10,7 @@
   with_items: "{{ harden_issue_lines | default([]) }}"
 
 - name: set better login.defs
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/login.defs
     regexp: "{{ item.r }}"
     line: "{{ item.l }}"
@@ -26,7 +26,7 @@
   when: ansible_os_family != "Alpine"
 
 - name: Set Account Expiration Following Inactivity
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/default/useradd
     regexp: '^INACTIVE=.*'
     line: 'INACTIVE=90'
@@ -36,16 +36,16 @@
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - block:
     - name: disable usb storage drivers - modprobe
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/modprobe.d/no-usb.conf
         line: 'install usb-storage /bin/true'
         mode: '0644'
         create: yes
     - name: Check if grub is present
-      stat: path=/etc/default/grub
+      ansible.builtin.stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
-      replace:
+      ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
         replace: '\1nousb\2'
@@ -56,12 +56,12 @@
   when: harden_disable_usb is defined and harden_disable_usb
 - block:
     - name: ensure usb storage drivers not disabled at modprobe level
-      file: dest=/etc/modprobe.d/no-usb.conf state=absent
+      ansible.builtin.file: dest=/etc/modprobe.d/no-usb.conf state=absent
     - name: Check if grub is present
-      stat: path=/etc/default/grub
+      ansible.builtin.stat: path=/etc/default/grub
       register: defgrub
     - name: disable usb storage drivers - grub
-      replace:
+      ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
         replace: '\1\2'
@@ -72,7 +72,7 @@
   when: not (harden_disable_usb is defined and harden_disable_usb)
 
 - name: disable firewire DMA drivers - modprobe
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/modprobe.d/no-firewire.conf
     line: "{{ item }}"
     mode: '0644'
@@ -90,18 +90,18 @@
 
 - block:
     - name: Ubuntu | check if apport is present
-      stat: path=/etc/default/apport
+      ansible.builtin.stat: path=/etc/default/apport
       register: defapport
       when: ansible_distribution == 'Ubuntu'
     - name: Ubuntu | ensure Apport crash report is disabled
-      replace:
+      ansible.builtin.replace:
         dest: /etc/default/apport
         regexp: '^enabled=.*$'
         replace: 'enabled=0'
         mode: '0644'
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: set sensible core pattern
-      sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
+      ansible.builtin.sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
       when: >
         not (ansible_os_family == 'RedHat' and
               (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
@@ -147,13 +147,13 @@
 
 - block:
     - name: Alpine | Ensure /etc/rsyslog.d exists
-      file:
+      ansible.builtin.file:
         dest: /etc/rsyslog.d
         state: directory
         owner: root
         mode: '0755'
     - name: Alpine | Ensure rsyslog use rsyslog.d directory
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/rsyslog.conf
         regexp: '^\$IncludeConfig /etc/.*'
         line: '$IncludeConfig /etc/rsyslog.d/*.conf'
@@ -162,7 +162,7 @@
   when: ansible_distribution == "Alpine"
 
 - name: Disable unused filesystems modules
-  template:
+  ansible.builtin.template:
     src: "{{ harden_modprobe_template }}"
     dest: /etc/modprobe.d/dev-sec.conf
     mode: '0644'

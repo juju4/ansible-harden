@@ -1,7 +1,7 @@
 ---
 
 - name: Configure ssh client options system-wide
-  template:
+  ansible.builtin.template:
     src: "{{ harden_ssh_template }}"
     dest: /etc/ssh/ssh_config
     mode: '0644'

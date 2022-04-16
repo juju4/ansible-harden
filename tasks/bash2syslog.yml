@@ -14,7 +14,7 @@
 ## https://administratosphere.wordpress.com/2011/05/20/logging-every-shell-command/
 ## https://stackoverflow.com/questions/15753234/scoping-anomalies-with-typeset-r-and-readonly-keywords-in-ksh
 - name: Enforce tighter bash settings
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: bash settings ###"
     content: |
@@ -45,7 +45,7 @@
 ## Note: does not apply to ansible (direct call to python?) or root bash (why?)
 ## empty command are? typeset?
 - name: Enable syslog logging of shell command through /etc/profile
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: bash2syslog ###"
     content: |

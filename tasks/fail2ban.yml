@@ -2,13 +2,13 @@
 
 - block:
     - name: Configure fail2ban logrotate
-      template:
+      ansible.builtin.template:
         src: logrotate-fail2ban.conf.j2
         dest: /etc/logrotate.d/fail2ban
         mode: '0644'
 
     - name: enable fail2ban for sshd
-      template:
+      ansible.builtin.template:
         src: fail2ban-jail.d-sshd.conf
         dest: /etc/fail2ban/jail.d/sshd.conf
         mode: 0644
@@ -17,7 +17,7 @@
         - restart fail2ban
 
     - name: configure fail2ban for snmpd
-      template:
+      ansible.builtin.template:
         src: "{{ item.t }}"
         dest: "{{ item.d }}"
         mode: '0644'
@@ -59,7 +59,7 @@
 
 - block:
     - name: ensure aide HIDS directory tree exists
-      file: dest=/etc/aide/aide.conf.d state=directory mode=0755
+      ansible.builtin.file: dest=/etc/aide/aide.conf.d state=directory mode=0755
     - name: add additional aide HIDS configuration
-      copy: src=99_aide_local_fail2ban dest=/etc/aide/aide.conf.d/99_aide_local_fail2ban mode=0644
+      ansible.builtin.copy: src=99_aide_local_fail2ban dest=/etc/aide/aide.conf.d/99_aide_local_fail2ban mode=0644
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

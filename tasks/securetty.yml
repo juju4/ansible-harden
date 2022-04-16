@@ -1,7 +1,7 @@
 ---
 
 - name: Clean /etc/securetty configuration
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/securetty
     regexp: "{{ item }}"
     state: absent

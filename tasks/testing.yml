@@ -1,18 +1,18 @@
 ---
 
 - name: Testing | Ensure testing packages are present
-  package:
+  ansible.builtin.package:
     name: "{{ testing_pkgs }}"
     state: present
 
 - block:
     # - name: testing | Ensure ruby and dependencies are present
-    #   package:
+    #   ansible.builtin.package:
     #     name: "{{ item }}"
     #     state: present
     #   with_items: "{{ testing_pkgs }}"
     # - name: testing | Ensure inspec is present
-    #   gem:
+    #   ansible.builtin.gem:
     #     name: "{{ item }}"
     #     state: present
     #     user_install: no
@@ -20,7 +20,7 @@
     #     - rake
     #     - inspec
     - name: download inspec package
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ inspec_url }}"
         dest: "/tmp/{{ inspec_url | basename }}"
         checksum: "{{ inspec_hash }}"
@@ -28,28 +28,28 @@
       register: dl_result
       until: dl_result is success
     - name: Debian | install chef public key for inspec package
-      apt_key:
+      ansible.builtin.apt_key:
         url: https://packages.chef.io/chef.asc
         state: present
       when: ansible_os_family == 'Debian'
       register: pkg_result
       until: pkg_result is success
     - name: Debian | install inspec package
-      apt:
+      ansible.builtin.apt:
         deb: "/tmp/{{ inspec_url | basename }}"
         state: present
       when: ansible_os_family == 'Debian'
       register: pkg_result
       until: pkg_result is success
     - name: RedHat | install chef public key for inspec package
-      rpm_key:
+      ansible.builtin.rpm_key:
         key: https://packages.chef.io/chef.asc
         state: present
       when: ansible_os_family == 'RedHat'
       register: pkg_result
       until: pkg_result is success
     - name: RedHat | install inspec package
-      yum:
+      ansible.builtin.yum:
         name: "/tmp/{{ inspec_url | basename }}"
         state: present
       when: ansible_os_family == 'RedHat'
@@ -57,7 +57,7 @@
       until: pkg_result is success
 
     - name: testing | accept inspec license - directory
-      file:
+      ansible.builtin.file:
         path: /etc/chef/accepted_licenses
         state: directory
         mode: '0755'
@@ -65,14 +65,14 @@
     # https://github.com/chef/automate/issues/83
     # https://github.com/chef/automate/pull/95 (alternative with ENV)
     - name: testing | accept inspec license
-      file:
+      ansible.builtin.file:
         path: /etc/chef/accepted_licenses/inspec
         mode: '0644'
         state: touch
 
     - name: testing | run linux-baseline
       # shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
-      shell: >
+      ansible.builtin.shell: >
         inspec exec inspec --input-file inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee {{ log_dir | default('/var/log') }}/inspec.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
@@ -83,10 +83,10 @@
       register: inspeclog
       changed_when: false
     - name: Debug | inspec output
-      debug: var=inspeclog.stdout_lines
+      ansible.builtin.debug: var=inspeclog.stdout_lines
 
     - name: testing | run inspec baselines
-      shell: >
+      ansible.builtin.shell: >
         inspec exec {{ item.u }} --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee -a {{ log_dir | default('/var/log') }}/inspec-{{ item.i }}.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"

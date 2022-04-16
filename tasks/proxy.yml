@@ -1,7 +1,7 @@
 ---
 
 - name: Debian | Ensure apt is configured with proxy
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/apt/apt.conf.d/10proxy
     regexp: '^Acquire::http::Proxy ".*";'
     line: "Acquire::http::Proxy \"{{ harden_proxy_url }}\";"
@@ -25,7 +25,7 @@
   when: ansible_os_family == "RedHat"
 
 - name: Linux | Update /etc/environment with proxy
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/environment
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"

@@ -14,11 +14,11 @@
 ## http://binbash.fr/2012/09/05/bash-syslog/
 
 - name: Check if /var/log/account/pacct exists
-  stat: path=/var/log/account/pacct
+  ansible.builtin.stat: path=/var/log/account/pacct
   register: pacct
 ## FIXME! might be not active if enabled/disabled...
 - name: enable accounting
-  command: "accton on creates=/var/log/account/pacct"
+  ansible.builtin.command: "accton on creates=/var/log/account/pacct"
   environment:
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   when: not pacct.stat.exists
@@ -29,7 +29,7 @@
   when: harden_unix_fstab_flags is defined and harden_unix_fstab_flags and harden_mount_options != []
 
 - name: Enforce shell timeout
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: /etc/profile
     marker: "### {mark} ANSIBLE MANAGED BLOCK: shell timeout ###"
     content: |
@@ -38,7 +38,7 @@
   tags: bash
 
 - name: configure motd
-  template:
+  ansible.builtin.template:
     src: "{{ harden_motd_template }}"
     dest: "{{ item }}"
     mode: '0644'
@@ -53,7 +53,7 @@
   when: harden_securetty
 
 - name: Set immutable attribute for chosen files
-  file:  # noqa 208
+  ansible.builtin.file:  # noqa 208
     path: "{{ item }}"
     attributes: +i
   with_items: "{{ harden_immutable_others }}"

@@ -1,7 +1,7 @@
 ---
 
 - name: Configure Debian Signature check
-  replace:
+  ansible.builtin.replace:
     dest: /etc/dpkg/dpkg.cfg
     regexp: "^{% if not harden_debsig_enable %}#{%endif %}no-debsig"
     replace: "{% if harden_debsig_enable %}#{%endif %}no-debsig"
@@ -11,7 +11,7 @@
 ## FIXME! kitchen OK, travis NOK
 ## Error! Your kernel headers for kernel 3.19.0-58-generic cannot be found
 - name: Debian | upgrade all packages to the latest version
-  apt: upgrade=dist
+  ansible.builtin.apt: upgrade=dist
   async: 3600
   poll: 300
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
@@ -19,7 +19,7 @@
   until: pkg_result is success
 
 - name: Debian | Remove rpc-related packages
-  apt:
+  ansible.builtin.apt:
     name: rpcbind
     state: absent
     purge: yes
@@ -28,7 +28,7 @@
   until: pkg_result is success
 
 - name: Debian | Remove container lxc-related packages
-  apt:
+  ansible.builtin.apt:
     name: ['lxd', 'lxcfs', 'lxc-common', 'liblxc1']
     state: absent
     purge: yes
@@ -40,15 +40,15 @@
   when: harden_security_update_auto
 
 - name: Debug | ansible_mounts var
-  debug: var=ansible_mounts
+  ansible.builtin.debug: var=ansible_mounts
 - name: add apt hardening with somme immutable directories
-  template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
+  ansible.builtin.template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
 
 - import_tasks: debian-logcheck.yml
   when: harden_logcheck is defined and harden_logcheck
 
 - name: Enable sysstat sar collection
-  replace:
+  ansible.builtin.replace:
     dest: '/etc/default/sysstat'
     regexp: '^ENABLED="false"'
     replace: 'ENABLED="true"'
@@ -57,10 +57,10 @@
     - restart sysstat
 
 - name: Check if rng-tools is present
-  stat: path=/etc/default/rng-tools
+  ansible.builtin.stat: path=/etc/default/rng-tools
   register: rngconf
 - name: Debian | More entropy
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: '/etc/default/rng-tools'
     regexp: '^HRNGDEVICE=/dev/urandom'
     mode: '0644'
@@ -71,21 +71,21 @@
 ## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
 - block:
     - name: Ubuntu | Disable automatic report of debsecan
-      replace:
+      ansible.builtin.replace:
         dest: /etc/default/debsecan
         regexp: '^REPORT=.*'
         replace: 'REPORT=false'
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
     - name: Ubuntu | Disable debsecan cron
-      replace:
+      ansible.builtin.replace:
         dest: /etc/cron.d/debsecan
         regexp: '^([0-9].*) * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
         replace: '#\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
         mode: '0644'
   when: ansible_distribution == 'Ubuntu'
 - name: Debian | define distribution of debsecan
-  replace:
+  ansible.builtin.replace:
     dest: /etc/default/debsecan
     regexp: '^SUITE=.*'
     replace: 'SUITE={{ ansible_distribution_release }}'
@@ -103,7 +103,7 @@
 ## Not setpcap in unprivileged lxc container,
 ##      https://lists.linuxcontainers.org/pipermail/lxc-users/2016-February/010998.html
 - name: Check if capabilities are set
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     getcap {{ harden_cap_test_bin | default('/usr/sbin/tcpdump') }} | awk -F' = ' '{ gsub(" ", ",", $2); print $2 }'
   args:
@@ -112,10 +112,10 @@
   changed_when: false
   failed_when: false
 - name: Debug | getcap1 var
-  debug: var=getcap1.stdout
+  ansible.builtin.debug: var=getcap1.stdout
 - block:
     - name: Debug | ansible_virtualization_type var
-      debug: var=ansible_virtualization_type
+      ansible.builtin.debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
       capabilities:
         path: "{{ item.bin }}"
@@ -123,7 +123,7 @@
         state: present
       with_items: "{{ harden_cap_list }}"
     - name: ensure permissions are not setuid - using capabilities
-      file:
+      ansible.builtin.file:
         path: "{{ item.bin }}"
         mode: "{{ item.mode | default('0755') }}"
       with_items: "{{ harden_cap_list }}"
@@ -134,29 +134,29 @@
     and getcap1.stdout is defined and getcap1.stdout != harden_cap_test_bincap
 
 - name: check if /etc/init.d/rc exists
-  stat: path=/etc/init.d/rc
+  ansible.builtin.stat: path=/etc/init.d/rc
   register: rcfile
 - block:
     - name: Check attribute of immutable test file
-      command: "lsattr {{ immutable_testfile }}"
+      ansible.builtin.command: "lsattr {{ immutable_testfile }}"
       register: rclsattr
       changed_when: false
     - name: Debug | rclsattr var
-      debug: var=rclsattr.stdout
+      ansible.builtin.debug: var=rclsattr.stdout
     - name: remove temporarily immutable flag on file
-      command: "chattr -i /etc/init.d"
+      ansible.builtin.command: "chattr -i /etc/init.d"
       when: >
         rclsattr.stdout.find("----i-") == -1 and
         not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
     - name: set umask in /etc/init.d/rc
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/init.d/rc
         regexp: '^umask '
         line: "umask {{ harden_umask }}"
         mode: '0644'
       when: ansible_distribution == "Ubuntu"
     - name: re-set immutable flag on file
-      command: "chattr +i /etc/init.d"
+      ansible.builtin.command: "chattr +i /etc/init.d"
       when: >
         rclsattr.stdout.find("----i-") == -1 and
         not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")

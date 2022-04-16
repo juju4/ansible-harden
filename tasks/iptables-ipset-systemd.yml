@@ -1,13 +1,13 @@
 ---
 
 - name: Debug | ansible_service_mgr
-  debug: var=ansible_service_mgr
+  ansible.builtin.debug: var=ansible_service_mgr
 
 - block:
 
     - block:
         - name: install systemd configuration
-          template:
+          ansible.builtin.template:
             src: systemd-ipset-persistence.service.j2
             dest: /lib/systemd/system/ipset-persistence.service
             mode: '0644'
@@ -27,7 +27,7 @@
             target_dir: /lib/systemd/system/ipset-persistence
             state: pre
         - name: install systemd configuration
-          template:
+          ansible.builtin.template:
             src: systemd-ipset-persistence.service.j2
             dest: /lib/systemd/system/ipset-persistence.service
             mode: '0644'
@@ -47,10 +47,10 @@
     (ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7)
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: enable and start ipset-persistence systemd service
-  service:
+  ansible.builtin.service:
     name: ipset-persistence
     enabled: "{{ ipsetpersistence_svc_enable | default(true) }}"
     state: "{{ ipsetpersistence_svc_state | default('started') }}"

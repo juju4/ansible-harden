@@ -3,14 +3,14 @@
 ## https://github.com/maestretti/AWS_IR/blob/master/apparmor.audit
 
 - name: ensure apparmor-utils is present
-  package:
+  ansible.builtin.package:
     name: apparmor-utils
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: install apparmor audit profile
-  get_url:
+  ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/maestretti/AWS_IR/master/apparmor.audit
     dest: /etc/apparmor.d/apparmor.audit
     mode: '0644'

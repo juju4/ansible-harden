@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure tzdata package is present
-  package:
+  ansible.builtin.package:
     name: tzdata
     state: present
   register: pkg_result
@@ -9,12 +9,12 @@
 
 - block:
     - name: Alpine | copy timezone file
-      copy:
+      ansible.builtin.copy:
         src: "/usr/share/zoneinfo/{{ harden_timezone | default('UTC') }}"
         dest: "/etc/localtime"
         mode: '0644'
     - name: Alpine | set local timezone
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/timezone
         regexp: '^.*'
         line: "{{ harden_timezone | default('UTC') }}"
@@ -24,7 +24,7 @@
   when: ansible_distribution == "Alpine"
 
 - name: Set system timezone
-  timezone:
+  ansible.builtin.timezone:
     name: "{{ harden_timezone | default('UTC') }}"
   when: >
     ansible_distribution != "Alpine" and

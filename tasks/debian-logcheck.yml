@@ -1,19 +1,19 @@
 ---
 
 - name: Logcheck additional configuration - ntpd ignore
-  copy:
+  ansible.builtin.copy:
     src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=0644
 
 - name: Logcheck additional configuration - ignore rules
-  copy:
+  ansible.builtin.copy:
     src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=0644
 
 - name: Debian-docker | check if /var/log/syslog exists
-  stat:
+  ansible.builtin.stat:
     path: /var/log/syslog
   register: syslogfile
 - name: Debian-docker | ensure /var/log/syslog file exists for following validate
-  file:
+  ansible.builtin.file:
     dest: /var/log/syslog
     mode: '0644'
     state: touch
@@ -24,7 +24,7 @@
     ) and not syslogfile.stat.exists
 
 - name: Logcheck replace rules
-  template:
+  ansible.builtin.template:
     src: logcheck.replace.j2
     dest: /etc/logcheck/logcheck.replace
     mode: '0644'
@@ -32,7 +32,7 @@
     # validate: 'sed -f %s /var/log/syslog > /dev/null'
 
 - name: Review Logcheck configuration
-  replace:
+  ansible.builtin.replace:
     dest: '/etc/logcheck/logcheck.conf'
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
@@ -45,14 +45,14 @@
     - { regexp: '^(#?)TMP=".*"', replace: 'TMP=/tmp/logcheck-temp-files' }
 
 - name: Ensure TMP dir exists
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/cron.d/logcheck
     line: '@reboot         logcheck    [ ! -d /tmp/logcheck-temp-files ] && install -d -m 700 /tmp/logcheck-temp-files'
     insertafter: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi'
     mode: '0644'
 
 - name: Add log files for logcheck to check
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/logcheck/logcheck.logfiles
     line: "{{ item }}"
     mode: '0644'
@@ -60,7 +60,7 @@
   with_items: "{{ harden_logcheck_extra_logfiles }}"
 
 - name: check if logcheck patched
-  stat: path=/usr/sbin/.logcheck-ansible-harden-patch
+  ansible.builtin.stat: path=/usr/sbin/.logcheck-ansible-harden-patch
   register: lpatch
 - block:
     - name: Patch logcheck to do replacement
@@ -71,13 +71,13 @@
         backup: "{{ harden_backup | default(false) }}"
       failed_when: false
     - name: Backup patched logcheck
-      copy:
+      ansible.builtin.copy:
         src: /usr/sbin/logcheck
         dest: /usr/sbin/logcheck.patched
         mode: '0700'
         remote_src: true
     - name: add patch marker
-      file:
+      ansible.builtin.file:
         dest: /usr/sbin/.logcheck-ansible-harden-patch
         mode: '0644'
         state: touch
@@ -85,14 +85,14 @@
 
 # FIXME!
 # - name: Add support for fail2ban date format to syslog-summary
-#   lineinfile:
+#   ansible.builtin.lineinfile:
 #     dest: /usr/bin/syslog-summary
 #     line: '\tre.compile(r"^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9]+ "),'
 #     insertbefore: '^\]$'
 #     backup: yes
 
 - name: Review logcheck frequency
-  replace:
+  ansible.builtin.replace:
     dest: /etc/cron.d/logcheck
     regexp: '^2 \* \* \* \*       logcheck'
     replace: '2 {{ harden_logcheck_hours }} * * *       logcheck'
@@ -100,7 +100,7 @@
   when: harden_logcheck_hours is defined and harden_logcheck_hours != '*'
 ## http://wiki.bluelightav.org/display/BLUE/Logcheck+administration
 - name: Review Logcheck cron on reboot
-  replace:
+  ansible.builtin.replace:
     dest: /etc/cron.d/logcheck
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
@@ -111,7 +111,7 @@
     }
 
 - name: ensure pid directory for logcheck user at reboot (systemd-tmpfiles)
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/tmpfiles.d/logcheck.conf
     line: '    d    /run/logcheck   0755 logcheck logcheck - -'
     mode: '0644'

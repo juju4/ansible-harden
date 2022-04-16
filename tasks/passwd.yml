@@ -3,7 +3,7 @@
 ## http://thegarywilson.com/blog/2006/using-cracklib-to-require-stronger-passwords/
 
 - name: recover dictionary files
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ item.u }}"
     dest: "/usr/share/dict/{{ item.u | basename }}"
     mode: '0644'
@@ -12,26 +12,26 @@
   when: ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)
 
 - name: check for cracklib refresh marker
-  stat:
+  ansible.builtin.stat:
     path: /usr/share/dict/.ansible_cracklib_update
   register: cracklibrefresh
 - block:
     - name: Debian | create cracklib database
-      command: "create-cracklib-dict /usr/share/dict/*"  # noqa no-changed-when
+      ansible.builtin.command: "create-cracklib-dict /usr/share/dict/*"  # noqa no-changed-when
       ## just a refresh = not idempotent
       # args:
       #   creates: /var/cache/cracklib/cracklib_dict.pwd
   when: ansible_os_family == 'Debian' and not cracklibrefresh.stat.exists
 - block:
     - name: RedHat | create cracklib database
-      shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"  # noqa no-changed-when
+      ansible.builtin.shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"  # noqa no-changed-when
       # args:
       #   creates: /usr/lib/cracklib_dict.pwd
   when: >
     (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7) and
     not cracklibrefresh.stat.exists
 - name: add cracklib refresh marker
-  file:
+  ansible.builtin.file:
     path: /usr/share/dict/.ansible_cracklib_update
     mode: '0600'
     state: touch
@@ -43,7 +43,7 @@
 - block:
     # complexity... do we still want that?
     - name: RedHat | Set Password Strength complexity
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/security/pwquality.conf
         regexp: "{{ item.re }}"
         line: "{{ item.l }}"
@@ -55,7 +55,7 @@
         - { re: '^lcredit=.*', l: 'lcredit=1' }
       when: harden_rhel_pwquality_with_complexity
     - name: RedHat | Set Password Minimum Length
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/security/pwquality.conf
         regexp: '^minlen=.*'
         line: "minlen={{ harden_rhel_pwquality_minlen | default(16) }}"

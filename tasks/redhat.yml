@@ -1,7 +1,7 @@
 ---
 
 - name: Redhat| Remove some packages
-  yum:
+  ansible.builtin.yum:
     name: rpcbind
     state: absent
   when: harden_use_rpc is not defined or not harden_use_rpc
@@ -12,17 +12,17 @@
 ## FIXME! slow... even when rerun
 - block:
     - name: yum | upgrade all packages to the latest version
-      yum: name=* state=latest  # noqa 403
+      ansible.builtin.yum: name=* state=latest  # noqa 403
       async: 3600
       poll: 300
       register: pkg_result
       until: pkg_result is success
     - name: Debug | pkg_result var
-      debug: var=pkg_result.stdout_lines
+      ansible.builtin.debug: var=pkg_result.stdout_lines
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 
 - name: set better login.defs - redhat only
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/login.defs
     regexp: "{{ item.r }}"
     line: "{{ item.l }}"
@@ -31,14 +31,14 @@
     - { r: '^PASS_MIN_LEN', l: 'PASS_MIN_LEN    10' }
 
 - name: Check login.defs permissions
-  file:
+  ansible.builtin.file:
     dest: /etc/login.defs
     owner: root
     group: root
     mode: '0444'
 
 - name: Ensure initscripts package is present
-  package:
+  ansible.builtin.package:
     name: initscripts
     state: present
   register: pkg_result
@@ -47,7 +47,7 @@
     not (ansible_distribution_major_version|int == 8)
 
 - name: password set for single mode
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sysconfig/init
     regexp: '^SINGLE='
     line: 'SINGLE=/sbin/sulogin'
@@ -56,22 +56,22 @@
     not (ansible_distribution_major_version|int == 8)
 
 - name: Debug | ansible_virtualization_type var
-  debug: var=ansible_virtualization_type
+  ansible.builtin.debug: var=ansible_virtualization_type
 - name: Container inside | disable incompatible daemons
-  set_fact:
+  ansible.builtin.set_fact:
     harden_services_containers: []
   when: >
     (ansible_virtualization_type is defined and
       (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
     )
 - name: Redhat | Ensure services are running and enabled on boot.
-  service: name={{ item }} state=started enabled=yes
+  ansible.builtin.service: name={{ item }} state=started enabled=yes
   with_items:
     - "{{ harden_services }}"
     - "{{ harden_services_containers }}"
 
 - name: initialize rootkithunter db
-  command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
+  ansible.builtin.command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
   when: >
     not (ansible_distribution_major_version|int == 8)
 
@@ -88,21 +88,21 @@
     not (ansible_distribution_major_version|int == 8)
 
 - name: Ensure YUM Removes Previous Package Versions
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/yum.conf
     regexp: '^clean_requirements_on_remove=.*'
     line: 'clean_requirements_on_remove=1'
     mode: '0644'
 
 - name: Ensure gpgcheck Enabled for Local Packages
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/yum.conf
     regexp: '^localpkg_gpgcheck=.*'
     line: 'localpkg_gpgcheck=1'
     mode: '0644'
 
 - name: Disable the Automounter
-  service:
+  ansible.builtin.service:
     name: autofs
     enabled: no
     state: stopped
@@ -112,7 +112,7 @@
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-hardening_your_system_with_tools_and_services#sect-Security_Guide-Workstation_Security-Account_Locking = Keeping Custom Settings with authconfig
 # system-auth: CCE-26923-3, CCE-27286-4
 - name: Configure pam.d local system-auth and password-auth
-  template:
+  ansible.builtin.template:
     src: "rhel-{{ item }}.j2"
     dest: "/etc/pam.d/{{ item }}"
     mode: '0644'
@@ -122,7 +122,7 @@
     - system-auth-local
 
 - name: Link pam.d local system-auth and password-auth
-  file:
+  ansible.builtin.file:
     src: "{{ item }}-local"
     dest: "/etc/pam.d/{{ item }}"
     mode: '0644'

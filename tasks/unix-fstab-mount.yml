@@ -1,7 +1,7 @@
 ---
 
 - name: Secure Mount options
-  mount:
+  ansible.builtin.mount:
     name: "{{ outer_item.mount }}"
     # src: "{{ item.device }}"
     # src: "UUID={{ item.uuid }}"
@@ -19,12 +19,12 @@
   register: mountopts
 
 - name: Debug | mountopts var
-  debug: var=mountopts
+  ansible.builtin.debug: var=mountopts
 - name: Debug | mountopts first entry var
-  debug: var=mountopts.results[0]
+  ansible.builtin.debug: var=mountopts.results[0]
 ## man 8 mount: 'After this call mount reads fstab (or mtab) and merges these options with options
 ##      from command line ( -o ).'
 - name: remount changed mount points
-  command: "mount -o remount {{ item.item.mount }}"  # noqa 503 303
+  ansible.builtin.command: "mount -o remount {{ item.item.mount }}"  # noqa 503 303
   when: item.changed
   with_items: "{{ mountopts.results }}"

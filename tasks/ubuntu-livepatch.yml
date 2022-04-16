@@ -6,41 +6,41 @@
 ## related? https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1590842
 ##  https://bugs.launchpad.net/snapd/+bug/1555217
 - name: Ensure enough /dev/loop devices for snap
-  command: "mknod -m 0660 /dev/loop{{ item }} b 7 {{ item }}"
+  ansible.builtin.command: "mknod -m 0660 /dev/loop{{ item }} b 7 {{ item }}"
   args:
     creates: "/dev/loop{{ item }}"
   with_sequence: start=0 end=32
 
 - name: Ensure snapd is installed
-  apt: name=snapd state=present
+  ansible.builtin.apt: name=snapd state=present
   register: pkg_result
   until: pkg_result is success
 
 - name: Ubuntu | Install livepatch
-  snap:
+  ansible.builtin.snap:
     name: "canonical-livepatch"
     classic: no
 
 - name: Ubuntu | Check livepatch status
-  command: "/snap/bin/canonical-livepatch status --verbose"
+  ansible.builtin.command: "/snap/bin/canonical-livepatch status --verbose"
   changed_when: false
   register: livepatch
   ignore_errors: true
 
 - name: Ubuntu | livepatch issue
-  debug: msg="WARNING! Possible error in current livepatch configuration. Please check."
+  ansible.builtin.debug: msg="WARNING! Possible error in current livepatch configuration. Please check."
   when: >
    livepatch is defined and livepatch.stdout is defined and
    'checkState: check-failed' in livepatch.stdout
 
 - name: Ubuntu | Enable livepatch
-  command: "/snap/bin/canonical-livepatch enable {{ harden_ubuntu_livepatch_token }}"
+  ansible.builtin.command: "/snap/bin/canonical-livepatch enable {{ harden_ubuntu_livepatch_token }}"
   no_log: true
   when: livepatch is defined and livepatch.stdout is defined and "Machine is not enabled." in livepatch.stdout
 
 ## Note: display token
 # - name: Check status
-#   command: "/snap/bin/canonical-livepatch status --verbose"
+#   ansible.builtin.command: "/snap/bin/canonical-livepatch status --verbose"
 #   changed_when: false
 #   register: livepatchstatus
 # - debug: var=livepatchstatus
