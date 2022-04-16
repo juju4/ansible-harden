@@ -73,7 +73,7 @@
     - name: testing | run linux-baseline
       # shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
       shell: >
-        inspec exec inspec --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
+        inspec exec inspec --input-file inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee {{ log_dir | default('/var/log') }}/inspec.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
       args:
