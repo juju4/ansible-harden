@@ -13,6 +13,7 @@
     - harden_sshd_ca_gen: true
     - harden_sshd_ca_path: /tmp/cadir/ssh-ca
     - harden_sshd_host_key_opath: /tmp/ofiles
+    - harden_lkrg: true
     - harden_testing: true
     - ipv6_config: 'harden'
     - harden_ipset_list:

@@ -5,6 +5,7 @@ login_defs_passmindays: '0'
 login_defs_passwarnage: '30'
 sysctl_forwarding: false
 sysctl_ipv6: true
+sysctl_lkrg: true
 kernel_modules_disabled: 0
 # Take care of silent arguments and order that might change...
 iptables_input_ports: [
