@@ -13,7 +13,7 @@
       changed_when: false
 
     - name: Remove immutable attribute
-      command: "chattr -i '{{ target_dir }}'"
+      ansible.builtin.command: "chattr -i '{{ target_dir }}'"
       when: dir.stdout.find('-i-') != -1
   when: state == 'pre'
 
