@@ -20,6 +20,8 @@
 - name: Import openwall gpg key  # noqa 301
   ansible.builtin.command: >
     gpg --import {{ install_archives }}/openwall-offline-signatures.asc
+  register: gpg_import
+  changed_when: "'gpg: Total number processed: 1' in gpg_import.stderr"
 
 - name: Validate lkrg hash signature
   ansible.builtin.command: >
