@@ -158,8 +158,8 @@ onexit() {
 		MAILHEAD="$(printf "The cron job was terminated: Cannot move away %s." "$TMPDIRIN")"
 		;;
 	nohook)
-		LOGHEAD="$(printf "terminated: CRONEXITHOOK set to %s which is not executeable." "$CRONEXITHOOK")"
-		MAILHEAD="$(printf "The cron job was terminated: CRONEXITHOOK set to %s which is not executeable." "$CRONEXITHOOK")"
+		LOGHEAD="$(printf "terminated: CRONEXITHOOK set to %s which is not executable." "$CRONEXITHOOK")"
+		MAILHEAD="$(printf "The cron job was terminated: CRONEXITHOOK set to %s which is not executable." "$CRONEXITHOOK")"
 		;;
 	cantcreatetmp)
 		LOGHEAD="$(printf "terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
@@ -491,7 +491,7 @@ if ! mkdir -p $TMPDIRIN; then
 	exit 1
 fi
 
-# handle the case that CRONEXITHOOK does not exist or is not executeable
+# handle the case that CRONEXITHOOK does not exist or is not executable
 if [ -n "$CRONEXITHOOK" ]; then
   if ! [ -x "$CRONEXITHOOK" ]; then
     onexit nohook
@@ -555,7 +555,7 @@ DBCHECKLOG="$(mytempfile dbchecklog)"
 NOISETMP="$(mytempfile noisetmp)"
 NOISETMP2="$(mytempfile noisetmp2)"
 
-# find out whether we neeed to copy the new database over the old one
+# find out whether we need to copy the new database over the old one
 
 COPYDB="0"
 if [ "$COPYNEWDB" = "ifnochange" ] && [ "$ARETVAL" = "0" ]; then

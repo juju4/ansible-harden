@@ -41,7 +41,7 @@
 
 - name: Debug | ansible_mounts var
   ansible.builtin.debug: var=ansible_mounts
-- name: add apt hardening with somme immutable directories
+- name: add apt hardening with some immutable directories
   ansible.builtin.template: "src=99security dest=/etc/apt/apt.conf.d owner=root mode=0644"
 
 - import_tasks: debian-logcheck.yml

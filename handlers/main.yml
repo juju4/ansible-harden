@@ -60,7 +60,7 @@
         ) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
 
 ## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...)
-##  and cant ssh after... vagrant reload: fine?
+##  and can't ssh after... vagrant reload: fine?
 - name: reload fstab
   ansible.builtin.shell: "umount -a; mount -a"
   # shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
