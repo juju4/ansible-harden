@@ -5,9 +5,9 @@ repos:
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
-        exclude: 'files/patch-*'
+        exclude: '(files|templates)/patch-*'
       - id: trailing-whitespace
-        exclude: 'files/patch-*'
+        exclude: '(files|templates)/patch-*'
       - id: check-added-large-files
       - id: check-json
       - id: detect-private-key
