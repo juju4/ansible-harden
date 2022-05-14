@@ -73,7 +73,8 @@
   changed_when: false
   register: moduli
 
-- block:
+- name: ssh moduli
+  block:
     - name: Clean /etc/ssh/moduli
       # just remove weak ones
       ansible.builtin.shell: |

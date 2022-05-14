@@ -11,7 +11,8 @@
 ## https://www.sstic.org/2010/presentation/Analyse_de_l_efficacite_du_service_fourni_par_une_IOMMU/
 ## https://www.cs.tau.ac.il/~mad/publications/asplos2016-iommu.pdf
 ## http://www.stewin.org/papers/dimvap15-stewin.pdf
-- block:
+- name: Update grub settings
+  block:
     - name: Enable IOMMU in grub
       ansible.builtin.replace:
         dest: /etc/default/grub

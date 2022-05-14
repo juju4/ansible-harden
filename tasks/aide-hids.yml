@@ -5,7 +5,8 @@
   register: pkg_result
   until: pkg_result is success
 
-- block:
+- name: Debian | Update configuration
+  block:
     - name: Review Aide configuration
       ansible.builtin.lineinfile:
         # dest='/etc/default/aide' regexp='^COPYNEWDB=' line='COPYNEWDB=ifnochange'
@@ -30,7 +31,8 @@
     - import_tasks: debian-aide-unprivileged-report.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- block:
+- name: RedHat | Update configuration
+  block:
     - name: RedHat | set aide binary name
       ansible.builtin.set_fact:
         aide_bin: aide

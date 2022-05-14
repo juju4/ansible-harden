@@ -34,7 +34,8 @@
   when: ansible_os_family != "Alpine"
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
-- block:
+- name: Disable USB
+  block:
     - name: disable usb storage drivers - modprobe
       ansible.builtin.lineinfile:
         dest: /etc/modprobe.d/no-usb.conf
@@ -88,7 +89,8 @@
   notify:
     - update-initramfs
 
-- block:
+- name: Disable Distribution bug report
+  block:
     - name: Ubuntu | check if apport is present
       ansible.builtin.stat: path=/etc/default/apport
       register: defapport
@@ -145,7 +147,8 @@
     not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8)
 - import_tasks: passwd.yml
 
-- block:
+- name: Alpine rsyslog
+  block:
     - name: Alpine | Ensure /etc/rsyslog.d exists
       ansible.builtin.file:
         dest: /etc/rsyslog.d

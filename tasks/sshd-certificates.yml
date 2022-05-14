@@ -43,7 +43,8 @@
     path: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
   register: sshhost_signed
 
-- block:
+- name: Sign SSH host
+  block:
     - name: Retrieve SSH host key
       ansible.builtin.fetch:
         src: "{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}"

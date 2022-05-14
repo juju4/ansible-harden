@@ -5,7 +5,8 @@
     name: "{{ testing_pkgs }}"
     state: present
 
-- block:
+- name: Testing | inspec
+  block:
     # - name: testing | Ensure ruby and dependencies are present
     #   ansible.builtin.package:
     #     name: "{{ item }}"

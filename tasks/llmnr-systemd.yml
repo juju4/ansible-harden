@@ -8,7 +8,8 @@
     path: /etc/systemd/resolved.conf
   register: sysres
 
-- block:
+- name: Systemd-resolved
+  block:
     - name: Ensure LLMNR is disabled in systemd-resolved
       ansible.builtin.lineinfile:
         dest: /etc/systemd/resolved.conf

@@ -3,9 +3,11 @@
 - name: Debug | ansible_service_mgr
   ansible.builtin.debug: var=ansible_service_mgr
 
-- block:
+- name: Set systemd for ipset-persistence
+  block:
 
-    - block:
+    - name: Systemd for ipset-persistence
+      block:
         - name: install systemd configuration
           ansible.builtin.template:
             src: systemd-ipset-persistence.service.j2

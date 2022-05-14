@@ -15,14 +15,16 @@
   ansible.builtin.stat:
     path: /usr/share/dict/.ansible_cracklib_update
   register: cracklibrefresh
-- block:
+- name: Debian | Cracklib db does not exist
+  block:
     - name: Debian | create cracklib database
       ansible.builtin.command: "create-cracklib-dict /usr/share/dict/*"  # noqa no-changed-when
       ## just a refresh = not idempotent
       # args:
       #   creates: /var/cache/cracklib/cracklib_dict.pwd
   when: ansible_os_family == 'Debian' and not cracklibrefresh.stat.exists
-- block:
+- name: RedHat | Cracklib db does not exist
+  block:
     - name: RedHat | create cracklib database
       ansible.builtin.shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"  # noqa no-changed-when
       # args:
@@ -40,7 +42,8 @@
       (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)
     ) and not cracklibrefresh.stat.exists
 
-- block:
+- name: Redhat | password criteria
+  block:
     # complexity... do we still want that?
     - name: RedHat | Set Password Strength complexity
       ansible.builtin.lineinfile:

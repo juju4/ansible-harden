@@ -7,7 +7,8 @@
   register: pkg_result
   until: pkg_result is success
 
-- block:
+- name: Alpine | timezone
+  block:
     - name: Alpine | copy timezone file
       ansible.builtin.copy:
         src: "/usr/share/zoneinfo/{{ harden_timezone | default('UTC') }}"

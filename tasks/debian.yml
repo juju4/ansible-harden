@@ -69,7 +69,8 @@
   when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and rngconf.stat.exists
 
 ## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
-- block:
+- name: Ubuntu | Disable debsecan reports
+  block:
     - name: Ubuntu | Disable automatic report of debsecan
       ansible.builtin.replace:
         dest: /etc/default/debsecan
@@ -113,7 +114,8 @@
   failed_when: false
 - name: Debug | getcap1 var
   ansible.builtin.debug: var=getcap1.stdout
-- block:
+- name: Set more granular capabilities
+  block:
     - name: Debug | ansible_virtualization_type var
       ansible.builtin.debug: var=ansible_virtualization_type
     - name: Capabilities Hardening - default network tools
@@ -136,7 +138,8 @@
 - name: check if /etc/init.d/rc exists
   ansible.builtin.stat: path=/etc/init.d/rc
   register: rcfile
-- block:
+- name: Update /etc/init.d/rc
+  block:
     - name: Check attribute of immutable test file
       ansible.builtin.command: "lsattr {{ immutable_testfile }}"
       register: rclsattr

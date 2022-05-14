@@ -62,7 +62,8 @@
 - name: check if logcheck patched
   ansible.builtin.stat: path=/usr/sbin/.logcheck-ansible-harden-patch
   register: lpatch
-- block:
+- name: Logcheck patching
+  block:
     - name: Patch logcheck to do replacement
       patch:
         src: patch-logcheck-replace

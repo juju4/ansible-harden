@@ -2,7 +2,8 @@
 ## manage install when some directories are immutable
 ## requires target_dir, state=pre/post
 
-- block:
+- name: Pre-change immutable
+  block:
     ## Ansible 2.3+ for get_attributes
     - name: check target_dir {{ target_dir }} attributes
       # ansible.builtin.stat:

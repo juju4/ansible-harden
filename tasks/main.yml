@@ -63,7 +63,8 @@
   register: pkg_result
   until: pkg_result is success
 
-- block:
+- name: Arpwatch
+  block:
     - name: Install arpwatch
       ansible.builtin.package: name=arpwatch state=present
       register: pkg_result

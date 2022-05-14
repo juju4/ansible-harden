@@ -1,6 +1,7 @@
 ---
 
-- block:
+- name: Fail2ban
+  block:
     - name: Configure fail2ban logrotate
       ansible.builtin.template:
         src: logrotate-fail2ban.conf.j2
@@ -57,7 +58,8 @@
   when: ansible_distribution_release != 'precise'
   ## ubuntu precise has no jail.d
 
-- block:
+- name: Debian | update aide HIDS for fail2ban
+  block:
     - name: ensure aide HIDS directory tree exists
       ansible.builtin.file: dest=/etc/aide/aide.conf.d state=directory mode=0755
     - name: add additional aide HIDS configuration

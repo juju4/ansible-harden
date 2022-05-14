@@ -1,6 +1,7 @@
 ---
 
-- block:
+- name: Firewall IPv4
+  block:
     - import_tasks: iptables-ipset.yml
       when: harden_ipset_enable
     - name: ensure iptables directory exists
@@ -25,7 +26,8 @@
       when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw
 
-- block:
+- name: Firewall IPv6
+  block:
     - name: ensure iptables directory exists
       ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
     - name: iptables configuration file update
@@ -47,7 +49,8 @@
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
-- block:
+- name: Alpine Linux Firewall
+  block:
     - name: Alpine | Load iptables rules - v4  # noqa no-changed-when
       ansible.builtin.shell: >
         iptables-restore -v < {{ iptables_rulesv4 }}
