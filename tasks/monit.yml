@@ -54,7 +54,8 @@
           notify:
             - restart monit
       when: ansible_distribution_release == 'trusty' or ansible_distribution_release == 'jessie'
-    - block:
+    - name: Enable
+      block:
         - name: Debian | enable monit
           ansible.builtin.file: "src={{ monit_confdir }}/{{ item }} dest=/etc/monit/conf-enabled/{{ item }} state=link"
           with_items: "{{ daemons }}"

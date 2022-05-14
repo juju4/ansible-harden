@@ -29,7 +29,8 @@
 - name: fix Ubuntu network hack
   ansible.builtin.file: dest=/etc/udev/rules.d/70-persistent-net.rules state=absent
 
-- block:
+- name: Ubuntu precise
+  block:
     ## http://askubuntu.com/questions/339790/how-can-i-prevent-apt-get-aptitude-from-showing-dialogs-during-installation
     - name: Ubuntu precise | prevent apt module of asking questions for iptables-persistent
       ansible.builtin.debconf: name=iptables-persistent question="iptables-persistent/{{ item }}" value=false vtype='boolean'

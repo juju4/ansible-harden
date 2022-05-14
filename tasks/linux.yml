@@ -55,7 +55,8 @@
       ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: harden_disable_usb is defined and harden_disable_usb
-- block:
+- name: Allow USB
+  block:
     - name: ensure usb storage drivers not disabled at modprobe level
       ansible.builtin.file: dest=/etc/modprobe.d/no-usb.conf state=absent
     - name: Check if grub is present
