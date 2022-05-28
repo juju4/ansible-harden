@@ -4,12 +4,11 @@ galaxy_info:
   author: juju4
   description: System Hardening role
   license: BSD
-  min_ansible_version: 2.0
+  min_ansible_version: '2.0'
   platforms:
     - name: EL
       versions:
-        - 7
-        - 8
+        - all
     - name: Fedora
       versions:
         - all
