@@ -116,6 +116,7 @@ jobs:
         continue-on-error: true
       - name: After script - etc
         run: |
+          set -x
           cat /etc/passwd
           cat /etc/rsyslog.conf
           find /etc/rsyslog.d -type f -exec cat {} \;
@@ -132,6 +133,8 @@ jobs:
           cat /etc/pam.d/password-auth || true
           cat /etc/logrotate.conf || true
           cat /etc/security/pwquality.conf || true
+          ls -laR /etc/monit/
+          cat /etc/monit/monitrc
         if: ${{ always() }}
         continue-on-error: true
       - name: After script - files
