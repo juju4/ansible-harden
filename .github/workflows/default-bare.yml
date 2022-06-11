@@ -124,6 +124,8 @@ jobs:
           ls -l /etc/login.defs
           cat /etc/login.defs
           ls -la /etc
+          ls -laR /etc/aide/
+          cat /etc/aide/aide.conf
           ls -la /etc/ssh/
           ls -l /etc/pam.d/
           cat /etc/pam.d/system-auth || true
