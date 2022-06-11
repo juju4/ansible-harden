@@ -9,14 +9,12 @@ immutable_testfile: /etc/init.d/rc
 harden_pkg:
   - openssh-server
   - rsyslog
-  # - harden       ## exist in precise/trusty/vivid, not wily+
   - unzip
   - rkhunter
   - chkrootkit
   - acct
   - aide
   - logcheck
-  - syslog-summary
   - apparmor-profiles
   - apparmor-utils
   - acl
@@ -44,8 +42,6 @@ harden_pkg:
   - apt-transport-https
   ## requested by https://github.com/awailly/cis-ubuntu-ansible
   - aptitude
-  ## files classification = not available. http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=tracker-utils
-  # - tracker-utils
   - systemtap
   - sudo
   - ecryptfs-utils
