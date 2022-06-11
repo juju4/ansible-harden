@@ -48,8 +48,6 @@ harden_pkg:
   # - apt-listbugs
   - apt-listchanges
   - libopenscap8
-  - ssg-debderived
-  - ssg-applications
   # - libpam-pwquality     # conflicting with cracklib
   - ubuntu-dbgsym-keyring
 
