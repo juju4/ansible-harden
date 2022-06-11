@@ -2,6 +2,7 @@
 
 ssh_svc: ssh
 aide_bin: aide
+aide_conf: /etc/aide/aide.conf
 aide_args_v: --log-level info
 aide_hids_cron_patch: patch-cron.daily-aide2
 auditd_pkg: auditd
