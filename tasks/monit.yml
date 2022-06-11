@@ -84,6 +84,9 @@
     - { re: '^#  include /etc/monit.d/*', rep: '  include /etc/monit.d/*' }
   notify:
     - restart monit
+  when: >
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int < 22) or
+    (ansible_distribution == 'Debian' and ansible_distribution_major_version | int < 11)
 
 - name: Monit configuration check
   ansible.builtin.command: "monit -t"
