@@ -44,6 +44,10 @@
   notify:
     - restart monit
 
+- name: Monit configuration check
+  ansible.builtin.command: "monit -t"
+  changed_when: false
+
 - name: Debian | Monit
   block:
     - name: Debian Trusty+Jessie
@@ -80,6 +84,10 @@
     - { re: '^#  include /etc/monit.d/*', rep: '  include /etc/monit.d/*' }
   notify:
     - restart monit
+
+- name: Monit configuration check
+  ansible.builtin.command: "monit -t"
+  changed_when: false
 
 - name: ensure monit service is enabled and started
   ansible.builtin.service: name=monit state=started enabled=yes
