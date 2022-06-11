@@ -134,7 +134,7 @@ jobs:
           cat /etc/logrotate.conf || true
           cat /etc/security/pwquality.conf || true
           ls -laR /etc/monit/
-          cat /etc/monit/monitrc
+          sudo cat /etc/monit/monitrc
         if: ${{ always() }}
         continue-on-error: true
       - name: After script - files
