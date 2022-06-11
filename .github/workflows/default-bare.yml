@@ -9,11 +9,12 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       max-parallel: 4
+      matrix:
+        os: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
     env:
       ANSIBLE_CALLBACKS_ENABLED: profile_tasks
       ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes -e harden_testing_privesc_upc=false -e harden_testing_privesc_lpc=false -e inspec_dir=/home/runner/work/ansible-harden/ansible-harden/juju4.harden/test/integration/default"
