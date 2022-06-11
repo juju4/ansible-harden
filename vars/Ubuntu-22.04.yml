@@ -2,6 +2,7 @@
 
 ssh_svc: ssh
 aide_bin: aide
+aide_args_v: --log_level info
 aide_hids_cron_patch: patch-cron.daily-aide2
 auditd_pkg: auditd
 immutable_testfile: /etc/init.d/rc
