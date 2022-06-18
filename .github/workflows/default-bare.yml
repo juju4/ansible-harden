@@ -128,6 +128,8 @@ jobs:
           ls -laR /etc/aide/
           cat /etc/aide/aide.conf
           ls -la /etc/ssh/
+          cat /etc/ssh/sshd_config
+          cat /etc/ssh/ssh_config
           ls -l /etc/pam.d/
           cat /etc/pam.d/system-auth || true
           cat /etc/pam.d/password-auth || true
