@@ -40,7 +40,7 @@
     ##      supporting multiple commands in validation
     # validate: 'monit -t -c %s'
     # validate: 'chown root %s; monit -t -c %s'
-  with_items: "{{ daemons }}"
+  loop: "{{ daemons }}"
   notify:
     - restart monit
 
