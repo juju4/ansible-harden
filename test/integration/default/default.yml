@@ -33,6 +33,10 @@
             - 13.107.64.0/18
             - 52.112.0.0/14
             - 52.120.0.0/14
+  pre_tasks:
+    - name: Ubuntu 22.04 | disable sshd certificates
+      ansible.builtin.set_fact:
+        harden_sshd_ca_gen: false
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
