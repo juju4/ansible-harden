@@ -70,8 +70,6 @@
   failed_when: false
   when: upc is succeeded
 
-## FIXME: cert issue on ubuntu trusty - hash
-## FIXME: in some case, server returns 206 Partial Content
 - name: retrieve linuxprivchecker
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/sleventyeleven/linuxprivchecker/master/linuxprivchecker.py

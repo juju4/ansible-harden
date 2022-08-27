@@ -136,7 +136,6 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/se
 
 ## Troubleshooting & Known issues
 
-* Tests has been mostly on Ubuntu trusty and xenial so coverage might be not equivalent for other distributions.
 * You are also advise to check projects like https://github.com/dev-sec
 Some tasks are better covered there like suid/sgid binaries cleaning and inspec control testing.
 

@@ -5,13 +5,8 @@ VAGRANTFILE_API_VERSION = "2"
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-## for xenial, need to manually install python as python v2 is not in default image.
-    #config.vm.box = "ubuntu/xenial64"
-    config.vm.box = "boxcutter/ubuntu1604"
-    #config.vm.box = "ubuntu/trusty64"
-    #config.vm.box = "centos/7"
-    #config.vm.box = "generic/centos8"
-    #config.vm.box = "generic/alpine36"
+    config.vm.box = "ubuntu/jammy64"
+    #config.vm.box = "generic/centos9s"
 
     # use hostname based on host
     config.vm.hostname = "#{`hostname`[0..-2]}".sub(/\..*$/,'')+"-harden-vagrant"

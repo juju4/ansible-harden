@@ -37,9 +37,6 @@
     cache_valid_time: 3600
   when: ansible_os_family == "Debian"
 
-## FIXME! travis/docker/xenial+trusty: 'Error: No information about packages!
-##    (Maybe no deb entries?)\r\ndpkg: error processing package apt-show-versions (--configure)'
-## https://groups.google.com/forum/#!topic/beagleboard/jXb9KhoMOsk  = Not that, settings non-existent
 - name: Install some hardening packages
   ansible.builtin.package:
     name: "{{ harden_pkg }}"

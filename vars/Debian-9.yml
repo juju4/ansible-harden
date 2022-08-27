@@ -7,7 +7,6 @@ immutable_testfile: /etc/init.d/sudo
 harden_pkg:
   - openssh-server
   - rsyslog
-  # - harden       ## exist in precise/trusty/vivid, not wily+
   - unzip
   - rkhunter
   - chkrootkit
