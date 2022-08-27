@@ -17,7 +17,7 @@
   ansible.builtin.stat: path=/var/log/account/pacct
   register: pacct
 ## FIXME! might be not active if enabled/disabled...
-- name: enable accounting
+- name: Enable accounting
   ansible.builtin.command: "accton on creates=/var/log/account/pacct"
   environment:
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
@@ -37,7 +37,7 @@
     backup: "{{ harden_backup | default(false) }}"
   tags: bash
 
-- name: configure motd
+- name: Configure motd
   ansible.builtin.template:
     src: "{{ harden_motd_template }}"
     dest: "{{ item }}"

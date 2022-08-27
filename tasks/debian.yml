@@ -3,8 +3,8 @@
 - name: Configure Debian Signature check
   ansible.builtin.replace:
     dest: /etc/dpkg/dpkg.cfg
-    regexp: "^{% if not harden_debsig_enable %}#{%endif %}no-debsig"
-    replace: "{% if harden_debsig_enable %}#{%endif %}no-debsig"
+    regexp: "^{% if not harden_debsig_enable %}#{% endif %}no-debsig"
+    replace: "{% if harden_debsig_enable %}#{% endif %}no-debsig"
     mode: '0644'
     backup: "{{ harden_backup | default(false) }}"
 
@@ -135,7 +135,7 @@
         )
     and getcap1.stdout is defined and getcap1.stdout != harden_cap_test_bincap
 
-- name: check if /etc/init.d/rc exists
+- name: Check if /etc/init.d/rc exists
   ansible.builtin.stat: path=/etc/init.d/rc
   register: rcfile
 - name: Update /etc/init.d/rc
@@ -146,19 +146,19 @@
       changed_when: false
     - name: Debug | rclsattr var
       ansible.builtin.debug: var=rclsattr.stdout
-    - name: remove temporarily immutable flag on file
+    - name: Remove temporarily immutable flag on file
       ansible.builtin.command: "chattr -i /etc/init.d"
       when: >
         rclsattr.stdout.find("----i-") == -1 and
         not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
-    - name: set umask in /etc/init.d/rc
+    - name: Set umask in /etc/init.d/rc
       ansible.builtin.lineinfile:
         dest: /etc/init.d/rc
         regexp: '^umask '
         line: "umask {{ harden_umask }}"
         mode: '0644'
       when: ansible_distribution == "Ubuntu"
-    - name: re-set immutable flag on file
+    - name: Set back immutable flag on file
       ansible.builtin.command: "chattr +i /etc/init.d"
       when: >
         rclsattr.stdout.find("----i-") == -1 and

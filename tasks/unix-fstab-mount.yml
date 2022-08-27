@@ -24,7 +24,7 @@
   ansible.builtin.debug: var=mountopts.results[0]
 ## man 8 mount: 'After this call mount reads fstab (or mtab) and merges these options with options
 ##      from command line ( -o ).'
-- name: remount changed mount points
+- name: Remount changed mount points
   ansible.builtin.command: "mount -o remount {{ item.item.mount }}"  # noqa 503 303
   when: item.changed
   with_items: "{{ mountopts.results }}"

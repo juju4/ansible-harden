@@ -13,7 +13,7 @@
 ##      systemd-udevd[257]: specified group 'input' unknown
 ## https://patchwork.ozlabs.org/patch/198234/
 ## https://bugs.freedesktop.org/show_bug.cgi?id=88491
-- name: patch udev init for missing group
+- name: Patch udev init for missing group
   ansible.builtin.replace:
     dest: /etc/init.d/udev
     regexp: ' /sbin/udevd$'
