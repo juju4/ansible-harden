@@ -5,7 +5,7 @@
 - name: Pre-change immutable
   block:
     ## Ansible 2.3+ for get_attributes
-    - name: check target_dir {{ target_dir }} attributes
+    - name: Check target_dir attributes - {{ target_dir }}
       # ansible.builtin.stat:
       #   path: "{{ target_dir }}"
       #   get_attributes: yes

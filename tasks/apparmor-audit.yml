@@ -2,14 +2,14 @@
 ## https://www.linkedin.com/pulse/apparmor-auditd-almost-alex-maestretti
 ## https://github.com/maestretti/AWS_IR/blob/master/apparmor.audit
 
-- name: ensure apparmor-utils is present
+- name: Ensure apparmor-utils is present
   ansible.builtin.package:
     name: apparmor-utils
     state: present
   register: pkg_result
   until: pkg_result is success
 
-- name: install apparmor audit profile
+- name: Install apparmor audit profile
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/maestretti/AWS_IR/master/apparmor.audit
     dest: /etc/apparmor.d/apparmor.audit
@@ -18,4 +18,4 @@
     checksum: 'sha256:d97de7268381e779a1783f9b615437d8939bd21ae819c522a049d370c9ca40df.'
   register: apparmoraudit
   notify:
-    - enable apparmor audit profile
+    - Enable apparmor audit profile

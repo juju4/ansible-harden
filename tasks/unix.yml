@@ -53,7 +53,7 @@
   when: harden_securetty
 
 - name: Set immutable attribute for chosen files
-  ansible.builtin.file:  # noqa 208
+  ansible.builtin.file:  # noqa risky-file-permissions
     path: "{{ item }}"
     attributes: +i
   with_items: "{{ harden_immutable_others }}"

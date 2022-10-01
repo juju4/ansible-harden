@@ -8,16 +8,16 @@
         dest: /etc/logrotate.d/fail2ban
         mode: '0644'
 
-    - name: enable fail2ban for sshd
+    - name: Enable fail2ban for sshd
       ansible.builtin.template:
         src: fail2ban-jail.d-sshd.conf
         dest: /etc/fail2ban/jail.d/sshd.conf
         mode: 0644
         backup: "{{ harden_backup | default(false) }}"
       notify:
-        - restart fail2ban
+        - Restart fail2ban
 
-    - name: configure fail2ban for snmpd
+    - name: Configure fail2ban for snmpd
       ansible.builtin.template:
         src: "{{ item.t }}"
         dest: "{{ item.d }}"
@@ -27,9 +27,9 @@
         - { t: 'fail2ban-filter.d-snmpd.conf', d: '/etc/fail2ban/filter.d/snmpd.conf' }
         - { t: 'fail2ban-jail.d-snmpd.conf', d: '/etc/fail2ban/jail.d/snmpd.conf' }
       notify:
-        - restart fail2ban
+        - Restart fail2ban
 
-    - name: extend whitelist for fail2ban
+    - name: Extend whitelist for fail2ban
       ini_file:
         dest: /etc/fail2ban/jail.local
         section: DEFAULT
@@ -39,10 +39,10 @@
         backup: "{{ harden_backup | default(false) }}"
         create: yes
       notify:
-        - restart fail2ban
+        - Restart fail2ban
       ## avoid conflict with role tersmitten.fail2ban
       when: fail2ban_ignoreips is not defined
-    - name: extend whitelist for fail2ban - tersmitten.fail2ban
+    - name: Extend whitelist for fail2ban - tersmitten.fail2ban
       ini_file:
         dest: /etc/fail2ban/jail.local
         section: DEFAULT
@@ -52,7 +52,7 @@
         backup: "{{ harden_backup | default(false) }}"
         create: yes
       notify:
-        - restart fail2ban
+        - Restart fail2ban
       when: fail2ban_ignoreips is defined
       ## avoid conflict with role tersmitten.fail2ban
   when: ansible_distribution_release != 'precise'
@@ -60,8 +60,8 @@
 
 - name: Debian | update aide HIDS for fail2ban
   block:
-    - name: ensure aide HIDS directory tree exists
+    - name: Ensure aide HIDS directory tree exists
       ansible.builtin.file: dest=/etc/aide/aide.conf.d state=directory mode=0755
-    - name: add additional aide HIDS configuration
+    - name: Add additional aide HIDS configuration
       ansible.builtin.copy: src=99_aide_local_fail2ban dest=/etc/aide/aide.conf.d/99_aide_local_fail2ban mode=0644
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

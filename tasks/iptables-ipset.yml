@@ -25,6 +25,6 @@
     dest: /etc/ipsets.conf
     mode: '0644'
   notify:
-    - ipset restore
+    - Ipset restore
 
 - import_tasks: iptables-ipset-systemd.yml

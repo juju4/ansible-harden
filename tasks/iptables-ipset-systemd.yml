@@ -8,7 +8,7 @@
 
     - name: Systemd for ipset-persistence
       block:
-        - name: install systemd configuration
+        - name: Install systemd configuration
           ansible.builtin.template:
             src: systemd-ipset-persistence.service.j2
             dest: /lib/systemd/system/ipset-persistence.service
@@ -16,8 +16,8 @@
             backup: yes
           register: systemd
           notify:
-            - reload systemd
-            - restart ipset-persistence
+            - Reload systemd
+            - Restart ipset-persistence
 
       rescue:
         - include_tasks: immutable.yml
@@ -28,15 +28,15 @@
           vars:
             target_dir: /lib/systemd/system/ipset-persistence.service
             state: pre
-        - name: install systemd configuration
+        - name: Install systemd configuration
           ansible.builtin.template:
             src: systemd-ipset-persistence.service.j2
             dest: /lib/systemd/system/ipset-persistence.service
             mode: '0644'
             backup: yes
           notify:
-            - reload systemd
-            - restart ipset-persistence
+            - Reload systemd
+            - Restart ipset-persistence
         - include_tasks: immutable.yml
           vars:
             target_dir: /lib/systemd/system
@@ -51,7 +51,7 @@
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
-- name: enable and start ipset-persistence systemd service
+- name: Enable and start ipset-persistence systemd service
   ansible.builtin.service:
     name: ipset-persistence
     enabled: "{{ ipsetpersistence_svc_enable | default(true) }}"

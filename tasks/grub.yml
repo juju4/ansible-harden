@@ -29,8 +29,8 @@
         mode: '0644'
         create: yes
       notify:
-        - refresh grub config
-      when: ansible_os_family == 'Debian' and harden_grub_md5password is defined and harden_grub_md5password|string
+        - Refresh grub config
+      when: ansible_os_family == 'Debian' and harden_grub_md5password is defined and harden_grub_md5password | string
     - name: Enable grub password
       ansible.builtin.lineinfile:
         dest: /boot/grub/grub.cfg
@@ -38,7 +38,7 @@
         line: "password --md5 {{ harden_grub_md5password }}"
         mode: '0644'
         create: yes
-      when: ansible_os_family == "RedHat" and harden_grub_md5password is defined and harden_grub_md5password|string
+      when: ansible_os_family == "RedHat" and harden_grub_md5password is defined and harden_grub_md5password | string
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")

@@ -17,7 +17,7 @@
   failed_when: false
   when: ansible_os_family == "Alpine"
 
-- name: retrieve unix-privesc-check
+- name: Retrieve unix-privesc-check
   ansible.builtin.get_url:
     url: http://pentestmonkey.net/tools/unix-privesc-check/unix-privesc-check-1.4.tar.gz
     dest: /tmp/unix-privesc-check-1.4.tar.gz
@@ -34,7 +34,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: unarchive unix-privesc-check
+- name: Unarchive unix-privesc-check
   ansible.builtin.unarchive:
     src: /tmp/unix-privesc-check-1.4.tar.gz
     dest: /tmp/
@@ -45,7 +45,7 @@
   when: upc is succeeded
   failed_when: false
 
-- name: execute unix-privesc-check
+- name: Execute unix-privesc-check
   ansible.builtin.shell: |
     set -o pipefail
     /tmp/unix-privesc-check-1.4/unix-privesc-check detailed | tee /tmp/unix-privesc-check.out
@@ -56,10 +56,10 @@
     executable: /bin/bash
   become: yes
   become_user: _test
-  when: upc is succeeded and harden_testing_privesc_upc|bool
+  when: upc is succeeded and harden_testing_privesc_upc | bool
 
 # - debug: var=privcheck.stdout_lines
-- name: grep error+warning of unix-privesc
+- name: Grep error+warning of unix-privesc
   ansible.builtin.shell: |
     set -o pipefail
     egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | \
@@ -70,7 +70,7 @@
   failed_when: false
   when: upc is succeeded
 
-- name: retrieve linuxprivchecker
+- name: Retrieve linuxprivchecker
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/sleventyeleven/linuxprivchecker/master/linuxprivchecker.py
     dest: /tmp/linuxprivchecker.py
@@ -82,7 +82,7 @@
   register: dl_result
   until: dl_result is success
 
-- name: execute linuxprivchecker
+- name: Execute linuxprivchecker
   ansible.builtin.shell: |
     set -o pipefail
     python /tmp/linuxprivchecker.py | tee /tmp/linuxprivchecker.out
@@ -93,7 +93,7 @@
   become: yes
   become_user: _test
   failed_when: false
-  when: harden_testing_privesc_lpc|bool
+  when: harden_testing_privesc_lpc | bool
 
 # - debug: var=linuxprivchecker.stdout_lines
 
@@ -106,7 +106,7 @@
 
 # http://www.kitploit.com/2017/11/kernelpop-kernel-privilege-escalation.html
 # https://github.com/spencerdodd/kernelpop
-- name: retrieve kernelpop
+- name: Retrieve kernelpop
   ansible.builtin.git:
     repo: 'https://github.com/spencerdodd/kernelpop'
     dest: /home/_test/kernelpop
@@ -115,14 +115,14 @@
   become: yes
   become_user: _test
 
-- name: ensure python3 is present
+- name: Ensure python3 is present
   ansible.builtin.package:
     name: "{{ python3_pkg | default('python3') }}"
     state: present
   register: pkg_result
   until: pkg_result is success
 
-- name: execute kernelpop
+- name: Execute kernelpop
   ansible.builtin.shell: |
     set -o pipefail
     {{ python3_bin | default('python3') }} kernelpop.py -b | tee /tmp/kernelpop.out
@@ -134,7 +134,7 @@
   become_user: _test
 
 # https://github.com/mzet-/linux-exploit-suggester/
-- name: retrieve linux-exploit-suggester.sh
+- name: Retrieve linux-exploit-suggester.sh
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh
     dest: /tmp/linux-exploit-suggester.sh
@@ -146,7 +146,7 @@
   register: dl_result
   until: dl_result is success
 
-- name: execute linux-exploit-suggester.sh
+- name: Execute linux-exploit-suggester.sh
   ansible.builtin.shell: |
     set -o pipefail
     bash /tmp/linux-exploit-suggester.sh | tee /tmp/linux-exploit-suggester.out
@@ -159,7 +159,7 @@
   failed_when: false
 
 # https://github.com/jondonas/linux-exploit-suggester-2/
-- name: retrieve linux-exploit-suggester-2.pl
+- name: Retrieve linux-exploit-suggester-2.pl
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
     dest: /tmp/linux-exploit-suggester-2.pl
@@ -171,7 +171,7 @@
   register: dl_result
   until: dl_result is success
 
-- name: execute linux-exploit-suggester-2.pl
+- name: Execute linux-exploit-suggester-2.pl
   ansible.builtin.shell: |
     set -o pipefail
     perl /tmp/linux-exploit-suggester-2.pl | tee /tmp/linux-exploit-suggester-2.out

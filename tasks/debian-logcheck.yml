@@ -59,7 +59,7 @@
     backup: "{{ harden_backup | default(false) }}"
   with_items: "{{ harden_logcheck_extra_logfiles }}"
 
-- name: check if logcheck patched
+- name: Check if logcheck patched
   ansible.builtin.stat: path=/usr/sbin/.logcheck-ansible-harden-patch
   register: lpatch
 - name: Logcheck patching
@@ -77,7 +77,7 @@
         dest: /usr/sbin/logcheck.patched
         mode: '0700'
         remote_src: true
-    - name: add patch marker
+    - name: Add patch marker
       ansible.builtin.file:
         dest: /usr/sbin/.logcheck-ansible-harden-patch
         mode: '0644'
@@ -111,7 +111,7 @@
         replace: '@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then sleep 10; nice -n10 /usr/sbin/logcheck -R; fi'
     }
 
-- name: ensure pid directory for logcheck user at reboot (systemd-tmpfiles)
+- name: Ensure pid directory for logcheck user at reboot (systemd-tmpfiles)
   ansible.builtin.lineinfile:
     dest: /etc/tmpfiles.d/logcheck.conf
     line: '    d    /run/logcheck   0755 logcheck logcheck - -'

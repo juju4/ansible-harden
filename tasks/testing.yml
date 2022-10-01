@@ -20,7 +20,7 @@
     #   with_items:
     #     - rake
     #     - inspec
-    - name: download inspec package
+    - name: Download inspec package
       ansible.builtin.get_url:
         url: "{{ inspec_url }}"
         dest: "/tmp/{{ inspec_url | basename }}"
@@ -57,7 +57,7 @@
       register: pkg_result
       until: pkg_result is success
 
-    - name: testing | accept inspec license - directory
+    - name: Testing | accept inspec license - directory
       ansible.builtin.file:
         path: /etc/chef/accepted_licenses
         state: directory
@@ -65,13 +65,13 @@
 
     # https://github.com/chef/automate/issues/83
     # https://github.com/chef/automate/pull/95 (alternative with ENV)
-    - name: testing | accept inspec license
+    - name: Testing | accept inspec license
       ansible.builtin.file:
         path: /etc/chef/accepted_licenses/inspec
         mode: '0644'
         state: touch
 
-    - name: testing | run linux-baseline
+    - name: Testing | run linux-baseline
       # shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
       ansible.builtin.shell: >
         inspec exec inspec --input-file inspec/profile-attributes-{{ ansible_os_family }}.yml |
@@ -86,7 +86,7 @@
     - name: Debug | inspec output
       ansible.builtin.debug: var=inspeclog.stdout_lines
 
-    - name: testing | run inspec baselines
+    - name: Testing | run inspec baselines
       ansible.builtin.shell: >
         inspec exec {{ item.u }} --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee -a {{ log_dir | default('/var/log') }}/inspec-{{ item.i }}.log |

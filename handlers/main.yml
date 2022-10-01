@@ -1,6 +1,6 @@
 ---
 
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
   when: >
@@ -8,26 +8,26 @@
           (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
         )
 
-- name: restart sshd
+- name: Restart sshd
   ansible.builtin.service: name={{ ssh_svc }} state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: restart iptables
+- name: Restart iptables
   ansible.builtin.service: name={{ iptables_persistent_svc }} state=restarted
   when: >
     not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: restart ipset-persistence
+- name: Restart ipset-persistence
   ansible.builtin.service: name=ipset-persistence state=restarted
   when: >
     (ansible_distribution == 'Debian' or
       (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 16)
     ) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: ipset restore
+- name: Ipset restore
   ansible.builtin.command: /sbin/ipset restore -f -! /etc/ipsets.conf
 
-- name: restart iptables - redhat|alpine
+- name: Restart iptables - redhat|alpine
   ansible.builtin.service: name=iptables state=restarted
   when: >
     (
@@ -35,7 +35,7 @@
       not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
     )
 
-- name: restart ip6tables - redhat|alpine
+- name: Restart ip6tables - redhat|alpine
   ansible.builtin.service: name=ip6tables state=restarted
   when: >
     (
@@ -44,7 +44,7 @@
       ipv6_config != 'disable'
     )
 
-- name: restart auditd
+- name: Restart auditd
   ansible.builtin.service: name=auditd state=restarted
   when: >
     not (ansible_virtualization_type is defined and
@@ -52,7 +52,7 @@
         ) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
 
 # See README.md FAQ why using service
-- name: restart auditd - rhel7+  # noqa 303
+- name: Restart auditd - rhel7+  # noqa command-instead-of-module
   ansible.builtin.command: "service auditd restart"
   when: >
     not (ansible_virtualization_type is defined and
@@ -61,45 +61,45 @@
 
 ## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...)
 ##  and can't ssh after... vagrant reload: fine?
-- name: reload fstab
+- name: Reload fstab
   ansible.builtin.shell: "umount -a; mount -a"
   # shell: "mount > /root/mount1; umount -a; mount -a; mount > /root/mount2; diff -urN /root/mount[12]"
   failed_when: false
   when: ansible_os_family != 'RedHat'
 
-- name: restart sysstat
+- name: Restart sysstat
   ansible.builtin.service: name=sysstat state=restarted
 
-- name: restart rsyslog
+- name: Restart rsyslog
   ansible.builtin.service: name=rsyslog state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: restart fail2ban
+- name: Restart fail2ban
   ansible.builtin.service: name=fail2ban state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: restart osquery
+- name: Restart osquery
   ansible.builtin.service: name=osqueryd state=restarted
 
-- name: restart journald
+- name: Restart journald
   ansible.builtin.service: name=systemd-journald state=restarted
 
-- name: reload udev
+- name: Reload udev
   ansible.builtin.command: "udevadm control --reload-rules"
 
-- name: restart monit
+- name: Restart monit
   ansible.builtin.service: name=monit state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: update-initramfs
+- name: Update-initramfs
   ansible.builtin.command: update-initramfs -k all -u
   when: ansible_os_family == "Debian"
 
-- name: enable apparmor audit profile
+- name: Enable apparmor audit profile
   ansible.builtin.command: aa-complain /etc/apparmor.d/apparmor.audit
 
-- name: restart systemd-resolved
+- name: Restart systemd-resolved
   ansible.builtin.service: name=systemd-resolved state=restarted
 
-- name: refresh grub config
+- name: Refresh grub config
   ansible.builtin.command: update-grub

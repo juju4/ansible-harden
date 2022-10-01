@@ -8,7 +8,7 @@
   ansible.builtin.command: ssh-keygen -A
   when: >
     not sshkey.stat.exists and
-    ((ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7) or
+    ((ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 7) or
       ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == "Alpine"
     )
 
@@ -32,7 +32,7 @@
   failed_when: false
   when: ansible_distribution == "Alpine"
 
-- name: ensure privsep directory for sshd at reboot (systemd-tmpfiles)
+- name: Ensure privsep directory for sshd at reboot (systemd-tmpfiles)
   ansible.builtin.lineinfile:
     dest: /etc/tmpfiles.d/sshd.conf
     line: '    d    /run/sshd   0755 root root - -'
@@ -40,14 +40,14 @@
     create: yes
   when: >
     ansible_service_mgr == 'systemd' and
-    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18)
 
-- name: ensure privsep directory for sshd
+- name: Ensure privsep directory for sshd
   ansible.builtin.file:
     dest: /run/sshd
     mode: '0755'
     state: directory
-  when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+  when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18)
 
 - import_tasks: sshd-certificates.yml
   when: harden_sshd_ca_gen
@@ -62,7 +62,7 @@
     backup: "{{ harden_backup | default(false) }}"
     validate: "{{ sshd_validate | default('sshd -f %s -T') }}"
   notify:
-    - restart sshd
+    - Restart sshd
 
 - name: Check /etc/ssh/moduli for weak values
   ansible.builtin.shell: |
@@ -73,7 +73,7 @@
   changed_when: false
   register: moduli
 
-- name: ssh moduli
+- name: Ssh moduli
   block:
     - name: Clean /etc/ssh/moduli
       # just remove weak ones
@@ -94,4 +94,4 @@
         dest: /etc/ssh/moduli
         mode: '0644'
         remote_src: true
-  when: moduli.stdout|int != 0
+  when: moduli.stdout | int != 0

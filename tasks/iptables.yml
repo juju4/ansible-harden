@@ -4,9 +4,9 @@
   block:
     - import_tasks: iptables-ipset.yml
       when: harden_ipset_enable
-    - name: ensure iptables directory exists
+    - name: Ensure iptables directory exists
       ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
-    - name: iptables configuration file update
+    - name: Iptables configuration file update
       ansible.builtin.template:
         src: "{{ harden_fw_template }}"
         dest: "{{ iptables_rulesv4 }}"
@@ -17,20 +17,20 @@
         ## works in ansible 2.2.0.0, nok 2.2.1.0?
         # validate: 'iptables-restore -tv < %s'
       notify:
-        - restart iptables
-        - restart iptables - redhat|alpine
+        - Restart iptables
+        - Restart iptables - redhat|alpine
       register: rulesv4
     ## as validate option seems incorrect
-    - name: ensure iptables v4 rules are correct
+    - name: Ensure iptables v4 rules are correct
       ansible.builtin.shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
       when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw
 
 - name: Firewall IPv6
   block:
-    - name: ensure iptables directory exists
+    - name: Ensure iptables directory exists
       ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
-    - name: iptables configuration file update
+    - name: Iptables configuration file update
       ansible.builtin.template:
         src: "{{ harden_fw6_template }}"
         dest: "{{ iptables_rulesv6 }}"
@@ -41,10 +41,10 @@
         ## works in ansible 2.2.0.0, nok 2.2.1.0?
         # validate: 'iptables-restore -tv < %s'
       notify:
-        - restart iptables
-        - restart ip6tables - redhat|alpine
+        - Restart iptables
+        - Restart ip6tables - redhat|alpine
       register: rulesv6
-    - name: ensure iptables v6 rules are correct
+    - name: Ensure iptables v6 rules are correct
       ansible.builtin.shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined

@@ -24,7 +24,7 @@
       ansible.builtin.copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
       with_items: "{{ harden_aide_extra_conf }}"
       register: aidecustomconf
-    - name: check global aide config if changed
+    - name: Check global aide config if changed
       ansible.builtin.command: "{{ aide_bin }} -D -c {{ aide_conf }} {{ aide_args_v }}"
       when: aidecustomconf.changed
       changed_when: false
@@ -36,7 +36,7 @@
     - name: RedHat | set aide binary name
       ansible.builtin.set_fact:
         aide_bin: aide
-    - name: review aide settings
+    - name: Review aide settings
       ansible.builtin.replace:
         dest: /etc/aide.conf
         regexp: "{{ item.re }}"
@@ -47,7 +47,7 @@
         - { re: '^gzip_dbout=.*', rep: 'gzip_dbout=no' }
         - { re: '^database=file:.*', rep: 'database=file:@@{DBDIR}/aide.db' }
         - { re: '^database_out=file:.*', rep: 'database_out=file:@@{DBDIR}/aide.db.new' }
-    - name: add daily cron to check and update aide db
+    - name: Add daily cron to check and update aide db
       ansible.builtin.copy: src=cron.daily-aide-redhat.j2 dest=/etc/cron.daily/aide mode=0700
   when: ansible_os_family == "RedHat"
 

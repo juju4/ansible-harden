@@ -9,7 +9,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: check kpatch applied
+- name: Check kpatch applied
   ansible.builtin.command: kpatch --list
   changed_when: false
   failed_when: false

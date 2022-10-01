@@ -50,8 +50,8 @@
   register: pkg_result
   until: pkg_result is success
   when: not (ansible_virtualization_type is defined and
-              (ansible_virtualization_type == 'lxc' or ansible_virtualization_type == 'docker')
-            )
+              (ansible_virtualization_type == 'lxc' or ansible_virtualization_type == 'docker'))
+
 - name: Remove some packages
   ansible.builtin.package:
     name: "{{ harden_pkg_remove }}"

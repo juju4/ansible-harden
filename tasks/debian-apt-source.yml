@@ -26,7 +26,7 @@
 #   when: ansible_distribution == "Ubuntu"
 
 ## https://github.com/chef/bento/issues/592
-- name: fix Ubuntu network hack
+- name: Fix Ubuntu network hack
   ansible.builtin.file: dest=/etc/udev/rules.d/70-persistent-net.rules state=absent
 
 - name: Ubuntu precise

@@ -13,7 +13,7 @@
   ansible.builtin.package_facts:
     manager: auto
 
-- name: get sudo version
+- name: Get sudo version
   ansible.builtin.set_fact:
     sudo_v: "{{ ansible_facts.packages['sudo'][0]['version'] }}"
 
@@ -27,7 +27,7 @@
     mode: '0440'
     backup: "{{ harden_backup | default(false) }}"
     validate: 'visudo -cf %s'
-  when: sudo_v|string is version_compare('1.9.4', '>=')
+  when: sudo_v | string is version_compare('1.9.4', '>=')
 
 - name: Configure sudo remote syslog
   ansible.builtin.lineinfile:
@@ -37,4 +37,4 @@
     mode: '0440'
     backup: "{{ harden_backup | default(false) }}"
     validate: 'visudo -cf %s'
-  when: sudo_v|string is version_compare('1.9.4', '>=') and harden_sudo_remotesyslog|string
+  when: sudo_v | string is version_compare('1.9.4', '>=') and harden_sudo_remotesyslog | string

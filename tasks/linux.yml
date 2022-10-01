@@ -9,7 +9,7 @@
     mode: '0644'
   with_items: "{{ harden_issue_lines | default([]) }}"
 
-- name: set better login.defs
+- name: Set better login.defs
   ansible.builtin.lineinfile:
     dest: /etc/login.defs
     regexp: "{{ item.r }}"
@@ -36,7 +36,7 @@
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - name: Disable USB
   block:
-    - name: disable usb storage drivers - modprobe
+    - name: Disable usb storage drivers - modprobe
       ansible.builtin.lineinfile:
         dest: /etc/modprobe.d/no-usb.conf
         line: 'install usb-storage /bin/true'
@@ -45,7 +45,7 @@
     - name: Check if grub is present
       ansible.builtin.stat: path=/etc/default/grub
       register: defgrub
-    - name: disable usb storage drivers - grub
+    - name: Disable usb storage drivers - grub
       ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
@@ -57,12 +57,12 @@
   when: harden_disable_usb is defined and harden_disable_usb
 - name: Allow USB
   block:
-    - name: ensure usb storage drivers not disabled at modprobe level
+    - name: Ensure usb storage drivers not disabled at modprobe level
       ansible.builtin.file: dest=/etc/modprobe.d/no-usb.conf state=absent
     - name: Check if grub is present
       ansible.builtin.stat: path=/etc/default/grub
       register: defgrub
-    - name: disable usb storage drivers - grub
+    - name: Disable usb storage drivers - grub
       ansible.builtin.replace:
         dest: /etc/default/grub
         regexp: 'GRUB_CMDLINE_LINUX="(.*)nousb(.*)"'
@@ -73,7 +73,7 @@
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
   when: not (harden_disable_usb is defined and harden_disable_usb)
 
-- name: disable firewire DMA drivers - modprobe
+- name: Disable firewire DMA drivers - modprobe
   ansible.builtin.lineinfile:
     dest: /etc/modprobe.d/no-firewire.conf
     line: "{{ item }}"
@@ -88,7 +88,7 @@
     - 'blacklist firewire-ohci'
     - 'blacklist firewire-sbp2'
   notify:
-    - update-initramfs
+    - Update-initramfs
 
 - name: Disable Distribution bug report
   block:
@@ -103,7 +103,7 @@
         replace: 'enabled=0'
         mode: '0644'
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
-    - name: set sensible core pattern
+    - name: Set sensible core pattern
       ansible.builtin.sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
       when: >
         not (ansible_os_family == 'RedHat' and
@@ -181,4 +181,4 @@
         )
 
 - import_tasks: proxy.yml
-  when: harden_proxy|bool
+  when: harden_proxy | bool

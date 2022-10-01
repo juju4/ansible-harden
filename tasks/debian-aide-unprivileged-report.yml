@@ -1,6 +1,6 @@
 ---
 
-- name: adding aide user
+- name: Adding aide user
   ansible.builtin.user:
     name: "{{ harden_aide_user }}"
     system: yes

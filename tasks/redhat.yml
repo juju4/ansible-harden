@@ -1,6 +1,6 @@
 ---
 
-- name: Redhat| Remove some packages
+- name: Redhat | Remove some packages
   ansible.builtin.yum:
     name: rpcbind
     state: absent
@@ -12,8 +12,8 @@
 ## FIXME! slow... even when rerun
 - name: Redhat | latest
   block:
-    - name: yum | upgrade all packages to the latest version
-      ansible.builtin.yum: name=* state=latest  # noqa 403
+    - name: Redhat | upgrade all packages to the latest version
+      ansible.builtin.yum: name=* state=latest  # noqa package-latest
       async: 3600
       poll: 300
       register: pkg_result
@@ -22,7 +22,7 @@
       ansible.builtin.debug: var=pkg_result.stdout_lines
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
 
-- name: set better login.defs - redhat only
+- name: Set better login.defs - redhat only
   ansible.builtin.lineinfile:
     dest: /etc/login.defs
     regexp: "{{ item.r }}"
@@ -47,7 +47,7 @@
   when: >
     not (ansible_distribution_major_version|int == 8)
 
-- name: password set for single mode
+- name: Password set for single mode
   ansible.builtin.lineinfile:
     dest: /etc/sysconfig/init
     regexp: '^SINGLE='
@@ -71,7 +71,7 @@
     - "{{ harden_services }}"
     - "{{ harden_services_containers }}"
 
-- name: initialize rootkithunter db
+- name: Initialize rootkithunter db
   ansible.builtin.command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
   when: >
     not (ansible_distribution_major_version|int == 8)

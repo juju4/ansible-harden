@@ -26,7 +26,7 @@
   connection: local
   when: not sshca.stat.exists
 
-- name: debug
+- name: Debug
   ansible.builtin.command: "ls -la {{ harden_sshd_ca_path | dirname }}"
   failed_when: false
   changed_when: false

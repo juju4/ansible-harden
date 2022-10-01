@@ -4,7 +4,7 @@
 # https://twitter.com/pwnallthethings/status/948693961358667777
 # https://github.com/Eugnis/spectre-attack/blob/master/Source.c
 
-- name: ensure dev tools are present
+- name: Ensure dev tools are present
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -12,7 +12,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: download speculative execution sample code
+- name: Download speculative execution sample code
   ansible.builtin.get_url:
     url: >
       https://gist.githubusercontent.com/jedisct1/3bbb6e50b768968c30629bf734ea49c6/raw/6ede3c9a3356a4a55a27febaf38157897c4fed09/spectre.c
@@ -20,13 +20,13 @@
     mode: '0600'
     owner: nobody
 
-- name: compile sample code
+- name: Compile sample code
   ansible.builtin.command: gcc -std=c99 -O0 spectre.c -o spectre
   args:
     chdir: /tmp
     creates: /tmp/spectre
 
-- name: run sample code
+- name: Run sample code
   ansible.builtin.shell: ./spectre | tee /tmp/speculative-spectre.log
   args:
     chdir: /tmp
@@ -39,7 +39,7 @@
 - name: Debug | spectre output
   ansible.builtin.debug: var=spectre
 
-- name: retrieve Am-I-affected-by-Meltdown
+- name: Retrieve Am-I-affected-by-Meltdown
   ansible.builtin.git:
     repo: https://github.com/raphaelsc/Am-I-affected-by-Meltdown.git
     dest: /tmp/Am-I-affected-by-Meltdown
@@ -48,14 +48,14 @@
   become: yes
   become_user: nobody
 
-- name: build Am-I-affected-by-Meltdown
+- name: Build Am-I-affected-by-Meltdown
   ansible.builtin.command: make
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
     creates: /tmp/Am-I-affected-by-Meltdown/meltdown-checker
 
 # root required as kptr_restrict set to 1
-- name: test Am-I-affected-by-Meltdown
+- name: Test Am-I-affected-by-Meltdown
   ansible.builtin.shell: ./meltdown-checker | tee /var/log/speculative-meltdown-checker.log
   args:
     chdir: /tmp/Am-I-affected-by-Meltdown
@@ -66,7 +66,7 @@
 - name: Debug | meltdown output
   ansible.builtin.debug: var=meltdown
 
-- name: retrieve another meltdown poc
+- name: Retrieve another meltdown poc
   ansible.builtin.git:
     repo: https://github.com/paboldin/meltdown-exploit.git
     dest: /tmp/meltdown-exploit
@@ -75,14 +75,14 @@
   become: yes
   become_user: nobody
 
-- name: build meltdown-exploit
+- name: Build meltdown-exploit
   ansible.builtin.command: make
   args:
     chdir: /tmp/meltdown-exploit
     creates: /tmp/meltdown-exploit/meltdown
 
 # root required as kptr_restrict set to 1
-- name: test meltdown-exploit
+- name: Test meltdown-exploit
   ansible.builtin.shell: ./run.sh | tee /var/log/speculative-meltdown-exploit-log
   args:
     chdir: /tmp/meltdown-exploit
@@ -93,7 +93,7 @@
 - name: Debug | meltdown2 output
   ansible.builtin.debug: var=meltdown2
 
-- name: retrieve IAIK poc
+- name: Retrieve IAIK poc
   ansible.builtin.git:
     repo: https://github.com/IAIK/meltdown.git
     dest: /tmp/meltdown-iaik
@@ -102,7 +102,7 @@
   become: yes
   become_user: nobody
 
-- name: ensure IAIK poc dependencies are present
+- name: Ensure IAIK poc dependencies are present
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -113,7 +113,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: build IAIK poc
+- name: Build IAIK poc
   ansible.builtin.command: make
   args:
     chdir: /tmp/meltdown-iaik
@@ -121,7 +121,7 @@
   when: >
     not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8)
 
-- name: test IAIK poc
+- name: Test IAIK poc
   ansible.builtin.shell: taskset 0x1 ./test | tee /var/log/speculative-IAIK.log
   args:
     chdir: /tmp/meltdown-iaik
@@ -156,7 +156,7 @@
 #
 # - debug: var=iaik2
 
-- name: retrieve another check
+- name: Retrieve another check
   ansible.builtin.git:
     repo: https://github.com/speed47/spectre-meltdown-checker.git
     dest: /tmp/spectre-meltdown-checker
@@ -166,7 +166,7 @@
   become_user: nobody
 
 # root required
-- name: run spectre-meltdown-checker
+- name: Run spectre-meltdown-checker
   ansible.builtin.shell: ./spectre-meltdown-checker.sh | tee /tmp/speculative-spectre-meltdown-checker.log
   args:
     chdir: /tmp/spectre-meltdown-checker

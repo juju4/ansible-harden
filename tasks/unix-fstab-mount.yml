@@ -25,6 +25,6 @@
 ## man 8 mount: 'After this call mount reads fstab (or mtab) and merges these options with options
 ##      from command line ( -o ).'
 - name: Remount changed mount points
-  ansible.builtin.command: "mount -o remount {{ item.item.mount }}"  # noqa 503 303
+  ansible.builtin.command: "mount -o remount {{ item.item.mount }}"  # noqa no-handler command-instead-of-module
   when: item.changed
   with_items: "{{ mountopts.results }}"

@@ -3,11 +3,11 @@
 - name: Ubuntu 14.04 | Set gcc 4.8
   ansible.builtin.set_fact:
     gcc_v: 4.8
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0]|int <= 14
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0] | int <= 14
 - name: Ubuntu 15.04+ | Set gcc 5
   ansible.builtin.set_fact:
     gcc_v: 5
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0]|int >= 15
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version.split('.')[0] | int >= 15
 
 ## Note: can't do before full end of provisioning else might break other things...
 - name: Debian, RedHat | Compiler restrictions

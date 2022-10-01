@@ -6,7 +6,7 @@
     state: enforcing
 
 ## ANSSI R67
-- name: enforce more strict configuration for selinux
+- name: Enforce more strict configuration for selinux
   seboolean: name={{ item }} state=no persistent=yes
   with_items:
     - allow_execheap

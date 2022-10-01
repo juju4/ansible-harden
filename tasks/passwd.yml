@@ -2,16 +2,16 @@
 ## https://jerrygamblin.com/2017/08/24/disallow-million-most-common-passwords/
 ## http://thegarywilson.com/blog/2006/using-cracklib-to-require-stronger-passwords/
 
-- name: recover dictionary files
+- name: Recover dictionary files
   ansible.builtin.get_url:
     url: "{{ item.u }}"
     dest: "/usr/share/dict/{{ item.u | basename }}"
     mode: '0644'
     checksum: "{{ item.h }}"
   with_items: "{{ harden_cracklib_dict }}"
-  when: ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)
+  when: ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7)
 
-- name: check for cracklib refresh marker
+- name: Check for cracklib refresh marker
   ansible.builtin.stat:
     path: /usr/share/dict/.ansible_cracklib_update
   register: cracklibrefresh
@@ -30,16 +30,16 @@
       # args:
       #   creates: /usr/lib/cracklib_dict.pwd
   when: >
-    (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7) and
+    (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7) and
     not cracklibrefresh.stat.exists
-- name: add cracklib refresh marker
+- name: Add cracklib refresh marker
   ansible.builtin.file:
     path: /usr/share/dict/.ansible_cracklib_update
     mode: '0600'
     state: touch
   when: >
     (ansible_os_family == 'Debian' or
-      (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int < 7)
+      (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7)
     ) and not cracklibrefresh.stat.exists
 
 - name: Redhat | password criteria
@@ -64,4 +64,4 @@
         line: "minlen={{ harden_rhel_pwquality_minlen | default(16) }}"
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
-  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 7
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 7
