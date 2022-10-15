@@ -9,18 +9,24 @@
         )
 
 - name: Restart sshd
-  ansible.builtin.service: name={{ ssh_svc }} state=restarted
+  ansible.builtin.service:
+    name: "{{ ssh_svc }}"
+    state: "restarted"
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: Restart iptables
-  ansible.builtin.service: name={{ iptables_persistent_svc }} state=restarted
+  ansible.builtin.service:
+    name: "{{ iptables_persistent_svc }}"
+    state: "restarted"
   when: >
     not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: Restart ipset-persistence
-  ansible.builtin.service: name=ipset-persistence state=restarted
+  ansible.builtin.service:
+    name: ipset-persistence
+    state: restarted
   when: >
-    (ansible_distribution == 'Debian' or
+    (ansible_distribution =:  'Debian' or
       (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 16)
     ) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
@@ -28,7 +34,9 @@
   ansible.builtin.command: /sbin/ipset restore -f -! /etc/ipsets.conf
 
 - name: Restart iptables - redhat|alpine
-  ansible.builtin.service: name=iptables state=restarted
+  ansible.builtin.service:
+    name: iptables
+    state: restarted
   when: >
     (
       (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
@@ -36,7 +44,9 @@
     )
 
 - name: Restart ip6tables - redhat|alpine
-  ansible.builtin.service: name=ip6tables state=restarted
+  ansible.builtin.service:
+    name: ip6tables
+    state: restarted
   when: >
     (
       (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
@@ -45,7 +55,9 @@
     )
 
 - name: Restart auditd
-  ansible.builtin.service: name=auditd state=restarted
+  ansible.builtin.service:
+    name: auditd
+    state: restarted
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
@@ -68,27 +80,39 @@
   when: ansible_os_family != 'RedHat'
 
 - name: Restart sysstat
-  ansible.builtin.service: name=sysstat state=restarted
+  ansible.builtin.service:
+    name: sysstat
+    state: restarted
 
 - name: Restart rsyslog
-  ansible.builtin.service: name=rsyslog state=restarted
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: Restart fail2ban
-  ansible.builtin.service: name=fail2ban state=restarted
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: Restart osquery
-  ansible.builtin.service: name=osqueryd state=restarted
+  ansible.builtin.service:
+    name: osqueryd
+    state: restarted
 
 - name: Restart journald
-  ansible.builtin.service: name=systemd-journald state=restarted
+  ansible.builtin.service:
+    name: systemd-journald
+    state: restarted
 
 - name: Reload udev
   ansible.builtin.command: "udevadm control --reload-rules"
 
 - name: Restart monit
-  ansible.builtin.service: name=monit state=restarted
+  ansible.builtin.service:
+    name: monit
+    state: restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: Update-initramfs
@@ -99,7 +123,9 @@
   ansible.builtin.command: aa-complain /etc/apparmor.d/apparmor.audit
 
 - name: Restart systemd-resolved
-  ansible.builtin.service: name=systemd-resolved state=restarted
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
 
 - name: Refresh grub config
   ansible.builtin.command: update-grub

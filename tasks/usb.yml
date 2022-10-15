@@ -1,7 +1,9 @@
 ---
 
 - name: USB | Ensure udev & others are present
-  ansible.builtin.package: name={{ item }} state=present
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
   with_items:
     - udev
     - zenity

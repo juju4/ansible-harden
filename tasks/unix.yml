@@ -1,10 +1,13 @@
 ---
 
-- import_tasks: timezone.yml
+- name: Import timezone
+  ansible.builtin.import_tasks: timezone.yml
 
-- import_tasks: sshd.yml
+- name: Import sshd
+  ansible.builtin.import_tasks: sshd.yml
   when: harden_sshd_review
-- import_tasks: ssh.yml
+- name: Import ssh
+  ansible.builtin.import_tasks: ssh.yml
   when: harden_ssh_review
 
 ## Bash history to syslog (since 4.1) but need re-compile for most distributions
@@ -14,18 +17,22 @@
 ## http://binbash.fr/2012/09/05/bash-syslog/
 
 - name: Check if /var/log/account/pacct exists
-  ansible.builtin.stat: path=/var/log/account/pacct
+  ansible.builtin.stat:
+    path: /var/log/account/pacct
   register: pacct
 ## FIXME! might be not active if enabled/disabled...
 - name: Enable accounting
-  ansible.builtin.command: "accton on creates=/var/log/account/pacct"
+  ansible.builtin.command: "accton on"
+  args:
+    creates: /var/log/account/pacct
   environment:
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   when: not pacct.stat.exists
   ## FIXME! not working on centos-6
   failed_when: false
 
-- import_tasks: unix-fstab.yml
+- name: Import unix-fstab
+  ansible.builtin.import_tasks: unix-fstab.yml
   when: harden_unix_fstab_flags is defined and harden_unix_fstab_flags and harden_mount_options != []
 
 - name: Enforce shell timeout
@@ -47,9 +54,11 @@
     - /etc/motd
     - /etc/issue.net
 
-- import_tasks: sudo.yml
+- name: Import sudo
+  ansible.builtin.import_tasks: sudo.yml
 
-- import_tasks: securetty.yml
+- name: Import securetty
+  ansible.builtin.import_tasks: securetty.yml
   when: harden_securetty
 
 - name: Set immutable attribute for chosen files

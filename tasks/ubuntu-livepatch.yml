@@ -12,7 +12,9 @@
   with_sequence: start=0 end=32
 
 - name: Ensure snapd is installed
-  ansible.builtin.apt: name=snapd state=present
+  ansible.builtin.apt:
+    name: snapd
+    state: present
   register: pkg_result
   until: pkg_result is success
 
@@ -28,7 +30,8 @@
   ignore_errors: true
 
 - name: Ubuntu | livepatch issue
-  ansible.builtin.debug: msg="WARNING! Possible error in current livepatch configuration. Please check."
+  ansible.builtin.debug:
+    msg: "WARNING! Possible error in current livepatch configuration. Please check."
   when: >
    livepatch is defined and livepatch.stdout is defined and
    'checkState: check-failed' in livepatch.stdout

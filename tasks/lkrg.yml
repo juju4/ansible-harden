@@ -57,7 +57,8 @@
     mode: '0644'
   when: ansible_distribution_release == 'xenial'
 
-- import_tasks: immutable.yml
+- name: Import immutable
+  ansible.builtin.import_tasks: immutable.yml
   vars:
     target_dir: /lib/modules
     state: pre
@@ -68,7 +69,8 @@
   args:
     chdir: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}"
 
-- import_tasks: immutable.yml
+- name: Import immutable
+  ansible.builtin.import_tasks: immutable.yml
   vars:
     target_dir: /lib/modules
     state: post
@@ -81,7 +83,7 @@
     enabled: yes
 
 - name: Configure lkrg sysctl
-  sysctl:
+  ansible.posix.sysctl:
     name: "lkrg.{{ item.n }}"
     value: "{{ item.v }}"
     sysctl_set: yes

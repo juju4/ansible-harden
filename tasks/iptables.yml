@@ -1,11 +1,16 @@
 ---
 
 - name: Firewall IPv4
+  when: harden_fw is defined and harden_fw
   block:
-    - import_tasks: iptables-ipset.yml
+    - name: Import iptables-ipset
+      ansible.builtin.import_tasks: iptables-ipset.yml
       when: harden_ipset_enable
     - name: Ensure iptables directory exists
-      ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
+      ansible.builtin.file:
+        dest: /etc/iptables
+        state: directory
+        mode: '0755'
     - name: Iptables configuration file update
       ansible.builtin.template:
         src: "{{ harden_fw_template }}"
@@ -24,12 +29,15 @@
     - name: Ensure iptables v4 rules are correct
       ansible.builtin.shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
       when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
-  when: harden_fw is defined and harden_fw
 
 - name: Firewall IPv6
+  when: harden_fw is defined and harden_fw and harden_fw6_template is defined
   block:
     - name: Ensure iptables directory exists
-      ansible.builtin.file: dest=/etc/iptables state=directory mode=0755
+      ansible.builtin.file:
+        dest: /etc/iptables
+        state: directory
+        mode: '0755'
     - name: Iptables configuration file update
       ansible.builtin.template:
         src: "{{ harden_fw6_template }}"
@@ -47,9 +55,9 @@
     - name: Ensure iptables v6 rules are correct
       ansible.builtin.shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
       when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
-  when: harden_fw is defined and harden_fw and harden_fw6_template is defined
 
 - name: Alpine Linux Firewall
+  when: ansible_os_family == "Alpine"
   block:
     - name: Alpine | Load iptables rules - v4  # noqa no-changed-when
       ansible.builtin.shell: >
@@ -70,4 +78,3 @@
       with_items:
         - rc-update add iptables
         - rc-update add ip6tables
-  when: ansible_os_family == "Alpine"

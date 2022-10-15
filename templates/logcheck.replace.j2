@@ -123,6 +123,7 @@ s/grafana-server\[[0-9]*\]: t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\+\([0-9]
 #s/grafana-server\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\) /grafana-server: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NN+\4 /
 s/grafana-server\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana-server: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NN/
 s/grafana-server\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*/grafana-server: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS/
+s/grafana-server\[[0-9]*\]: logger=cleanup t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=info msg="Completed cleanup jobs" duration=[0-9]*\.[0-9]*ms/grafana-server: logger=cleanup t=YYYY-MM-DDTHH:MM:SS.NNZ level=info msg="Completed cleanup jobs" duration=N.Nms/
 s/grafana-server\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana-server: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NN/
 
 ## snap

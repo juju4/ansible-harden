@@ -1,11 +1,14 @@
 ---
 
 - name: Ensure aide package is installed
-  ansible.builtin.package: name=aide state=present
+  ansible.builtin.package:
+    name: aide
+    state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: Debian | Update configuration
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   block:
     - name: Review Aide configuration
       ansible.builtin.lineinfile:
@@ -21,17 +24,22 @@
         replace: 'FILTERUPDATES=yes'
         mode: '0644'
     - name: Add custom configuration for aide HIDS
-      ansible.builtin.copy: "src={{ item }} dest=/etc/aide/aide.conf.d owner=root mode=0644"
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/etc/aide/aide.conf.d"
+        owner: "root"
+        mode: "0644"
       with_items: "{{ harden_aide_extra_conf }}"
       register: aidecustomconf
     - name: Check global aide config if changed
       ansible.builtin.command: "{{ aide_bin }} -D -c {{ aide_conf }} {{ aide_args_v }}"
       when: aidecustomconf.changed
       changed_when: false
-    - import_tasks: debian-aide-unprivileged-report.yml
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    - name: Import debian-aide-unprivileged-report
+      ansible.builtin.import_tasks: debian-aide-unprivileged-report.yml
 
 - name: RedHat | Update configuration
+  when: ansible_os_family == "RedHat"
   block:
     - name: RedHat | set aide binary name
       ansible.builtin.set_fact:
@@ -48,15 +56,19 @@
         - { re: '^database=file:.*', rep: 'database=file:@@{DBDIR}/aide.db' }
         - { re: '^database_out=file:.*', rep: 'database_out=file:@@{DBDIR}/aide.db.new' }
     - name: Add daily cron to check and update aide db
-      ansible.builtin.copy: src=cron.daily-aide-redhat.j2 dest=/etc/cron.daily/aide mode=0700
-  when: ansible_os_family == "RedHat"
+      ansible.builtin.copy:
+        src: cron.daily-aide-redhat.j2
+        dest: /etc/cron.daily/aide
+        mode: 0700
 
 ## aide at the end of provisioning?
 - name: Check if aide database exists
-  ansible.builtin.stat: path=/var/lib/aide/aide.db
+  ansible.builtin.stat:
+    path: /var/lib/aide/aide.db
   register: aidedb
 - name: Debug | aidedb var
-  ansible.builtin.debug: var=aidedb
+  ansible.builtin.debug:
+    var: aidedb
 - name: Generating initial Aide database and backup
   ansible.builtin.command: "{{ item }}"
   with_items:

@@ -8,6 +8,7 @@
   until: pkg_result is success
 
 - name: Alpine | timezone
+  when: ansible_distribution == "Alpine"
   block:
     - name: Alpine | copy timezone file
       ansible.builtin.copy:
@@ -22,7 +23,6 @@
         mode: '0644'
         owner: root
         create: yes
-  when: ansible_distribution == "Alpine"
 
 - name: Set system timezone
   ansible.builtin.timezone:

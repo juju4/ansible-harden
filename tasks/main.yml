@@ -19,7 +19,8 @@
   ansible.builtin.include_vars: "Alpine.yml"
   when: ansible_os_family == "Alpine"
 
-- import_tasks: travis.yml
+- name: Import travis
+  ansible.builtin.import_tasks: travis.yml
   when: ansible_os_family != "Windows"
 
 - name: Ensure archives folder exists
@@ -28,7 +29,8 @@
     state: directory
     mode: '0700'
 
-- import_tasks: debian-apt-source.yml
+- name: Import debian-apt-source
+  ansible.builtin.import_tasks: debian-apt-source.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Debian | update apt cache
@@ -61,18 +63,23 @@
   until: pkg_result is success
 
 - name: Arpwatch
-  block:
-    - name: Install arpwatch
-      ansible.builtin.package: name=arpwatch state=present
-      register: pkg_result
-      until: pkg_result is success
-    - name: Ensure arpwatch service is enabled and started
-      ansible.builtin.service: name=arpwatch state=started enabled=yes
   when: >
     harden_arpwatch and
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
+  block:
+    - name: Install arpwatch
+      ansible.builtin.package:
+        name: arpwatch
+        state: present
+      register: pkg_result
+      until: pkg_result is success
+    - name: Ensure arpwatch service is enabled and started
+      ansible.builtin.service:
+        name: arpwatch
+        state: started
+        enabled: yes
 - name: Install arpwatch
   ansible.builtin.package:
     name: arpwatch
@@ -85,39 +92,48 @@
   register: pkg_result
   until: pkg_result is success
 
-- import_tasks: linux.yml
+- name: Import linux
+  ansible.builtin.import_tasks: linux.yml
   when: ansible_system == 'Linux'
 
 - name: Debian | Harden
-  import_tasks: debian.yml
+  ansible.builtin.import_tasks: debian.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Redhat | Harden
-  import_tasks: redhat.yml
+  ansible.builtin.import_tasks: redhat.yml
   when: ansible_os_family == "RedHat"
 
 - name: Alpine | Harden
-  import_tasks: alpine.yml
+  ansible.builtin.import_tasks: alpine.yml
   when: ansible_os_family == "Alpine"
 
-- import_tasks: unix.yml
+- name: Import unix
+  ansible.builtin.import_tasks: unix.yml
   when: ansible_system == 'Linux' or ansible_distribution == 'OpenBSD'
 
-- import_tasks: restrict_compiler.yml
+- name: Import restrict_compiler
+  ansible.builtin.import_tasks: restrict_compiler.yml
   when: harden_restrict_compiler is defined and harden_restrict_compiler
 
-- import_tasks: bash2syslog.yml
+- name: Import bash2syslog
+  ansible.builtin.import_tasks: bash2syslog.yml
   when: harden_bash2syslog is defined and harden_bash2syslog
 
-- import_tasks: root-forward.yml
+- name: Import root-forward
+  ansible.builtin.import_tasks: root-forward.yml
   when: harden_rootforward is defined and harden_rootforward
 
-- import_tasks: fail2ban.yml
+- name: Import fail2ban
+  ansible.builtin.import_tasks: fail2ban.yml
   when: >
     not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8)
 
-- import_tasks: vim-swapfiles.yml
-- import_tasks: llmnr-systemd.yml
+- name: Import vim-swapfiles
+  ansible.builtin.import_tasks: vim-swapfiles.yml
+- name: Import llmnr-systemd
+  ansible.builtin.import_tasks: llmnr-systemd.yml
 
-- import_tasks: testing.yml
+- name: Import testing
+  ansible.builtin.import_tasks: testing.yml
   when: harden_testing

@@ -3,6 +3,7 @@
 ## requires target_dir, state=pre/post
 
 - name: Pre-change immutable
+  when: state == 'pre'
   block:
     ## Ansible 2.3+ for get_attributes
     - name: Check target_dir attributes - {{ target_dir }}
@@ -17,7 +18,6 @@
       ansible.builtin.command: "chattr -R -i '{{ target_dir }}'"
       failed_when: false
       when: dir.stdout.find('-i-') != -1
-  when: state == 'pre'
 
 - name: Reestablish immutable attribute
   ansible.builtin.command: "chattr -R +i '{{ target_dir }}'"

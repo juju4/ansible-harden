@@ -10,4 +10,5 @@
   register: lynis
 
 - name: Debug | lynis output
-  ansible.builtin.debug: var=lynis.stdout_lines
+  ansible.builtin.debug:
+    var: lynis.stdout_lines

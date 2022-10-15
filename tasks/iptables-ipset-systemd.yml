@@ -1,11 +1,16 @@
 ---
 
 - name: Debug | ansible_service_mgr
-  ansible.builtin.debug: var=ansible_service_mgr
+  ansible.builtin.debug:
+    var: ansible_service_mgr
 
 - name: Set systemd for ipset-persistence
+  # when: ansible_service_mgr == 'systemd'
+  when: >
+    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16) or
+    (ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or
+    (ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7)
   block:
-
     - name: Systemd for ipset-persistence
       block:
         - name: Install systemd configuration
@@ -20,11 +25,13 @@
             - Restart ipset-persistence
 
       rescue:
-        - include_tasks: immutable.yml
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
           vars:
             target_dir: /lib/systemd/system
             state: pre
-        - include_tasks: immutable.yml
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
           vars:
             target_dir: /lib/systemd/system/ipset-persistence.service
             state: pre
@@ -37,16 +44,11 @@
           notify:
             - Reload systemd
             - Restart ipset-persistence
-        - include_tasks: immutable.yml
+        - name: Include immutable
+          ansible.builtin.include_tasks: immutable.yml
           vars:
             target_dir: /lib/systemd/system
             state: post
-
-  # when: ansible_service_mgr == 'systemd'
-  when: >
-    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16) or
-    (ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9) or
-    (ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7)
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

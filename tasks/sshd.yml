@@ -2,7 +2,8 @@
 ## or separate role like https://github.com/dev-sec/ansible-ssh-hardening
 
 - name: Check if /etc/ssh/ssh_host_ed25519_key exists
-  ansible.builtin.stat: path=/etc/ssh/ssh_host_ed25519_key
+  ansible.builtin.stat:
+    path: /etc/ssh/ssh_host_ed25519_key
   register: sshkey
 - name: Generate any missing SSH host key
   ansible.builtin.command: ssh-keygen -A
@@ -49,7 +50,8 @@
     state: directory
   when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18)
 
-- import_tasks: sshd-certificates.yml
+- name: Import sshd-certificates
+  ansible.builtin.import_tasks: sshd-certificates.yml
   when: harden_sshd_ca_gen
 
 - name: Configure sshd_config
@@ -74,8 +76,9 @@
   register: moduli
 
 - name: Ssh moduli
+  when: moduli.stdout | int != 0
   block:
-    - name: Clean /etc/ssh/moduli
+    - name: Clean /etc/ssh/moduli  # noqa no-free-form
       # just remove weak ones
       ansible.builtin.shell: |
         set -o pipefail
@@ -94,4 +97,3 @@
         dest: /etc/ssh/moduli
         mode: '0644'
         remote_src: true
-  when: moduli.stdout | int != 0

@@ -9,6 +9,7 @@
   register: sysres
 
 - name: Systemd-resolved
+  when: sysres.stat.exists
   block:
     - name: Ensure LLMNR is disabled in systemd-resolved
       ansible.builtin.lineinfile:
@@ -19,4 +20,3 @@
         backup: "{{ harden_backup | default(false) }}"
       notify:
         - Restart systemd-resolved
-  when: sysres.stat.exists

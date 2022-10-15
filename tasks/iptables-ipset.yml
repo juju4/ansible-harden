@@ -27,4 +27,5 @@
   notify:
     - Ipset restore
 
-- import_tasks: iptables-ipset-systemd.yml
+- name: Import iptables-ipset-systemd
+  ansible.builtin.import_tasks: iptables-ipset-systemd.yml

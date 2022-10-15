@@ -2,11 +2,15 @@
 
 - name: Logcheck additional configuration - ntpd ignore
   ansible.builtin.copy:
-    src=ntpd dest=/etc/logcheck/ignore.d.server/ntpd mode=0644
+    src: ntpd
+    dest: /etc/logcheck/ignore.d.server/ntpd
+    mode: 0644
 
 - name: Logcheck additional configuration - ignore rules
   ansible.builtin.copy:
-    src=logcheck-local-ignores dest=/etc/logcheck/ignore.d.server/local-rules mode=0644
+    src: logcheck-local-ignores
+    dest: /etc/logcheck/ignore.d.server/local-rules
+    mode: '0644'
 
 - name: Debian-docker | check if /var/log/syslog exists
   ansible.builtin.stat:
@@ -60,12 +64,14 @@
   with_items: "{{ harden_logcheck_extra_logfiles }}"
 
 - name: Check if logcheck patched
-  ansible.builtin.stat: path=/usr/sbin/.logcheck-ansible-harden-patch
+  ansible.builtin.stat:
+    path: /usr/sbin/.logcheck-ansible-harden-patch
   register: lpatch
 - name: Logcheck patching
+  when: not lpatch.stat.exists
   block:
     - name: Patch logcheck to do replacement
-      patch:
+      ansible.posix.patch:
         src: patch-logcheck-replace
         dest: /usr/sbin/logcheck
         remote_src: no
@@ -82,7 +88,6 @@
         dest: /usr/sbin/.logcheck-ansible-harden-patch
         mode: '0644'
         state: touch
-  when: not lpatch.stat.exists
 
 # FIXME!
 # - name: Add support for fail2ban date format to syslog-summary

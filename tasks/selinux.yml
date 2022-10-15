@@ -1,13 +1,16 @@
 ---
 
 - name: Enable SELinux
-  selinux:
+  ansible.posix.selinux:
     policy: targeted
     state: enforcing
 
 ## ANSSI R67
 - name: Enforce more strict configuration for selinux
-  seboolean: name={{ item }} state=no persistent=yes
+  ansible.posix.seboolean:
+    name: "{{ item }}"
+    state: no
+    persistent: yes
   with_items:
     - allow_execheap
     ## vagrant/Centos7: "msg": "SELinux boolean allow_execmem does not exist.",

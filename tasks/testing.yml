@@ -6,6 +6,7 @@
     state: present
 
 - name: Testing | inspec
+  when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
   block:
     # - name: testing | Ensure ruby and dependencies are present
     #   ansible.builtin.package:
@@ -84,7 +85,8 @@
       register: inspeclog
       changed_when: false
     - name: Debug | inspec output
-      ansible.builtin.debug: var=inspeclog.stdout_lines
+      ansible.builtin.debug:
+        var: inspeclog.stdout_lines
 
     - name: Testing | run inspec baselines
       ansible.builtin.shell: >
@@ -98,13 +100,14 @@
       failed_when: false
       changed_when: false
 
-  when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
-
-- import_tasks: testing-check.yml
+- name: Import testing-check
+  ansible.builtin.import_tasks: testing-check.yml
   when: harden_testing_check
 
-- import_tasks: testing-privesc.yml
+- name: Import testing-privesc
+  ansible.builtin.import_tasks: testing-privesc.yml
   when: harden_testing_privesc
 
-- import_tasks: testing-speculative.yml
+- name: Import testing-speculative
+  ansible.builtin.import_tasks: testing-speculative.yml
   when: harden_testing_speculative

@@ -35,6 +35,7 @@
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - name: Disable USB
+  when: harden_disable_usb is defined and harden_disable_usb
   block:
     - name: Disable usb storage drivers - modprobe
       ansible.builtin.lineinfile:
@@ -43,7 +44,8 @@
         mode: '0644'
         create: yes
     - name: Check if grub is present
-      ansible.builtin.stat: path=/etc/default/grub
+      ansible.builtin.stat:
+        path: /etc/default/grub
       register: defgrub
     - name: Disable usb storage drivers - grub
       ansible.builtin.replace:
@@ -54,13 +56,16 @@
         backup: "{{ harden_backup | default(false) }}"
       ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
-  when: harden_disable_usb is defined and harden_disable_usb
 - name: Allow USB
+  when: not (harden_disable_usb is defined and harden_disable_usb)
   block:
     - name: Ensure usb storage drivers not disabled at modprobe level
-      ansible.builtin.file: dest=/etc/modprobe.d/no-usb.conf state=absent
+      ansible.builtin.file:
+        dest: /etc/modprobe.d/no-usb.conf
+        state: absent
     - name: Check if grub is present
-      ansible.builtin.stat: path=/etc/default/grub
+      ansible.builtin.stat:
+        path: /etc/default/grub
       register: defgrub
     - name: Disable usb storage drivers - grub
       ansible.builtin.replace:
@@ -71,7 +76,6 @@
         backup: "{{ harden_backup | default(false) }}"
       ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
       when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
-  when: not (harden_disable_usb is defined and harden_disable_usb)
 
 - name: Disable firewire DMA drivers - modprobe
   ansible.builtin.lineinfile:
@@ -91,9 +95,14 @@
     - Update-initramfs
 
 - name: Disable Distribution bug report
+  when: >
+    ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and
+    harden_linux_disable_bugreport and
+    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
   block:
     - name: Ubuntu | check if apport is present
-      ansible.builtin.stat: path=/etc/default/apport
+      ansible.builtin.stat:
+        path: /etc/default/apport
       register: defapport
       when: ansible_distribution == 'Ubuntu'
     - name: Ubuntu | ensure Apport crash report is disabled
@@ -104,7 +113,12 @@
         mode: '0644'
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: Set sensible core pattern
-      ansible.builtin.sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes
+      ansible.builtin.sysctl:
+        name: "kernel.core_pattern"
+        value: "/tmp/cores/core.%e.%p.%h.%t"
+        sysctl_set: yes
+        state: present
+        reload: yes
       when: >
         not (ansible_os_family == 'RedHat' and
               (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
@@ -113,23 +127,21 @@
               (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 20) and
               (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
             )
-  when: >
-    ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and
-    harden_linux_disable_bugreport and
-    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-## FIXME! firewall rules
-
-- import_tasks: iptables.yml
+- name: Import iptables
+  ansible.builtin.import_tasks: iptables.yml
   when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" or ansible_os_family == "Alpine"
 
-- import_tasks: usb.yml
+- name: Import usb
+  ansible.builtin.import_tasks: usb.yml
   when: harden_usb_restrict_udev
 
-- import_tasks: aide-hids.yml
+- name: Import aide-hids
+  ansible.builtin.import_tasks: aide-hids.yml
   when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
 
-- import_tasks: ubuntu-livepatch.yml
+- name: Import ubuntu-livepatch
+  ansible.builtin.import_tasks: ubuntu-livepatch.yml
   when:
     - ansible_distribution == 'Ubuntu'
     - '"LTS" in ansible_lsb["description"]'
@@ -137,18 +149,23 @@
     - harden_ubuntu_livepatch is defined
     - harden_ubuntu_livepatch
 
-- import_tasks: redhat-kpatch.yml
+- name: Import redhat-kpatch
+  ansible.builtin.import_tasks: redhat-kpatch.yml
   when: >
     ansible_distribution == 'RedHat Enterprise Linux' and ansible_distribution_version == '7.2' and
     harden_rhel_kpatch is defined and harden_rhel_kpatch
 
-- import_tasks: grub.yml
-- import_tasks: monit.yml
+- name: Import grub
+  ansible.builtin.import_tasks: grub.yml
+- name: Import monit
+  ansible.builtin.import_tasks: monit.yml
   when: >
     not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8)
-- import_tasks: passwd.yml
+- name: Import passwd
+  ansible.builtin.import_tasks: passwd.yml
 
 - name: Alpine rsyslog
+  when: ansible_distribution == "Alpine"
   block:
     - name: Alpine | Ensure /etc/rsyslog.d exists
       ansible.builtin.file:
@@ -163,7 +180,6 @@
         line: '$IncludeConfig /etc/rsyslog.d/*.conf'
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
-  when: ansible_distribution == "Alpine"
 
 - name: Disable unused filesystems modules
   ansible.builtin.template:
@@ -173,12 +189,14 @@
     backup: "{{ harden_backup | default(false) }}"
   when: harden_modprobe_template is defined
 
-- import_tasks: lkrg.yml
+- name: Import lkrg
+  ansible.builtin.import_tasks: lkrg.yml
   when: >
     harden_lkrg and
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
 
-- import_tasks: proxy.yml
+- name: Import proxy
+  ansible.builtin.import_tasks: proxy.yml
   when: harden_proxy | bool

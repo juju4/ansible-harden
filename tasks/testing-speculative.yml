@@ -20,7 +20,7 @@
     mode: '0600'
     owner: nobody
 
-- name: Compile sample code
+- name: Compile sample code  # noqa no-free-form
   ansible.builtin.command: gcc -std=c99 -O0 spectre.c -o spectre
   args:
     chdir: /tmp
@@ -37,7 +37,8 @@
   ignore_errors: true
 
 - name: Debug | spectre output
-  ansible.builtin.debug: var=spectre
+  ansible.builtin.debug:
+    var: spectre
 
 - name: Retrieve Am-I-affected-by-Meltdown
   ansible.builtin.git:
@@ -64,7 +65,8 @@
   ignore_errors: true
 
 - name: Debug | meltdown output
-  ansible.builtin.debug: var=meltdown
+  ansible.builtin.debug:
+    var: meltdown
 
 - name: Retrieve another meltdown poc
   ansible.builtin.git:
@@ -91,7 +93,8 @@
   ignore_errors: true
 
 - name: Debug | meltdown2 output
-  ansible.builtin.debug: var=meltdown2
+  ansible.builtin.debug:
+    var: meltdown2
 
 - name: Retrieve IAIK poc
   ansible.builtin.git:
@@ -134,7 +137,8 @@
     not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8)
 
 - name: Debug | IAIK output
-  ansible.builtin.debug: var=iaik1
+  ansible.builtin.debug:
+    var: iaik1
 
 # - name: test IAIK poc - root
 #   ansible.builtin.command: "{{ item }}"
@@ -175,5 +179,6 @@
   ignore_errors: true
 
 - name: Debug | spectre-meltdown-checker output
-  ansible.builtin.debug: var=checker.stdout_lines
+  ansible.builtin.debug:
+    var: checker.stdout_lines
   when: checker is defined

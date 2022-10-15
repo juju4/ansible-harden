@@ -11,6 +11,7 @@
 
 ## Note: can't do before full end of provisioning else might break other things...
 - name: Debian, RedHat | Compiler restrictions
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
   block:
     - name: Restrict compiler tools to group {{ harden_restrict_compiler_group }}
       ansible.builtin.file:
@@ -31,9 +32,9 @@
         - /usr/bin/c++
       ## Note: ignore errors as compiler tools may not be installed...
       failed_when: false
-  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
 
 - name: Alpine | Compiler restrictions
+  when: ansible_os_family == 'Alpine'
   block:
     ## https://github.com/ansible/ansible/issues/13652
     - name: Alpine | Restrict compiler tools to group {{ harden_restrict_compiler_group }}
@@ -51,4 +52,3 @@
         - /usr/bin/make
         - /usr/bin/g++
       failed_when: false
-  when: ansible_os_family == 'Alpine'

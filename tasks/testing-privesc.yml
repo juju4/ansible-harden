@@ -8,7 +8,9 @@
   when: ansible_os_family != "Alpine"
 
 - name: Alpine | Add _test user
-  ansible.builtin.command: "adduser -D _test creates=/home/_test"
+  ansible.builtin.command: adduser -D _test
+  args:
+    creates: /home/_test
   become: yes
   failed_when: false
   when: ansible_os_family == "Alpine"
@@ -59,7 +61,7 @@
   when: upc is succeeded and harden_testing_privesc_upc | bool
 
 # - debug: var=privcheck.stdout_lines
-- name: Grep error+warning of unix-privesc
+- name: Grep error+warning of unix-privesc  # noqa no-free-form
   ansible.builtin.shell: |
     set -o pipefail
     egrep --color=always '(ERROR|WARNING)' /tmp/unix-privesc-check.out | \

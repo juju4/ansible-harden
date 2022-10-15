@@ -11,7 +11,7 @@
   when: ansible_os_family == "Debian"
 
 - name: RedHat | Ensure dnf is configured with proxy
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dnf/dnf.conf
     section: main
     option: proxy

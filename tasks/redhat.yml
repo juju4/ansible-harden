@@ -11,16 +11,19 @@
 ## https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 ## FIXME! slow... even when rerun
 - name: Redhat | latest
+  when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
   block:
     - name: Redhat | upgrade all packages to the latest version
-      ansible.builtin.yum: name=* state=latest  # noqa package-latest
+      ansible.builtin.yum:  # noqa package-latest
+        name: '*'
+        state: latest
       async: 3600
       poll: 300
       register: pkg_result
       until: pkg_result is success
     - name: Debug | pkg_result var
-      ansible.builtin.debug: var=pkg_result.stdout_lines
-  when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
+      ansible.builtin.debug:
+        var: pkg_result.stdout_lines
 
 - name: Set better login.defs - redhat only
   ansible.builtin.lineinfile:
@@ -57,7 +60,8 @@
     not (ansible_distribution_major_version|int == 8)
 
 - name: Debug | ansible_virtualization_type var
-  ansible.builtin.debug: var=ansible_virtualization_type
+  ansible.builtin.debug:
+    var: ansible_virtualization_type
 - name: Container inside | disable incompatible daemons
   ansible.builtin.set_fact:
     harden_services_containers: []
@@ -66,24 +70,31 @@
       (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
     )
 - name: Redhat | Ensure services are running and enabled on boot.
-  ansible.builtin.service: name={{ item }} state=started enabled=yes
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
   with_items:
     - "{{ harden_services }}"
     - "{{ harden_services_containers }}"
 
 - name: Initialize rootkithunter db
-  ansible.builtin.command: "rkhunter --propupd creates=/var/lib/rkhunter/db/rkhunter.dat"
+  ansible.builtin.command: "rkhunter --propupd"
+  args:
+    creates: /var/lib/rkhunter/db/rkhunter.dat
   when: >
     not (ansible_distribution_major_version|int == 8)
 
-- import_tasks: selinux.yml
+- name: Import selinux
+  ansible.builtin.import_tasks: selinux.yml
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         ) and
     not (ansible_distribution_major_version|int == 8)
 
-- import_tasks: yum-cron.yml
+- name: Import yum-cron
+  ansible.builtin.import_tasks: yum-cron.yml
   when: >
     harden_security_update_auto and
     not (ansible_distribution_major_version|int == 8)

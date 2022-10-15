@@ -1,7 +1,8 @@
 ---
 
 - name: Debug | harden_rootforward var
-  ansible.builtin.debug: var=harden_rootforward
+  ansible.builtin.debug:
+    var: harden_rootforward
 - name: Forward all root email
   ansible.builtin.lineinfile:
     dest: /root/.forward

@@ -1,7 +1,8 @@
 ---
 
 - name: Check if grub is present
-  ansible.builtin.stat: path=/etc/default/grub
+  ansible.builtin.stat:
+    path: /etc/default/grub
   register: hasgrub
 
 ## linux.yml: disable usb storage drivers - grub
@@ -12,6 +13,10 @@
 ## https://www.cs.tau.ac.il/~mad/publications/asplos2016-iommu.pdf
 ## http://www.stewin.org/papers/dimvap15-stewin.pdf
 - name: Update grub settings
+  when: >
+    not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        ) and hasgrub.stat.exists
   block:
     - name: Enable IOMMU in grub
       ansible.builtin.replace:
@@ -39,7 +44,3 @@
         mode: '0644'
         create: yes
       when: ansible_os_family == "RedHat" and harden_grub_md5password is defined and harden_grub_md5password | string
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and hasgrub.stat.exists
