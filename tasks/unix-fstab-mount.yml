@@ -1,7 +1,7 @@
 ---
 
 - name: Secure Mount options
-  ansible.builtin.mount:
+  ansible.posix.mount:
     name: "{{ outer_item.mount }}"
     # src: "{{ item.device }}"
     # src: "UUID={{ item.uuid }}"

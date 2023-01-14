@@ -25,7 +25,7 @@
         create: yes
 
 - name: Set system timezone
-  ansible.builtin.timezone:
+  community.general.timezone:
     name: "{{ harden_timezone | default('UTC') }}"
   when: >
     ansible_distribution != "Alpine" and

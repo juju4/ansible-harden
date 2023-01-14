@@ -1,7 +1,7 @@
 ---
 
 - name: Alpine | upgrade all packages to the latest version
-  ansible.builtin.apk:
+  community.general.apk:
     upgrade: yes
   async: 3600
   poll: 300

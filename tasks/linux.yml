@@ -113,7 +113,7 @@
         mode: '0644'
       when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
     - name: Set sensible core pattern
-      ansible.builtin.sysctl:
+      ansible.posix.sysctl:
         name: "kernel.core_pattern"
         value: "/tmp/cores/core.%e.%p.%h.%t"
         sysctl_set: yes

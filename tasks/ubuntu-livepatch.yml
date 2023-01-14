@@ -19,7 +19,7 @@
   until: pkg_result is success
 
 - name: Ubuntu | Install livepatch
-  ansible.builtin.snap:
+  community.general.snap:
     name: "canonical-livepatch"
     classic: no
 
