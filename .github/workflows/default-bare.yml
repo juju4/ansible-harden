@@ -4,11 +4,16 @@ name: default-bare
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:  # run weekly, every Wednesday 03:00
     - cron: '0 3 * * 3'
 
+permissions: {}
+
 jobs:
   build:
+    permissions:
+      contents: read
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -20,11 +25,11 @@ jobs:
       ANSIBLE_EXTRA_VARS: "-e harden_sshd_remote_src=yes -e harden_testing_privesc_upc=false -e harden_testing_privesc_lpc=false -e inspec_dir=/home/runner/work/ansible-harden/ansible-harden/juju4.harden/test/integration/default"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: juju4.harden
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - name: ACL
