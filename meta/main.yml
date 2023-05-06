@@ -33,6 +33,6 @@ dependencies:
   - role: juju4.auditd
   # - role: juju4.syslogclient
   # - role: juju4.ntpclient
-  # - role: kbrebanov.osquery
+  # - role: juju4.osquery
   ## better to enable falco at the end of the provisioning
   # - role: juju4.falco

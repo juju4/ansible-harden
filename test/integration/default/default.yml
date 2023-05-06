@@ -41,5 +41,5 @@
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
-    # - kbrebanov.osquery
+    # - juju4.osquery
     - juju4.harden
