@@ -29,9 +29,13 @@
     not cracklibrefresh.stat.exists
   block:
     - name: RedHat | create cracklib database
-      ansible.builtin.shell: "mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"  # noqa no-changed-when
-      # args:
-      #   creates: /usr/lib/cracklib_dict.pwd
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          mkdict /usr/share/dict/* | packer /usr/lib/cracklib_dict"  # noqa no-changed-when
+      args:
+        executable: /bin/bash
+        # creates: /usr/lib/cracklib_dict.pwd
 - name: Add cracklib refresh marker
   ansible.builtin.file:
     path: /usr/share/dict/.ansible_cracklib_update

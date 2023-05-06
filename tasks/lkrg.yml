@@ -52,7 +52,7 @@
 - name: Debian | fix systemd service file destination path
   ansible.builtin.replace:
     dest: "{{ install_archives }}/lkrg-{{ harden_lkrg_version }}/scripts/bootup/systemd/lkrg-systemd.sh"
-    regex: -f5
+    regexp: -f5
     replace: -f7
     mode: '0644'
   when: ansible_distribution_release == 'xenial'

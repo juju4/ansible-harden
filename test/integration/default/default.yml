@@ -1,38 +1,39 @@
 ---
 
-- hosts: all
+- name: Test integration playbook
+  hosts: all
   environment:
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
     https_proxy: "{{ lookup('env', 'https_proxy') }}"
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
   vars:
-    - harden_upgradeall: false
-    - harden_auditd_log_all_execve: true
-    - harden_auditd_log_all_socket: true
-    - harden_auditd_log_all_connect: true
-    - harden_sshd_ca_gen: true
-    - harden_sshd_ca_path: /tmp/cadir/ssh-ca
-    - harden_sshd_host_key_opath: /tmp/ofiles
-    - harden_lkrg: true
-    - harden_testing: true
-    - ipv6_config: 'harden'
-    - harden_ipset_list:
-        - { n: blacklist_cidr, t: nethash }
-        - { n: msteams_tcp, t: nethash }
-        - { n: msteams_udp, t: nethash }
-    - harden_ipset_list_data:
-        - n: msteams_tcp
-          list:
-            - 13.107.64.0/18
-            - 52.112.0.0/14
-            - 52.120.0.0/14
-            - 52.238.119.141/32
-            - 52.244.160.207/32
-        - n: msteams_udp
-          list:
-            - 13.107.64.0/18
-            - 52.112.0.0/14
-            - 52.120.0.0/14
+    harden_upgradeall: false
+    harden_auditd_log_all_execve: true
+    harden_auditd_log_all_socket: true
+    harden_auditd_log_all_connect: true
+    harden_sshd_ca_gen: true
+    harden_sshd_ca_path: /tmp/cadir/ssh-ca
+    harden_sshd_host_key_opath: /tmp/ofiles
+    harden_lkrg: true
+    harden_testing: true
+    ipv6_config: 'harden'
+    harden_ipset_list:
+      - { n: blacklist_cidr, t: nethash }
+      - { n: msteams_tcp, t: nethash }
+      - { n: msteams_udp, t: nethash }
+    harden_ipset_list_data:
+      - n: msteams_tcp
+        list:
+          - 13.107.64.0/18
+          - 52.112.0.0/14
+          - 52.120.0.0/14
+          - 52.238.119.141/32
+          - 52.244.160.207/32
+      - n: msteams_udp
+        list:
+          - 13.107.64.0/18
+          - 52.112.0.0/14
+          - 52.120.0.0/14
   pre_tasks:
     - name: Ubuntu 22.04 | disable sshd certificates
       ansible.builtin.set_fact:

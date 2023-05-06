@@ -74,13 +74,15 @@
 
     - name: Testing | run linux-baseline
       # shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
-      ansible.builtin.shell: >
+      ansible.builtin.shell: |
+        set -o pipefail
         inspec exec inspec --input-file inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee {{ log_dir | default('/var/log') }}/inspec.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
       args:
         chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
         creates: "{{ log_dir | default('/var/log') }}/inspec.log"
+        executable: /bin/bash
       failed_when: false
       register: inspeclog
       changed_when: false
@@ -89,13 +91,15 @@
         var: inspeclog.stdout_lines
 
     - name: Testing | run inspec baselines
-      ansible.builtin.shell: >
+      ansible.builtin.shell: |
+        set -o pipefail
         inspec exec {{ item.u }} --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
             tee -a {{ log_dir | default('/var/log') }}/inspec-{{ item.i }}.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
       args:
         chdir: "{{ inspec_dir | default('/tmp/kitchen/juju4.harden/test/integration/default') }}"
         creates: "/var/log/inspec-{{ item.i }}.log"
+        executable: /bin/bash
       with_items: "{{ harden_testing_inspec_paths }}"
       failed_when: false
       changed_when: false

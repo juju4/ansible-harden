@@ -129,3 +129,7 @@
 
 - name: Refresh grub config
   ansible.builtin.command: update-grub
+
+- name: Check global aide config if changed
+  ansible.builtin.command: "{{ aide_bin }} -D -c {{ aide_conf }} {{ aide_args_v }}"
+  changed_when: false

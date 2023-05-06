@@ -1,65 +1,66 @@
 ---
 
-- hosts: all
+- name: Test integration playbook
+  hosts: all
   vars:
-    - harden_upgradeall: false
-    - harden_auditd_log_all_execve: true
-    - harden_auditd_log_all_socket: true
-    - harden_auditd_log_all_connect: true
-    - hardensysctl_kernel_modules:
-        - sysdig_probe
-        - ip_tables
-        - iptable_filter
-        - nf_log_ipv4
-        - nf_log_common
-        - nf_conntrack_ipv4
-        - nf_defrag_ipv4
-        - nf_conntrack
-        - xt_multiport
-        - xt_conntrack
-        - xt_LOG
-        - xt_limit
-        - xt_tcpudp
-        - xt_recent
-        - xt_conntrack
-        - x_tables
-        - xt_tcpudp
-        # if you use nat, postrouting, lxd-bridge...
-        - iptable_nat
-        - iptable_mangle
-        - ipt_MASQUERADE
-        - nf_nat_masquerade_ipv4
-        - xt_CHECKSUM
-        - xt_comment
-        # - ip6_tables
-        # - ip6table_filter
-        # - ip6t_REJECT
-        # - ip6t_rt
-        ## firewall or ufw (latter requires ip6* modules if ipv6 enabled)
-        # - xt_hl
-        # - nf_conntrack_ipv6
-        # - nf_defrag_ipv6
-        # - ipt_REJECT
-        # - nf_reject_ipv4
-        # - xt_addrtype
-        # - nf_conntrack_broadcast
-        # /etc/default/ufw
-        # - nf_conntrack_ftp
-        # - nf_nat_ftp
-        # - nf_conntrack_netbios_ns
-        ## if bridge/lxd-bridge
-        # - bridge
-        # - stp
-        # - llc
-        # - veth
-        # - scsi_transport_iscsi
-        ## qemu/kvm
-        # - pvpanic
-        # - kvm
-        # - kvm_intel
-        ## openwall lkrg
-        - 'p_lkrg p_init_log_level=3'
-    - harden_lkrg: true
-    - harden_testing: true
+    harden_upgradeall: false
+    harden_auditd_log_all_execve: true
+    harden_auditd_log_all_socket: true
+    harden_auditd_log_all_connect: true
+    hardensysctl_kernel_modules:
+      - sysdig_probe
+      - ip_tables
+      - iptable_filter
+      - nf_log_ipv4
+      - nf_log_common
+      - nf_conntrack_ipv4
+      - nf_defrag_ipv4
+      - nf_conntrack
+      - xt_multiport
+      - xt_conntrack
+      - xt_LOG
+      - xt_limit
+      - xt_tcpudp
+      - xt_recent
+      - xt_conntrack
+      - x_tables
+      - xt_tcpudp
+      # if you use nat, postrouting, lxd-bridge...
+      - iptable_nat
+      - iptable_mangle
+      - ipt_MASQUERADE
+      - nf_nat_masquerade_ipv4
+      - xt_CHECKSUM
+      - xt_comment
+      # - ip6_tables
+      # - ip6table_filter
+      # - ip6t_REJECT
+      # - ip6t_rt
+      ## firewall or ufw (latter requires ip6* modules if ipv6 enabled)
+      # - xt_hl
+      # - nf_conntrack_ipv6
+      # - nf_defrag_ipv6
+      # - ipt_REJECT
+      # - nf_reject_ipv4
+      # - xt_addrtype
+      # - nf_conntrack_broadcast
+      # /etc/default/ufw
+      # - nf_conntrack_ftp
+      # - nf_nat_ftp
+      # - nf_conntrack_netbios_ns
+      ## if bridge/lxd-bridge
+      # - bridge
+      # - stp
+      # - llc
+      # - veth
+      # - scsi_transport_iscsi
+      ## qemu/kvm
+      # - pvpanic
+      # - kvm
+      # - kvm_intel
+      ## openwall lkrg
+      - 'p_lkrg p_init_log_level=3'
+    harden_lkrg: true
+    harden_testing: true
   roles:
     - juju4.harden

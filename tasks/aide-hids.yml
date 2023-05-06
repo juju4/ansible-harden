@@ -31,10 +31,10 @@
         mode: "0644"
       with_items: "{{ harden_aide_extra_conf }}"
       register: aidecustomconf
-    - name: Check global aide config if changed
-      ansible.builtin.command: "{{ aide_bin }} -D -c {{ aide_conf }} {{ aide_args_v }}"
-      when: aidecustomconf.changed
-      changed_when: false
+      notify:
+        - Check global aide config if changed
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
     - name: Import debian-aide-unprivileged-report
       ansible.builtin.import_tasks: debian-aide-unprivileged-report.yml
 

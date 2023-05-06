@@ -1,36 +1,37 @@
 ---
 
-- hosts: all
+- name: Test integration playbook
+  hosts: all
   environment:
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
     https_proxy: "{{ lookup('env', 'https_proxy') }}"
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
   vars:
-    # - harden_upgradeall: false
-    - harden_auditd_log_all_execve: true
-    - harden_auditd_log_all_socket: true
-    - harden_auditd_log_all_connect: true
-    - harden_sshd_ca_gen: true
-    - harden_sshd_ca_path: /tmp/cadir/ssh-ca
-    - harden_sshd_host_key_opath: /tmp/ofiles
-    - harden_testing: true
-    - ipv6_config: 'harden'
-    - rsyslog_conf_d:
-        - 49-bash2syslog.conf
-        # must be before 50-* else duplicate in main syslog/messages and separate
-        - 30-ansible.conf
-        - 30-iptables.conf
-        - 30-snmpd.conf
-    - rsyslog_conf_d_extradirs:
-        - { d: /var/log/ansible }
-        - { d: /var/log/iptables }
-        - { d: /var/log/snmpd }
-    - syslogclient_logrotate_syslog_template_extras:
-        - logrotate-iptables
-        - logrotate-osquery
+    # harden_upgradeall: false
+    harden_auditd_log_all_execve: true
+    harden_auditd_log_all_socket: true
+    harden_auditd_log_all_connect: true
+    harden_sshd_ca_gen: true
+    harden_sshd_ca_path: /tmp/cadir/ssh-ca
+    harden_sshd_host_key_opath: /tmp/ofiles
+    harden_testing: true
+    ipv6_config: 'harden'
+    rsyslog_conf_d:
+      - 49-bash2syslog.conf
+      # must be before 50-* else duplicate in main syslog/messages and separate
+      - 30-ansible.conf
+      - 30-iptables.conf
+      - 30-snmpd.conf
+    rsyslog_conf_d_extradirs:
+      - { d: /var/log/ansible }
+      - { d: /var/log/iptables }
+      - { d: /var/log/snmpd }
+    syslogclient_logrotate_syslog_template_extras:
+      - logrotate-iptables
+      - logrotate-osquery
   pre_tasks:
     - name: RedHat | set fact
-      set_fact:
+      ansible.builtin.set_fact:
         ntpclient_listen: ['127.0.0.1', '::1']
       when: ansible_os_family == "RedHat"
   roles:
@@ -39,7 +40,7 @@
     - juju4.harden_mailserver
     - { role: juju4.ipv6, when: not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8) }
     - juju4.auditd
-    - kbrebanov.osquery
+    - juju4.osquery
     - juju4.ntpclient
     - juju4.syslogclient
     - juju4.falco
