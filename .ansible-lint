@@ -3,3 +3,5 @@ warn_list:
   - experimental
   - no-changed-when
   - role-name
+exclude_paths:
+  - .github/workflows/galaxy.yml

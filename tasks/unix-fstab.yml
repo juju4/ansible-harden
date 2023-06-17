@@ -21,7 +21,7 @@
   ansible.builtin.command: "diff /etc/fstab.{{ ansible_date_time.date }} /etc/fstab"
   changed_when: false
   ignore_errors: true
-  register: diff
+  register: diff_fstab
 - name: Debug | fstab changes
   ansible.builtin.debug:
-    var: diff.stdout_lines
+    var: diff_fstab.stdout_lines
