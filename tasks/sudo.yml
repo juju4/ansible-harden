@@ -27,7 +27,9 @@
     mode: '0440'
     backup: "{{ harden_backup | default(false) }}"
     validate: 'visudo -cf %s'
-  when: sudo_v | string is version_compare('1.9.4', '>=')
+  when:
+    - sudo_v | string is version_compare('1.9.4', '>=')
+    - harden_sudo_logs_json | bool
 
 - name: Configure sudo remote syslog
   ansible.builtin.lineinfile:

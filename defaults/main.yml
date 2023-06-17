@@ -41,6 +41,7 @@ harden_shell_timeout: 3600
 # minutes
 harden_sudo_timeout: 15
 harden_sudo_remotesyslog: ''
+harden_sudo_logs_json: false
 harden_ssh_review: true
 harden_ssh_template: ssh_config.j2
 harden_sshd_review: true
