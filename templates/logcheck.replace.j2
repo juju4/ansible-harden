@@ -129,9 +129,10 @@ s/grafana\[[0-9]*\]: logger=cleanup t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\
 s/grafana\[[0-9]*\]: t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\+\([0-9]*\)/grafana: t=YYYY-MM-DDTHH:MM:SS+\1/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NN/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS/
-s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=info msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9]*\.[0-9]*ms size=[0-9]*/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=info msg="\5" method=\6 path=\7 status=\8 remote_addr=\9 time_ms=N duration=N.Nms size=N/
+s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9]*\.[0-9]*ms size=[0-9]*/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.Nms size=N/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Nms/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" error="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" error="\4" duration=N.Nms/
+s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" file=/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\4" file=/
 
 ## snap
 s/\(.*\)\.logrotate\[[0-9]*\]: reading config file \/tmp\/tmp\..*/\1.logrotate: reading config file \/tmp\/tmp.XXXXX/
