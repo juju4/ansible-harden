@@ -131,8 +131,6 @@ jobs:
           ls -l /etc/login.defs
           cat /etc/login.defs
           ls -la /etc
-          ls -laR /etc/aide/
-          cat /etc/aide/aide.conf
           ls -la /etc/ssh/
           cat /etc/ssh/sshd_config
           cat /etc/ssh/ssh_config
@@ -143,6 +141,22 @@ jobs:
           cat /etc/security/pwquality.conf || true
           ls -laR /etc/monit/
           sudo cat /etc/monit/monitrc
+        if: ${{ always() }}
+        continue-on-error: true
+      - name: After script - ssh
+        run: |
+          set -x
+          ls -la /etc/ssh/
+          cat /etc/ssh/sshd_config
+          cat /etc/ssh/ssh_config
+        if: ${{ always() }}
+        continue-on-error: true
+      - name: After script - aide hids
+        run: |
+          set -x
+          ls -laR /etc/aide/
+          cat /etc/aide/aide.conf
+          cat /usr/local/scripts/cron.daily-aide
         if: ${{ always() }}
         continue-on-error: true
       - name: After script - files

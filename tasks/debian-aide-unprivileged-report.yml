@@ -27,7 +27,7 @@
 
 - name: Have custom aide cron.daily script
   ansible.builtin.template:
-    src: cron.daily-aide.j2
+    src: "{{ aide_hids_crondaily | default('cron.daily-aide.j2') }}"
     dest: /usr/local/scripts/cron.daily-aide
     mode: '0755'
 

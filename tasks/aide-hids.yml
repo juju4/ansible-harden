@@ -38,6 +38,19 @@
     - name: Import debian-aide-unprivileged-report
       ansible.builtin.import_tasks: debian-aide-unprivileged-report.yml
 
+- name: Ubuntu 22.04+ | Workaround config issue
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int > 22
+  block:
+    # ERROR: /etc/aide/aide.conf.d/31_aide_smokeping: stderr>   ERROR: /etc/aide/aide.conf.d/31_aide_smokeping: execl failed: Exec format error
+    - name: Check if /etc/aide/aide.conf.d/31_aide_smokeping
+      ansible.builtin.stat:
+        path: /etc/aide/aide.conf.d/31_aide_smokeping
+      register: aide_smokeping
+    - name: Disable faulty config file
+      ansible.builtin.command:  # noqa no-changed-when
+        cmd: mv /etc/aide/aide.conf.d/31_aide_smokeping /etc/aide/aide.conf.d/31_aide_smokeping.disabled
+      when: aide_smokeping.stat.exists
+
 - name: RedHat | Update configuration
   when: ansible_os_family == "RedHat"
   block:
