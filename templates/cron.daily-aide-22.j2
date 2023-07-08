@@ -845,7 +845,7 @@ if [ "$COPYNEWDB" = "ifnochange" ] && [ "$ARETVAL" = "0" ]; then
     printf >> "$POSTRUNLOG" "no significant changes detected.\\n"
 fi
 
-if [ "$COPYNEWDB" = "yes" ]; then
+if [ "$COPYNEWDB" = "yes" ] || [ "$COPYNEWDB" = "rotate" ]; then
     COPYDB=1
 fi
 
