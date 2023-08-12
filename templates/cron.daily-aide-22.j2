@@ -249,9 +249,9 @@ onexit() {
         # LOGHEAD goes to syslog instead of LOGFILE since we do not know
         # what's up with LOGFILE
         logger -t aide-cron-daily "$LOGHEAD"
-        if [ "$SILENTREPORTS" != "yes" ]; then
-          echo "$MAILHEAD" | fold --bytes --width="${MAILWIDTH}" | mail -s "premature termination - $MAILSUBJ" "$MAILTO"
-        fi
+        # if [ "$SILENTREPORTS" != "yes" ]; then
+        #   echo "$MAILHEAD" | fold --bytes --width="${MAILWIDTH}" | mail -s "premature termination - $MAILSUBJ" "$MAILTO"
+        # fi
         CRONEXITHOOKPARM="early-$CRONEXITHOOKPARM"
     else
         # we are being called after the cron job was properly set up.
