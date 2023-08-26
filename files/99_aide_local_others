@@ -115,6 +115,14 @@
 /var/lib/apt/periodic/autoclean-stamp$ VarTime
 /var/lib/apt/periodic/unattended-upgrades-stamp$ VarTime
 /var/lib/ubuntu-advantage$ VarDir
+/var/lib/ubuntu-advantage/apt-esm/var/cache/apt$ VarDir
+/var/lib/ubuntu-advantage/apt-esm/var/cache/apt/pkgcache.bin$ VarFile
+/var/lib/ubuntu-advantage/apt-esm/var/cache/apt/srcpkgcache.bin$ VarFile
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists$ VarDir
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/auxfiles$ VarDir
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/esm.ubuntu.com_apps_ubuntu_dists_focal-apps-security_InRelease$ VarFile
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/esm.ubuntu.com_apps_ubuntu_dists_focal-apps-updates_InRelease$ VarFile
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/partial$ VarDir
 /var/lib/ubuntu-advantage/messages$ VarTime
 /var/lib/ubuntu-advantage/jobs-status.json$ VarFile
 /var/lib/ubuntu-advantage/private$ VarTime
@@ -211,6 +219,8 @@
 /var/mail/_aide$ VarFile
 /var/snap/canonical-livepatch/common$ VarDir
 /var/snap/canonical-livepatch/common/client-info$ VarFile
+/var/snap/canonical-livepatch/common/kernel-sru-date$ VarFile
+/var/snap/canonical-livepatch/common/kernel-support-status$ VarFile
 /var/snap/canonical-livepatch/common/payload$ VarDir
 /var/snap/canonical-livepatch/common/payload/changelog$ VarFile
 /var/snap/canonical-livepatch/common/payload/copyright$ VarFile
