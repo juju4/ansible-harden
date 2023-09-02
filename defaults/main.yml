@@ -50,6 +50,7 @@ harden_sshd_port: 22
 harden_sshd_permitrootlogin: without-password
 harden_sshd_allowusers: 'vagrant deploy'
 harden_sshd_config_maxauthtries: 2
+harden_sshd_loglevel: VERBOSE
 # Use SSH certificates:
 #  * should this role manage CA on orchestrator
 #  * path to public CA key on ansible target(s)

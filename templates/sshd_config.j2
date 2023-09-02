@@ -42,7 +42,7 @@ ServerKeyBits 1024
 {% endif %}
 # Logging
 SyslogFacility AUTH
-LogLevel {{ harden_sshd_loglevel | default('VERBOSE') }}
+LogLevel {{ harden_sshd_loglevel }}
 
 # Authentication:
 LoginGraceTime 30s
@@ -116,7 +116,9 @@ HostCertificate {{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key
 # Allow client to pass locale environment variables
 AcceptEnv LANG LC_*
 
-Subsystem sftp /usr/lib/openssh/sftp-server
+# VERBOSE needed for file transfers
+# https://access.redhat.com/articles/1374633
+Subsystem sftp /usr/lib/openssh/sftp-server -l {{ harden_sshd_loglevel }}
 ## read-only sftp?
 #Subsystem sftp /usr/lib/openssh/sftp-server -R
 
@@ -189,7 +191,7 @@ AllowUsers {{ ansible_user }}
 
 {% if not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8) %}
 Match group sftp-users
-    ForceCommand internal-sftp
+    ForceCommand internal-sftp -l {{ harden_sshd_loglevel }}
     ChrootDirectory /sftp-home/\%u
     PermitTTY no
 
