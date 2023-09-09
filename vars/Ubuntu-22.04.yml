@@ -17,6 +17,7 @@ harden_pkg:
   - chkrootkit
   - acct
   - aide
+  - logcheck
   - apparmor-profiles
   - apparmor-utils
   - acl
