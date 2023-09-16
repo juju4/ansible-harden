@@ -22,6 +22,7 @@
         follow: yes
       with_items:
         # - /usr/bin/gcc-{{ gcc_v }}
+        - /usr/bin/as
         - /usr/bin/cc
         - /usr/bin/gcc
         - /usr/bin/gcc-ar

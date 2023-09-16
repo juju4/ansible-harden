@@ -96,6 +96,12 @@ harden_issue_lines:
   - { re: '^Kernel.*', l: 'Kernel: \r' }
   - { re: '^IPv4.*', l: 'IPv4: \4{eth0}' }
   - { re: '^IPv6.*', l: 'IPv6: \6{eth0}' }
+  - { re: '\*\*\* This system is monitored and actions are recorded. \*\*\*',
+      l: '*** This system is monitored and actions are recorded. ***'
+  }
+  - { re: '\*\*\* Unauthorized access is strictly prohibited.        \*\*\*',
+      l: '*** Unauthorized access is strictly prohibited.        ***'
+  }
 
 harden_disable_usb: true
 harden_enable_iommu_force: false

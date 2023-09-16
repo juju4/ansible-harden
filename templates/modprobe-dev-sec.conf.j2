@@ -9,3 +9,8 @@ install udf /bin/true
 install vfat /bin/true
 # https://askubuntu.com/questions/719058/blk-update-request-i-o-error-dev-fd0-sector-0
 blacklist floppy
+# https://cisofy.com/lynis/controls/NETW-3200/
+blacklist dccp
+blacklist sctp
+blacklist rds
+blacklist tipc
