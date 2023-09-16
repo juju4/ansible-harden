@@ -35,6 +35,9 @@ s/sshd\[[0-9]*\]: Connection closed by invalid user \(.*\) \([0-9a-fA-F\.:]*\) p
 s/sshd\[[0-9]*\]: Disconnected from authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from authenticating user \1 \2 port N/
 s/sshd\[[0-9]*\]: Closing connection to \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Closing connection to \1 port N/
 s/systemd\[[0-9]*\]: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
+s/systemd\[[0-9]*\]: ssh.service: Unit process [0-9]* (\(.*\)) remains running after unit stopped./systemd: ssh.service: Unit process X (\1) remains running after unit stopped./
+s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read 0 written [0-9]*/sftp-server: close "\1" bytes read 0 written N/
+s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read [0-9]* written 0/sftp-server: close "\1" bytes read N written 0/
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
@@ -69,6 +72,8 @@ s/systemd-udevd\[[0-9]*\]: Could not generate persistent MAC address for veth[A-
 s/.service: Scheduled restart job, restart counter is at [0-9]*./.service: Scheduled restart job, restart counter is at X./
 s/systemd\[[0-9]*\]: \(.*\).service: Killing process [0-9]* (\(.*\)) with signal \(.*\)./systemd: \1.service: Killing process X (\2) with signal \3./
 s/systemd\[[0-9]*\]: Started snap.\(.*\)\.[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*\.scope/systemd: Started snap.\1.GUID.scope/
+s/systemd\[[0-9]*\]: \(.*\).service: Consumed [0-9]*\.[0-9]*s CPU time/systemd: \1.service: Consumed N.Ns CPU time/
+s/systemd\[[0-9]*\]: \(.*\).service: Consumed [0-9]*min [0-9]*\.[0-9]*s CPU time/systemd: \1.service: Consumed Nmin N.Ns CPU time/
 
 ### snmpd
 s/snmpd\[[0-9]*\]: Connection from UDP: \[\([0-9\.:]*\)\]:[0-9]* ->\[\([0-9\.:]*\)\]:\([0-9]*\)/snmpd: Connection from UDP: [\1]:N ->[\2]:\3/
@@ -84,6 +89,7 @@ s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N 
 s/ansible-async_wrapper.py: [0-9]* still running ([0-9]*)/ansible-async_wrapper.py: N still running (N)/
 s/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-xxxxxx ;/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
+s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/source/
 
 ### ptrace
 s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
@@ -133,6 +139,8 @@ s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Nms/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" error="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" error="\4" duration=N.Nms/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" file=/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\4" file=/
+s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9.]*\(.*\)s size=[0-9]* referer= handler=\(.*\)/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.N\11s size=N referer= handler=\12/
+s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*s/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Ns/
 
 ## snap
 s/\(.*\)\.logrotate\[[0-9]*\]: reading config file \/tmp\/tmp\..*/\1.logrotate: reading config file \/tmp\/tmp.XXXXX/
