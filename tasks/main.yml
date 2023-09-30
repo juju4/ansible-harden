@@ -135,6 +135,8 @@
   ansible.builtin.import_tasks: llmnr-systemd.yml
 - name: Import chkrootkit
   ansible.builtin.import_tasks: chkrootkit.yml
+  when: >
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 22)
 
 - name: Import testing
   ansible.builtin.import_tasks: testing.yml
