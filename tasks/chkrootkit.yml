@@ -1,0 +1,15 @@
+---
+
+- name: Configure chkrootkit
+  ansible.builtin.copy:
+    src: "{{ harden_chkrootkit_conf }}"
+    dest: /etc/chkrootkit/chkrootkit.conf
+    mode: '0644'
+    backup: yes
+
+- name: Add ignore to chkrootkit
+  ansible.builtin.lineinfile:
+    path: /etc/chkrootkit/chkrootkit.ignore
+    line: "{{ item }}"
+    mode: '0644'
+  loop: "{{ harden_chkrootkit_ignore }}"

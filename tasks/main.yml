@@ -133,6 +133,8 @@
   ansible.builtin.import_tasks: vim-swapfiles.yml
 - name: Import llmnr-systemd
   ansible.builtin.import_tasks: llmnr-systemd.yml
+- name: Import chkrootkit
+  ansible.builtin.import_tasks: chkrootkit.yml
 
 - name: Import testing
   ansible.builtin.import_tasks: testing.yml

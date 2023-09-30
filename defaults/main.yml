@@ -243,6 +243,9 @@ harden_rhel_kpatch: false
 
 harden_selinux_customhome: []
 
+harden_chkrootkit_ignore: []
+harden_chkrootkit_conf: chkrootkit.conf
+
 harden_osquery: true
 harden_osquery_template: 'osquery.conf.j2'
 harden_osquery_upload_packs: []
