@@ -88,6 +88,7 @@ s/lxdbr0: port [0-9]*(veth[A-Za-z0-9]*) entered disabled state/lxdbr0: port N(ve
 s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N still running (N)/
 s/ansible-async_wrapper.py: [0-9]* still running ([0-9]*)/ansible-async_wrapper.py: N still running (N)/
 s/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-xxxxxx ;/
+s/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-xxxxxx ;/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/source/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
@@ -140,6 +141,7 @@ s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]
 s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9]*\.[0-9]*ms size=[0-9]*/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.Nms size=N/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Nms/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" error="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" error="\4" duration=N.Nms/
+s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" error="\(.*\)"/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" error="\4"/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" file=/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\4" file=/
 s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9.]*\(.*\)s size=[0-9]* referer= handler=\(.*\)/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.N\11s size=N referer= handler=\12/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*s/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Ns/
