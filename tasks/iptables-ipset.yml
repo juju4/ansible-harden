@@ -13,11 +13,26 @@
     src: ipsets.conf.j2
     dest: /etc/ipsets.conf
     mode: '0644'
+  notify:
+    - Ipset restore
 
 - name: Check existing lists
   ansible.builtin.command: "ipset list"
   changed_when: false
   register: ipset
+
+- name: Create ipset list
+  ansible.builtin.command: "ipset create {{ item.n }} {{ item.t }}"
+  loop: "{{ harden_ipset_list }}"
+  when: "item.n not in ipset"
+  register: ipset_create
+  changed_when:
+    - ipset_create.rc == 0
+  failed_when:
+    - ipset_create.rc != 0
+    - "'set with the same name already exists' not in ipset_create.stderr"
+  notify:
+    - Ipset restore
 
 - name: Configure ipsets
   ansible.builtin.template:
