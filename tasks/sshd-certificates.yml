@@ -8,6 +8,7 @@
     state: directory
     mode: '0700'
   connection: local
+  become: no
   when: harden_sshd_ca_path | dirname != '/tmp'
 
 - name: Check if SSH CA exists (pubkey)
@@ -15,15 +16,17 @@
     path: "{{ harden_sshd_ca_path }}.pub"
   register: sshca
   connection: local
+  become: no
 
 - name: Orchestrator | Generate SSH CA
   community.crypto.openssh_keypair:
     path: "{{ harden_sshd_ca_path }}"
     type: "{{ harden_sshd_ca_type | default('ed25519') }}"
     mode: "{{ harden_sshd_ca_mode | default('0400') }}"
-    owner: "{{ harden_sshd_ca_user | default('root') }}"
+    owner: "{{ harden_sshd_ca_user | default(lookup('env', 'USER')) }}"
     group: "{{ harden_sshd_ca_group | default('root') }}"
   connection: local
+  become: no
   when: not sshca.stat.exists
 
 - name: Debug
@@ -92,3 +95,4 @@
     creates: "{{ item.pubkey | regex_replace('.pub$', '-cert.pub') }}"
   with_items: "{{ harden_sshd_ca_signing_userkeys }}"
   connection: local
+  become: no
