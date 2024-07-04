@@ -3,7 +3,7 @@
 ## RHEL7.2+
 
 - name: Ensure kpatch is present
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: kpatch
     state: present
   register: pkg_result

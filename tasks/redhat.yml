@@ -1,7 +1,7 @@
 ---
 
 - name: Redhat | Remove some packages
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: rpcbind
     state: absent
   when: harden_use_rpc is not defined or not harden_use_rpc
@@ -14,7 +14,7 @@
   when: (harden_upgradeall is defined and harden_upgradeall) and (travisci is not defined or not travisci)
   block:
     - name: Redhat | upgrade all packages to the latest version
-      ansible.builtin.yum:  # noqa package-latest
+      ansible.builtin.dnf:  # noqa package-latest
         name: '*'
         state: latest
       async: 3600

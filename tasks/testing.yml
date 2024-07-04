@@ -51,7 +51,7 @@
       register: pkg_result
       until: pkg_result is success
     - name: RedHat | install inspec package
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         name: "/tmp/{{ inspec_url | basename }}"
         state: present
       when: ansible_os_family == 'RedHat'

@@ -4,7 +4,7 @@
 ## http://unix.stackexchange.com/questions/252314/why-does-a-yum-package-update-replaces-my-yum-cron-config-files
 
 - name: RedHat | Ensure yum-cron package is present
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: yum-cron
     state: present
   register: pkg_result
