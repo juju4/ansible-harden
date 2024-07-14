@@ -30,7 +30,7 @@ harden_pkg:
   - ldnsutils
   - update-notifier-common
   - gnupg
-  - libpam-cracklib
+  # - libpam-cracklib
   - debsums
   # - apt-show-versions
   - lynis
