@@ -50,7 +50,7 @@ harden_pkg:
   - ecryptfs-utils
   # - apt-listbugs
   - apt-listchanges
-  - libopenscap8
+  - libopenscap25t64
   # - libpam-pwquality     # conflicting with cracklib
   - ubuntu-dbgsym-keyring
 
