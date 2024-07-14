@@ -1,5 +1,16 @@
-#{{ ansible_managed | comment }}
+# {{ ansible_managed | comment }}
 # /etc/logcheck/logcheck.replace
+
+{% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
+      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
+# Final uniq+sort is done by syslog-summary normally
+s/[A-Z][a-z][a-z]\s*[0-9]*\s*[0-9]*:[0-9]*:[0-9]*\s*//
+s/sudo\[[0-9]*\]: /sudo: /
+s/CRON\[[0-9]*\]: /CRON: /
+{% else %}
+# s/[A-Z][a-z][a-z]\s*[0-9]*\s*[0-9]*:[0-9]*:[0-9]*\s*//
+{% endif %}
+
 s/sshd\[[0-9]*\]: Accepted \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Accepted \1 for \2 from \3 port N ssh2/
 s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* ssh2/sshd: Failed \1 for \2 from \3 port N ssh2/
 s/sshd\[[0-9]*\]: Accepted publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
@@ -38,6 +49,12 @@ s/systemd\[[0-9]*\]: ssh.service: Found left-over process [0-9]* (\(.*\)) in con
 s/systemd\[[0-9]*\]: ssh.service: Unit process [0-9]* (\(.*\)) remains running after unit stopped./systemd: ssh.service: Unit process X (\1) remains running after unit stopped./
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read 0 written [0-9]*/sftp-server: close "\1" bytes read 0 written N/
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read [0-9]* written 0/sftp-server: close "\1" bytes read N written 0/
+{% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
+      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
+# for other sftp-server logs
+s/sftp-server\[[0-9]*\]: /sftp-server: /
+s/sshd\[[0-9]*\]: /sshd: /
+{% endif %}
 
 ### kernel
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
@@ -54,6 +71,8 @@ s/kernel: \[[0-9]*\.[0-9]*\] Out of memory: Kill process [0-9]* (\(.*\)) score [
 s/kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*.*//
 s/kernel: \[[0-9N]*\.[0-9N]*\] audit: audit_lost=[0-9]* audit_rate_limit=\([0-9]*\) audit_backlog_limit=\([0-9]*\)/kernel: [N.N] audit: audit_lost=X audit_rate_limit=\1 audit_backlog_limit=\2/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit_log_start: [0-9]* callbacks suppressed/kernel: [N.N] audit_log_start: X callbacks suppressed/
+s/kernel: \[[ 0-9N]*\.[0-9N]*\] kauditd_print_skb: [0-9]* callbacks suppressed/kernel: [N.N] kauditd_print_skb: X callbacks suppressed/
+s/kernel: kauditd_print_skb: [0-9]* callbacks suppressed/kernel: kauditd_print_skb: X callbacks suppressed/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] net_ratelimit: [0-9]* callbacks suppressed/kernel: [N.N] net_ratelimit: X callbacks suppressed/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] \(.*\)\[[0-9]*\]: segfault at \(.*\) ip \([0-9a-f]*\) sp [0-9a-f]* error \([0-9]*\) in \(.*\) \[[0-9a-f]*\+[0-9a-f]*\]/kernel: [N.N] \1: segfault at \2 ip \3 sp HHHH error \4 in \5 [HH+HH]/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] \(.*\)\[[0-9]*\]: segfault at \(.*\) ip \([0-9a-f]*\) sp [0-9a-f]* error \([0-9]*\) in \(.*\)/kernel: [N.N] \1: segfault at \2 ip \3 sp HHHH error \4 in \5/
@@ -90,6 +109,7 @@ s/ansible-async_wrapper.py: [0-9]* still running ([0-9]*)/ansible-async_wrapper.
 s/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-xxxxxx ;/
 s/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-xxxxxx ;/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
+s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/async_wrapper.py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/async_wrapper.py/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/source/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/tmp\/ansible-tmp-N.N-N-N\/source/
@@ -107,6 +127,8 @@ s/falco: [A-Z][a-z]* [A-Z][a-z]*[ ]* [0-9]* [0-9]*:[0-9]*:[0-9]* [0-9]*: /falco:
 s/falco: [0-9]*:[0-9]*:[0-9]*\.[0-9]*: /falco: N:N:N.N: /
 s/falco: adding new consumer [0-9a-f]*/falco: adding new consumer HHHHHH/
 s/falco: deallocating consumer [0-9a-f]*/falco: deallocating consumer HHHHHH/
+# falcoctl: 2024-07-04 00:58:16 ERROR unable to retrieve Falco versions, please check if it is running and correctly exposing the version endpoint: unable to get versions from URL
+s/falcoctl\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* /falcoctl: YYYY-MM-DD HH:MM:SS /
 
 ### ansible
 s/ansible-async_wrapper: Invoked with [0-9]* [0-9]* \(.*\)\/.ansible\/tmp\/ansible-tmp-[0-9]*.[0-9]*-[0-9]*\/\(.*\)/ansible-async_wrapper: Invoked with N N \1\/.ansible\/tmp\/ansible-tmp-N.N-N\/\2/
@@ -179,3 +201,13 @@ s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
 
 s/postfix\/master\[[0-9]*\]: warning: process \(.*\) pid [0-9]* exit status \([0-9]*\)/postfix\/master: warning: process \1 pid X exit status \2/
+s/postfix\/pickup\[[0-9]*\]: [0-9A-Z]*: uid=\([0-9]*\) from=\(.*\)/postfix\/pickup: XXX: uid=\1 from=\2/
+s/postfix\/postdrop\[[0-9]*\]: warning: \(.*\)/postfix\/postdrop: warning: \1/
+s/postfix\/qmgr\[[0-9]*\]: [0-9A-Z]*: from=\(.*\), size=[0-9]*, nrcpt=\([0-9]*\) \(.*\)/postfix\/qmgr: XXX: from=\1, size=N, nrcpt=\2 \3/
+s/postfix\/qmgr\[[0-9]*\]: [0-9A-Z]*: removed/postfix\/qmgr: XXX: removed/
+s/postfix\/sendmail\[[0-9]*\]: fatal: \(.*\)/postfix\/sendmail: fatal: \1/
+s/postfix\/cleanup\[[0-9]*\]: [0-9A-Z]*: message-id=<[0-9]*.[0-9A-Z]*@\(.*\)>/postfix\/cleanup: XXX: message-id=<NNN.XXX@\1/
+
+# teleport timestamp
+s/teleport\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z ERRO/teleport: YYYY-MM-DDTHH:MM:SSZ ERRO/
+s/teleport\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z INFO/teleport: YYYY-MM-DDTHH:MM:SSZ INFO/
