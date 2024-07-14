@@ -1,4 +1,8 @@
 ---
+# syslog-summary package has been removed after Debian10/Ubuntu20.04
+# and no direct replacement => basic one
+# https://tracker.debian.org/pkg/syslog-summary
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=198762
 
 - name: Logcheck additional configuration - ntpd ignore
   ansible.builtin.copy:
@@ -48,10 +52,16 @@
     - { regexp: '^#SYSLOGSUMMARY=0', replace: 'SYSLOGSUMMARY=1' }
     - { regexp: '^(#?)TMP=".*"', replace: 'TMP=/tmp/logcheck-temp-files' }
 
-- name: Ensure TMP dir exists
+- name: Ensure TMP dir exists now
+  ansible.builtin.file:
+    path: /tmp/logcheck-temp-files
+    owner: logcheck
+    mode: '0700'
+
+- name: Ensure TMP dir exists at reboot
   ansible.builtin.lineinfile:
     dest: /etc/cron.d/logcheck
-    line: '@reboot         logcheck    [ ! -d /tmp/logcheck-temp-files ] && install -d -m 700 /tmp/logcheck-temp-files'
+    line: '@reboot         logcheck    [ ! -d /tmp/logcheck-temp-files ] && install -d -o logcheck -m 700 /tmp/logcheck-temp-files'
     insertafter: '^@reboot         logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R; fi'
     mode: '0644'
 
@@ -123,3 +133,12 @@
     mode: '0644'
     create: yes
   when: ansible_service_mgr == 'systemd'
+
+- name: Add basic replacement for syslog-summary if no package
+  ansible.builtin.template:
+    src: syslog-summary.j2
+    dest: /usr/bin/syslog-summary
+    mode: '0755'
+  when: >
+    (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20)
