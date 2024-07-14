@@ -57,6 +57,7 @@
     path: /tmp/logcheck-temp-files
     owner: logcheck
     mode: '0700'
+    state: directory
 
 - name: Ensure TMP dir exists at reboot
   ansible.builtin.lineinfile:
