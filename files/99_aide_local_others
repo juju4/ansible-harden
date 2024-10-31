@@ -114,6 +114,9 @@
 /var/lib/apt/periodic/upgrade-stamp$ VarTime
 /var/lib/apt/periodic/autoclean-stamp$ VarTime
 /var/lib/apt/periodic/unattended-upgrades-stamp$ VarTime
+/var/lib/command-not-found$ VarDir
+/var/lib/command-not-found/commands.db$ VarFile
+/var/lib/command-not-found/commands.db.metadata$ VarFile
 /var/lib/ubuntu-advantage$ VarDir
 /var/lib/ubuntu-advantage/apt-esm/var/cache/apt$ VarDir
 /var/lib/ubuntu-advantage/apt-esm/var/cache/apt/pkgcache.bin$ VarFile
@@ -122,6 +125,8 @@
 /var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/auxfiles$ VarDir
 /var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/esm.ubuntu.com_apps_ubuntu_dists_focal-apps-security_InRelease$ VarFile
 /var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/esm.ubuntu.com_apps_ubuntu_dists_focal-apps-updates_InRelease$ VarFile
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/esm.ubuntu.com_apps_ubuntu_dists_jammy-apps-security_InRelease$ VarFile
+/var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/esm.ubuntu.com_apps_ubuntu_dists_jammy-apps-updates_InRelease$ VarFile
 /var/lib/ubuntu-advantage/apt-esm/var/lib/apt/lists/partial$ VarDir
 /var/lib/ubuntu-advantage/messages$ VarTime
 /var/lib/ubuntu-advantage/jobs-status.json$ VarFile
