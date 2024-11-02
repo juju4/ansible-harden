@@ -96,12 +96,16 @@ BEGINSTAMP="$(date +"%Y-%m-%d %H:%M:%S")"
 
 if ! [ -d "$LOCKBASE" ]; then
     sudo install -d -o "${AIDE_USER}" -g root -m 600 $LOCKBASE
+else
+    sudo -n chown "${AIDE_USER}" $LOCKBASE
 fi
 
 # make sure $TMPBASE exists
 
-if ! [ -d "$TMPBASE" ]; then
-  sudo install -d -o "${AIDE_USER}" -g root -m 700 $TMPBASE
+if ! [ -d "$TMPDIRIN" ]; then
+  sudo install -d -o "${AIDE_USER}" -g root -m 700 $TMPDIRIN
+else
+    sudo -n chown "${AIDE_USER}" $TMPDIRIN
 fi
 
 # have /etc/default/aide override variables
@@ -742,6 +746,8 @@ fi
 
 if command -v dotlockfile >/dev/null 2>&1; then
     if ! dotlockfile -p -l "$LOCKFILE"; then
+	ls -la $LOCKBASE
+	whoami
         onexit nolock
         exit 1
     fi

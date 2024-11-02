@@ -13,6 +13,9 @@ Cmnd_Alias C_AIDE = \
    /usr/bin/stat -c %y /var/lib/aide/aide.db, \
    /usr/bin/savelog -c 7 /var/lib/aide/aide.db, \
    /usr/bin/install -d -o _aide -g root -m 700 /run/aide, \
+   /usr/bin/install -d -o _aide -g root -m 700 /var/tmp/aide.cron.daily, \
+   /usr/bin/chown _aide /run/aide, \
+   /usr/bin/chown _aide /var/tmp/aide.cron.daily, \
    /bin/cp -f /var/lib/aide/aide.db.new /var/lib/aide/aide.db
 
 #   /usr/bin/savelog -t -g adm -m 640 -u root -c 7 /var/log/aide/aide.log
