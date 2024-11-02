@@ -91,17 +91,25 @@
     - name: Ubuntu | Disable debsecan cron
       ansible.builtin.replace:
         dest: /etc/cron.d/debsecan
-        regexp: '^([0-9].*) * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
+        regexp: '^([0-9].*) \* \*\ \* \* daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron$'
         replace: '#\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
         mode: '0644'
-- name: Debian | define distribution of debsecan
-  ansible.builtin.replace:
-    dest: /etc/default/debsecan
-    regexp: '^SUITE=.*'
-    replace: 'SUITE={{ ansible_distribution_release }}'
-    mode: '0644'
-    backup: "{{ harden_backup | default(false) }}"
+- name: Debian distrib debsecan
   when: ansible_distribution == 'Debian'
+  block:
+    - name: Debian | define distribution of debsecan
+      ansible.builtin.replace:
+        dest: /etc/default/debsecan
+        regexp: '^SUITE=.*'
+        replace: 'SUITE={{ ansible_distribution_release }}'
+        mode: '0644'
+        backup: "{{ harden_backup | default(false) }}"
+    - name: Debian | Report only fixed for debsecan cron
+      ansible.builtin.replace:
+        dest: /etc/cron.d/debsecan
+        regexp: '^([0-9].*) \* \* \* \* daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron$'
+        replace: '\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron --only-fixed --suite {{ ansible_distribution_release }}'
+        mode: '0644'
 
 ## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
 ## https://bugzilla.redhat.com/show_bug.cgi?id=455713
