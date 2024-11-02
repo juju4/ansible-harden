@@ -1,4 +1,4 @@
-# {{ ansible_managed | comment }}
+{{ ansible_managed | comment }}
 # /etc/logcheck/logcheck.replace
 
 {% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
@@ -45,10 +45,12 @@ s/sshd\[[0-9]*\]: Did not receive identification string from \([0-9a-fA-F\.:]*\)
 s/sshd\[[0-9]*\]: Connection closed by invalid user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by invalid user \1 \2 port N/
 s/sshd\[[0-9]*\]: Disconnected from authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from authenticating user \1 \2 port N/
 s/sshd\[[0-9]*\]: Closing connection to \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Closing connection to \1 port N/
+s/sshd\[[0-9]*\]: User child is on pid [0-9]*/sshd: sshd: User child is on pid N/
 s/systemd\[[0-9]*\]: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
 s/systemd\[[0-9]*\]: ssh.service: Unit process [0-9]* (\(.*\)) remains running after unit stopped./systemd: ssh.service: Unit process X (\1) remains running after unit stopped./
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read 0 written [0-9]*/sftp-server: close "\1" bytes read 0 written N/
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read [0-9]* written 0/sftp-server: close "\1" bytes read N written 0/
+s/sshd\[[0-9]*\]: message repeated [0-9]* times: \[ error: channel 0: chan_read_failed for istate 1\]/sshd: message repeated N times: [ error: channel 0: chan_read_failed for istate 1]/
 {% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
       (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
 # for other sftp-server logs
@@ -70,12 +72,39 @@ s/kernel: \[[0-9N]*\.[0-9N]*\] init: \(.*\) main process ([0-9]*) terminated wit
 s/kernel: \[[0-9]*\.[0-9]*\] Out of memory: Kill process [0-9]* (\(.*\)) score [0-9]* or sacrifice child/kernel: [N.N] Out of memory: Kill process X (\1) score X or sacrifice child/
 s/kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9]*\]\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*[0-9]*\s*.*//
 s/kernel: \[[0-9N]*\.[0-9N]*\] audit: audit_lost=[0-9]* audit_rate_limit=\([0-9]*\) audit_backlog_limit=\([0-9]*\)/kernel: [N.N] audit: audit_lost=X audit_rate_limit=\1 audit_backlog_limit=\2/
+s/kernel: \[[0-9N]*\.[0-9N]*\] audit: audit([0-9]*\.[0-9]*:[0-9]*): proctitle="\(.*\)"/kernel: [N.N] audit: audit(NNN.N:NNN): proctitle="\1"/
+s/kernel: \[[0-9N]*\.[0-9N]*\] audit: audit([0-9]*\.[0-9]*:[0-9]*): proctitle=[A-Z0-9]*/kernel: [N.N] audit: audit(NNN.N:NNN): proctitle=XXXXXX/
+# kernel: [ N.N] audit: type=1400 audit(1721020997.828:34645): apparmor="ALLOWED" operation="open" profile="/opt/osquery/bin/osqueryd" name="/etc/passwd" pid=738
+# kernel: audit: type=1400 audit(1721090019.920:36796): apparmor="DENIED" operation="mount" info="failed flags match" error=-13 profile="lxc-218_</var/lib/lxc>" name="/run/systemd/unit-root/proc/" pid=335599 comm="(find)" fstype="proc" srcname="proc" flags="rw, nosuid, nodev, noexec"
+s/kernel: \[[0-9N]*\.[0-9N]*\] audit: type=1400 audit([0-9]*\.[0-9]*:[0-9]*): apparmor="\(.*\)" \(.*\) pid=[0-9]* /kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="\1" \2 pid=N /
+s/kernel: audit: type=1400 audit([0-9]*\.[0-9]*:[0-9]*): apparmor="\(.*\)" \(.*\) pid=[0-9]* /kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="\1" \2 pid=N /
+# ubuntu_pro_apt_news
+s/audit: type=1400 audit(NNN.N:NNN): apparmor=\(.*\) name="\(.*\)\/#[0-9]*" pid=/audit: type=1400 audit(NNN.N:NNN): apparmor=\1 name="\2\/#NNN" pid=/
+s/audit: type=1400 audit(NNN.N:NNN): apparmor=\(.*\) name="\(.*\)\/#[0-9]*" pid=/audit: type=1400 audit(NNN.N:NNN): apparmor=\1 name="\2\/clearsigned.message.XXX" pid=/
+s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): proctitle="\(.*\)"/kernel: audit: type=\1 audit(NNN.NNN:NNN): proctitle="\2"/
+s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): proctitle=[0-9A-F]*/kernel: audit: type=\1 audit(NNN.NNN:NNN): proctitle=XXXXXX/
+s/kernel: \[ N\.N\] audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): proctitle=[0-9A-F]*/kernel: [ N.N] audit: type=\1 audit(NNN.NNN:NNN): proctitle=XXXXXX/
+s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): cwd="\(.*\)"/kernel: audit: type=\1 audit(NNN.NNN:NNN): cwd="\2"/
+s/kernel: \[ N\.N\] audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): cwd="\(.*\)"/kernel: [ N.N] audit: type=\1 audit(NNN.NNN:NNN): cwd="\2"/
+s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): \(.*\) ppid=\([0-9]*\) pid=\([0-9]*\) /kernel: audit: type=\1 audit(NNN.NNN:NNN): \2 ppid=N pid=N /
+# kernel: [N.N] audit: type=1300 audit(1722717740.766:3348033): arch=c000003e syscall=157 success=yes exit=0 a0=23 a1=9 a2=7ff2cb8db009 a3=0 items=0 ppid=1 pid=1073288 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="(auditd)" exe="/usr/lib/systemd/systemd" subj=unconfined key="uncommon_syscalls"
+s/kernel: \[N\.N\] audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): \(.*\) ppid=\([0-9]*\) pid=\([0-9]*\) /kernel: [N.N] audit: type=\1 audit(NNN.NNN:NNN): \2 ppid=N pid=N /
+s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): opid=\([0-9]*\) /kernel: audit: type=\1 audit(NNN.NNN:NNN): opid=N /
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit_log_start: [0-9]* callbacks suppressed/kernel: [N.N] audit_log_start: X callbacks suppressed/
-s/kernel: \[[ 0-9N]*\.[0-9N]*\] kauditd_print_skb: [0-9]* callbacks suppressed/kernel: [N.N] kauditd_print_skb: X callbacks suppressed/
-s/kernel: kauditd_print_skb: [0-9]* callbacks suppressed/kernel: kauditd_print_skb: X callbacks suppressed/
+s/kernel: \[[ 0-9N]*\.[0-9N]*\] kauditd_printk_skb: [0-9]* callbacks suppressed/kernel: [N.N] kauditd_printk_skb: X callbacks suppressed/
+s/kernel: kauditd_printk_skb: [0-9]* callbacks suppressed/kernel: kauditd_printk_skb: X callbacks suppressed/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] net_ratelimit: [0-9]* callbacks suppressed/kernel: [N.N] net_ratelimit: X callbacks suppressed/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] \(.*\)\[[0-9]*\]: segfault at \(.*\) ip \([0-9a-f]*\) sp [0-9a-f]* error \([0-9]*\) in \(.*\) \[[0-9a-f]*\+[0-9a-f]*\]/kernel: [N.N] \1: segfault at \2 ip \3 sp HHHH error \4 in \5 [HH+HH]/
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] \(.*\)\[[0-9]*\]: segfault at \(.*\) ip \([0-9a-f]*\) sp [0-9a-f]* error \([0-9]*\) in \(.*\)/kernel: [N.N] \1: segfault at \2 ip \3 sp HHHH error \4 in \5/
+# kernel: [N.N] EXT4-fs (loop3): last error at time 1720674471: ext4_journal_check_start:83
+# kernel: EXT4-fs (loop0): last error at time 1720674097: ext4_check_bdev_write_error:217
+s/kernel: \[N.N\] EXT4-fs (loop[0-9]*): last error at time [0-9]*: \(.*\)/kernel: [N.N] EXT4-fs (loopX): last error at time N: \1/
+s/kernel: EXT4-fs (loop[0-9]*): last error at time [0-9]*: \(.*\)/kernel: EXT4-fs (loopX): last error at time N: \1/
+# kernel: [N.N] EXT4-fs (loop3): initial error at time 1720674081: kmmpd:187
+s/kernel: \[N.N\] EXT4-fs (loop[0-9]*): initial error at time [0-9]*: kmmpd:187/kernel: [N.N] EXT4-fs (loopX): initial error at time N: kmmpd:187/
+s/kernel: EXT4-fs (loop[0-9]*): initial error at time [0-9]*: kmmpd:187/kernel: EXT4-fs (loopX): initial error at time N: kmmpd:187/
+s/kernel: \[N.N\] EXT4-fs (loop[0-9]*): error count since last fsck: [0-9]*/kernel: [N.N] EXT4-fs (loopX): error count since last fsck: N/
+s/kernel: EXT4-fs (loop[0-9]*): error count since last fsck: [0-9]*/kernel: EXT4-fs (loopX): error count since last fsck: N/
 
 ### iptables
 s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8/
@@ -93,6 +122,11 @@ s/systemd\[[0-9]*\]: \(.*\).service: Killing process [0-9]* (\(.*\)) with signal
 s/systemd\[[0-9]*\]: Started snap.\(.*\)\.[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*\.scope/systemd: Started snap.\1.GUID.scope/
 s/systemd\[[0-9]*\]: \(.*\).service: Consumed [0-9]*\.[0-9]*s CPU time/systemd: \1.service: Consumed N.Ns CPU time/
 s/systemd\[[0-9]*\]: \(.*\).service: Consumed [0-9]*min [0-9]*\.[0-9]*s CPU time/systemd: \1.service: Consumed Nmin N.Ns CPU time/
+# systemd[1]: Started snap.canonical-livepatch.canonical-livepatch-f1a5810b-b5ed-4d39-a4a9-4700884f9773.scope.
+s/systemd\[1\]: Started snap.canonical-livepatch.canonical-livepatch-[a-f0-9]*-[a-f0-9]*-[0-9]*-[a-f0-9]*-[a-f0-9]*.scope./systemd[1]: Started snap.canonical-livepatch.canonical-livepatch-HHH-HHH-NNN-HHH-HHH.scope./
+# systemd[1]: snap.canonical-livepatch.canonical-livepatch-fad3f2a8-b690-4552-84b3-3d07c4c7c5ca.scope: Deactivated successfully.
+s/systemd\[1\]: snap.canonical-livepatch.canonical-livepatch-[a-f0-9]*-[a-f0-9]*-[0-9]*-[a-f0-9]*-[a-f0-9]*.scope: Deactivated successfully./systemd[1]: snap.canonical-livepatch.canonical-livepatch-HHH-HHH-NNN-HHH-HHH.scope: Deactivated successfully./
+s/systemd-journald\[[0-9]*\]: Suppressed [0-9]* messages from \(.*\)/systemd-journald: Suppressed N messages from \1/
 
 ### snmpd
 s/snmpd\[[0-9]*\]: Connection from UDP: \[\([0-9\.:]*\)\]:[0-9]* ->\[\([0-9\.:]*\)\]:\([0-9]*\)/snmpd: Connection from UDP: [\1]:N ->[\2]:\3/
@@ -113,6 +147,7 @@ s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/async_wrapper.py/\/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/source/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/tmp\/ansible-tmp-N.N-N-N\/source/
+s/\/async_wrapper.py j[0-9]* [0-9]* \(.*\)\/.ansible\/tmp\//\/async_wrapper.py jNNN N \1\/.ansible\/tmp\//
 
 ### ptrace
 s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
@@ -160,13 +195,19 @@ s/grafana\[[0-9]*\]: logger=cleanup t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\
 s/grafana\[[0-9]*\]: t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\+\([0-9]*\)/grafana: t=YYYY-MM-DDTHH:MM:SS+\1/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NN/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS/
-s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9]*\.[0-9]*ms size=[0-9]*/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.Nms size=N/
+# s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9]*\.[0-9]*ms size=[0-9]*/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.Nms size=N/
+s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=/
+s/grafana: \(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9]*\.[0-9]*ms size=[0-9]*/grafana: \1 remote_addr=\2 time_ms=N duration=N.Nms size=N/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Nms/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" error="\(.*\)" duration=[0-9]*\.[0-9]*ms/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" error="\4" duration=N.Nms/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" error="\(.*\)"/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" error="\4"/
 s/grafana\[[0-9]*\]: logger=\(.*\) type=\(.*\) name=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" file=/grafana: logger=\1 type=\2 name=\3 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\4" file=/
 s/grafana\[[0-9]*\]: logger=\(.*\) userId=\(.*\) orgId=\(.*\) uname=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" method=\(.*\) path=\(.*\) status=\(.*\) remote_addr=\(.*\) time_ms=[0-9]* duration=[0-9.]*\(.*\)s size=[0-9]* referer= handler=\(.*\)/grafana: logger=\1 userId=\2 orgId=\3 uname=\4 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\5 msg="\6" method=\7 path=\8 status=\9 remote_addr=\10 time_ms=N duration=N.N\11s size=N referer= handler=\12/
 s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=\(.*\) msg="\(.*\)" duration=[0-9]*\.[0-9]*s/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NNZ level=\2 msg="\3" duration=N.Ns/
+s/grafana\[[0-9]*\]: logger=\(.*\) t=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*/grafana: logger=\1 t=YYYY-MM-DDTHH:MM:SS.NN/
+/grafana: logger=context .*level=info msg="Request Completed" .*/d
+/grafana: logger=plugins.update.checker .*level=info msg="Update check succeeded" .*/d
+/grafana: logger=cleanup .*level=info msg="Completed cleanup jobs" .*/d
 
 ## snap
 s/\(.*\)\.logrotate\[[0-9]*\]: reading config file \/tmp\/tmp\..*/\1.logrotate: reading config file \/tmp\/tmp.XXXXX/
@@ -180,6 +221,7 @@ s/\(.*\)\.logrotate\[[0-9]*\]: old log \/var\/snap\/\(.*\)\.[0-9]*\.gz does not 
 s/, next retry is \(.*\) \(.*\) \([0-9]*\) [0-9]*:[0-9]*:[0-9]* \([0-9]*\), retry nbr /, next retry is \1 \2 \3 HH:MM:SS \4, retry nbr /
 s/rsyslogd\[[0-9]*\]: imjournal: [0-9]* messages lost due to rate-limiting/rsyslogd: imjournal: N messages lost due to rate-limiting/
 s/rsyslogd: imjournal: [0-9]* messages lost due to rate-limiting/rsyslogd: imjournal: N messages lost due to rate-limiting/
+s/rsyslogd:  message repeated [0-9]* times: /rsyslogd:  message repeated N times: /
 
 ## networkd-dispatcher
 s/networkd-dispatcher\[[0-9]*\]: ERROR:Unknown interface index [0-9]* seen even after reload/networkd-dispatcher: ERROR:Unknown interface index X seen even after reload/
@@ -193,6 +235,8 @@ s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: \[ \[system\] The maximu
 s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: \[ \[system\] The maximum number of pending replies for ":[0-9]*\.[0-9]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)\]/dbus-daemon: message repeated X times: [ [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)]/
 s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: /dbus-daemon: message repeated X times: /
 s/\[system\] The maximum number of pending replies for ":[0-9]*\.[0-9]*" /[system] The maximum number of pending replies for ":N.NNN" /
+# dbus-daemon[644]: [system] Activating via systemd: service name='org.freedesktop.timedate1' unit='dbus-org.freedesktop.timedate1.service' requested by ':1.11459' (uid=0 pid=861278 comm="/usr/bin/timedatectl " label="unconfined")
+s/dbus-daemon\[[0-9]*\]: \[system\] Activating via systemd: service name='\(.*\)' unit='\(.*\)' requested by ':[0-9\.]*' (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)")/dbus-daemon: [system] Activating via systemd: service name='\1' unit='\2' requested by ':N' (uid=\3 pid=NNN comm="\4" label="\5")/
 
 ## *exporter
 s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/exporter: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
@@ -200,14 +244,34 @@ s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z" level=/e
 s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: level=\1 caller=/
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
 
+# postfix/local[11110]: 88A897E2BB: to=<_zeek@vps58732.vps.ovh.ca>, orig_to=<_zeek>, relay=local, delay=0.02, delays=0.01/0/0/0, dsn=2.0.0, status=sent (delivered to mailbox)
+s/postfix\/local\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=sent (forwarded as [0-9A-F]*)/postfix\/local: XXX: to=\1, orig_to=\2, relay=\3, delay=N, delays=N\/N\/N\/N, dsn=N, status=sent (forwarded as XXXXXX)/
+s/postfix\/local\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=/postfix\/local: XXX: to=\1, orig_to=\2, relay=\3, delay=N, delays=N\/N\/N\/N, dsn=N, status=/
 s/postfix\/master\[[0-9]*\]: warning: process \(.*\) pid [0-9]* exit status \([0-9]*\)/postfix\/master: warning: process \1 pid X exit status \2/
 s/postfix\/pickup\[[0-9]*\]: [0-9A-Z]*: uid=\([0-9]*\) from=\(.*\)/postfix\/pickup: XXX: uid=\1 from=\2/
 s/postfix\/postdrop\[[0-9]*\]: warning: \(.*\)/postfix\/postdrop: warning: \1/
-s/postfix\/qmgr\[[0-9]*\]: [0-9A-Z]*: from=\(.*\), size=[0-9]*, nrcpt=\([0-9]*\) \(.*\)/postfix\/qmgr: XXX: from=\1, size=N, nrcpt=\2 \3/
+# postfix/qmgr[2136]: DA8687E2B1: from=<www-data@hostname>, size=685, nrcpt=1 (queue active)
+s/postfix\/qmgr\[[0-9]*\]: [0-9A-Z]*: from=\(.*\), size=[0-9]*, nrcpt=\([0-9]*\)/postfix\/qmgr: XXX: from=\1, size=N, nrcpt=\2/
 s/postfix\/qmgr\[[0-9]*\]: [0-9A-Z]*: removed/postfix\/qmgr: XXX: removed/
 s/postfix\/sendmail\[[0-9]*\]: fatal: \(.*\)/postfix\/sendmail: fatal: \1/
-s/postfix\/cleanup\[[0-9]*\]: [0-9A-Z]*: message-id=<[0-9]*.[0-9A-Z]*@\(.*\)>/postfix\/cleanup: XXX: message-id=<NNN.XXX@\1/
+# postfix/smtp[1148150]: A73F31FAF70: to=<relay4561535+ansible@gmail.com>, orig_to=<root>, relay=smtp.gmail.com[2607:f8b0:4004:c17::6c]:587, delay=2.1, delays=0.01/0.02/1.5/0.51, dsn=2.0.0, status=sent (250 2.0.0 OK  1721583648 d75a77b69052e-44f9cdbce43sm25680981cf.87 - gsmtp)
+s/postfix\/smtp\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=sent (250 2.0.0 OK  [0-9]* [0-9a-z]*-[0-9a-z]*\.[0-9]* - \(.*\))/postfix\/smtp: XXX: to=\1, orig_to=\2, relay=\3, delay=N, delays=N\/N\/N\/N, dsn=N, status=sent (250 2.0.0 OK  NNN XXXXXX - \4)/
+s/postfix\/cleanup\[[0-9]*\]: [0-9A-Z]*: message-id=<[0-9]*.[0-9A-Z]*@\(.*\)>/postfix\/cleanup: XXX: message-id=<NNN.XXX@\1>/
 
 # teleport timestamp
 s/teleport\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z ERRO/teleport: YYYY-MM-DDTHH:MM:SSZ ERRO/
 s/teleport\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z INFO/teleport: YYYY-MM-DDTHH:MM:SSZ INFO/
+
+# smartd
+s/smartd\[[0-9]*\]: Device: \(.*\) \[SAT\], SMART Usage Attribute: \([0-9]*\) \(.*\) changed from [0-9]* to [0-9]*/smartd[649]: Device: \1 [SAT], SMART Usage Attribute: \2 \3 changed from N to N/
+
+# filebeat
+s/filebeat\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*.[0-9]* +0000 UTC m=+[0-9]*\.[0-9]*/filebeat: YYYY-MM-DD HH:MM:SS.ZZZ +0000 UTC m=+NNN.NNN/
+
+# proxmox
+s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not have an email address/proxmox-mail-forward: mail forward failed: user '\1' does not have an email address/
+s/pvestatd\[[0-9]*\]: status update time ([0-9]*.[0-9]* seconds)/pvestatd: status update time (N.N seconds)/
+s/pvestatd\[[0-9]*\]: modified cpu set for/pvestatd: modified cpu set for/
+s/pveproxy\[[0-9]*\]: worker [0-9]* started/pveproxy: worker N started/
+s/pveproxy\[[0-9]*\]: worker [0-9]* finished/pveproxy: worker N finished/
+s/pveproxy\[[0-9]*\]: worker exit/pveproxy: worker exit/
