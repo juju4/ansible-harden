@@ -18,6 +18,10 @@
     - { n: /var/log/aide, m: '0755', recurse: no }
     - { n: /run/aide, m: '0700', recurse: no }
 
+- name: Ensure owner is correct if preexisting logs
+  ansible.builtin.command:
+    cmd: "find /var/log/aide -type f -user root -exec chown {{ harden_aide_user }} {} \\;"
+
 - name: Ensure sudo config for unprivileged aide cron.daily
   ansible.builtin.template:
     src: sudoers.d-aide.j2
