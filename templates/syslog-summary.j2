@@ -4,6 +4,7 @@
 # Basic replacement for dead package...
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=198762
 
+echo "$*" > /tmp/syslog-summary.args
 for f in $*; do
   if [ -r "$f" ]; then
     list_files="$list_files $f";
@@ -13,6 +14,6 @@ for f in $*; do
 done
 cat ${list_files} | sort | uniq -c | sort -nr | tee /tmp/syslog-summary.bak
 
-if [ "X${no_files}" != "X " ]; then
->&2 echo "Warning: following syslog-summary arguments are not files or not readable: $no_files"
+if [ -n "${no_files}" -a "X${no_files}" != "X " ]; then
+>&2 echo "Warning: following syslog-summary arguments are not files or not readable: '$no_files'"
 fi

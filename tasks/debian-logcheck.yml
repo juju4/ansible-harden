@@ -135,11 +135,21 @@
     create: yes
   when: ansible_service_mgr == 'systemd'
 
-- name: Add basic replacement for syslog-summary if no package
-  ansible.builtin.template:
-    src: syslog-summary.j2
-    dest: /usr/bin/syslog-summary
-    mode: '0755'
+- name: Alternate syslog-summary
   when: >
     (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
     (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20)
+  block:
+    - name: Add basic replacement for syslog-summary if no package
+      ansible.builtin.template:
+        src: syslog-summary.j2
+        dest: /usr/bin/syslog-summary
+        mode: '0755'
+    - name: Redirect stderr to tmp file
+      ansible.builtin.replace:
+        path: /usr/sbin/logcheck
+        regexp: '\$SYSLOG_SUMMARY "\$TMPDIR\/checked" \| \\'
+        replace: '$SYSLOG_SUMMARY "$TMPDIR/checked" 2>/tmp/syslog-summary.err | \\'
+        backup: true
+        # backup: "{{ harden_backup | default(false) }}"
+        mode: '0755'
