@@ -30,7 +30,7 @@ dependencies:
   ## harden-sysctl before any other sysctl related tasks. doing some cleaning (centos-6)
   - role: juju4.harden_sysctl
   # - role: juju4.ipv6
-  - role: juju4.auditd
+  # - role: juju4.auditd
   # - role: juju4.syslogclient
   # - role: juju4.ntpclient
   # - role: juju4.osquery
