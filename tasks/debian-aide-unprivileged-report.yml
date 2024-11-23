@@ -35,6 +35,13 @@
     dest: /usr/local/scripts/cron.daily-aide
     mode: '0755'
 
+- name: Ensure scripts dir exists
+  ansible.builtin.file:
+    path: /usr/local/scripts
+    state: directory
+    mode: '0755'
+    owner: root
+
 - name: Scheduled unprivileged daily script
   ansible.builtin.cron:
     name: aide hids unprivileged cron.daily
