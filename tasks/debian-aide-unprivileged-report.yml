@@ -29,18 +29,18 @@
     mode: '0440'
     owner: root
 
-- name: Have custom aide cron.daily script
-  ansible.builtin.template:
-    src: "{{ aide_hids_crondaily | default('cron.daily-aide.j2') }}"
-    dest: /usr/local/scripts/cron.daily-aide
-    mode: '0755'
-
 - name: Ensure scripts dir exists
   ansible.builtin.file:
     path: /usr/local/scripts
     state: directory
     mode: '0755'
     owner: root
+
+- name: Have custom aide cron.daily script
+  ansible.builtin.template:
+    src: "{{ aide_hids_crondaily | default('cron.daily-aide.j2') }}"
+    dest: /usr/local/scripts/cron.daily-aide
+    mode: '0755'
 
 - name: Scheduled unprivileged daily script
   ansible.builtin.cron:
