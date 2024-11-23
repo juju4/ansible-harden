@@ -22,3 +22,24 @@
     }
     - { regexp: '^APT::Periodic::Unattended-Upgrade', line: 'APT::Periodic::Unattended-Upgrade "1";' }
     - { regexp: '^APT::Periodic::AutocleanInterval', line: 'APT::Periodic::AutocleanInterval "14";' }
+    # more verbose
+    # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/2003851
+    - { regexp: '^APT::Periodic::Verbose', line: 'APT::Periodic::Verbose "2";' }
+    - { regexp: '^APT::Acquire::Retries .*', line: 'APT::Acquire::Retries "0";' }
+
+- name: Debian | Ensure service.d directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/apt-daily.service.d
+    state: directory
+    mode: '0755'
+    owner: root
+
+- name: Debian | Enforce run time limit
+  ansible.builtin.copy:
+    content: |
+      [Service]
+      RuntimeMaxSec=60
+      RuntimeRandomizedExtraSec=15
+    dest: /etc/systemd/system/apt-daily.service.d/runtimemax.conf
+    mode: '0644'
+    owner: root
