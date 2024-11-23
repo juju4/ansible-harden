@@ -16,7 +16,11 @@
     path: /usr/share/dict/.ansible_cracklib_update
   register: cracklibrefresh
 - name: Debian | Cracklib db does not exist
-  when: ansible_os_family == 'Debian' and not cracklibrefresh.stat.exists
+  when:
+    - ansible_os_family == 'Debian'
+    - not (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12)
+    - not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24)
+    - not cracklibrefresh.stat.exists
   block:
     - name: Debian | create cracklib database
       ansible.builtin.command: "create-cracklib-dict /usr/share/dict/*"  # noqa no-changed-when
