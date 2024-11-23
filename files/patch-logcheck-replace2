@@ -1,0 +1,12 @@
+--- logcheck.orig	2024-11-21 21:40:15.264264647 +0000
++++ logcheck	2024-11-21 21:45:17.978301439 +0000
+@@ -780,7 +780,8 @@
+ # First sort the logs to remove duplicate lines (including from different logfiles with
+ # the same lines) to reduce CPU and memory usage.
+ debug "Sorting logs"
+-$SORT "$TMPDIR/logoutput"/* | sed -e 's/[[:space:]]\+$//' > "$TMPDIR/logoutput-sorted" \
++$SORT "$TMPDIR/logoutput"/* | sed -e 's/[[:space:]]\+$//' \
++		| sed -f /etc/logcheck/logcheck.replace > "$TMPDIR/logoutput-sorted" \
+ 		|| error "Could not save sorted log content to $TMPDIR/logoutput-sorted"
+ debug "After sorting, we have the following log entries to check" "$TMPDIR/logoutput-sorted"
+ 

@@ -79,6 +79,8 @@ harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
 harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
 sshd_validate: 'sshd -f %s -T -C user=nobody -C host=localhost -C addr=localhost'
 
+harden_logcheck_patch: patch-logcheck-replace
+
 monitrc: /etc/monit/monitrc
 monit_confdir: /etc/monit/conf-available
 

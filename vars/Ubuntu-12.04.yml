@@ -70,6 +70,8 @@ harden_sshd_crypto_kex: 'diffie-hellman-group-exchange-sha256'
 harden_sshd_crypto_cipher: 'aes256-ctr,aes192-ctr,aes128-ctr'
 harden_sshd_crypto_mac: 'hmac-sha2-512,hmac-sha2-256'
 
+harden_logcheck_patch: patch-logcheck-replace
+
 monitrc: /etc/monit/monitrc
 monit_confdir: /etc/monit/conf.d
 

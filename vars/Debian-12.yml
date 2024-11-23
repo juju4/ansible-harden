@@ -1,10 +1,13 @@
 ---
 
 ssh_svc: ssh
-aide_bin: aide.wrapper
+aide_bin: aide
+aide_conf: /etc/aide/aide.conf
+aide_args_v: --log-level info
 aide_hids_cron_patch: patch-cron.daily-aide2
 aide_hids_crondaily: cron.daily-aide-22.j2
 immutable_testfile: /etc/init.d/sudo
+auditd_pkg: auditd
 
 harden_pkg:
   - openssh-server
@@ -33,7 +36,7 @@ harden_pkg:
   # - update-notifier-common
   - gnupg
   # - gnupg-curl
-  - libpam-cracklib
+  # - libpam-cracklib
   - debsums
   # - apt-show-versions
   - lynis
@@ -74,11 +77,13 @@ harden_services_containers:
   - psacct
   - auditd
 
-harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
+harden_sshd_crypto_kex: 'sntrup761x25519-sha512@openssh.com,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256'
 harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
 harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
 
 sshd_validate: 'sshd -f %s -T -C user=nobody -C host=localhost -C addr=localhost'
+
+harden_logcheck_patch: patch-logcheck-replace2
 
 aptconf_unattended: /etc/apt/apt.conf.d/50unattended-upgrades
 monitrc: /etc/monit/monitrc
@@ -98,6 +103,11 @@ build_dev_tools:
   - gcc
   - g++
   - make
+
+lkrg_dep_pkgs:
+  - "linux-headers-{{ ansible_kernel }}"
+  - make
+  - gcc
 
 inspec_url: https://packages.chef.io/files/stable/inspec/4.18.39/ubuntu/18.04/inspec_4.18.39-1_amd64.deb
 inspec_hash: 'sha256:303a8dbe90dfa45857dd315ad3f970ddd528a46efcd25bf27dc5affd03e35005'

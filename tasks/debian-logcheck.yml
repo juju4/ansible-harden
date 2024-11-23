@@ -83,7 +83,7 @@
   block:
     - name: Patch logcheck to do replacement
       ansible.posix.patch:
-        src: patch-logcheck-replace
+        src: "{{ harden_logcheck_patch }}"
         dest: /usr/sbin/logcheck
         remote_src: no
         backup: "{{ harden_backup | default(false) }}"

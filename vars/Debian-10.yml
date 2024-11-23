@@ -80,6 +80,8 @@ harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh
 
 sshd_validate: 'sshd -f %s -T -C user=nobody -C host=localhost -C addr=localhost'
 
+harden_logcheck_patch: patch-logcheck-replace
+
 aptconf_unattended: /etc/apt/apt.conf.d/50unattended-upgrades
 monitrc: /etc/monit/monitrc
 monit_confdir: /etc/monit/conf-available
