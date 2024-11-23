@@ -72,7 +72,7 @@
       ansible.builtin.copy:
         src: cron.daily-aide-redhat.j2
         dest: /etc/cron.daily/aide
-        mode: 0700
+        mode: '0700'
 
 ## aide at the end of provisioning?
 - name: Check if aide database exists

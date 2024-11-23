@@ -8,7 +8,7 @@
   ansible.builtin.copy:
     src: ntpd
     dest: /etc/logcheck/ignore.d.server/ntpd
-    mode: 0644
+    mode: '0644'
 
 - name: Logcheck additional configuration - ignore rules
   ansible.builtin.copy:

@@ -14,7 +14,7 @@
       ansible.builtin.template:
         src: fail2ban-jail.d-sshd.conf
         dest: /etc/fail2ban/jail.d/sshd.conf
-        mode: 0644
+        mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
       notify:
         - Restart fail2ban
