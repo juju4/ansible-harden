@@ -13,3 +13,22 @@
     line: "{{ item }}"
     mode: '0644'
   loop: "{{ harden_chkrootkit_ignore }}"
+
+- name: Check if log.expected exists
+  ansible.builtin.stat:
+    path: /var/log/chkrootkit/log.expected
+  register: chkr_expected
+- name: Check if log.today exists
+  ansible.builtin.stat:
+    path: /var/log/chkrootkit/log.today
+  register: chkr_today
+- name: Set log.expected
+  ansible.builtin.file:
+    src: /var/log/chkrootkit/log.today
+    dest: /var/log/chkrootkit/log.expected
+    mode: '0644'
+    owner: root
+    remote_src: true
+  when:
+    - not chkr_expected.stat.exists
+    - chkr_today.stat.exists
