@@ -5,6 +5,7 @@
       (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
 # Final uniq+sort is done by syslog-summary normally
 s/[A-Z][a-z][a-z]\s*[0-9]*\s*[0-9]*:[0-9]*:[0-9]*\s*//
+s/[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*+[0-9]*:[0-9]* //
 s/sudo\[[0-9]*\]: /sudo: /
 s/CRON\[[0-9]*\]: /CRON: /
 {% else %}
@@ -46,11 +47,12 @@ s/sshd\[[0-9]*\]: Connection closed by invalid user \(.*\) \([0-9a-fA-F\.:]*\) p
 s/sshd\[[0-9]*\]: Disconnected from authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from authenticating user \1 \2 port N/
 s/sshd\[[0-9]*\]: Closing connection to \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Closing connection to \1 port N/
 s/sshd\[[0-9]*\]: User child is on pid [0-9]*/sshd: sshd: User child is on pid N/
-s/systemd\[[0-9]*\]: ssh.service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: ssh.service: Found left-over process X (\1) in control group while starting unit. Ignoring./
-s/systemd\[[0-9]*\]: ssh.service: Unit process [0-9]* (\(.*\)) remains running after unit stopped./systemd: ssh.service: Unit process X (\1) remains running after unit stopped./
+s/systemd\[[0-9]*\]: \(.*\).service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: \1.service: Found left-over process X (\2) in control group while starting unit. Ignoring./
+s/systemd\[[0-9]*\]: \(.*\).service: Unit process [0-9]* (\(.*\)) remains running after unit stopped./systemd: \1.service: Unit process X (\2) remains running after unit stopped./
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read 0 written [0-9]*/sftp-server: close "\1" bytes read 0 written N/
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read [0-9]* written 0/sftp-server: close "\1" bytes read N written 0/
 s/sshd\[[0-9]*\]: message repeated [0-9]* times: \[ error: channel 0: chan_read_failed for istate 1\]/sshd: message repeated N times: [ error: channel 0: chan_read_failed for istate 1]/
+s/sshd\[[0-9]*\]: refused local port forward: originator \(.*\) port [0-9]*, target \(.*\) port \([0-9]*\)/sshd: refused local port forward: originator \1 port N, target \2 port \3/
 {% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
       (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
 # for other sftp-server logs
@@ -105,12 +107,17 @@ s/kernel: \[N.N\] EXT4-fs (loop[0-9]*): initial error at time [0-9]*: kmmpd:187/
 s/kernel: EXT4-fs (loop[0-9]*): initial error at time [0-9]*: kmmpd:187/kernel: EXT4-fs (loopX): initial error at time N: kmmpd:187/
 s/kernel: \[N.N\] EXT4-fs (loop[0-9]*): error count since last fsck: [0-9]*/kernel: [N.N] EXT4-fs (loopX): error count since last fsck: N/
 s/kernel: EXT4-fs (loop[0-9]*): error count since last fsck: [0-9]*/kernel: EXT4-fs (loopX): error count since last fsck: N/
+s/kernel: traps: \(.*\)\[[0-9]*\] general protection fault ip:[0-9a-f]*:[0-9a-f]* error:[0-9]* in \(.*\)\[[0-9a-f]*\+[0-9a-f]*\]/kernel: traps: \1 general protection fault ip:HHH:HHH error:N in \2[HHH+HHH]/
+s/kernel: ll header: \([09]*\): \([0-9a-f]*\) \([0-9a-f]*\) \([0-9a-f]*\) [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]*/kernel: ll header: \1: \2 \3 \4 HH HH HH HH HH HH HH HH HH HH HH HH HH/
 
 ### iptables
 s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8/
 ## optional fields
 s/iptables denied: \(.*\) WINDOW=[0-9]*/iptables denied: \1 WINDOW=X/
 s/iptables denied: \(.*\) LEN=[0-9]*/iptables denied: \1 LEN=X/
+s/iptables: \[NOMATCH\] IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\) LEN=[0-9]*/ iptables: [NOMATCH] IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8 LEN=N/
+s/iptables: \[NOMATCH\] IN=\(.*\) OUT=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\) LEN=[0-9]*/ iptables: [NOMATCH] IN=\1 OUT=\2 SRC=\3 DST=\4 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \5PROTO=\6 SPT=X DPT=\7 LEN=N/
+s/iptables: \[NOMATCH\] IN=\(.*\) OUT=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\) WINDOW=[0-9]*/ iptables: [NOMATCH] IN=\1 OUT=\2 SRC=\3 DST=\4 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \5PROTO=\6 SPT=X DPT=\7 WINDOW=N/
 
 ### systemd
 s/systemd\[[0-9]*\]: Started Session [0-9]* of user \(.*\)/systemd: Started Session N of user \1/
@@ -127,6 +134,10 @@ s/systemd\[1\]: Started snap.canonical-livepatch.canonical-livepatch-[a-f0-9]*-[
 # systemd[1]: snap.canonical-livepatch.canonical-livepatch-fad3f2a8-b690-4552-84b3-3d07c4c7c5ca.scope: Deactivated successfully.
 s/systemd\[1\]: snap.canonical-livepatch.canonical-livepatch-[a-f0-9]*-[a-f0-9]*-[0-9]*-[a-f0-9]*-[a-f0-9]*.scope: Deactivated successfully./systemd[1]: snap.canonical-livepatch.canonical-livepatch-HHH-HHH-NNN-HHH-HHH.scope: Deactivated successfully./
 s/systemd-journald\[[0-9]*\]: Suppressed [0-9]* messages from \(.*\)/systemd-journald: Suppressed N messages from \1/
+s/failed, retrying in [0-9m]*s./failed, retrying in T./
+s/\(.*\)\[[0-9]*\]: Starting/\1: Starting/
+s/\(.*\)\[[0-9]*\]: Stopping/\1: Stopping/
+s/\(.*\)\[[0-9]*\]: Launching/\1: Launching/
 
 ### snmpd
 s/snmpd\[[0-9]*\]: Connection from UDP: \[\([0-9\.:]*\)\]:[0-9]* ->\[\([0-9\.:]*\)\]:\([0-9]*\)/snmpd: Connection from UDP: [\1]:N ->[\2]:\3/
@@ -145,6 +156,7 @@ s/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c 'echo 
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/async_wrapper.py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/async_wrapper.py/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/source/
+s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/.source.conf/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/.source.conf/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/tmp\/ansible-tmp-N.N-N-N\/source/
 s/\/async_wrapper.py j[0-9]* [0-9]* \(.*\)\/.ansible\/tmp\//\/async_wrapper.py jNNN N \1\/.ansible\/tmp\//
@@ -229,6 +241,8 @@ s/networkd-dispatcher\[[0-9]*\]: WARNING:Unknown index [0-9]* seen, reloading in
 
 s/hostapd\[[0-9]*\]: \(.*\): STA \([0-9a-f:]*\) RADIUS: starting accounting session [A-F0-9]*/hostapd: \1: STA \2 RADIUS: starting accounting session HHHH/
 
+s/NetworkManager\[[0-9]*\]: <\(.*\)> \[[0-9\.]\] device /NetworkManager: <\1> [TTT] device /
+
 ## dbus
 s/dbus-daemon\[[0-9]*\]: \[system\] The maximum number of pending replies for ":[0-9.]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)/dbus-daemon: [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)/
 s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: \[ \[system\] The maximum number of pending replies for ":[0-9.]*" (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)") has been reached (max_replies_per_connection=\([0-9]*\)\]/dbus-daemon: message repeated X times: [ [system] The maximum number of pending replies for ":N.NNN" (uid=\1 pid=N comm="\2" label="\3") has been reached (max_replies_per_connection=\4)]/
@@ -256,6 +270,7 @@ s/postfix\/qmgr\[[0-9]*\]: [0-9A-Z]*: removed/postfix\/qmgr: XXX: removed/
 s/postfix\/sendmail\[[0-9]*\]: fatal: \(.*\)/postfix\/sendmail: fatal: \1/
 # postfix/smtp[1148150]: A73F31FAF70: to=<relay4561535+ansible@gmail.com>, orig_to=<root>, relay=smtp.gmail.com[2607:f8b0:4004:c17::6c]:587, delay=2.1, delays=0.01/0.02/1.5/0.51, dsn=2.0.0, status=sent (250 2.0.0 OK  1721583648 d75a77b69052e-44f9cdbce43sm25680981cf.87 - gsmtp)
 s/postfix\/smtp\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=sent (250 2.0.0 OK  [0-9]* [0-9a-z]*-[0-9a-z]*\.[0-9]* - \(.*\))/postfix\/smtp: XXX: to=\1, orig_to=\2, relay=\3, delay=N, delays=N\/N\/N\/N, dsn=N, status=sent (250 2.0.0 OK  NNN XXXXXX - \4)/
+s/postfix\/smtp\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=sent (250 OK id=[0-9A-Za-z]*-[0-9A-Za-z]*-[0-9a-z]*)/postfix\/smtp: XXX: to=\1, orig_to=\2, relay=\3, delay=N, delays=N\/N\/N\/N, dsn=N, status=sent (250 OK id=XXXXXX)/
 s/postfix\/cleanup\[[0-9]*\]: [0-9A-Z]*: message-id=<[0-9]*.[0-9A-Z]*@\(.*\)>/postfix\/cleanup: XXX: message-id=<NNN.XXX@\1>/
 
 # teleport timestamp
@@ -267,6 +282,7 @@ s/smartd\[[0-9]*\]: Device: \(.*\) \[SAT\], SMART Usage Attribute: \([0-9]*\) \(
 
 # filebeat
 s/filebeat\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*.[0-9]* +0000 UTC m=+[0-9]*\.[0-9]*/filebeat: YYYY-MM-DD HH:MM:SS.ZZZ +0000 UTC m=+NNN.NNN/
+s/filebeat\[[0-9]*\]: \(.*\),"@timestamp":"[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z",/filebeat: \1,"@timestamp":"YYYY-MM-DDTHH:MM:SS.ZZZZ",/
 
 # proxmox
 s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not have an email address/proxmox-mail-forward: mail forward failed: user '\1' does not have an email address/
@@ -275,3 +291,20 @@ s/pvestatd\[[0-9]*\]: modified cpu set for/pvestatd: modified cpu set for/
 s/pveproxy\[[0-9]*\]: worker [0-9]* started/pveproxy: worker N started/
 s/pveproxy\[[0-9]*\]: worker [0-9]* finished/pveproxy: worker N finished/
 s/pveproxy\[[0-9]*\]: worker exit/pveproxy: worker exit/
+
+# rngd
+s/rngd\[[0-9]*\]: stats: FIPS 140-2 successes: [0-9]*/rngd: stats: FIPS 140-2 successes: N/
+s/rngd\[[0-9]*\]: stats: FIPS 150-2 successes: [0-9]*/rngd: stats: FIPS 150-2 successes: N/
+s/rngd\[[0-9]*\]: stats: entropy added to kernel pool: [0-9]*/rngd: stats: entropy added to kernel pool: N/
+s/rngd\[[0-9]*\]: stats: bits sent to kernel pool: [0-9]*/rngd: stats: bits sent to kernel pool: N/
+s/rngd\[[0-9]*\]: stats: bits received from HRNG source: [0-9]*/rngd: stats: bits received from HRNG source: N/
+s/rngd\[[0-9]*\]: stats: HRNG source speed: (min=[0-9\.]*; avg=[0-9\.]*; max=[0-9\.]*)Kibits\/s/rngd: stats: HRNG source speed: (min=N; avg=N; max=N)Kibits\/s/
+s/rngd\[[0-9]*\]: stats: HRNG test speed: (min=[0-9\.]*; avg=[0-9\.]*; max=[0-9\.]*)Mibits\/s/rngd: stats: HRNG source speed: (min=N; avg=N; max=N)Mibits\/s/
+s/rngd\[[0-9]*\]: stats: FIPS source speed: (min=[0-9\.]*; avg=[0-9\.]*; max=[0-9\.]*)\([MK]*\)ibits\/s/rngd: stats: FIPS source speed: (min=N; avg=N; max=N)\1ibits\/s/
+s/rngd\[[0-9]*\]: stats: FIPS tests speed: (min=[0-9\.]*; avg=[0-9\.]*; max=[0-9\.]*)\([MK]*\)ibits\/s/rngd: stats: FIPS tests speed: (min=N; avg=N; max=N)\1ibits\/s/
+
+s/apt.systemd.daily\[[0-9]*\]: Applying pinning: PkgFilePin(id=[0-9]*, priority=-[0-9]*)/apt.systemd.daily: Applying pinning: PkgFilePin(id=N, priority=-N)/
+s/apt.systemd.daily\[[0-9]*\]: check_stamp: interval=[0-9]*, now=[0-9]*, stamp=[0-9]*, delta=[0-9]* (sec)/apt.systemd.daily: check_stamp: interval=N, now=N, stamp=N, delta=N (sec)/
+
+s/in.tftpd\[[0-9]*\]: tftp:/in.tftpd: tftp:/
+s/in.tftpd\[[0-9]*\]: RRQ from/in.tftpd: RRQ from/
