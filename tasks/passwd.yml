@@ -9,7 +9,10 @@
     mode: '0644'
     checksum: "{{ item.h }}"
   with_items: "{{ harden_cracklib_dict }}"
-  when: ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7)
+  when:
+    - ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7)
+    - not (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12)
+    - not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24)
 
 - name: Check for cracklib refresh marker
   ansible.builtin.stat:
