@@ -133,3 +133,8 @@
 - name: Check global aide config if changed
   ansible.builtin.command: "{{ aide_bin }} -D -c {{ aide_conf }} {{ aide_args_v }}"
   changed_when: false
+
+- name: Load Nftables rules
+  ansible.builtin.command:
+    cmd: "nft -f {{ nftables_rules }}"
+  # when: false

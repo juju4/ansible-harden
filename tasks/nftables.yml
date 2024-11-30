@@ -1,0 +1,23 @@
+---
+
+- name: Nftables Firewall
+  when:
+    - harden_fw is defined and harden_fw
+    - (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12) or
+      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24) or
+      (ansible_os_famiy == 'RedHat' and ansible_distribution_major_version|int >= 9)
+  block:
+    - name: Nftables configuration file update
+      ansible.builtin.template:
+        src: "{{ harden_fw_template }}"
+        dest: "{{ nftables_rules }}"
+        backup: "{{ harden_backup | default(false) }}"
+        owner: '0'
+        group: '0'
+        mode: '0644'
+        # validate: 'nft -c -f %s'
+      notify:
+        - Load Nftables rules
+    - name: Nftables configuration validation
+      ansible.builtin.command:
+        cmd: "nft -c -f {{ nftables_rules }}"

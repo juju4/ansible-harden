@@ -130,7 +130,14 @@
 
 - name: Import iptables
   ansible.builtin.import_tasks: iptables.yml
-  when: ansible_os_family == 'Debian' or ansible_os_family == "RedHat" or ansible_os_family == "Alpine"
+  when:
+    - ansible_os_family == 'Debian' or ansible_os_family == "RedHat" or ansible_os_family == "Alpine"
+    - harden_fw_type == 'iptables'
+
+- name: Import nftables
+  ansible.builtin.import_tasks: nftables.yml
+  when:
+    - harden_fw_type == 'nftables'
 
 - name: Import usb
   ansible.builtin.import_tasks: usb.yml
