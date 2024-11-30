@@ -1,0 +1,77 @@
+---
+
+ssh_svc: sshd
+auditd_pkg: audit
+
+harden_pkg:
+  - openssh-server
+  - rsyslog
+  - git
+  - gnupg
+  - rng-tools
+  - psacct
+  - sysstat
+  - aide
+  - sysstat
+  - iotop
+  # - sysdig
+  - tcpdump
+  - dnf-utils
+  # - setroubleshoot
+  - systemtap
+  - sudo
+  - iptables-services
+  - perf              # perf /FlameGraph
+  - openscap-scanner
+  - scap-security-guide
+  - libpwquality
+  # EPEL?
+  # - fail2ban
+  # - rkhunter
+  # - lynis
+  # - jitterentropy-rngd
+  # - libsemanage-python
+  # audit2why
+  - policycoreutils-python-utils
+
+harden_pkg_remove: []
+
+harden_services: []
+# - jitterentropy-rngd
+harden_services_containers:
+  # - psacct
+  - auditd
+
+syslog_mainfile: /var/log/messages
+syslog_authfile: /var/log/secure
+
+harden_sshd_crypto_kex: 'curve25519-sha256@libssh.org'
+harden_sshd_crypto_cipher: 'chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+harden_sshd_crypto_mac: 'hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com'
+sshd_validate: 'sshd -f %s -T -C user=nobody -C host=localhost -C addr=localhost'
+
+monitrc: /etc/monitrc
+monit_confdir: /etc/monit.d
+
+iptables_rulesv4: /etc/sysconfig/iptables
+iptables_rulesv6: /etc/sysconfig/ip6tables
+nftables_rules: /etc/nftables.conf
+
+testing_pkgs:
+  - curl
+  - bind-utils
+
+python3_pkg: python36
+
+build_dev_tools:
+  - gcc
+  - gcc-c++
+  - make
+
+lkrg_dep_pkgs:
+  - kernel-devel
+  - make
+  - gcc
+
+inspec_url: https://packages.chef.io/files/stable/inspec/5.10.5/el/7/inspec-5.10.5-1.el7.x86_64.rpm
+inspec_hash: 'sha256:4642f1209e60fbc88c365d57b8d007679c210c26f8d3f13dd893b0b2d3b883bd'
