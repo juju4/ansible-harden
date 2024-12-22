@@ -1,0 +1,16 @@
+kernel: [  22288] 100000 22288      683       96        0       96         0    49152        0             0 agetty
+kernel: [   5155] 100033  5155     3217      280      152      128         0    61440      192             0 nginx
+kernel: [N.N] vmalloc 745472
+kernel: [N.N] percpu 1409472
+kernel: [ N.N] workingset_restore_anon 14932
+kernel: [ N.N] workingset_refault_file 626942
+kernel: vmalloc 745472
+kernel: Code: 01 00 00 48 8d 15 18 87 42 00 48 0f be c0 48 8b 92 40 06 00 00 4c 8b 24 c2 4c 89 24 24 4d 85 e4 0f 84 94 00 00 00 49 8b 04 24 <48> 8b 58 e8 4c 01 e3 8b 43 08 83 f8 ff 74 59 83 c0 01 89 43 08 48
+squid[29843]: 2024/11/30 18:41:11 kid1| /var/spool/squid/09 exists
+squid[29843]: 2024/11/30 18:41:11 kid1| Making directories in /var/spool/squid/00
+kernel: [N.N] RIP: 0033:0x7f64841a19c0
+kernel: [N.N] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+kernel: [N.N] R13: ffffb00c1a257000 R14: 0000000000000000 R15: ffffb00c0b76bb28
+kernel: [N.N] tg3 0000:04:00.0 enp4s0f0: 0x00007500: 0x00000000, 0x00000000, 0x00000080, 0x00000000
+named[35724]: corporation.  Support and training for BIND 9 are
+named[35716]: Inc. (ISC), a non-profit 501(c)(3) public-benefit

@@ -178,3 +178,10 @@ jobs:
           sdiff /tmp/lsattr-i-* || true
         if: ${{ always() }}
         continue-on-error: true
+      - name: logcheck
+        run: |
+          set -x
+          sudo sed -f /etc/logcheck/logcheck.replace test/logcheck-test-data.log
+          sudo sed -f /etc/logcheck/logcheck.replace test/logcheck-test-data-delete.log
+        if: ${{ always() }}
+        continue-on-error: true

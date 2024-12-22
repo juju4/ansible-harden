@@ -38,6 +38,14 @@
     mode: '0644'
     # FIXME! seems to create random errors
     # validate: 'sed -f %s /var/log/syslog > /dev/null'
+    #
+- name: Validate Logcheck replace rules
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      tail -n10 /var/log/syslog | sed -f /etc/logcheck/logcheck.replace > /dev/null
+    executable: /bin/bash
+  changed_when: false
 
 - name: Review Logcheck configuration
   ansible.builtin.replace:
@@ -88,6 +96,10 @@
         remote_src: no
         backup: "{{ harden_backup | default(false) }}"
       failed_when: false
+    - name: Check logcheck patched
+      ansible.builtin.command:
+        cmd: grep logcheck.replace /usr/sbin/logcheck
+      changed_when: false
     - name: Backup patched logcheck
       ansible.builtin.copy:
         src: /usr/sbin/logcheck

@@ -1,0 +1,42 @@
+NetworkManager[534]: <warn>  [1733258121.1535] device (wlan0): Activation: failed for connection 'uplink'
+NetworkManager[534]: <info>  [1733484794.1593] Config: added 'scan_ssid' value '1'
+kernel: [N.N] redis-server invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0, oom_score_adj=0
+kernel: [N.N] traps: squid[65274] general protection fault ip:5573dc8df8e8 sp:7ffcc83ed7c0 error:0 in squid[5573dc705000+48f000]
+kernel: [N.N] traps: node[9800] trap int3 ip:2198312 sp:7ffc7a0ed540 error:0 in node[b84000+1abd000]
+kernel: traps: node[4406] trap int3 ip:2198312 sp:7ffe26f09940 error:0 in node[b84000+1abd000]
+kernel: squid[55680]: segfault at ffffffffffffffe8 ip 0000564ccbdf08e8 sp 00007ffd117ccd80 error 5 in squid[564ccbc16000+48f000]
+kernel: [N.N] workingset_refault_file 78716
+kernel: overlayfs: fs on '/var/lib/docker/overlay2/opaque-bug-check2316032048/l2' does not support file handles, falling back to xino=off.
+kernel: overlayfs: fs on '/var/lib/docker/overlay2/metacopy-check929823112/l1' does not support file handles, falling back to xino=off.
+kernel: overlayfs: fs on '/var/lib/docker/overlay2/check-overlayfs-support578603326/lower2' does not support file handles, falling back to xino=off.
+kernel: [N.N] overlayfs: fs on '/var/lib/docker/overlay2/metacopy-check2160790016/l1' does not support file handles, falling back to xino=off.
+kernel: [N.N] overlayfs: fs on '/var/lib/docker/overlay2/l/Z3GLX2ILUVWHNOYSVDT24F3M27' does not support file handles, falling back to xino=off.
+osqueryd[46072]: W1202 17:43:39.731765 55207 hashing.cpp:133] Failed to hash /etc/resolv.conf.dhclient-new.10203
+osqueryd[46072]: W1204 05:34:50.640570 55207 hashing.cpp:133] Failed to hash /etc/resolv.conf.dhclient-new.51692
+osqueryd[46072]: W1202 14:42:36.566676 55207 hashing.cpp:133] Failed to hash /etc/logcheck/4913
+audit[9196]: AVC apparmor="ALLOWED" operation="open" class="file" profile="/opt/osquery/bin/osqueryd" name="/usr/bin/" pid=9196 comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+audit[4786]: AVC apparmor="ALLOWED" operation="open" class="file" profile="/opt/osquery/bin/osqueryd" name="/etc/passwd" pid=4786 comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+kernel: audit: type=1400 audit(1733356827.925:15680120): apparmor="ALLOWED" operation="open" class="file" profile="/opt/osquery/bin/osqueryd" name="/proc/" pid=32657 comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+kernel: audit: type=1400 audit(1733356828.609:15680121): apparmor="DENIED" operation="mount" class="mount" info="failed flags match" error=-13 profile="lxc-220_</var/lib/lxc>" name="/run/systemd/namespace-DBb41v/" pid=42836 comm="(ogrotate)" fstype="proc" srcname="proc" flags="rw, nosuid, nodev, noexec"
+kernel: audit: type=1400 audit(1733513630.286:200391): apparmor="DENIED" operation="mount" class="mount" info="failed flags match" error=-13 profile="lxc-231_</var/lib/lxc>" name="/dev/shm/" pid=37785 comm="(sd-mkdcreds)" fstype="ramfs" srcname="ramfs" flags="rw, nosuid, nodev, noexec"
+kernel: audit: type=1400 audit(1721090019.920:36796): apparmor="DENIED" operation="mount" info="failed flags match" error=-13 profile="lxc-218_</var/lib/lxc>" name="/run/systemd/unit-root/proc/" pid=335599 comm="(find)" fstype="proc" srcname="proc" flags="rw, nosuid, nodev, noexec"
+kernel: [ N.N] audit: type=1400 audit(1733930837.937:993): apparmor="ALLOWED" operation="capable" class="cap" profile="/opt/osquery/bin/osqueryd" pid=1076 comm="SchedulerRunner" capability=1  capname="dac_override"
+kernel: [ N.N] audit: type=1400 audit(1733930782.169:353): apparmor="DENIED" operation="mount" class="mount" info="failed flags match" error=-13 profile="lxc-N_</var/lib/lxc>" name="XXX" pid=3409 comm="(exporter)" fstype="proc" srcname="proc" flags="rw, nosuid, nodev, noexec"
+kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="STATUS" operation="profile_load" label="lxc-220_</var/lib/lxc>//&:lxc-220_<-var-lib-lxc>:unconfined" name="/usr/lib/connman/scripts/dhclient-script" pid=N comm="apparmor_parser"
+kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" label="lxc-197_</var/lib/lxc>//&:lxc-197_<-var-lib-lxc>:unconfined" name="QtWebEngineProcess" pid=N comm="apparmor_parser"
+pmxcfs[9457]: [status] notice: RRDC update error /var/lib/rrdcached/db/pve2-vm/231: -1
+postfix/smtp[52867]: 699FCAEE8: to=<recipient@example.com>, orig_to=<logcheck>, relay=192.168.1.2[192.168.1.2]:25, delay=0.29, delays=0/0.01/0.25/0.04, dsn=2.0.0, status=sent (250 OK id=5tUVCa-00089k-1A)
+postfix/smtp[8393]: CDCE3DF0A: to=<recipient@example.com>, relay=192.168.1.2[192.168.1.2]:25, delay=0.32, delays=0.01/0.01/0.29/0.02, dsn=2.0.0, status=sent (250 OK id=1tKWpp-0000AL-0C)
+postfix/smtp[51537]: connect to 192.168.1.2[192.168.1.2]:25: No route to host
+postfix/smtp[51537]: 688041016F: to=<recipient@example.com>, orig_to=<root>, relay=none, delay=13066, delays=13063/0.02/3.1/0, dsn=4.4.1, status=deferred (connect to 192.168.1.2[192.168.1.2]:25: No route to host)
+systemd-journald[402]: /var/log/journal/51e1aeca61df4814931edfb762645df9/user-1001.journal: Journal header limits reached or header out-of-date, rotating.
+systemd-journald[402]: /var/log/journal/51e1aeca61df4814931edfb762645df9/system.journal: Journal header limits reached or header out-of-date, rotating.
+systemd-journald[402]: Oldest entry in /var/log/journal/51e1aeca61df4814931edfb762645df9/user-1001.journal is older than the configured file retention duration (1month), suggesting rotation.
+systemd-journald[402]: Data hash table of /var/log/journal/51e1aeca61df4814931edfb762645df9/system.journal has a fill level at 75.0 (129558 of 172743 items, 41943040 file size, 323 bytes per hash table item), suggesting rotation.
+systemd-journal-upload[23001]: Upload to https://192.168.12.34:19532/upload failed: SSL certificate problem: unable to get local issuer certificate
+systemd-journal-upload[1234]: Upload to https://192.168.12.34:19532/upload failed: Failed to connect to 192.168.12.34 port 19532 after 3156 ms: Couldn't connect to server
+apt.systemd.daily[19289]: remove by archive size: /var/cache/apt/archives//libxslt1.1_1.1.35-1_amd64.deb, delta=614247 >= 172800 (sec), size=775204#011 >= 512000
+falcoctl: 2024-07-04 00:58:16 ERROR unable to retrieve Falco versions, please check if it is running and correctly exposing the version endpoint: unable to get versions from URL
+falcoctl[62474]:                       ├ followerName: ghcr.io/falcosecurity/rules/falco-rules:3
+alertmanager[39404]: ts=2024-12-15T02:47:35.630Z caller=tls_config.go:316 level=info msg="TLS is disabled." http2=false address=[::]:9093
+blackbox_exporter[29967]: ts=2024-12-19T14:34:46.583Z caller=main.go:100 level=info msg="Loaded config file"
