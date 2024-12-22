@@ -1,0 +1,36 @@
+--- logcheck.orig	2024-11-17 17:26:14.789270872 +0000
++++ logcheck	2024-12-06 13:00:42.045819802 +0000
+@@ -92,6 +92,7 @@
+ SORTUNIQ=0
+ SUPPORT_CRACKING_IGNORE=0
+ SYSLOGSUMMARY=0
++LINES=10000
+ LOCKDIR=/run/lock/logcheck
+ LOCKFILE="$LOCKDIR/logcheck"
+ 
+@@ -335,6 +336,15 @@
+ 																 --file -
+ 						return $?
+ 				else
++						outlines="$(wc -l "$TMPDIR/report" | awk '{ print $1 }')"
++						if [ "$LINES" -gt "0" ] && [ "${outlines:=0}" -gt "$LINES" ]; then
++								{
++										printf "Log output has been truncated in this mail\\n"
++										printf "Output is %d lines, truncated to %d.\\n" "$outlines" "$LINES"
++										head -n "$LINES" "$TMPDIR/report"
++								} > "$TMPDIR/report2"
++								mv "$TMPDIR/report2" "$TMPDIR/report"
++						fi
+ 						mime-construct "${MIMECONSTRUCTARGS[@]}" --subject "$subject" --to "$SENDMAILTO" "${ENCODING[@]}" \
+ 													 --file "$TMPDIR/report"
+ 				fi
+@@ -780,7 +790,8 @@
+ # First sort the logs to remove duplicate lines (including from different logfiles with
+ # the same lines) to reduce CPU and memory usage.
+ debug "Sorting logs"
+-$SORT "$TMPDIR/logoutput"/* | sed -e 's/[[:space:]]\+$//' > "$TMPDIR/logoutput-sorted" \
++$SORT "$TMPDIR/logoutput"/* | sed -e 's/[[:space:]]\+$//' \
++		| sed -f /etc/logcheck/logcheck.replace > "$TMPDIR/logoutput-sorted" \
+ 		|| error "Could not save sorted log content to $TMPDIR/logoutput-sorted"
+ debug "After sorting, we have the following log entries to check" "$TMPDIR/logoutput-sorted"
+ 
