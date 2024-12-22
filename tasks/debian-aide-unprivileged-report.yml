@@ -55,3 +55,12 @@
   ansible.builtin.file:
     path: /etc/cron.daily/aide
     state: absent
+
+- name: Disable dailyaidecheck.timer
+  ansible.builtin.systemd_service:
+    name: dailyaidecheck.timer
+    state: stopped
+    enabled: no
+  when: >
+    (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12) or
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24)
