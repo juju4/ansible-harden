@@ -171,6 +171,12 @@ jobs:
           sudo ls -la /tmp/cadir/ || true
         if: ${{ always() }}
         continue-on-error: true
+      - name: After script - run files
+        run: |
+          set -x
+          ls -lR /var/run/ /run/
+        if: ${{ always() }}
+        continue-on-error: true
       - name: lsattr2
         run: |
           set -x
