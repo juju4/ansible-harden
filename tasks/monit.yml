@@ -3,7 +3,6 @@
   ansible.builtin.set_fact:
     daemons:
       - sshd
-      - rsyslog
 - name: Monit | Include osqueryd
   ansible.builtin.set_fact:
     daemons: "{{ daemons + ['osqueryd'] }}"
