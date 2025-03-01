@@ -1,0 +1,44 @@
+{{ ansible_managed | comment }}
+
+skip-test=LYNIS
+skip-test=DEB-0520
+skip-test=DEB-0810
+skip-test=DEB-0811
+skip-test=DEB-0831
+skip-test=BOOT-5264
+skip-test=KRNL-5788
+skip-test=KRNL-5820
+skip-test=AUTH-9282:deploy
+skip-test=AUTH-9282:breakglass
+skip-test=AUTH-9286
+skip-test=NAME-4028
+skip-test=PKGS-7394
+skip-test=PKGS-7420
+skip-test=NETW-3200
+skip-test=SSH-7408:ClientAliveCountMax
+skip-test=SSH-7408:MaxAuthTries
+skip-test=SSH-7408:MaxSessions
+skip-test=SSH-7408:Port
+skip-test=SSH-7408:UseDNS
+skip-test=FILE-6410
+# aide --path-check=f:/etc/password --config /etc/aide/aide.conf
+# [X] f '/etc/password': selective rule: '/ (none) l+p+u+g+s+c+m+i+b+n+md5+sha1+rmd160+tiger+crc32+haval+gost+crc32b+acl+sha256+sha512+selinux+xattrs+whirlpool+ftype+e2fsattrs+caps' (/etc/aide/aide.conf.d/99_aide_root:3: '/ 0 Full')
+skip-test=FINT-4402
+skip-test=TOOL-5002
+# Remote logging?
+skip-test=LOGG-2154
+{% if ansible_hostname == 'pluto' %}
+# TFTP
+skip-test=INSE-8318
+skip-test=INSE-8320
+{% endif %}
+{% if ansible_domain == 'vps.ovh.ca' and ansible_virtualization_type == 'openstack' %}
+# Checking if /home is mounted separately or mounted on / file system
+skip-test=FILE-6310
+{% endif %}
+{% if 'rpi' in ansible_kernel %}
+# only for Raspberry where single partition
+skip-test=FILE-6310
+# auditd
+skip-test=ACCT-9628
+{% endif %}

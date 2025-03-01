@@ -1,0 +1,20 @@
+---
+
+- name: Lynis | Set custom config
+  ansible.builtin.template:
+    src: lynis-custom.prf.j2
+    dest: /etc/lynis/custom.prf
+    mode: '0644'
+    owner: root
+
+- name: Lynis | Ensure restricted permissions
+  ansible.builtin.file:
+    path: "{{ item.p }}"
+    mode: "{{ item.m }}"
+  loop:
+    - { p: /root/.ssh, m: '0700' }
+    - { p: /etc/crontab, m: '0600' }
+    - { p: /etc/cron.d, m: '0700' }
+    - { p: /etc/cron.daily, m: '0700' }
+    - { p: /etc/cron.weekly, m: '0700' }
+    - { p: /etc/cron.monthly, m: '0700' }

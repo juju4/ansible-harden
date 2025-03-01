@@ -344,6 +344,8 @@ harden_lkrg_version: '0.9.7'
 harden_lkrg_sysctl:
   - { n: block_modules, v: 0 }
 
+harden_lynis_enable: false
+
 harden_aide_user: _aide
 
 harden_testing: false

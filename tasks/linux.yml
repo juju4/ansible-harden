@@ -206,6 +206,11 @@
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
 
+- name: Import lynis
+  ansible.builtin.import_tasks: lynis.yml
+  when:
+    - harden_lynis_enable | bool
+
 - name: Import proxy
   ansible.builtin.import_tasks: proxy.yml
   when: harden_proxy | bool
