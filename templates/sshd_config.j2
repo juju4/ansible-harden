@@ -12,7 +12,7 @@ Port {{ harden_sshd_port }}
 # Use these options to restrict which interfaces/protocols sshd will bind to
 #ListenAddress ::
 AddressFamily any
-ListenAddress 0.0.0.0
+ListenAddress {{ harden_sshd_listen | default('0.0.0.0') }}
 Protocol 2
 
 # HostKeys for protocol version 2

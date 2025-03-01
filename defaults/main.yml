@@ -46,6 +46,7 @@ harden_ssh_review: true
 harden_ssh_template: ssh_config.j2
 harden_sshd_review: true
 harden_sshd_template: sshd_config.j2
+harden_sshd_listen: '0.0.0.0'
 harden_sshd_port: 22
 harden_sshd_permitrootlogin: without-password
 harden_sshd_allowusers: 'vagrant deploy'
