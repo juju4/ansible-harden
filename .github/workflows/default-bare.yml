@@ -31,7 +31,7 @@ jobs:
             experimental: false
           - distribution: ubuntu
             version: '24.04'
-            suite: default-full
+            suite: full
             experimental: false
     env:
       ANSIBLE_CALLBACKS_ENABLED: profile_tasks
