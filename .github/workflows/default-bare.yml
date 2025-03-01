@@ -46,8 +46,6 @@ jobs:
           pip3 install ansible
           pip3 show ansible
           ls -l $HOME/.local/bin || true
-          ls -l /opt/hostedtoolcache/Python/3.9.1/x64/bin || true
-          echo "/opt/hostedtoolcache/Python/3.9.1/x64/bin" >> $GITHUB_PATH
           ansible --version
           cd $GITHUB_WORKSPACE/$ANSIBLE_ROLE
           [ -f get-dependencies.sh ] && sh -x get-dependencies.sh
@@ -189,5 +187,12 @@ jobs:
           set -x
           sudo sed -f /etc/logcheck/logcheck.replace test/logcheck-test-data.log
           sudo sed -f /etc/logcheck/logcheck.replace test/logcheck-test-data-delete.log
+        if: ${{ always() }}
+        continue-on-error: true
+      - name: apparmor
+        run: |
+          set -x
+          sudo apparmor_status
+          sudo journalctl -xe -g apparmor -l --no-pager | tail -500
         if: ${{ always() }}
         continue-on-error: true
