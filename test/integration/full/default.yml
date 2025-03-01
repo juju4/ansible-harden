@@ -30,6 +30,8 @@
     syslogclient_logrotate_syslog_template_extras:
       - logrotate-iptables
       - logrotate-osquery
+    # ERROR: Conflicting profiles for firefox defined in two files:\n- /etc/apparmor.d/firefox\n- /etc/apparmor.d/usr.bin.firefox
+    osquery_apparmor_enable: false
   pre_tasks:
     - name: RedHat | set fact
       ansible.builtin.set_fact:
