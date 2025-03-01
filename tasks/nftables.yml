@@ -4,8 +4,8 @@
   when:
     - harden_fw is defined and harden_fw
     - (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12) or
-      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24) or
-      (ansible_os_famiy == 'RedHat' and ansible_distribution_major_version|int >= 9)
+      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 22) or
+      (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 9)
   block:
     - name: Nftables configuration file update
       ansible.builtin.template:
