@@ -61,17 +61,29 @@ s/sshd\[[0-9]*\]: /sshd: /
 {% endif %}
 
 ### kernel
+/kernel: \[[0-9]*\.[0-9]*\]$/d
 s/kernel: \[[0-9]*\.[0-9]*\] /kernel: [N.N] /
 s/kernel: \[\s*[0-9]*\.[0-9]*\] /kernel: [ N.N] /
 s/kernel: \[[0-9N]*\.[0-9N]*\] \(.*\): renamed from veth\([A-Za-z0-9]*\)/kernel: [N.N] \1: renamed from vethXXXXXX/
-s/kernel: \[[0-9N]*\.[0-9N]*\] veth\([A-Za-z0-9]*\): renamed from \(.*\)/kernel: [N.N] vethXXXXXX: renamed from \1/
+s/kernel: \[[0-9N]*\.[0-9N]*\] veth\([A-Za-z0-9]*\): renamed from [0-9a-f]*/kernel: [N.N] vethXXXXXX: renamed from HHH/
 s/device veth[A-Za-z0-9]* entered promiscuous mode/device vethXXXXXX entered promiscuous mode/
 s/device veth[A-Za-z0-9]* left promiscuous mode/device vethXXXXXX left promiscuous mode/
+s/veth[A-Za-z0-9]*: entered promiscuous mode/vethXXXXXX: entered promiscuous mode/
+s/veth[A-Za-z0-9]*: left promiscuous mode/vethXXXXXX: left promiscuous mode/
+s/veth[A-Za-z0-9]*: (unregistering): left promiscuous mode/vethXXXXXX: (unregistering): left promiscuous mode/
+s/veth[A-Za-z0-9]*: left allmulticast mode/vethXXXXXX: left allmulticast mode/
+s/veth[A-Za-z0-9]*: (unregistering): left allmulticast mode/vethXXXXXX: (unregistering): left allmulticast mode/
+s/veth[A-Za-z0-9]*: entered allmulticast mode/vethXXXXXX: entered allmulticast mode/
+s/docker0: port [0-9]*(veth[A-Za-z0-9]*) entered disabled state/docker0: port N(vethXXXXXXX) entered disabled state/
+s/docker0: port [0-9]*(veth[A-Za-z0-9]*) entered blocking state/docker0: port N(vethXXXXXXX) entered disabled state/
+s/br-[0-9a-f]*: port [0-9]*(veth[A-Za-z0-9]*) entered disabled state/br-HHH: port N(vethXXXXXXX) entered disabled state/
+s/br-[0-9a-f]*: port [0-9]*(veth[A-Za-z0-9]*) entered blocking state/br-HHH: port N(vethXXXXXXX) entered disabled state/
 /kernel: \[[0-9N]*\.[0-9N]*\] \[[0-9a-f]*\] \[[0-9a-f]*\] \[[0-9a-f]*\] \[[0-9a-f]*\]/d
 /kernel: \[[0-9N]*\.[0-9N]*\] Call Trace:/d
 /kernel: \[[0-9N]*\.[0-9N]*\] Code: [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* .*/d
 /kernel: Code: [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* .*/d
 /kernel: \[\s*[0-9]*] [0-9]* [0-9]* .*/d
+/kernel: \[[0-9]*]\.[0-9]*\]/d
 /kernel: vmalloc [0-9]*$/d
 /kernel: pglazyfree [0-9]*$/d
 /kernel: percpu [0-9]*$/d
@@ -90,6 +102,7 @@ s/device veth[A-Za-z0-9]* left promiscuous mode/device vethXXXXXX left promiscuo
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pagetables [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] percpu [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgactivate [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] pgdeactivate [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgfault [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pglazyfree [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pglazyfreed [0-9]*$/d
@@ -97,14 +110,21 @@ s/device veth[A-Za-z0-9]* left promiscuous mode/device vethXXXXXX left promiscuo
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgrefill [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgscan [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgscan_direct [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] pgscan_khugepaged [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgsteal [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] pgsteal_direct [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] pgsteal_khugepaged [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] sec_pagetables [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] slab_reclaimable [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] slab_unreclaimable [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] slab [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] sock [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] shmem [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] shmem_thp [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] swapcached [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] thp_collapse_alloc [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] thp_fault_alloc [0-9]*$/d
+/kernel: \[[0-9N ]*\.[0-9N ]*\] thp_swpout [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] vmalloc [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] workingset_[a-z_]* [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] zswpwb [0-9]*$/d
@@ -113,7 +133,10 @@ s/device veth[A-Za-z0-9]* left promiscuous mode/device vethXXXXXX left promiscuo
 /kernel: \[[0-9N ]*\.[0-9N ]*\] zswapped [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] zswap [0-9]*$/d
 /kernel: \[[0-9N ]*\.[0-9N ]*\] unevictable [0-9]*$/d
-/kernel: \[[0-9N ]*\.[0-9N ]*\] tg3 [0-9]*:[0-9]*:[0-9]*\.[0-9]* [a-z0-9]*: 0x[0-9a-f]*: 0x[0-9a-f]*, .*/d
+s/kernel: .*tg3 \([0-9]*\):\([0-9]*\):\([0-9]*\)\.\([0-9]*\) \([a-z0-9]*\): 0x[0-9a-f]*: 0x[0-9a-f]*, 0x[0-9a-f]*, 0x[0-9a-f]*, 0x[0-9a-f]*/kernel: tg3 \1:\2:\3.\4 \5: 0xHHH: 0xHHH, 0xHHH, 0xHHH, 0xHHH/
+s/kernel: .*tg3 \([0-9]*\):\([0-9]*\):\([0-9]*\)\.\([0-9]*\) \([a-z0-9]*\): [0-9]*: NAPI info \[[0-9a-f]*:[0-9a-f]*:([0-9a-f]*:[0-9a-f]*:[0-9a-f]*):[0-9a-f]*:([0-9a-f]*:[0-9a-f]*:[0-9a-f]*:[0-9a-f]*)/kernel: tg3 \1:\2:\3.\4 \5: N: NAPI info [HHH:HHH:(HHH:HHH:HHH):HHH:(HHH:HHH:HHH:HHH)]/
+s/kernel: .*tg3 \([0-9]*\):\([0-9]*\):\([0-9]*\)\.\([0-9]*\) \([a-z0-9]*\): [0-9]*: Host status block \[[0-9a-f]*:[0-9a-f]*:([0-9a-f]*:[0-9a-f]*:[0-9a-f]*):([0-9a-f]*:[0-9a-f]*)/kernel: tg3 \1:\2:\3.\4 \5: N: Host status block [HHH:HHH:(HHH:HHH:HHH):(HHH:HHH)]/
+s/kernel: .*tg3 \([0-9]*\):\([0-9]*\):\([0-9]*\)\.\([0-9]*\) \([a-z0-9]*\): NETDEV WATCHDOG: CPU: \([0-9]*\): transmit queue \([0-9]*\) timed out [0-9]* ms/kernel: tg3 \1:\2:\3.\4 \5: NETDEV WATCHDOG: CPU: \1: transmit queue \2 timed out N ms/
 /kernel: .*RAX: [0-9a-f]* R.*/d
 /kernel: RSP: [0-9a-f]*: [0-9a-f]* .*$/d
 /kernel: RDX: [0-9a-f]* RSI: [0-9a-f]* RDI: [0-9a-f]*$/d
@@ -139,6 +162,7 @@ s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="\(.*\)" 
 
 s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="\(.*\)" \(.*\)label="lxc-[0-9]*_<\/var\/lib\/lxc>\/\/&:lxc-[0-9]*_<-var-lib-lxc>:unconfined" name=".*" pid=[0-9N]* comm="\(.*\)" /kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="\1" \2label="lxc-N_<\/var\/lib\/lxc>\/\/&:lxc-N_<-var-lib-lxc>:unconfined" name="XXX" pid=N comm="\3" /
 s/lxc-[0-9]*_/lxc-N_/g
+s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="ALLOWED" operation="\(.*\)" class="\(.*\)" profile="\(.*\)" name=".*" pid=[0-9N]* comm="\(.*\)" requested_mask="\(.*\)" denied_mask="\(.*\)" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="\1" class="\2" profile="\3" name="XXX" pid=N comm="\4" requested_mask="\5" denied_mask="\6" fsuid=\7 ouid=\8/
 
 # ubuntu_pro_apt_news
 s/audit: type=1400 audit(NNN.N:NNN): apparmor=\(.*\) name="\(.*\)\/#[0-9]*" pid=/audit: type=1400 audit(NNN.N:NNN): apparmor=\1 name="\2\/#NNN" pid=/
@@ -187,6 +211,7 @@ s/kernel: .*overlayfs: fs on '\/var\/lib\/\(.*\)\/[A-Z0-9]*' does not support fi
 
 ### iptables
 s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\) SPT=[0-9]* DPT=\([0-9]*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7 SPT=X DPT=\8/
+s/iptables denied: IN=\(.*\) OUT=\(.*\) MAC=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TOS=0x[0-9]* PREC=0x[0-9]* TTL=[0-9]* ID=[0-9]* \(.*\)PROTO=\(.*\)/ iptables denied: IN=\1 OUT=\2 MAC=MAC-XXX SRC=\4 DST=\5 LEN=X TOS=0xX PREC=0xX TTL=X ID=X \6PROTO=\7/
 ## optional fields
 s/iptables denied: \(.*\) WINDOW=[0-9]*/iptables denied: \1 WINDOW=X/
 s/iptables denied: \(.*\) LEN=[0-9]*/iptables denied: \1 LEN=X/
@@ -197,6 +222,8 @@ s/iptables: \[NOMATCH\] IN=\(.*\) OUT=\(.*\) SRC=\(.*\) DST=\(.*\) LEN=[0-9]* TO
 ### systemd
 s/systemd\[[0-9]*\]: Started Session [0-9]* of user \(.*\)/systemd: Started Session N of user \1/
 s/systemd-logind\[[0-9]*\]: New session [0-9]* of user \(.*\)/systemd-logind: New session N of user \1/
+/systemd-logind\[[0-9]*\]: New seat seat[0-9]*\./d
+/systemd-logind\[[0-9]*\]: Watching system buttons on \/dev\/input\/event[0-9]* .*/d
 s/systemd\[[0-9]*\]: Received SIGRTMIN+24 from PID [0-9]* (\(.*\))./systemd: Received SIGRTMIN+24 from PID N (\1)./
 s/systemd-udevd\[[0-9]*\]: Could not generate persistent MAC address for veth[A-Za-z0-9]*: No such file or directory/systemd-udevd: Could not generate persistent MAC address for vethXXXXXX: No such file or directory/
 s/.service: Scheduled restart job, restart counter is at [0-9]*./.service: Scheduled restart job, restart counter is at X./
@@ -222,6 +249,7 @@ s/systemd-journald\[[0-9]*\]: Oldest entry in \/var\/log\/journal\/[0-9a-f]*\/us
 s/systemd-journald\[[0-9]*\]: Data hash table of \/var\/log\/journal\/[0-9a-f]*\/system.journal has a fill level at [0-9]*\.[0-9]* ([0-9]* of [0-9]* items, [0-9]* file size, [0-9]* bytes per hash table item), suggesting rotation./systemd-journald: Data hash table of \/var\/log\/journal\/HHH\/system.journal has a fill level at N.N (N of N items, N file size, N bytes per hash table item), suggesting rotation./
 s/systemd-journal-upload\[[0-9]*\]: Upload to \(.*\) failed: Failed to connect to \(.*\) port [0-9]* after [0-9]* ms: Couldn't connect to server/systemd-journal-upload: Upload to \1 failed: Failed to connect to \2 port N after N ms: Couldn't connect to server/
 s/systemd-journal-upload\[[0-9]*\]: Upload to /systemd-journal-upload: Upload to /
+s/systemd\[[0-9]*\]: \(.*\).service: \(.*\) is configured, but the kernel does not support UTS namespaces, ignoring namespace setup./systemd: \1.service: \2 is configured, but the kernel does not support UTS namespaces, ignoring namespace setup./
 
 ### snmpd
 s/snmpd\[[0-9]*\]: Connection from UDP: \[\([0-9\.:]*\)\]:[0-9]* ->\[\([0-9\.:]*\)\]:\([0-9]*\)/snmpd: Connection from UDP: [\1]:N ->[\2]:\3/
@@ -242,6 +270,8 @@ s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*/\/.ansible\/tmp\/ansible-tmp-N.N-N-N/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/tmp\/ansible-tmp-N.N-N-N\/source/
+s/\/tmp\/ansible-\(.*\)\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/tmp\/ansible-\1\/ansible-tmp-N.N-N-N\/AnsiballZ_\2.py/
+s/\/tmp\/ansible-\(.*\)\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/tmp\/ansible-\1\/ansible-tmp-N.N-N-N\/source/
 s/\/async_wrapper.py j[0-9]* [0-9]* \(.*\)\/.ansible\/tmp\//\/async_wrapper.py jNNN N \1\/.ansible\/tmp\//
 s/python3\[[0-9]*\]: ansible-/python3: ansible-/
 
@@ -277,6 +307,7 @@ s/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open"
 # kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="/opt/osquery/bin/osqueryd" name="/root/.ssh/" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
 s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=[0-9]* comm="\(.*\)" requested_mask="\([a-z]*\)" denied_mask="\([a-z]*\)" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=N comm="\1" requested_mask="\2" denied_mask="\3" fsuid=\4 ouid=\5/
 s/profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=/profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=/
+s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="\(.*\)" operation="\(.*\)" class="\(.*\)" info="\(.*\)" error=\([0-9\-]*\) profile="\/opt\/osquery\/bin\/osqueryd" pid=[0-9N]* comm="\(.*\)" /kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="\1" operation="\2" class="\3" info="\4" error=\5 profile="\/opt\/osquery\/bin\/osqueryd" pid=N comm="\6" /
 
 # kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="/opt/osquery/bin/osqueryd" name="/root/.ansible/tmp/ansible-tmp-N.N-N-N/AnsiballZ_copy.py" pid=N comm="" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
 
@@ -349,6 +380,8 @@ s/dbus-daemon\[[0-9]*\]: message repeated [0-9]* times: /dbus-daemon: message re
 s/\[system\] The maximum number of pending replies for ":[0-9]*\.[0-9]*" /[system] The maximum number of pending replies for ":N.NNN" /
 # dbus-daemon[644]: [system] Activating via systemd: service name='org.freedesktop.timedate1' unit='dbus-org.freedesktop.timedate1.service' requested by ':1.11459' (uid=0 pid=861278 comm="/usr/bin/timedatectl " label="unconfined")
 s/dbus-daemon\[[0-9]*\]: \[system\] Activating via systemd: service name='\(.*\)' unit='\(.*\)' requested by ':[0-9\.]*' (uid=\([0-9]*\) pid=[0-9]* comm="\(.*\)" label="\(.*\)")/dbus-daemon: [system] Activating via systemd: service name='\1' unit='\2' requested by ':N' (uid=\3 pid=NNN comm="\4" label="\5")/
+s/dbus-daemon\[[0-9]*\]: Failed to start message bus:/dbus-daemon: Failed to start message bus:/
+
 
 ## *exporter
 s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/exporter: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
@@ -357,6 +390,16 @@ s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
 s/alertmanager\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/alertmanager: caller=/
 s/_exporter\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: caller=/
+s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config/
+s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* INFO dns_exporter/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 INFO dns_exporter/
+s/dns_exporter\[[0-9]*\]: Exception occurred during processing of request from ('\(.*\)', [0-9]*)/dns_exporter: Exception occurred during processing of request from ('\1', N)/
+/pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Worker exiting (pid: [0-9]*)/d
+/pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Starting gunicorn/d
+/pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Listening at: \(.*\) ([0-9]*)/d
+/pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Using worker: gthread/d
+/pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Booting worker with pid: [0-9]*/d
+/pve_exporter\[[0-9]*\]: \s*[\^]*/d
+s/pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] /pve_exporter: [YYYY-MM-DD HH:MM:SS +0000] [N] /
 
 # postfix/local[11110]: 88A897E2BB: to=<_zeek@vps58732.vps.ovh.ca>, orig_to=<_zeek>, relay=local, delay=0.02, delays=0.01/0/0/0, dsn=2.0.0, status=sent (delivered to mailbox)
 s/postfix\/local\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=sent (forwarded as [0-9A-F]*)/postfix\/local: XXX: to=\1, orig_to=\2, relay=\3, delay=N, delays=N\/N\/N\/N, dsn=N, status=sent (forwarded as XXXXXX)/
@@ -387,14 +430,33 @@ s/smartd\[[0-9]*\]: Device: \(.*\) \[SAT\], SMART Usage Attribute: \([0-9]*\) \(
 s/filebeat\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*.[0-9]* +0000 UTC m=+[0-9]*\.[0-9]*/filebeat: YYYY-MM-DD HH:MM:SS.ZZZ +0000 UTC m=+NNN.NNN/
 s/filebeat\[[0-9]*\]: \(.*\),"@timestamp":"[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z",/filebeat: \1,"@timestamp":"YYYY-MM-DDTHH:MM:SS.ZZZZ",/
 
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#\(.*\), "dropped_items": [0-9]*}/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#\1, "dropped_items": N}/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#\(.*\), "rejected_items": [0-9]*}/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#\1, "rejected_items": N}/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#\(.*\), "interval": "[0-9\.]*s"}/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#\1, "interval": "Ns"}/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#/
+/otelcol-contrib\[[0-9]*\]: github.com/d
+/otelcol-contrib\[[0-9]*\]: #011github.com\/open-telemetry\/opentelemetry-collector-contrib\/pkg\/stanza@v0.111.0\/fileconsumer\/file.go:[0-9N]*/d
+/otelcol-contrib: #011github.com\/open-telemetry\/opentelemetry-collector-contrib\/pkg\/stanza@v0.111.0\/fileconsumer\/file.go:[0-9N]*/d
+s/otelcol-contrib\[[0-9]*\]: #\([0-9]*\)github.com\(.*\):[0-9]*/otelcol-contrib: #\1github.com\2:N/
+/otelcol-contrib\[[0-9]*\]: go.opentelemetry.io/d
+s/otelcol-contrib\[[0-9]*\]: #\([0-9]*\)go.opentelemetry.io\(.*\):[0-9]*/otelcol-contrib: #\1go.opentelemetry.io\2:N/
+s/otelcol-contrib\[[0-9]*\]: Error:/otelcol-contrib: Error:/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* collector server run finished with error:/otelcol-contrib: YYYY-MM-DD HH:MM:SS collector server run finished with error:/
+
 # proxmox
 s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not have an email address/proxmox-mail-forward: mail forward failed: user '\1' does not have an email address/
+s/proxmox-mail-forward\[[0-9]*\]: could not notify via target/proxmox-mail-forward: could not notify via target/
+s/proxmox-mail-forward\[[0-9]*\]: notify via target/proxmox-mail-forward: notify via target/
+s/proxmox-mail-forward\[[0-9]*\]: skipping disabled matcher/proxmox-mail-forward: skipping disabled matcher/
 s/pvestatd\[[0-9]*\]: status update time ([0-9]*.[0-9]* seconds)/pvestatd: status update time (N.N seconds)/
 s/pvestatd\[[0-9]*\]: modified cpu set for/pvestatd: modified cpu set for/
 s/pveproxy\[[0-9]*\]: worker [0-9]* started/pveproxy: worker N started/
 s/pveproxy\[[0-9]*\]: worker [0-9]* finished/pveproxy: worker N finished/
 s/pveproxy\[[0-9]*\]: worker exit/pveproxy: worker exit/
 s/pveproxy\[[0-9]*\]: detected empty handle/pveproxy: detected empty handle/
+/pveproxy\[[0-9]*\]: starting [0-9]* worker(s)/d
+/pvesh: Starting CT [0-9]*/d
+/pvestatd: modified cpu set for lxc\/[0-9]*: [0-9]*-[0-9]*/d
 s/pvedaemon\[[0-9]*\]: worker [0-9]* started/pvedaemon: worker N started/
 s/pvedaemon\[[0-9]*\]: worker [0-9]* finished/pvedaemon: worker N finished/
 s/pvedaemon\[[0-9]*\]: worker exit/pvedaemon: worker exit/
@@ -407,7 +469,7 @@ s/pmxcfs\[[0-9]*\]: \[status\] notice: RRDC update error \/var\/lib\/rrdcached\/
 s/pve-ha-lrm\[[0-9]*\]: loop take too long ([0-9]* seconds)/pve-ha-lrm: loop take too long (N seconds)/
 
 # rngd
-s/rngd\[[0-9]*\]: stats: FIPS 140-2 successes: [0-9]*/rngd: stats: FIPS 140-2 successes: N/
+/rngd\[[0-9]*\]: stats: FIPS 140-2/d
 s/rngd\[[0-9]*\]: stats: FIPS 150-2 successes: [0-9]*/rngd: stats: FIPS 150-2 successes: N/
 s/rngd\[[0-9]*\]: stats: entropy added to kernel pool: [0-9]*/rngd: stats: entropy added to kernel pool: N/
 s/rngd\[[0-9]*\]: stats: bits sent to kernel pool: [0-9]*/rngd: stats: bits sent to kernel pool: N/
@@ -453,3 +515,43 @@ s/dhcpd\[[0-9]*\]: WARNING: /dhcpd: WARNING: /
 /named\[[0-9]*\]: ----------------------------------------------------/d
 s/named\[[0-9]*\]: permission denied resolving/named: permission denied resolving/
 s/named\[[0-9]*\]: network unreachable resolving/named: network unreachable resolving/
+
+s/ovpn-\(.*\)\[[0-9]*\]: Restart pause, [0-9]* second(s)/ovpn-\1: Restart pause, N second(s)/
+
+s/ripe-atlas\[[0-9]*\]: posting file '\/var\/spool\/ripe-atlas\/data\/out\/ooq\/[0-9]*'/ripe-atlas: posting file '\/var\/spool\/ripe-atlas\/data\/out\/ooq\/N'/
+s/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '64'/ripe-atlas: eooqd: atlas_run: argv[N] = 'N'/
+s/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '\/var\/spool\/ripe-atlas\/data\/new\/ooq.[0-9]*'/ripe-atlas: eooqd: atlas_run: argv[N] = '\/var\/spool\/ripe-atlas\/data\/new\/ooq.N'/
+/ripe-atlas\[[0-9]*\]: total size in dir: [0-9]*/d
+s/ripe-atlas\[[0-9]*\]: ready_callback4: got type [0-9]*/ripe-atlas: ready_callback4: got type N/
+s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ready_callback4: got type 5\]/ripe-atlas: message repeated N times: [ready_callback4: got type 5]/
+s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ ready_callback4: got type 5\]/ripe-atlas: message repeated N times: [ready_callback4: got type 5]/
+/ripe-atlas\[[0-9]*\]: httppost: got line 'Date: .*'/d
+/ripe-atlas\[[0-9]*\]: eooqd: init returned 0x[0-9a-f]* for 'evping -4 -c 3 -s 64 -i 1000 -A "[0-9]*" [0-9a-f.:]*'/d
+/ripe-atlas\[[0-9]*\]: ooqd: a process is still running/d
+/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv/d
+/ripe-atlas\[[0-9]*\]: eooqd: found cmd /d
+/ripe-atlas\[[0-9]*\]: unlinking file '\/var\/spool\/ripe-atlas\/data\//d
+/ripe-atlas\[[0-9]*\]: httppost: /d
+/perd\[[0-9]*\]: USER root pid .* cmd httppost -A [0-9]*\s*--set-time 2 --delete-file --maxpostsize 9000000 --post-header \/home\/atlas\/status\/.* --post-dir \/home\/atlas\/data\/out --post-footer \/home\/atlas\/status\/con_session_id.txt -O \/home\/atlas\/data\/new\/main_sent.vol http:\/\/127.0.0.1:8080\/?PROBE_ID=.*&SESSION_ID=.*/d
+/ripe-atlas\[[0-9]*\]: eooqd: init returned 0x.* for 'evping -4 -c 3 -s 48 -i 1000 -A /d
+/ripe-atlas\[[0-9]*\]: eooqd: init returned 0x.* for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A/d
+/ripe-atlas\[[0-9]*\]: eooqd: deleted last query qry [0-9]*/d
+/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: looking for 'ev/d
+/perd\[[0-9]*\]: crond (busybox 1.26.2) started, log level 8/d
+/perd\[[0-9]*\]: a process is still running/d
+/eperd\[[0-9]*\]: ping_cb: not busy for state 0x.*, /d
+
+# smallstep step-ca
+/step\[[0-9]*\]: certificate does not need renewal/d
+s/step\[[0-9]*\]: Your certificate has been saved in /step: Your certificate has been saved in /
+s/step\[[0-9]*\]: The request lacked necessary authorization to be completed: certificate expired on \([0-9]*\)-\([0-9]*\)-\([0-9]*\) [0-9]*:[0-9]*:[0-9]* +[0-9]* \([A-Z]*\)/step: The request lacked necessary authorization to be completed: certificate expired on \1-\2-\3 HH:MM:SS +ZZZZ \4/
+/step\[[0-9]*\]: Re-run with STEPDEBUG=1 for more info./d
+s/step\[[0-9]*\]: error renewing certificate/step: error renewing certificate/
+s/step\[[0-9]*\]: error validating renew token: /step: error validating renew token: /
+/step\[[0-9]*\]: github.com\/.*/d
+/step\[[0-9]*\]: #011github.com\/.*\.go:[0-9]*/d
+/step\[[0-9]*\]: runtime\./d
+/step\[[0-9]*\]: #011runtime\./d
+/step\[[0-9]*\]: main\.main/d
+/step\[[0-9]*\]: #011.\/main.go:/d
+s/step\[[0-9]*\]: client POST/step: client POST/

@@ -5,12 +5,46 @@ kernel: [N.N] percpu 1409472
 kernel: [ N.N] workingset_restore_anon 14932
 kernel: [ N.N] workingset_refault_file 626942
 kernel: vmalloc 745472
+kernel: [5167682.908442]
 kernel: Code: 01 00 00 48 8d 15 18 87 42 00 48 0f be c0 48 8b 92 40 06 00 00 4c 8b 24 c2 4c 89 24 24 4d 85 e4 0f 84 94 00 00 00 49 8b 04 24 <48> 8b 58 e8 4c 01 e3 8b 43 08 83 f8 ff 74 59 83 c0 01 89 43 08 48
 squid[29843]: 2024/11/30 18:41:11 kid1| /var/spool/squid/09 exists
 squid[29843]: 2024/11/30 18:41:11 kid1| Making directories in /var/spool/squid/00
 kernel: [N.N] RIP: 0033:0x7f64841a19c0
 kernel: [N.N] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
 kernel: [N.N] R13: ffffb00c1a257000 R14: 0000000000000000 R15: ffffb00c0b76bb28
-kernel: [N.N] tg3 0000:04:00.0 enp4s0f0: 0x00007500: 0x00000000, 0x00000000, 0x00000080, 0x00000000
 named[35724]: corporation.  Support and training for BIND 9 are
 named[35716]: Inc. (ISC), a non-profit 501(c)(3) public-benefit
+systemd-logind[12653]: New seat seat0.
+systemd-logind[12346]: Watching system buttons on /dev/input/event2 (Power Button)
+systemd-logind[12346]: Watching system buttons on /dev/input/event1 (Sleep Button)
+systemd-logind[12346]: Watching system buttons on /dev/input/event0 (Power Button)
+rngd[535]: stats: FIPS 140-2(2001-10-10) Monobit: 0
+otelcol-contrib[44887]: go.opentelemetry.io/collector/processor/batchprocessor.(*shard).startLoop
+otelcol-contrib: #011github.com/open-telemetry/opentelemetry-collector-contrib/pkg/stanza@v0.111.0/fileconsumer/file.go:N
+step[7014]: Re-run with STEPDEBUG=1 for more info.
+pve_exporter[64385]: [2025-01-18 13:21:21 +0000] [64385] [INFO] Starting gunicorn 23.0.0
+pve_exporter[64385]: [2025-01-18 13:21:21 +0000] [64385] [INFO] Listening at: http://192.168.1.2:9221 (64385)
+pve_exporter[64385]: [2025-01-18 13:21:21 +0000] [64385] [INFO] Using worker: gthread
+pve_exporter[64411]: [2025-01-18 13:21:21 +0000] [64411] [INFO] Booting worker with pid: 64411
+pve_exporter[2373]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pveproxy[2740]: starting 3 worker(s)
+pvesh: Starting CT 123
+pvestatd: modified cpu set for lxc/123: 0-1
+step[9354]: github.com/urfave/cli.Command.Run
+step[9354]: #011github.com/urfave/cli@v1.22.16/command.go:380
+step[64873]: runtime.main
+step[10635]: #011./main.go:73
+ripe-atlas[33244]: eooqd: found cmd 'evtraceroute' for 'evtraceroute -4 -I -a 16 -c 1 -f 1 -m 64 -w 4000 -z 10 -S 48 -p 80 -A "87126597" 43.159.98.10'
+ripe-atlas[33244]: eooqd: found cmd 'evping' for 'evping -4 -c 3 -s 64 -i 1000 -A "87123783" 43.175.226.100'
+ripe-atlas[33244]: eooqd: atlas_run: argv[10] = '43.175.226.100'
+ripe-atlas[32649]: ooqd: a process is still running
+ripe-atlas[33244]: unlinking file '/var/spool/ripe-atlas/data/out/ooq/9'
+ripe-atlas[33244]: httppost: got line 'Connection: close'
+perd[1706]: USER root pid   0 cmd httppost -A 9015 --set-time 2 --delete-file --maxpostsize 9000000 --post-header /home/atlas/status/p_to_c_report_header --post-dir /home/atlas/data/out --post-footer /home/atlas/status/con_session_id.txt -O /home/atlas/data/new/main_sent.vol http://127.0.0.1:8080/?PROBE_ID=1009927&SESSION_ID=26378e30fdfcb2244311980c66d57fd50918326e71b7e8a046edfbc5d2eeed9e >> /home/atlas/data/new/main
+ripe-atlas[1722]: eooqd: init returned 0x55da3305a6a0 for 'evping -4 -c 3 -s 48 -i 1000 -A "88057667" 
+ripe-atlas[1722]: eooqd: init returned 0x55da33058c80 for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A
+ripe-atlas[1722]: eooqd: deleted last query qry 88152893
+ripe-atlas[1722]: eooqd: atlas_run: looking for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A "88031155"
+perd[7356]: crond (busybox 1.26.2) started, log level 8
+perd[7356]: a process is still running
+eperd[1708]: ping_cb: not busy for state 0x561d9a345560, 
