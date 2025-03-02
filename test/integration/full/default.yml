@@ -18,6 +18,23 @@
     harden_lynis_enable: true
     harden_testing: true
     ipv6_config: 'harden'
+    harden_ipset_list:
+      - { n: blacklist_cidr, t: nethash }
+      - { n: msteams_tcp, t: nethash }
+      - { n: msteams_udp, t: nethash }
+    harden_ipset_list_data:
+      - n: msteams_tcp
+        list:
+          - 13.107.64.0/18
+          - 52.112.0.0/14
+          - 52.120.0.0/14
+          - 52.238.119.141/32
+          - 52.244.160.207/32
+      - n: msteams_udp
+        list:
+          - 13.107.64.0/18
+          - 52.112.0.0/14
+          - 52.120.0.0/14
     rsyslog_conf_d:
       - 49-bash2syslog.conf
       # must be before 50-* else duplicate in main syslog/messages and separate
