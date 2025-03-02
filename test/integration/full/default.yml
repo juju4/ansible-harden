@@ -38,6 +38,14 @@
       ansible.builtin.set_fact:
         ntpclient_listen: ['127.0.0.1', '::1']
       when: ansible_os_family == "RedHat"
+    - name: Validate ansible_remote_tmp dir permissions
+      ansible.builtin.file:
+        path: "{{ ansible_remote_tmp }}"
+        state: directory
+        mode: '1777'
+      when:
+        - ansible_remote_tmp is defined
+        - ansible_remote_tmp != '/tmp'
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
