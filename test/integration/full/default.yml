@@ -55,5 +55,5 @@
     - juju4.osquery
     - juju4.ntpclient
     # - juju4.syslogclient
-    - juju4.falco
+    # - juju4.falco
     - juju4.harden
