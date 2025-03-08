@@ -249,48 +249,6 @@ harden_selinux_customhome: []
 harden_chkrootkit_ignore: []
 harden_chkrootkit_conf: chkrootkit.conf
 
-harden_osquery: true
-harden_osquery_template: 'osquery.conf.j2'
-harden_osquery_upload_packs: []
-harden_osquery_packs:
-  - "osquery-monitoring"
-  - "incident-response"
-  - "it-compliance"
-  # - "osx-attacks"
-  - "ossec-rootkit"
-  - "vuln-management"
-  - "hardware-monitoring"
-  - "osquery-snapshots-pack"
-osquery_config_plugin: 'filesystem'
-harden_osquery_flags: []
-## if using zentral, kolide or else
-## https://github.com/zentralopensource/zentral/blob/f460b10a95d4ea1e515aea3363f55733465d1d9c/zentral/contrib/osquery/deb_script/template.sh
-## https://docs.kolide.co/kolide/current/infrastructure/adding-hosts-to-kolide.html
-# harden_osquery_flags:
-#    - { re: '^--enroll_secret_env=.*', l: '--enroll_secret_env=OSQUERY_ENROLL_SECRET' }
-#    - { re: '^--tls_server_certs=.*', l: '--tls_server_certs=/etc/osquery/kolide.crt' }
-#    - { re: '^--tls_hostname=.*', l: '--tls_hostname=acme.kolide.co' }
-#    - { re: '^--host_identifier=.*', l: '--host_identifier=hostname' }
-#    - { re: '^--enroll_tls_endpoint=.*', l: '--enroll_tls_endpoint=/api/v1/osquery/enroll' }
-#    - { re: '^--config_plugin=.*', l: '--config_plugin=tls' }
-#    - { re: '^--config_tls_endpoint=.*', l: '--config_tls_endpoint=/api/v1/osquery/config' }
-#    - { re: '^--config_tls_refresh=.*', l: '--config_tls_refresh=10' }
-#    - { re: '^--disable_distributed=.*', l: '--disable_distributed=false' }
-#    - { re: '^--distributed_plugin=.*', l: '--distributed_plugin=tls' }
-#    - { re: '^--distributed_interval=.*', l: '--distributed_interval=10' }
-#    - { re: '^--distributed_tls_max_attempts=.*', l: '--distributed_tls_max_attempts=3' }
-#    - { re: '^--distributed_tls_read_endpoint=.*', l: '--distributed_tls_read_endpoint=/api/v1/osquery/distributed/read' }
-#    - { re: '^--distributed_tls_write_endpoint=.*', l: '--distributed_tls_write_endpoint=/api/v1/osquery/distributed/write' }
-#    - { re: '^--logger_plugin=.*', l: '--logger_plugin=tls' }
-#    - { re: '^--logger_tls_endpoint=.*', l: '--logger_tls_endpoint=/api/v1/osquery/log' }
-#    - { re: '^--logger_tls_period=.*', l: '--logger_tls_period=10' }
-
-harden_osquery_fim: true
-harden_osquery_rsyslog: false
-## conflict with auditd. choose one.
-## https://osquery.readthedocs.io/en/stable/deployment/process-auditing/
-harden_osquery_process_auditing: false
-
 _ubuntu_sysctl:
 
 ## define in vars/{{ distribution }}*.yml

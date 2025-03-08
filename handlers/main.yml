@@ -96,11 +96,6 @@
     state: restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: Restart osquery
-  ansible.builtin.service:
-    name: osqueryd
-    state: restarted
-
 - name: Restart journald
   ansible.builtin.service:
     name: systemd-journald
