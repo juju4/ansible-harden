@@ -5,3 +5,5 @@ stap
 bootup
 # logcheck.replace
 erro
+# lynis-custom.prf.j2
+gost
