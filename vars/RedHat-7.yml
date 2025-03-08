@@ -1,7 +1,6 @@
 ---
 
 ssh_svc: sshd
-auditd_pkg: audit
 
 harden_pkg:
   - openssh-server

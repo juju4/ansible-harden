@@ -2,8 +2,6 @@
 
 ssh_svc: sshd
 aide_bin: ''
-## 201704 only through edge testing, https://pkgs.alpinelinux.org/packages?name=audit
-auditd_pkg: audit@testing
 
 harden_pkg:
   - openssh

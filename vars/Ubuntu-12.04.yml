@@ -2,7 +2,6 @@
 
 ssh_svc: ssh
 aide_bin: aide.wrapper
-auditd_pkg: auditd
 immutable_testfile: /etc/init.d/rc
 
 ## override: no sysdig(unmet dependencies)
@@ -15,7 +14,6 @@ harden_pkg:
   - chkrootkit
   - openntpd
   - acct
-  - "{{ auditd_pkg }}"
   - aide
   - logcheck
   - syslog-summary

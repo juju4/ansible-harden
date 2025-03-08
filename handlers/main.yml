@@ -54,23 +54,6 @@
       ipv6_config != 'disable'
     )
 
-- name: Restart auditd
-  ansible.builtin.service:
-    name: auditd
-    state: restarted
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
-
-# See README.md FAQ why using service
-- name: Restart auditd - rhel7+  # noqa command-instead-of-module
-  ansible.builtin.command: "service auditd restart"
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
-
 ## FIXME! on centos7, it seems we lose some path when remounting all (cgroup, mqueue, hugetlbfs...)
 ##  and can't ssh after... vagrant reload: fine?
 - name: Reload fstab
