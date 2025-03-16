@@ -4,9 +4,6 @@
   hosts: all
   vars:
     harden_upgradeall: false
-    harden_auditd_log_all_execve: true
-    harden_auditd_log_all_socket: true
-    harden_auditd_log_all_connect: true
     hardensysctl_kernel_modules:
       - sysdig_probe
       - ip_tables
