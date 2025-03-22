@@ -45,6 +45,14 @@
     state: present
   register: pkg_result
   until: pkg_result is success
+- name: Install rsyslog
+  ansible.builtin.package:
+    name: rsyslog
+    state: present
+  register: pkg_result
+  until: pkg_result is success
+  when:
+    - harden_rsyslog_enable | bool
 - name: Install some hardening packages - not in container
   ansible.builtin.package:
     name: "{{ harden_pkg_not_container | default([]) }}"
