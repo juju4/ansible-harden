@@ -107,6 +107,7 @@ harden_issue_lines:
 harden_disable_usb: true
 harden_enable_iommu_force: false
 
+harden_rsyslog_enable: true
 harden_bash2syslog: true
 
 harden_upgradeall: true

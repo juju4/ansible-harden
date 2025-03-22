@@ -174,7 +174,9 @@
     - not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int == 24)
 
 - name: Alpine rsyslog
-  when: ansible_distribution == "Alpine"
+  when:
+    - ansible_distribution == "Alpine"
+    - harden_rsyslog_enable | bool
   block:
     - name: Alpine | Ensure /etc/rsyslog.d exists
       ansible.builtin.file:

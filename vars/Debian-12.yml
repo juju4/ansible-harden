@@ -10,7 +10,7 @@ immutable_testfile: /etc/init.d/sudo
 
 harden_pkg:
   - openssh-server
-  - rsyslog
+  - "{%if harden_rsyslog_enable | bool %}rsyslog{% else %}{{ omit }}{% endif %}"
   - unzip
   - rkhunter
   - chkrootkit
