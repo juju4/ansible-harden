@@ -109,6 +109,7 @@ harden_enable_iommu_force: false
 
 harden_rsyslog_enable: true
 harden_bash2syslog: true
+harden_debian_sysstat_enable: true
 
 harden_upgradeall: true
 ## through unattended-upgrades or yum-cron

@@ -63,6 +63,8 @@
     mode: '0644'
   notify:
     - Restart sysstat
+  when:
+    - harden_debian_sysstat_enable | bool
 
 - name: Check if rng-tools is present
   ansible.builtin.stat:
