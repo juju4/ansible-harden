@@ -51,6 +51,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt
+            /var/_install
+          key: cache-ansible-harden-${{ steps.get-date.outputs.date }}
       - name: ACL
         run: |
           sudo apt-get install -y acl || true
