@@ -11,7 +11,7 @@
 -A INPUT -p tcp -m multiport --dports 22 -j fail2ban-sshd
 -A INPUT -p udp -m multiport --dports 161 -j fail2ban-snmpd
 -A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh
-{% if (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 14) or ansible_os_family == 'RedHat' %}
+{% if (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 14) or ansible_os_family == 'RedHat' %}
 {# no --mask option under precise #}
 -A INPUT -i eth0 -p tcp -m conntrack --ctstate INVALID -m recent --update --seconds 10 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
 -A INPUT -i eth0 -p tcp -m conntrack --ctstate INVALID -m recent --set --name DEFAULT --mask 255.255.255.255 --rsource
@@ -29,10 +29,10 @@
 {% endif %}
 ## Incoming SSH
 {% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}
-{% for host in harden_fw_ssh_restricted %}
+{%     for host in harden_fw_ssh_restricted %}
 -A INPUT -p tcp -s {{ host }} --dport {{ harden_fw_ssh_port }} -j ACCEPT
 -A OUTPUT -p tcp --sport {{ harden_fw_ssh_port }} -d {{ host }} -m conntrack --ctstate ESTABLISHED -j ACCEPT
-{% endfor %}
+{%     endfor %}
 {% else %}
 -A INPUT -p tcp --dport {{ harden_fw_ssh_port }} -j ACCEPT
 {% endif %}
@@ -49,10 +49,10 @@
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ## DNS
 {% if harden_fw_dnsservers is defined and harden_fw_dnsservers %}
-{% for host in harden_fw_dnsservers %}
+{%     for host in harden_fw_dnsservers %}
 -A OUTPUT -p tcp -d {{ host }} --dport 53 -j ACCEPT
 -A OUTPUT -p udp -d {{ host }} --dport 53 -j ACCEPT
-{% endfor %}
+{%     endfor %}
 {% else %}
 -A OUTPUT -p tcp --dport 53 -j ACCEPT
 -A OUTPUT -p udp --dport 53 -j ACCEPT
@@ -72,60 +72,60 @@
 -A FORWARD -p icmp --icmp-type 8 -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
 ## SMTP
 {% if harden_fw_smtp_ports is defined and harden_fw_smtp_ports != [] %}
-{% for port in harden_fw_smtp_ports %}
-{% if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
-{% for host in harden_fw_smtpservers %}
+{%     for port in harden_fw_smtp_ports %}
+{%         if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
+{%             for host in harden_fw_smtpservers %}
 -A OUTPUT -p tcp -d {{ host }} --dport {{ port }} -j ACCEPT
-{% endfor %}
-{% else %}
+{%             endfor %}
+{%         else %}
 -A OUTPUT -p tcp --dport {{ port }} -j ACCEPT
-{% endif %}
-{% endfor %}
+{%         endif %}
+{%     endfor %}
 {% endif %}
 ## Monitoring
 {% if 0 == 1 %}
 ## only possible if cache facts or talk with host in same play
 ## http://docs.ansible.com/ansible/playbooks_variables.html#fact-caching
-{% if groups['monitoring'] is defined and groups['monitoring'] %}
-{% for host in groups['monitoring'] %}
+{%     if groups['monitoring'] is defined and groups['monitoring'] %}
+{%         for host in groups['monitoring'] %}
 -A INPUT -p tcp -s {{ hostvars[host].ansible_default_ipv4.address }} --dport 5666 -j ACCEPT
-{% endfor %}
-{% endif %}
+{%         endfor %}
+{%     endif %}
 {% endif %}
 {% if harden_fw_monitoring_source is defined %}
-{% for host in harden_fw_monitoring_source %}
+{%     for host in harden_fw_monitoring_source %}
 -A INPUT -p tcp -s {{ host }} --dport 5666 -j ACCEPT
-{% endfor %}
+{%     endfor %}
 {% endif %}
 {% if harden_fw_snmp_restricted is defined and harden_fw_snmp_restricted %}
-{% for host in harden_fw_snmp_restricted %}
+{%     for host in harden_fw_snmp_restricted %}
 -A INPUT -p udp -s {{ host }} --dport 161 -j ACCEPT
-{% endfor %}
+{%     endfor %}
 {% else %}
 -A INPUT -p udp --dport 161 -j ACCEPT
 {% endif %}
 {% if groups['monitoring'] is defined and groups['monitoring'] %}
 ## Applications
-{% if inventory_hostname in groups['db_servers'] %}
+{%     if inventory_hostname in groups['db_servers'] %}
 -A INPUT -p tcp  --dport 3306 -j ACCEPT
-{% endif %}
+{%     endif %}
 {% endif %}
 {% if groups['http_servers'] is defined and groups['http_servers'] %}
-{% if inventory_hostname in groups['http_servers'] %}
+{%     if inventory_hostname in groups['http_servers'] %}
 -A INPUT -p tcp  --dport 80 -j ACCEPT
-{% if ansible_os_family == 'RedHat' %}
+{%         if ansible_os_family == 'RedHat' %}
 #-A OUTPUT -p tcp -m owner --uid-owner apache -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
 #-A OUTPUT -p tcp -m owner --uid-owner apache -j REJECT
-{% elif ansible_os_family == 'Debian' %}
+{%         elif ansible_os_family == 'Debian' %}
 #-A OUTPUT -p tcp -m owner --uid-owner www-user -j LOG --log-prefix "iptables denied: [apache-ssh-out] "
 #-A OUTPUT -p tcp -m owner --uid-owner www-user -j REJECT
-{% endif %}
-{% endif %}
+{%         endif %}
+{%     endif %}
 {% endif %}
 {% if groups['https_servers'] is defined and groups['https_servers'] %}
-{% if inventory_hostname in groups['https_servers'] %}
+{%     if inventory_hostname in groups['https_servers'] %}
 -A INPUT -p tcp  --dport 443 -j ACCEPT
-{% endif %}
+{%     endif %}
 {% endif %}
 {% if harden_ipset_enable is defined and harden_ipset_enable %}
 ## msteams via ipset as example
@@ -137,9 +137,9 @@
 -A OUTPUT -p tcp -m multiport --dport 80,443 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp -m multiport --sport 80,443 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 {% if harden_fw_open_incoming is defined and harden_fw_open_incoming %}
-{% for item in harden_fw_open_incoming %}
+{%     for item in harden_fw_open_incoming %}
 -A INPUT -p {{ item.proto }} --dport {{ item.port }} -j ACCEPT
-{% endfor %}
+{%     endfor %}
 {% endif %}
 ## generic rule
 -A OUTPUT -p tcp -m conntrack --ctstate ESTABLISHED -j ACCEPT

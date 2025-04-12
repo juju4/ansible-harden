@@ -9,9 +9,9 @@
     postrotate
         fail2ban-client flushlogs 1>/dev/null
 {% if syslog_postrotate_extras_cmd is defined and syslog_postrotate_extras_cmd %}
-{% for cmd in syslog_postrotate_extras_cmd %}
+{%     for cmd in syslog_postrotate_extras_cmd %}
         {{ cmd }}
-{% endfor %}
+{%     endfor %}
 {% endif %}
     endscript
 

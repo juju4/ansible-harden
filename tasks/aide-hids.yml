@@ -70,7 +70,7 @@
         - { re: '^database_out=file:.*', rep: 'database_out=file:@@{DBDIR}/aide.db.new' }
     - name: Add daily cron to check and update aide db
       ansible.builtin.copy:
-        src: cron.daily-aide-redhat.j2
+        src: cron.daily-aide-redhat
         dest: /etc/cron.daily/aide
         mode: '0700'
 

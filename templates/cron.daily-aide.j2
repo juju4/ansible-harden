@@ -18,13 +18,13 @@ if [ -z "$FQDN" ]; then
 fi
 
 traphandler() {
-	trap - INT ERR
-	if [ -n "${LOCKED:-}" ]; then
-	  # we have the lock,
-	  pidof aide | xargs --no-run-if-empty kill -9
-	fi
-	onexit signal $1
-	return 0
+    trap - INT ERR
+    if [ -n "${LOCKED:-}" ]; then
+      # we have the lock,
+      pidof aide | xargs --no-run-if-empty kill -9
+    fi
+    onexit signal $1
+    return 0
 }
 trap ' traphandler INT; trap - INT ERR' INT
 trap ' traphandler ERR; trap - INT ERR' ERR
@@ -67,7 +67,7 @@ fi
 # have /etc/default/aide override variables
 
 if [ -f "/etc/default/aide" ]; then
-	. "/etc/default/aide"
+    . "/etc/default/aide"
 fi
 
 # from here on, we're going to bail on unbound variables
@@ -154,37 +154,37 @@ onexit() {
 
   CRONEXITHOOKPARM="$1"
   case "$1" in
-	signal)
-		LOGHEAD="$(printf "terminated with signal %s" "$2")"
-		MAILHEAD="$(printf "The cron job was terminated with signal %s" "$2")"
-		;;
-	fatal)
-		LOGHEAD="$(printf "terminated by fatal error.")"
-		MAILHEAD="$(printf "The cron job was terminated by a fatal error.")"
-		;;
-	nolock)
-		LOGHEAD="$(printf "terminated because lock %s could not be obtained." "$LOCKFILE")"
-		MAILHEAD="$(printf "The cron job was terminated because lock %s could not be obtained." "$LOCKFILE")"
-		;;
-	cantmovetmp)
-		LOGHEAD="$(printf "terminated: Cannot move away %s." "$TMPDIRIN")"
-		MAILHEAD="$(printf "The cron job was terminated: Cannot move away %s." "$TMPDIRIN")"
-		;;
-	nohook)
-		LOGHEAD="$(printf "terminated: CRONEXITHOOK set to %s which is not executable." "$CRONEXITHOOK")"
-		MAILHEAD="$(printf "The cron job was terminated: CRONEXITHOOK set to %s which is not executable." "$CRONEXITHOOK")"
-		;;
-	cantcreatetmp)
-		LOGHEAD="$(printf "terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
-		MAILHEAD="$(printf "The cron job was terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
-		;;
-	success)
-		;;
-	*)
-		LOGHEAD="$(printf "wrong parameter (\"%s\") to onexit." "$1")"
-		MAILHEAD="$(printf "The cron job was terminated for unknown reasons, and a wrong parameter (\"%s\")was given to onexit." "$1")"
-		CRONEXITHOOKPARM="unknown"
-		;;
+    signal)
+        LOGHEAD="$(printf "terminated with signal %s" "$2")"
+        MAILHEAD="$(printf "The cron job was terminated with signal %s" "$2")"
+        ;;
+    fatal)
+        LOGHEAD="$(printf "terminated by fatal error.")"
+        MAILHEAD="$(printf "The cron job was terminated by a fatal error.")"
+        ;;
+    nolock)
+        LOGHEAD="$(printf "terminated because lock %s could not be obtained." "$LOCKFILE")"
+        MAILHEAD="$(printf "The cron job was terminated because lock %s could not be obtained." "$LOCKFILE")"
+        ;;
+    cantmovetmp)
+        LOGHEAD="$(printf "terminated: Cannot move away %s." "$TMPDIRIN")"
+        MAILHEAD="$(printf "The cron job was terminated: Cannot move away %s." "$TMPDIRIN")"
+        ;;
+    nohook)
+        LOGHEAD="$(printf "terminated: CRONEXITHOOK set to %s which is not executable." "$CRONEXITHOOK")"
+        MAILHEAD="$(printf "The cron job was terminated: CRONEXITHOOK set to %s which is not executable." "$CRONEXITHOOK")"
+        ;;
+    cantcreatetmp)
+        LOGHEAD="$(printf "terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
+        MAILHEAD="$(printf "The cron job was terminated: Cannot create temporary directory %s." "$TMPDIRIN")"
+        ;;
+    success)
+        ;;
+    *)
+        LOGHEAD="$(printf "wrong parameter (\"%s\") to onexit." "$1")"
+        MAILHEAD="$(printf "The cron job was terminated for unknown reasons, and a wrong parameter (\"%s\")was given to onexit." "$1")"
+        CRONEXITHOOKPARM="unknown"
+        ;;
   esac
 
   if [ -z "${TMPDIR:-}" ] || [ -z "${MAILFILE:-}" ]; then
@@ -312,24 +312,24 @@ Environment on %s started at %s.\n\n" "$FQDN" "$BEGINSTAMP"
     # include error log in daily report e-mail
 
     if [ -n "${AERRLOG:-}" ] && [ -s "$AERRLOG" ]; then
-	errorlines="$(wc -l "$AERRLOG" | awk '{ print $1 }')"
-	if [ "$LINES" -gt "0" ] && [ "${errorlines:=0}" -gt "$LINES" ]; then
-		printf "AIDE has returned many errors.\nthe error log output has been truncated in this mail\n" | \
-		    frame >> "$MAILFILE"
-		printf >> "$MAILFILE" "Error output is %d lines, truncated to %d.\n" "$errorlines" "$LINES"
-		< "$AERRLOG" head -n "$LINES" >> "$MAILFILE"
-		printf >> "$MAILFILE" "\nEnd of truncated AIDE error output. The full output can be found in %s.\n\n" "$LOGFILE"
-	else
-		printf >> "$MAILFILE" "Errors produced  (%d lines):\n" "$errorlines"
-		< "$AERRLOG" cat >> "$MAILFILE"
-		printf >> "$MAILFILE" "\nEnd of AIDE error output.\n\n"
-	fi
-	printf >> "$LOGFILE" "AIDE error output (%d lines):\n" "$errorlines"
-	< "$AERRLOG" cat >> "$LOGFILE"
-	printf >> "$LOGFILE" "End of AIDE error output\n"
+    errorlines="$(wc -l "$AERRLOG" | awk '{ print $1 }')"
+    if [ "$LINES" -gt "0" ] && [ "${errorlines:=0}" -gt "$LINES" ]; then
+        printf "AIDE has returned many errors.\nthe error log output has been truncated in this mail\n" | \
+            frame >> "$MAILFILE"
+        printf >> "$MAILFILE" "Error output is %d lines, truncated to %d.\n" "$errorlines" "$LINES"
+        < "$AERRLOG" head -n "$LINES" >> "$MAILFILE"
+        printf >> "$MAILFILE" "\nEnd of truncated AIDE error output. The full output can be found in %s.\n\n" "$LOGFILE"
     else
-	printf >> "$MAILFILE" "AIDE produced no errors.\n\n"
-	printf >> "$LOGFILE" "AIDE produced no errors.\n"
+        printf >> "$MAILFILE" "Errors produced  (%d lines):\n" "$errorlines"
+        < "$AERRLOG" cat >> "$MAILFILE"
+        printf >> "$MAILFILE" "\nEnd of AIDE error output.\n\n"
+    fi
+    printf >> "$LOGFILE" "AIDE error output (%d lines):\n" "$errorlines"
+    < "$AERRLOG" cat >> "$LOGFILE"
+    printf >> "$LOGFILE" "End of AIDE error output\n"
+    else
+    printf >> "$MAILFILE" "AIDE produced no errors.\n\n"
+    printf >> "$LOGFILE" "AIDE produced no errors.\n"
     fi
 
 
@@ -506,51 +506,51 @@ Environment on %s started at %s.\n\n" "$FQDN" "$BEGINSTAMP"
     fi
 
       if [ -n "${NOISE:-}" ]; then
-	NOISETMP="$(mytempfile aidenoise1)"
-	NOISETMP2="$(mytempfile aidenoise2)"
-	< "$MAILTMP" sed -n '1,/^Detailed information about changes:/p' | \
-	grep '^\(changed\|removed\|added\|[fdLDBFs?!][ :l<>=bpugamcinCAXSE.+-]\{16\}\):' | \
-	grep -v "^added: THERE WERE ALSO [0-9]\+ FILES ADDED UNDER THIS DIRECTORY" >> "$NOISETMP2"
+    NOISETMP="$(mytempfile aidenoise1)"
+    NOISETMP2="$(mytempfile aidenoise2)"
+    < "$MAILTMP" sed -n '1,/^Detailed information about changes:/p' | \
+    grep '^\(changed\|removed\|added\|[fdLDBFs?!][ :l<>=bpugamcinCAXSE.+-]\{16\}\):' | \
+    grep -v "^added: THERE WERE ALSO [0-9]\+ FILES ADDED UNDER THIS DIRECTORY" >> "$NOISETMP2"
 
-	if [ -n "$NOISE" ]; then
-		< "$NOISETMP2" grep -v "^\(changed\|removed\|added\|[fdLDBFs?!][ :l<>=bpugamcinCAXSE.+-]\{16\}\): $NOISE" >> "$NOISETMP" || true
-		printf >> "$MAILFILE" "De-Noised output removes everything matching %s.\n" "$NOISE"
-	fi
+    if [ -n "$NOISE" ]; then
+        < "$NOISETMP2" grep -v "^\(changed\|removed\|added\|[fdLDBFs?!][ :l<>=bpugamcinCAXSE.+-]\{16\}\): $NOISE" >> "$NOISETMP" || true
+        printf >> "$MAILFILE" "De-Noised output removes everything matching %s.\n" "$NOISE"
+    fi
 
-	if [ -s "$NOISETMP" ]; then
-		loglines="$(< $NOISETMP wc -l | awk '{ print $1 }')"
-		if [ "$LINES" -gt "0" ] && [ "${loglines:=0}" -gt "$LINES" ]; then
-			printf "AIDE has returned long output which has been truncated in this mail\n" | \
-			  frame >> "$MAILFILE"
-			printf >> "$MAILFILE" \
+    if [ -s "$NOISETMP" ]; then
+        loglines="$(< $NOISETMP wc -l | awk '{ print $1 }')"
+        if [ "$LINES" -gt "0" ] && [ "${loglines:=0}" -gt "$LINES" ]; then
+            printf "AIDE has returned long output which has been truncated in this mail\n" | \
+              frame >> "$MAILFILE"
+            printf >> "$MAILFILE" \
                           "De-Noised output is %d lines, truncated to %d.\n" "$loglines" "$LINES"
-			< "$NOISETMP" head -n "$LINES" >> "$MAILFILE"
-			printf >> "$MAILFILE" "\nEnd of truncated De-Noised AIDE output. The full output can be found in %s.\nsha256sum: %s\n\n" "$LOGFILE" "$LOGFILE_CHECKSUM"
-		else
-			printf >> "$MAILFILE" "De-Noised output of the daily AIDE run (%d lines):\n" "$loglines"
-			< "$NOISETMP" cat >> "$MAILFILE"
-		        printf >> "$MAILFILE" "\nEnd of De-Noised AIDE output.\n\n"
-		fi
-	else
-		printf >> "$MAILFILE" "AIDE detected no changes after removing noise.\n\n"
-	fi
-	printf >> "$MAILFILE" "============================================================================\n"
+            < "$NOISETMP" head -n "$LINES" >> "$MAILFILE"
+            printf >> "$MAILFILE" "\nEnd of truncated De-Noised AIDE output. The full output can be found in %s.\nsha256sum: %s\n\n" "$LOGFILE" "$LOGFILE_CHECKSUM"
+        else
+            printf >> "$MAILFILE" "De-Noised output of the daily AIDE run (%d lines):\n" "$loglines"
+            < "$NOISETMP" cat >> "$MAILFILE"
+                printf >> "$MAILFILE" "\nEnd of De-Noised AIDE output.\n\n"
+        fi
+    else
+        printf >> "$MAILFILE" "AIDE detected no changes after removing noise.\n\n"
+    fi
+    printf >> "$MAILFILE" "============================================================================\n"
       fi
 
       # include non-de-noised log into mail
 
       if [ -n "${MAILTMP:-}" ] && [ -s "$MAILTMP" ]; then
-	loglines="$(wc -l "$MAILTMP" | awk '{ print $1 }')"
-	if [ "$LINES" -gt "0" ] && [ "${loglines:=0}" -gt "$LINES" ]; then
-		printf "AIDE has returned long output which has been truncated in this mail\n" | \
-		  frame >> "$MAILFILE"
-		printf >> "$MAILFILE" \
-		  "Output is %d lines, truncated to %d.\n" "$loglines" "$LINES"
-		< "$MAILTMP" head -n "$LINES" >> "$MAILFILE"
-		printf >> "$MAILFILE" "\nEnd of truncated AIDE output. The full output can be found in %s.\nsha256sum: %s\n\n" "$LOGFILE" "$LOGFILE_CHECKSUM"
-	else
-		printf >> "$MAILFILE" "Output of the daily AIDE run (%d lines):\n" "$loglines"
-		< "$MAILTMP" cat >> "$MAILFILE"
+    loglines="$(wc -l "$MAILTMP" | awk '{ print $1 }')"
+    if [ "$LINES" -gt "0" ] && [ "${loglines:=0}" -gt "$LINES" ]; then
+        printf "AIDE has returned long output which has been truncated in this mail\n" | \
+          frame >> "$MAILFILE"
+        printf >> "$MAILFILE" \
+          "Output is %d lines, truncated to %d.\n" "$loglines" "$LINES"
+        < "$MAILTMP" head -n "$LINES" >> "$MAILFILE"
+        printf >> "$MAILFILE" "\nEnd of truncated AIDE output. The full output can be found in %s.\nsha256sum: %s\n\n" "$LOGFILE" "$LOGFILE_CHECKSUM"
+    else
+        printf >> "$MAILFILE" "Output of the daily AIDE run (%d lines):\n" "$loglines"
+        < "$MAILTMP" cat >> "$MAILFILE"
         if [ "$MAIL_MODE" -gt "0" ] ; then
             case "$MAIL_MODE" in
                 1) AIDE_OUTPUT="truncated" ;;
@@ -559,20 +559,20 @@ Environment on %s started at %s.\n\n" "$FQDN" "$BEGINSTAMP"
             esac
             printf >> "$MAILFILE" "\nEnd of %s AIDE output.\n\nThe full output can be found in %s.\nsha256sum: %s\n\n" "$AIDE_OUTPUT" "$LOGFILE" "$LOGFILE_CHECKSUM"
         else
-	        printf >> "$MAILFILE" "\nEnd of AIDE output.\n\n"
+            printf >> "$MAILFILE" "\nEnd of AIDE output.\n\n"
         fi
-	fi
+    fi
       else
         printf >> "$MAILFILE" "AIDE detected no changes.\n\n"
       fi
     else
-	printf >> "$MAILFILE" "funny, AIDE did not leave a log.\n\n"
-	printf >> "$LOGFILE" "funny, AIDE did not leave a log.\n"
+    printf >> "$MAILFILE" "funny, AIDE did not leave a log.\n\n"
+    printf >> "$LOGFILE" "funny, AIDE did not leave a log.\n"
     fi
 
     if [ -n "${DBCHECKLOG:-}" ] && [ -s "$DBCHECKLOG" ]; then
-	< "$DBCHECKLOG" cat >> "$MAILFILE"
-	printf >> "$MAILFILE" "\n"
+    < "$DBCHECKLOG" cat >> "$MAILFILE"
+    printf >> "$MAILFILE" "\n"
     fi
 
     printf >> "$MAILFILE" "End of AIDE daily cron job at %s, run time %d seconds\n"  "$(date +"%Y-%m-%d %H:%M" -d@$ENDTIME)" "$(( $ENDTIME - $BEGINTIME ))"
@@ -609,10 +609,10 @@ if [ "$CRON_DAILY_RUN" != "yes" ] && ! tty -s; then
 fi
 
 if command -v dotlockfile >/dev/null 2>&1; then
-	if ! dotlockfile -p -l "$LOCKFILE"; then
-		onexit nolock
-		exit 1
-	fi
+    if ! dotlockfile -p -l "$LOCKFILE"; then
+        onexit nolock
+        exit 1
+    fi
 else
   PREERRLOG="no dotlockfile binary in path, not checking for already running aide cron job\n"
 fi
@@ -620,18 +620,18 @@ LOCKED=yes
 
 # prepare temp dir
 if [ -e "$TMPDIRIN" ]; then
-	if ! NEWNAME="$(mktemp -d $TMPBASE/cron.daily.old.XXXXXXXXXX)"; then
-	        onexit cantmovetmp
-		exit 1
-	fi
-	mv "$TMPDIRIN" "$NEWNAME"
-	unset NEWNAME
-	OLDTMPDIRFOUND="yes"
+    if ! NEWNAME="$(mktemp -d $TMPBASE/cron.daily.old.XXXXXXXXXX)"; then
+            onexit cantmovetmp
+        exit 1
+    fi
+    mv "$TMPDIRIN" "$NEWNAME"
+    unset NEWNAME
+    OLDTMPDIRFOUND="yes"
 fi
 
 if ! mkdir -p $TMPDIRIN; then
-	onexit cantcreatetmp
-	exit 1
+    onexit cantcreatetmp
+    exit 1
 fi
 
 # handle the case that CRONEXITHOOK does not exist or is not executable
@@ -665,10 +665,10 @@ MAILFILE="$(mytempfile mailfile)"
 ARETVAL=-1
 
 if [ ! -f "$DATABASE" ]; then
-	printf >> "$ERRORLOG" "Fatal error: The AIDE database '%s' does not exist!\n" "$DATABASE"
-	printf >> "$ERRORLOG" "This may mean you haven't created it or that the initialization process is still running, or it may mean that someone has removed it.\n"
-	onexit fatal
-	exit 1
+    printf >> "$ERRORLOG" "Fatal error: The AIDE database '%s' does not exist!\n" "$DATABASE"
+    printf >> "$ERRORLOG" "This may mean you haven't created it or that the initialization process is still running, or it may mean that someone has removed it.\n"
+    onexit fatal
+    exit 1
 fi
 
 # code
@@ -702,19 +702,19 @@ NOISETMP2="$(mytempfile noisetmp2)"
 
 COPYDB="0"
 if [ "$COPYNEWDB" = "ifnochange" ] && [ "$ARETVAL" = "0" ]; then
-	COPYDB="1"
-	printf >> "$POSTRUNLOG" "no significant changes detected.\n"
+    COPYDB="1"
+    printf >> "$POSTRUNLOG" "no significant changes detected.\n"
 fi
 
 if [ "$COPYNEWDB" = "yes" -o "$COPYNEWDB" = "rotate" ]; then
-	COPYDB=1
+    COPYDB=1
 fi
 
 if [ "$COPYDB" = "1" ] && [ "$COMMAND" = "update" ]; then
-	[ "$COPYNEWDB" = "rotate" ] && sudo savelog -c 7 "$DATABASE" > /dev/null
-#	setfacl -m "u:_backup:r--" -- $DATABASE*
-	sudo cp -f "$DATABASE_OUT" "$DATABASE"
-	printf >> "$POSTRUNLOG" "output database %s was copied to %s as requested by cron job configuration\n" "$DATABASE_OUT" "$DATABASE"
+    [ "$COPYNEWDB" = "rotate" ] && sudo savelog -c 7 "$DATABASE" > /dev/null
+#    setfacl -m "u:_backup:r--" -- $DATABASE*
+    sudo cp -f "$DATABASE_OUT" "$DATABASE"
+    printf >> "$POSTRUNLOG" "output database %s was copied to %s as requested by cron job configuration\n" "$DATABASE_OUT" "$DATABASE"
 fi
 
 onexit success

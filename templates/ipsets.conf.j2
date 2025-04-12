@@ -1,12 +1,12 @@
 {% for l in harden_ipset_list %}
-{% if l.t == 'nethash' %}
+{%     if l.t == 'nethash' %}
 create {{ l.n }} hash:net {{ l.option | default('family inet hashsize 1024 maxelem 65536') }}
-{% else %}
+{%     else %}
 create {{ l.n }} {{ l.t }} {{ l.option | default('') }}
-{% endif %}
+{%     endif %}
 {% endfor %}
 {% for i in harden_ipset_list_data %}
-{% for ip in i.list %}
+{%     for ip in i.list %}
 add {{ i.n }} {{ ip }}
-{% endfor %}
+{%     endfor %}
 {% endfor %}

@@ -8,7 +8,7 @@
 ## https://github.com/arthepsy/ssh-audit
 
 # What ports, IPs and protocols we listen for
-Port {{ harden_sshd_port }}
+Port {{ harden_sshd_port }}
 # Use these options to restrict which interfaces/protocols sshd will bind to
 #ListenAddress ::
 AddressFamily any
@@ -17,7 +17,7 @@ Protocol 2
 
 # HostKeys for protocol version 2
 HostKey /etc/ssh/ssh_host_rsa_key
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=8)) %}
+{% if not ((ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18) or (ansible_distribution == "Debian" and ansible_distribution_major_version | int >= 9) or (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 8)) %}
 HostKey /etc/ssh/ssh_host_dsa_key
 {% endif %}
 HostKey /etc/ssh/ssh_host_ecdsa_key
@@ -25,16 +25,16 @@ HostKey /etc/ssh/ssh_host_ed25519_key
 
 #Privilege Separation is turned on for security
 {# OpenSSH 7.5+ deprecates the sshd_config UsePrivilegeSeparation option. https://www.openssh.com/txt/release-7.5 #}
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_distribution == "Alpine" and ansible_distribution_version is version('3.8', '>=')) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8)) %}
-{% if ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 6 %}
+{% if not ((ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18) or (ansible_distribution == "Debian" and ansible_distribution_major_version | int >= 9) or (ansible_distribution == "Alpine" and ansible_distribution_version is version('3.8', '>=')) or (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 8)) %}
+{%     if ansible_os_family is defined and ansible_os_family == "RedHat" and ansible_distribution_major_version | int <= 6 %}
 UsePrivilegeSeparation yes
-{% else %}
+{%     else %}
 UsePrivilegeSeparation sandbox
-{% endif %}
+{%     endif %}
 {% endif %}
 UseDNS {{ harden_sshd_usedns | default('yes') }}
 
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
+{% if not ((ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18) or (ansible_distribution == "Debian" and ansible_distribution_major_version | int >= 9) or (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 7) or ansible_distribution == "Alpine") %}
 # Lifetime and size of ephemeral version 1 server key
 KeyRegenerationInterval 1800
 ServerKeyBits 1024
@@ -49,7 +49,7 @@ LoginGraceTime 30s
 PermitRootLogin {{ harden_sshd_permitrootlogin | default('no') }}
 StrictModes yes
 
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
+{% if not ((ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18) or (ansible_distribution == "Debian" and ansible_distribution_major_version | int >= 9) or (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 7) or ansible_distribution == "Alpine") %}
 RSAAuthentication yes
 # For this to work you will also need host keys in /etc/ssh_known_hosts
 RhostsRSAAuthentication no
@@ -95,7 +95,7 @@ PrintMotd no
 PrintLastLog yes
 {% endif %}
 TCPKeepAlive no
-{% if not ((ansible_distribution=="Ubuntu" and ansible_distribution_major_version|int>=18) or (ansible_distribution=="Debian" and ansible_distribution_major_version|int>=9) or (ansible_os_family=="RedHat" and ansible_distribution_major_version|int>=7) or ansible_distribution == "Alpine") %}
+{% if not ((ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18) or (ansible_distribution == "Debian" and ansible_distribution_major_version | int >= 9) or (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 7) or ansible_distribution == "Alpine") %}
 UseLogin no
 {% endif %}
 PermitUserEnvironment no
@@ -142,6 +142,7 @@ MACs {{ harden_sshd_crypto_mac | default('hmac-sha2-512-etm@openssh.com,hmac-sha
 
 ## https://wiki.mozilla.org/Security/Guidelines/OpenSSH
 KexAlgorithms {{ harden_sshd_crypto_kex | default('curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256') }}
+{# j2lint: disable=jinja-variable-format #}
 Ciphers {{ harden_sshd_crypto_cipher | default('chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr') }}
 #MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
 
@@ -153,9 +154,9 @@ AllowTcpForwarding no
 GatewayPorts no
 PermitTunnel no
 
-{% if harden_sshd_allowusers is defined and harden_sshd_allowusers|string %}
+{% if harden_sshd_allowusers is defined and harden_sshd_allowusers | string %}
 AllowUsers {{ harden_sshd_allowusers }}
-{% elif ansible_user is defined and ansible_user|string %}
+{% elif ansible_user is defined and ansible_user | string %}
 AllowUsers {{ ansible_user }}
 {% else %}
 # AllowUsers TBD
@@ -190,7 +191,7 @@ AllowUsers {{ ansible_user }}
 ## ensure chroot dir is owned by root for security reason
 #    ChrootDirectory %h
 
-{% if not (ansible_os_family=="RedHat" and ansible_distribution_major_version|int >= 8) %}
+{% if not (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 8) %}
 Match group sftp-users
     ForceCommand internal-sftp -l {{ harden_sshd_loglevel }}
     ChrootDirectory /sftp-home/\%u

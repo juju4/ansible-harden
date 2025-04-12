@@ -578,7 +578,7 @@ onexit() {
                             fi
                         done < "$MAILTMP"
                         IFS=$BACKUPIFS
-			F_ADD=$(( ADD-N_ADD )) || true
+                        F_ADD=$(( ADD-N_ADD )) || true
                         F_REM=$(( REM-N_REM )) || true
                         F_CHG=$(( CHG-N_CHG )) || true
                         {
@@ -746,8 +746,8 @@ fi
 
 if command -v dotlockfile >/dev/null 2>&1; then
     if ! dotlockfile -p -l "$LOCKFILE"; then
-	ls -la $LOCKBASE
-	whoami
+        ls -la $LOCKBASE
+        whoami
         onexit nolock
         exit 1
     fi
