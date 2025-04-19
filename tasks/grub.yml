@@ -25,7 +25,19 @@
         replace: 'GRUB_CMDLINE_LINUX="\1 iommu=force"'
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
+      notify:
+        - Refresh grub config
       when: harden_enable_iommu_force
+    - name: Enable bpf in grub
+      ansible.builtin.replace:
+        dest: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+        replace: 'GRUB_CMDLINE_LINUX="\1 lsm=bpf"'
+        mode: '0644'
+        backup: "{{ harden_backup | default(false) }}"
+      notify:
+        - Refresh grub config
+      when: harden_enable_grub_bpf
     - name: Enable grub password
       ansible.builtin.lineinfile:
         dest: /etc/grub.d/45_password
