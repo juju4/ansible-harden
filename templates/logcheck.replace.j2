@@ -363,6 +363,7 @@ s/, next retry is \(.*\) \(.*\) \([0-9]*\) [0-9]*:[0-9]*:[0-9]* \([0-9]*\), retr
 s/rsyslogd\[[0-9]*\]: imjournal: [0-9]* messages lost due to rate-limiting/rsyslogd: imjournal: N messages lost due to rate-limiting/
 s/rsyslogd: imjournal: [0-9]* messages lost due to rate-limiting/rsyslogd: imjournal: N messages lost due to rate-limiting/
 s/rsyslogd:  message repeated [0-9]* times: /rsyslogd:  message repeated N times: /
+s/rsyslogd\[[0-9]*\]: rsyslogd\[\(.*\)\]: [0-9]* messages lost due to rate-limiting/rsyslogd: rsyslogd[\1]: N messages lost due to rate-limiting/
 
 ## networkd-dispatcher
 s/networkd-dispatcher\[[0-9]*\]: ERROR:Unknown interface index [0-9]* seen even after reload/networkd-dispatcher: ERROR:Unknown interface index X seen even after reload/
@@ -525,6 +526,16 @@ s/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '\/var\/spool\/ripe-a
 s/ripe-atlas\[[0-9]*\]: ready_callback4: got type [0-9]*/ripe-atlas: ready_callback4: got type N/
 s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ready_callback4: got type 5\]/ripe-atlas: message repeated N times: [ready_callback4: got type 5]/
 s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ ready_callback4: got type 5\]/ripe-atlas: message repeated N times: [ready_callback4: got type 5]/
+/ripe-atlas\[[0-9]*\]: RESULT [0-9]* done [0-9]* [0-9a-f]* no reginit.vol start registration/d
+/ripe-atlas\[[0-9]*\]: Moving reboot-count.txt/d
+/ripe-atlas\[[0-9]*\]: condmv: not moving, destination '\/var\/spool\/ripe-atlas\/data\/out\/simpleping' exists/d
+/ripe-atlas\[[0-9]*\]: condmv: not moving, destination '\/var\/spool\/ripe-atlas\/data\/out\/v6addr.txt' exists/d
+/ripe-atlas\[[0-9]*\]: \/usr\/libexec\/ripe-atlas\/scripts\/reginit.sh: line 49: \/etc\/ripe-atlas\/reg_servers.sh: No such file or directory/d
+/ripe-atlas\[[0-9]*\]: ssh -p 443 atlas@ INIT/d
+/ripe-atlas\[[0-9]*\]: REGHOSTS/d
+/ripe-atlas\[[0-9]*\]: REASON_FOR_REGISTRATION NEW NO previous state files/d
+/ripe-atlas\[[0-9]*\]: ATLAS registration starting/d
+/ripe-atlas\[[0-9]*\]: 255  REGINIT exit with error/d
 /ripe-atlas\[[0-9]*\]: httppost: got line 'Date: .*'/d
 /ripe-atlas\[[0-9]*\]: eooqd: init returned 0x[0-9a-f]* for 'evping -4 -c 3 -s 64 -i 1000 -A "[0-9]*" [0-9a-f.:]*'/d
 /ripe-atlas\[[0-9]*\]: ooqd: a process is still running/d
@@ -533,13 +544,15 @@ s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ ready_callback4: got t
 /ripe-atlas\[[0-9]*\]: unlinking file '\/var\/spool\/ripe-atlas\/data\//d
 /ripe-atlas\[[0-9]*\]: httppost: /d
 /perd\[[0-9]*\]: USER root pid .* cmd httppost -A [0-9]*\s*--set-time 2 --delete-file --maxpostsize 9000000 --post-header \/home\/atlas\/status\/.* --post-dir \/home\/atlas\/data\/out --post-footer \/home\/atlas\/status\/con_session_id.txt -O \/home\/atlas\/data\/new\/main_sent.vol http:\/\/127.0.0.1:8080\/?PROBE_ID=.*&SESSION_ID=.*/d
-/ripe-atlas\[[0-9]*\]: eooqd: init returned 0x.* for 'evping -4 -c 3 -s 48 -i 1000 -A /d
+/ripe-atlas\[[0-9]*\]: eooqd: init returned 0x.* for 'evping -4 -c 3 -s [0-9]* -i 1000 -A /d
 /ripe-atlas\[[0-9]*\]: eooqd: init returned 0x.* for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A/d
 /ripe-atlas\[[0-9]*\]: eooqd: deleted last query qry [0-9]*/d
 /ripe-atlas\[[0-9]*\]: eooqd: atlas_run: looking for 'ev/d
+/ripe-atlas\[[0-9]*\]: eooqd: ping_cb: not busy for state 0x.*, /d
 /perd\[[0-9]*\]: crond (busybox 1.26.2) started, log level 8/d
 /perd\[[0-9]*\]: a process is still running/d
-/eperd\[[0-9]*\]: ping_cb: not busy for state 0x.*, /d
+/eperd\[[0-9]*\]: ping_cb: not busy for state 0x.*,/d
+/eperd\[[0-9]*\]: A process is still running/d
 
 # smallstep step-ca
 /step\[[0-9]*\]: certificate does not need renewal/d

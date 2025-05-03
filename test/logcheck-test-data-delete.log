@@ -41,10 +41,22 @@ ripe-atlas[32649]: ooqd: a process is still running
 ripe-atlas[33244]: unlinking file '/var/spool/ripe-atlas/data/out/ooq/9'
 ripe-atlas[33244]: httppost: got line 'Connection: close'
 perd[1706]: USER root pid   0 cmd httppost -A 9015 --set-time 2 --delete-file --maxpostsize 9000000 --post-header /home/atlas/status/p_to_c_report_header --post-dir /home/atlas/data/out --post-footer /home/atlas/status/con_session_id.txt -O /home/atlas/data/new/main_sent.vol http://127.0.0.1:8080/?PROBE_ID=1009927&SESSION_ID=26378e30fdfcb2244311980c66d57fd50918326e71b7e8a046edfbc5d2eeed9e >> /home/atlas/data/new/main
-ripe-atlas[1722]: eooqd: init returned 0x55da3305a6a0 for 'evping -4 -c 3 -s 48 -i 1000 -A "88057667" 
+ripe-atlas[1722]: eooqd: init returned 0x55da3305a6a0 for 'evping -4 -c 3 -s 48 -i 1000 -A "88057667"
+ripe-atlas[1722]: eooqd: init returned 0x55da3305a6a0 for 'evping -4 -c 3 -s 64 -i 1000 -A "89102181" a1-66.akam.net'
 ripe-atlas[1722]: eooqd: init returned 0x55da33058c80 for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A
 ripe-atlas[1722]: eooqd: deleted last query qry 88152893
 ripe-atlas[1722]: eooqd: atlas_run: looking for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A "88031155"
+ripe-atlas[1722]: eooqd: ping_cb: not busy for state 0x55da3305a6a0, 'a1-66.akam.net'
+ripe-atlas[963]: RESULT 9006 done 1746079276 fa163ea1ecfd no reginit.vol start registration
+ripe-atlas[963]: Moving reboot-count.txt
+ripe-atlas[9445]: condmv: not moving, destination '/var/spool/ripe-atlas/data/out/simpleping' exists
+ripe-atlas[9444]: condmv: not moving, destination '/var/spool/ripe-atlas/data/out/v6addr.txt' exists
+ripe-atlas[9422]: /usr/libexec/ripe-atlas/scripts/reginit.sh: line 49: /etc/ripe-atlas/reg_servers.sh: No such file or directory
+ripe-atlas[9422]: ssh -p 443 atlas@ INIT
+ripe-atlas[9422]: REGHOSTS
+ripe-atlas[9422]: REASON_FOR_REGISTRATION NEW NO previous state files
+ripe-atlas[9422]: ATLAS registration starting
+ripe-atlas[9422]: 255  REGINIT exit with error
 perd[7356]: crond (busybox 1.26.2) started, log level 8
 perd[7356]: a process is still running
-eperd[1708]: ping_cb: not busy for state 0x561d9a345560, 
+eperd[1708]: ping_cb: not busy for state 0x561d9a345560,
