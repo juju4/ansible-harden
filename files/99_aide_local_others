@@ -117,6 +117,7 @@
 /var/lib/command-not-found$ VarDir
 /var/lib/command-not-found/commands.db$ VarFile
 /var/lib/command-not-found/commands.db.metadata$ VarFile
+/var/lib/systemd/timers/stamp-*$ VarFile
 /var/lib/ubuntu-advantage$ VarDir
 /var/lib/ubuntu-advantage/apt-esm/var/cache/apt$ VarDir
 /var/lib/ubuntu-advantage/apt-esm/var/cache/apt/pkgcache.bin$ VarFile
