@@ -7,16 +7,14 @@
     dest: "{{ harden_sshd_ca_path | dirname }}"
     state: directory
     mode: '0700'
-  connection: local
-  become: no
+  delegate_to: localhost
   when: harden_sshd_ca_path | dirname != '/tmp'
 
 - name: Check if SSH CA exists (pubkey)
   ansible.builtin.stat:
     path: "{{ harden_sshd_ca_path }}.pub"
   register: sshca
-  connection: local
-  become: no
+  delegate_to: localhost
 
 - name: Orchestrator | Generate SSH CA
   community.crypto.openssh_keypair:
@@ -25,8 +23,7 @@
     mode: "{{ harden_sshd_ca_mode | default('0400') }}"
     owner: "{{ harden_sshd_ca_user | default(lookup('env', 'USER')) }}"
     group: "{{ harden_sshd_ca_group | default('root') }}"
-  connection: local
-  become: no
+  delegate_to: localhost
   when: not sshca.stat.exists
 
 - name: Debug
@@ -63,8 +60,7 @@
       with_items:
         - "{{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}"
         - "{{ harden_sshd_ca_path }}"
-      connection: local
-      become: no
+      delegate_to: localhost
 
     - name: Sign SSH host key
       ansible.builtin.command: >
@@ -75,8 +71,7 @@
           {{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}
       args:
         creates: "{{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}/{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') | regex_replace('.pub$', '-cert.pub') }}"
-      connection: local
-      become: no
+      delegate_to: localhost
 
     - name: Return SSH host key signed
       ansible.builtin.copy:
@@ -96,5 +91,4 @@
   args:
     creates: "{{ item.pubkey | regex_replace('.pub$', '-cert.pub') }}"
   with_items: "{{ harden_sshd_ca_signing_userkeys }}"
-  connection: local
-  become: no
+  delegate_to: localhost

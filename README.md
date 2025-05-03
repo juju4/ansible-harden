@@ -156,6 +156,12 @@ Normal ssh command line with recent releases should not be impacted. If required
   * above net-ssh issue with kex and hmac
   * Net::SSH:AuthenticationFailed: Authentication failed for user azure@xxx
 
+* `FAILED! => {"changed": false, "module_stderr": "sudo: The \"no new privileges\" flag is set, which prevents sudo from running as root.\nsudo: If sudo is running in a container, you may need to adjust the container configuration to disable the flag.\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}` on task "Ensure SSH CA dirname has right permissions".
+This was previously task with connection=local and become=no but still called sudo (as per -vvvv).
+Using instead delegate_to=localhost does not and is used in latest version.
+Typically happens if run under tool like semaphoreui and systemd unit is set with NoNewPrivileges restriction.
+
+
 ## License
 
 BSD 2-clause
