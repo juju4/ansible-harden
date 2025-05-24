@@ -23,7 +23,7 @@
     path: /var/log/chkrootkit/log.today
   register: chkr_today
 - name: Set log.expected
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: /var/log/chkrootkit/log.today
     dest: /var/log/chkrootkit/log.expected
     mode: '0644'
