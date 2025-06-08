@@ -41,6 +41,7 @@ postfix/smtp[52867]: 699FCAEE8: to=<recipient@example.com>, orig_to=<logcheck>, 
 postfix/smtp[8393]: CDCE3DF0A: to=<recipient@example.com>, relay=192.168.1.2[192.168.1.2]:25, delay=0.32, delays=0.01/0.01/0.29/0.02, dsn=2.0.0, status=sent (250 OK id=1tKWpp-0000AL-0C)
 postfix/smtp[51537]: connect to 192.168.1.2[192.168.1.2]:25: No route to host
 postfix/smtp[51537]: 688041016F: to=<recipient@example.com>, orig_to=<root>, relay=none, delay=13066, delays=13063/0.02/3.1/0, dsn=4.4.1, status=deferred (connect to 192.168.1.2[192.168.1.2]:25: No route to host)
+postfix/smtp[2001]: Untrusted TLS connection established to smtp.gmail.com[64.233.163.109]:587: TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits) key-exchange X25519 server-signature ECDSA (P-256)
 systemd-journald[402]: /var/log/journal/51e1aeca61df4814931edfb762645df9/user-1001.journal: Journal header limits reached or header out-of-date, rotating.
 systemd-journald[402]: /var/log/journal/51e1aeca61df4814931edfb762645df9/system.journal: Journal header limits reached or header out-of-date, rotating.
 systemd-journald[402]: Oldest entry in /var/log/journal/51e1aeca61df4814931edfb762645df9/user-1001.journal is older than the configured file retention duration (1month), suggesting rotation.
@@ -51,14 +52,17 @@ apt.systemd.daily[19289]: remove by archive size: /var/cache/apt/archives//libxs
 falcoctl: 2024-07-04 00:58:16 ERROR unable to retrieve Falco versions, please check if it is running and correctly exposing the version endpoint: unable to get versions from URL
 falcoctl[62474]:                       ├ followerName: ghcr.io/falcosecurity/rules/falco-rules:3
 alertmanager[39404]: ts=2024-12-15T02:47:35.630Z caller=tls_config.go:316 level=info msg="TLS is disabled." http2=false address=[::]:9093
+alertmanager[37283]: time=2025-06-07T10:35:32.443Z level=
 blackbox_exporter[29967]: ts=2024-12-19T14:34:46.583Z caller=main.go:100 level=info msg="Loaded config file"
 otelcol-contrib[24542]: 2024-12-23T00:20:56.539Z#011info#011fileconsumer/file.go:256#011Started watching file#011{"kind": "receiver", "name": "filelog/std", "data_type": "logs", "component": "fileconsumer", "path": "/var/log/monit.log"}
 otelcol-contrib[9167]: #011github.com/open-telemetry/opentelemetry-collector-contrib/pkg/stanza@v0.111.0/fileconsumer/file.go:172
 otelcol-contrib[44887]: #011go.opentelemetry.io/collector/processor/batchprocessor@v0.111.0/batch_processor.go:277
+otelcol-contrib[1248]: 2025-06-05T17:47:16.241Z        warn        batchprocessor@v0.125.0/batch_processor.go:264        Sender failed        {"otelcol.component.id": "batch", "otelcol.component.kind": "processor", "otelcol.pipeline.id": "logs/spython", "otelcol.signal": "logs", "error": "write /tmp/otel-debug.log: no space left on device"}
 systemd[44160]: named.service: ProtectHostname=yes is configured, but the kernel does not support UTS namespaces, ignoring namespace setup.
 dns_exporter[10409]: 2025-01-06 06:01:35 +0000 ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config
 dns_exporter[43577]: 2025-01-07 19:22:29 +0000 INFO dns_exporter.dns_exporter.entrypoint.main():170:  Ready to serve requests. Starting listener on 127.0.0.1 port 15353...
 dns_exporter[31038]: Exception occurred during processing of request from ('127.0.0.1', 56822)
+dns_exporter[858]: 2025-06-01 18:02:06 +0000 WARNING dns_exporter.dns_exporter.collector.collect_dns():170:  No DNS response received from server udp://127.0.0.1:53 - failure reason is 'timeout'...
 ovpn-xyz[1549]: Restart pause, 64 second(s)
 ripe-atlas[59002]: posting file '/var/spool/ripe-atlas/data/out/ooq/7'
 ripe-atlas[59002]: eooqd: atlas_run: argv[5] = '64'
@@ -74,3 +78,8 @@ step[7014]: The request lacked necessary authorization to be completed: certific
 step[36556]: error renewing certificate
 step[44643]: error validating renew token: token not valid yet (nbf)
 rsyslogd[875]: rsyslogd[internal_messages]: 3827 messages lost due to rate-limiting (500 allowed within 5 seconds)
+2025-05-28T06:01:59.881607+00:00 myhost sshd[3666]: Connection from 127.0.0.1 port 45688 on 127.0.0.1 port 22 rdomain ""
+dhcpd[12033]: reuse_lease: lease age 79 (secs) under 25% threshold, reply with unaltered, existing lease for 192.168.1.2
+IPCC.xs[2465327]: pam_unix(proxmox-ve-auth:auth):
+pvedaemon[2465327]: authentication failure;
+pveproxy[2470266]: got inotify poll request in wrong process - disabling inotify

@@ -6,6 +6,7 @@
 # Final uniq+sort is done by syslog-summary normally
 s/[A-Z][a-z][a-z]\s*[0-9]*\s*[0-9]*:[0-9]*:[0-9]*\s*//
 s/[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*+[0-9]*:[0-9]* //
+s/[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+[0-9]*:[0-9]* //
 s/sudo\[[0-9]*\]: /sudo: /
 s/CRON\[[0-9]*\]: /CRON: /
 {% else %}
@@ -274,6 +275,9 @@ s/\/tmp\/ansible-\(.*\)\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.
 s/\/tmp\/ansible-\(.*\)\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/source/\/tmp\/ansible-\1\/ansible-tmp-N.N-N-N\/source/
 s/\/async_wrapper.py j[0-9]* [0-9]* \(.*\)\/.ansible\/tmp\//\/async_wrapper.py jNNN N \1\/.ansible\/tmp\//
 s/python3\[[0-9]*\]: ansible-/python3: ansible-/
+s/python3\[[0-9]*\]: network: /python3: network: /
+s/python\[[0-9]*\]: network: /python: network: /
+/python3\[[0-9]*\]: importing module /d
 
 ### ptrace
 s/ptrace of pid [0-9]* was attempted by: \(.*\) (pid [0-9]*)/ptrace of pid N was attempted by: \1 (pid M)/
@@ -390,9 +394,11 @@ s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z" level=/e
 s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: level=\1 caller=/
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
 s/alertmanager\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/alertmanager: caller=/
+s/alertmanager\[[0-9]*\]: time=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=/alertmanager: level=/
 s/_exporter\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: caller=/
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config/
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* INFO dns_exporter/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 INFO dns_exporter/
+s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* WARNING dns_exporter/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 WARNING dns_exporter/
 s/dns_exporter\[[0-9]*\]: Exception occurred during processing of request from ('\(.*\)', [0-9]*)/dns_exporter: Exception occurred during processing of request from ('\1', N)/
 /pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Worker exiting (pid: [0-9]*)/d
 /pve_exporter\[[0-9]*\]: \[[0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]*\] \[[0-9]*\] \[INFO\] Starting gunicorn/d
@@ -419,6 +425,7 @@ s/postfix\/smtp\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), orig_to=\(.*\), relay=\(.*\), d
 s/postfix\/smtp\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), relay=\(.*\), delay=[0-9\.]*, delays=[0-9\.]*\/[0-9\.]*\/[0-9\.]*\/[0-9\.]*, dsn=[0-9\.]*, status=sent (250 OK id=[0-9A-Za-z]*-[0-9A-Za-z]*-[0-9A-Za-z]*)/postfix\/smtp: XXX: to=\1, relay=\2, delay=N, delays=N\/N\/N\/N, dsn=N, status=sent (250 OK id=XXXXXX)/
 s/postfix\/smtp\[[0-9]*\]: connect to /postfix\/smtp: connect to /
 s/postfix\/cleanup\[[0-9]*\]: [0-9A-Z]*: message-id=<[0-9]*.[0-9A-Z]*@\(.*\)>/postfix\/cleanup: XXX: message-id=<NNN.XXX@\1>/
+s/postfix\/smtp\[[0-9]*\]: Untrusted TLS connection established to \(.*\)\[[0-9a-f:.]*\]:\([0-9]*\): \(.*\)/postfix\/smtp: Untrusted TLS connection established to \1[IP]:\2: \3/
 
 # teleport timestamp
 s/teleport\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z ERRO/teleport: YYYY-MM-DDTHH:MM:SSZ ERRO/
@@ -443,6 +450,8 @@ s/otelcol-contrib\[[0-9]*\]: #\([0-9]*\)github.com\(.*\):[0-9]*/otelcol-contrib:
 s/otelcol-contrib\[[0-9]*\]: #\([0-9]*\)go.opentelemetry.io\(.*\):[0-9]*/otelcol-contrib: #\1go.opentelemetry.io\2:N/
 s/otelcol-contrib\[[0-9]*\]: Error:/otelcol-contrib: Error:/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* collector server run finished with error:/otelcol-contrib: YYYY-MM-DD HH:MM:SS collector server run finished with error:/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z        warn/otelcol-contrib:        warn/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z        error/otelcol-contrib:        error/
 
 # proxmox
 s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not have an email address/proxmox-mail-forward: mail forward failed: user '\1' does not have an email address/
@@ -468,6 +477,9 @@ s/spiceproxy\[[0-9]*\]: worker exit/spiceproxy: worker exit/
 s/spiceproxy\[[0-9]*\]: send HUP to [0-9]*/spiceproxy: send HUP to N/
 s/pmxcfs\[[0-9]*\]: \[status\] notice: RRDC update error \/var\/lib\/rrdcached\/db\/\(.*\): -1/pmxcfs: [status] notice: RRDC update error \/var\/lib\/rrdcached\/db\/XXX: -1/
 s/pve-ha-lrm\[[0-9]*\]: loop take too long ([0-9]* seconds)/pve-ha-lrm: loop take too long (N seconds)/
+s/IPCC.xs\[[0-9]*\]: pam_unix(proxmox-ve-auth:auth):/IPCC.xs: pam_unix(proxmox-ve-auth:auth):/
+s/pvedaemon\[[0-9]*\]: authentication failure;/pvedaemon\[[0-9]*\]: authentication failure;/
+s/pveproxy\[[0-9]*\]: got inotify poll request in wrong process - disabling inotify/pveproxy\[[0-9]*\]: got inotify poll request in wrong process - disabling inotify/
 
 # rngd
 /rngd\[[0-9]*\]: stats: FIPS 140-2/d
@@ -488,6 +500,7 @@ s/in.tftpd\[[0-9]*\]: tftp:/in.tftpd: tftp:/
 s/in.tftpd\[[0-9]*\]: RRQ from/in.tftpd: RRQ from/
 s/dhcpd\[[0-9]*\]: WARNING: /dhcpd: WARNING: /
 /dhcpd\[[0-9]*\]: Wrote [0-9]* /d
+s/dhcpd\[[0-9]*\]: reuse_lease: lease age [0-9]* (secs) under \([0-9]*\)% threshold, reply with unaltered, existing lease for /dhcpd: reuse_lease: lease age X (secs) under \1% threshold, reply with unaltered, existing lease for /
 
 /squid\[[0-9]*\]: .* \/var\/spool\/squid\/[0-9]* exists/d
 /squid\[[0-9]*\]: .* Making directories in \/var\/spool\/squid\/[0-9]*/d
@@ -551,6 +564,7 @@ s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ ready_callback4: got t
 /ripe-atlas\[[0-9]*\]: eooqd: ping_cb: not busy for state 0x.*, /d
 /perd\[[0-9]*\]: crond (busybox 1.26.2) started, log level 8/d
 /perd\[[0-9]*\]: a process is still running/d
+/perd\[[0-9]*\]: USER root pid   0 cmd condmv -A "RESULT [0-9]* ongoing" \/home\/atlas\/data\/new\/main \/home\/atlas\/data\/out\/main/d
 /eperd\[[0-9]*\]: ping_cb: not busy for state 0x.*,/d
 /eperd\[[0-9]*\]: A process is still running/d
 
