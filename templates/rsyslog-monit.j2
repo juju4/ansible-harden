@@ -8,7 +8,7 @@ check process rsyslog
   with pidfile "/var/run/syslogd.pid"
 {% endif %}
 {% if ansible_os_family == 'Debian' %}
-  with pidfile "/var/run/rsyslogd.pid"
+  matching rsyslog
 {% endif %}
   group system
   group rsyslog
