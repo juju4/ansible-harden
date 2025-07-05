@@ -48,6 +48,8 @@ s/sshd\[[0-9]*\]: Connection closed by invalid user \(.*\) \([0-9a-fA-F\.:]*\) p
 s/sshd\[[0-9]*\]: Disconnected from authenticating user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from authenticating user \1 \2 port N/
 s/sshd\[[0-9]*\]: Closing connection to \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Closing connection to \1 port N/
 s/sshd\[[0-9]*\]: User child is on pid [0-9]*/sshd: sshd: User child is on pid N/
+s/sshd\[[0-9]*\]: User child is on pid [0-9]*/sshd: sshd: User child is on pid N/
+s/sshd: banner exchange: Connection from \(.*\) port [0-9]*: /sshd: banner exchange: Connection from \1 port N: /
 s/systemd\[[0-9]*\]: \(.*\).service: Found left-over process [0-9]* (\(.*\)) in control group while starting unit. Ignoring./systemd: \1.service: Found left-over process X (\2) in control group while starting unit. Ignoring./
 s/systemd\[[0-9]*\]: \(.*\).service: Unit process [0-9]* (\(.*\)) remains running after unit stopped./systemd: \1.service: Unit process X (\2) remains running after unit stopped./
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read 0 written [0-9]*/sftp-server: close "\1" bytes read 0 written N/
@@ -174,6 +176,7 @@ s/profile="lxc-[0-9]*_<\/var\/lib\/lxc>" name=".*" pid=/profile="lxc-N_<\/var\/l
 s/audit\[[0-9]*\]\: AVC apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=[0-9]* comm="\(.*\)" requested_mask="\([a-z]*\)" denied_mask="\([a-z]*\)" fsuid=\([0-9]*\) ouid=\([0-9]*\)/audit: AVC apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=N comm="\1" requested_mask="\2" denied_mask="\3" fsuid=\4 ouid=\5/
 s/audit\[[0-9]*\]\(.*\) AVC apparmor=\(.*\) pid=[0-9]* comm=/audit\1 AVC apparmor=\2 pid=N comm=/
 s/audit\(.*\) AVC apparmor=\(.*\) name="\(.*\)" pid=[0-9]*$/audit\1 AVC apparmor=\1 name="\2" pid=N/
+s/ name="\/run\/systemd\/namespace-[A-Za-z0-9]*\/" pid=/ name="\/run\/systemd\/namespace-XXX\/" pid=/
 s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): proctitle="\(.*\)"/kernel: audit: type=\1 audit(NNN.NNN:NNN): proctitle="\2"/
 s/kernel: audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): proctitle=[0-9A-F]*/kernel: audit: type=\1 audit(NNN.NNN:NNN): proctitle=XXXXXX/
 s/kernel: \[ N\.N\] audit: type=\([0-9]*\) audit([0-9]*\.[0-9]*:[0-9]*): proctitle=[0-9A-F]*/kernel: [ N.N] audit: type=\1 audit(NNN.NNN:NNN): proctitle=XXXXXX/
@@ -248,6 +251,7 @@ s/systemd-journald\[[0-9]*\]: \/var\/log\/journal\/[0-9a-f]*\/\(.*\).journal: Jo
 s/systemd-journald\[[0-9]*\]: \/var\/log\/journal\/[0-9a-f]\/system.journal: Journal header limits reached or header out-of-date, rotating./systemd-journald: \/var\/log\/journal\/HHH\/system.journal: Journal header limits reached or header out-of-date, rotating./
 s/systemd-journald\[[0-9]*\]: Oldest entry in \/var\/log\/journal\/[0-9a-f]*\/user-[0-9]*.journal is older than the configured file retention duration (1month), suggesting rotation./systemd-journald: Oldest entry in \/var\/log\/journal\/HHH\/user-N.journal is older than the configured file retention duration (1month), suggesting rotation./
 s/systemd-journald\[[0-9]*\]: Data hash table of \/var\/log\/journal\/[0-9a-f]*\/system.journal has a fill level at [0-9]*\.[0-9]* ([0-9]* of [0-9]* items, [0-9]* file size, [0-9]* bytes per hash table item), suggesting rotation./systemd-journald: Data hash table of \/var\/log\/journal\/HHH\/system.journal has a fill level at N.N (N of N items, N file size, N bytes per hash table item), suggesting rotation./
+s/systemd-journald\[[0-9]*\]: Forwarding to syslog missed [0-9]* messages./systemd-journald: Forwarding to syslog missed N messages./
 s/systemd-journal-upload\[[0-9]*\]: Upload to \(.*\) failed: Failed to connect to \(.*\) port [0-9]* after [0-9]* ms: Couldn't connect to server/systemd-journal-upload: Upload to \1 failed: Failed to connect to \2 port N after N ms: Couldn't connect to server/
 s/systemd-journal-upload\[[0-9]*\]: Upload to /systemd-journal-upload: Upload to /
 s/systemd\[[0-9]*\]: \(.*\).service: \(.*\) is configured, but the kernel does not support UTS namespaces, ignoring namespace setup./systemd: \1.service: \2 is configured, but the kernel does not support UTS namespaces, ignoring namespace setup./
@@ -266,6 +270,7 @@ s/ansible-async_wrapper: [0-9]* still running ([0-9]*)/ansible-async_wrapper: N 
 s/ansible-async_wrapper.py: [0-9]* still running ([0-9]*)/ansible-async_wrapper.py: N still running (N)/
 s/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c echo BECOME-SUCCESS-xxxxxx ;/
 s/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-[a-z]* ;/COMMAND=\/bin\/sh -c 'echo BECOME-SUCCESS-xxxxxx ;/
+s/; http_proxy=\(.*\):\/\/\(.*\):.*@\(.*\) https_proxy=\(.*\):\/\/\(.*\):.*@\(.*\) no_proxy=\(.*\) \/usr\/bin\/python3/; http_proxy=\1:\/\/\2:REDACTED@\3 https_proxy=\4:\/\/\5:REDACTED@\6 no_proxy=\7 \/usr\/bin\/python3/
 # s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_\1.py/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*\/AnsiballZ_\(.*\).py/\/.ansible\/tmp\/ansible-tmp-N.N-N-N\/AnsiballZ_#MODULE#.py/
 s/\/.ansible\/tmp\/ansible-tmp-[0-9]*\.[0-9]*-[0-9]*-[0-9]*/\/.ansible\/tmp\/ansible-tmp-N.N-N-N/
@@ -303,8 +308,10 @@ s/ansible-async_wrapper: Invoked with [0-9]* [0-9]* \(.*\)\/.ansible\/tmp\/ansib
 ### osquery
 s/osqueryd\[[0-9]*\]: I1222 [0-9]*:[0-9]*:[0-9]*\.[0-9]*  5221 events.cpp:649\] Event publisher failed setup:/osqueryd: I1222 HH:MM:SS.XXXXXX  5221 events.cpp:649] Event publisher failed setup:/
 s/osqueryd\[[0-9]*\]: I1221 [0-9]*:[0-9]*:[0-9]*\.[0-9]* 25046 rocksdb.cpp:133\] RocksDB: \[ERROR\] \[JOB 227\] Failed to delete \/var\/osquery\/osquery.db\/[0-9]*.log type=0 #[0-9]* -- IO error: \/var\/osquery\/osquery.db\/[0-9]*.log: Permission denied/ osqueryd: I1221 HH:MM:SS.XXXXXX 25046 rocksdb.cpp:133] RocksDB: [ERROR] [JOB 227] Failed to delete \/var\/osquery\/osquery.db\/NNNNNNN.log type=0 #NNN -- IO error: \/var\/osquery\/osquery.db\/NNNNNN.log: Permission denied/
-s/osqueryd\[[0-9]*\]: W120\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* hashing.cpp:133\] Failed to hash \/etc\/resolv.conf.dhclient-new.[0-9]*/osqueryd: W120\1 HH:MM:SS.XXXXXXX N hashing.cpp:133] Failed to hash \/etc\/resolv.conf.dhclient-new.N/
-s/osqueryd\[[0-9]*\]: W120\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* hashing.cpp:133\] Failed to hash /osqueryd: W120\1 HH:MM:SS.XXXXXXX N hashing.cpp:133] Failed to hash /
+s/osqueryd\[[0-9]*\]: W\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* hashing.cpp:133\] Failed to hash \/etc\/resolv.conf.dhclient-new.[0-9]*/osqueryd: W\1 HH:MM:SS.XXXXXXX N hashing.cpp:133] Failed to hash \/etc\/resolv.conf.dhclient-new.N/
+s/osqueryd\[[0-9]*\]: W\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* hashing.cpp:133\] Failed to hash (.*)$/osqueryd: W\1 HH:MM:SS.XXXXXXX N hashing.cpp:133] Failed to hash XXX/
+s/osqueryd\[[0-9]*\]: W\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* virtual_table.cpp:1005\] \(.*\)$/osqueryd: W\1 HH:MM:SS.XXXXXXX N virtual_table.cpp:1005] \1/
+/osqueryd\[[0-9]*\]: I062[0-9]* [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* query.cpp:128\] Scheduled query has been updated: .*/d
 s/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\1 ouid=\2/
 # s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\1 ouid=\2/
 
@@ -391,6 +398,7 @@ s/dbus-daemon\[[0-9]*\]: Failed to start message bus:/dbus-daemon: Failed to sta
 ## *exporter
 s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*\+\([0-9]*\)" level=/exporter: time="YYYY-MM-DDTHH:MM:SS.NNNNNN+\1" level=/
 s/exporter\[[0-9]*\]: time="[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z" level=/exporter: time="YYYY-MM-DDTHH:MM:SSZ" level=/
+s/exporter\[[0-9]*\]: time=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=/exporter: time=YYYY-MM-DDTHH:MM:SS.NNNZ level=/
 s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: level=\1 caller=/
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
 s/alertmanager\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/alertmanager: caller=/
@@ -442,11 +450,13 @@ s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#\
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#\(.*\), "rejected_items": [0-9]*}/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#\1, "rejected_items": N}/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#\(.*\), "interval": "[0-9\.]*s"}/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#\1, "interval": "Ns"}/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z#/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ#/
+s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z \(.*\), "interval": "[0-9\.]*s"}/otelcol-contrib: YYYY-MM-DDTHH:MM:SS.ZZZZ \1, "interval": "N*s"}/
 /otelcol-contrib\[[0-9]*\]: github.com/d
 /otelcol-contrib\[[0-9]*\]: #011github.com\/open-telemetry\/opentelemetry-collector-contrib\/pkg\/stanza@v0.111.0\/fileconsumer\/file.go:[0-9N]*/d
 /otelcol-contrib: #011github.com\/open-telemetry\/opentelemetry-collector-contrib\/pkg\/stanza@v0.111.0\/fileconsumer\/file.go:[0-9N]*/d
 s/otelcol-contrib\[[0-9]*\]: #\([0-9]*\)github.com\(.*\):[0-9]*/otelcol-contrib: #\1github.com\2:N/
 /otelcol-contrib\[[0-9]*\]: go.opentelemetry.io/d
+/otelcol-contrib\[[0-9]*\]:         github.com\/open-telemetry\/opentelemetry-collector-contrib\/pkg\/stanza@v0\.[0-9]*\.[0-9]*\/fileconsumer\/file.go:[0-9]*/d
 s/otelcol-contrib\[[0-9]*\]: #\([0-9]*\)go.opentelemetry.io\(.*\):[0-9]*/otelcol-contrib: #\1go.opentelemetry.io\2:N/
 s/otelcol-contrib\[[0-9]*\]: Error:/otelcol-contrib: Error:/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* collector server run finished with error:/otelcol-contrib: YYYY-MM-DD HH:MM:SS collector server run finished with error:/
@@ -465,6 +475,7 @@ s/pveproxy\[[0-9]*\]: worker [0-9]* finished/pveproxy: worker N finished/
 s/pveproxy\[[0-9]*\]: worker exit/pveproxy: worker exit/
 s/pveproxy\[[0-9]*\]: detected empty handle/pveproxy: detected empty handle/
 /pveproxy\[[0-9]*\]: starting [0-9]* worker(s)/d
+/pveproxy\[[0-9]*\]: proxy detected vanished client connection/d
 /pvesh: Starting CT [0-9]*/d
 /pvestatd: modified cpu set for lxc\/[0-9]*: [0-9]*-[0-9]*/d
 s/pvedaemon\[[0-9]*\]: worker [0-9]* started/pvedaemon: worker N started/
@@ -480,6 +491,7 @@ s/pve-ha-lrm\[[0-9]*\]: loop take too long ([0-9]* seconds)/pve-ha-lrm: loop tak
 s/IPCC.xs\[[0-9]*\]: pam_unix(proxmox-ve-auth:auth):/IPCC.xs: pam_unix(proxmox-ve-auth:auth):/
 s/pvedaemon\[[0-9]*\]: authentication failure;/pvedaemon\[[0-9]*\]: authentication failure;/
 s/pveproxy\[[0-9]*\]: got inotify poll request in wrong process - disabling inotify/pveproxy\[[0-9]*\]: got inotify poll request in wrong process - disabling inotify/
+/pve-firewall\[[0-9]*\]: firewall update time ([0-9]*\.[0-9]* seconds)/d
 
 # rngd
 /rngd\[[0-9]*\]: stats: FIPS 140-2/d
@@ -532,9 +544,9 @@ s/named\[[0-9]*\]: network unreachable resolving/named: network unreachable reso
 
 s/ovpn-\(.*\)\[[0-9]*\]: Restart pause, [0-9]* second(s)/ovpn-\1: Restart pause, N second(s)/
 
-s/ripe-atlas\[[0-9]*\]: posting file '\/var\/spool\/ripe-atlas\/data\/out\/ooq\/[0-9]*'/ripe-atlas: posting file '\/var\/spool\/ripe-atlas\/data\/out\/ooq\/N'/
-s/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '64'/ripe-atlas: eooqd: atlas_run: argv[N] = 'N'/
-s/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '\/var\/spool\/ripe-atlas\/data\/new\/ooq.[0-9]*'/ripe-atlas: eooqd: atlas_run: argv[N] = '\/var\/spool\/ripe-atlas\/data\/new\/ooq.N'/
+/ripe-atlas\[[0-9]*\]: posting file '\/var\/spool\/ripe-atlas\/data\/out\/ooq\/[0-9]*'/d
+/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '64'/d
+/ripe-atlas\[[0-9]*\]: eooqd: atlas_run: argv\[[0-9]*\] = '\/var\/spool\/ripe-atlas\/data\/new\/ooq.[0-9]*'/d
 /ripe-atlas\[[0-9]*\]: total size in dir: [0-9]*/d
 s/ripe-atlas\[[0-9]*\]: ready_callback4: got type [0-9]*/ripe-atlas: ready_callback4: got type N/
 s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ready_callback4: got type 5\]/ripe-atlas: message repeated N times: [ready_callback4: got type 5]/
@@ -562,9 +574,11 @@ s/ripe-atlas\[[0-9]*\]: message repeated [0-9]* times: \[ ready_callback4: got t
 /ripe-atlas\[[0-9]*\]: eooqd: deleted last query qry [0-9]*/d
 /ripe-atlas\[[0-9]*\]: eooqd: atlas_run: looking for 'ev/d
 /ripe-atlas\[[0-9]*\]: eooqd: ping_cb: not busy for state 0x.*, /d
+/ripe-atlas\[[0-9]*\]: '/d
 /perd\[[0-9]*\]: crond (busybox 1.26.2) started, log level 8/d
 /perd\[[0-9]*\]: a process is still running/d
 /perd\[[0-9]*\]: USER root pid   0 cmd condmv -A "RESULT [0-9]* ongoing" \/home\/atlas\/data\/new\/main \/home\/atlas\/data\/out\/main/d
+/perd\[[0-9]*\]: USER root pid   0 cmd httppost -A [0-9]* --set-time [0-9]* .*/d
 /eperd\[[0-9]*\]: ping_cb: not busy for state 0x.*,/d
 /eperd\[[0-9]*\]: A process is still running/d
 

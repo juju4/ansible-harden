@@ -21,6 +21,7 @@ systemd-logind[12346]: Watching system buttons on /dev/input/event0 (Power Butto
 rngd[535]: stats: FIPS 140-2(2001-10-10) Monobit: 0
 otelcol-contrib[44887]: go.opentelemetry.io/collector/processor/batchprocessor.(*shard).startLoop
 otelcol-contrib: #011github.com/open-telemetry/opentelemetry-collector-contrib/pkg/stanza@v0.111.0/fileconsumer/file.go:N
+otelcol-contrib[1291]:         github.com/open-telemetry/opentelemetry-collector-contrib/pkg/stanza@v0.125.0/fileconsumer/file.go:208
 step[7014]: Re-run with STEPDEBUG=1 for more info.
 pve_exporter[64385]: [2025-01-18 13:21:21 +0000] [64385] [INFO] Starting gunicorn 23.0.0
 pve_exporter[64385]: [2025-01-18 13:21:21 +0000] [64385] [INFO] Listening at: http://192.168.1.2:9221 (64385)
@@ -37,10 +38,16 @@ step[10635]: #011./main.go:73
 ripe-atlas[33244]: eooqd: found cmd 'evtraceroute' for 'evtraceroute -4 -I -a 16 -c 1 -f 1 -m 64 -w 4000 -z 10 -S 48 -p 80 -A "87126597" 43.159.98.10'
 ripe-atlas[33244]: eooqd: found cmd 'evping' for 'evping -4 -c 3 -s 64 -i 1000 -A "87123783" 43.175.226.100'
 ripe-atlas[33244]: eooqd: atlas_run: argv[10] = '43.175.226.100'
+ripe-atlas[59002]: posting file '/var/spool/ripe-atlas/data/out/ooq/7'
+ripe-atlas[59002]: eooqd: atlas_run: argv[5] = '64'
+ripe-atlas[59002]: eooqd: atlas_run: argv[23] = '/var/spool/ripe-atlas/data/new/ooq.3'
 ripe-atlas[32649]: ooqd: a process is still running
 ripe-atlas[33244]: unlinking file '/var/spool/ripe-atlas/data/out/ooq/9'
 ripe-atlas[33244]: httppost: got line 'Connection: close'
-perd[1706]: USER root pid   0 cmd httppost -A 9015 --set-time 2 --delete-file --maxpostsize 9000000 --post-header /home/atlas/status/p_to_c_report_header --post-dir /home/atlas/data/out --post-footer /home/atlas/status/con_session_id.txt -O /home/atlas/data/new/main_sent.vol http://127.0.0.1:8080/?PROBE_ID=1009927&SESSION_ID=26378e30fdfcb2244311980c66d57fd50918326e71b7e8a046edfbc5d2eeed9e >> /home/atlas/data/new/main
+ripe-atlas[123]: posting file '/var/spool/ripe-atlas/data/out/ooq/1'
+ripe-atlas[1704]: '
+perd[1706]: USER root pid   0 cmd httppost -A 9015 --set-time 2 --delete-file --maxpostsize 9000000 --post-header /home/atlas/status/p_to_c_report_header --post-dir /home/atlas/data/out --post-footer /home/atlas/status/con_session_id.txt -O /home/atlas/data/new/main_sent.vol http://127.0.0.1:8080/?PROBE_ID=123&SESSION_ID=263>> /home/atlas/data/new/main
+perd[1683]: USER root pid   0 cmd httppost -A 9015 --set-time 2 --delete-file --maxpostsize 9000000 --post-header /home/atlas/status/p_to_c_report_header --post-footer /home/atlas/status/con_session_id.txt -O /home/atlas/data/new/main_sent.vol http://127.0.0.1:8080/?PROBE_ID=123&SESSION_ID=6ad&SRC=timesync >> /home/atlas/data/new/main
 ripe-atlas[1722]: eooqd: init returned 0x55da3305a6a0 for 'evping -4 -c 3 -s 48 -i 1000 -A "88057667"
 ripe-atlas[1722]: eooqd: init returned 0x55da3305a6a0 for 'evping -4 -c 3 -s 64 -i 1000 -A "89102181" a1-66.akam.net'
 ripe-atlas[1722]: eooqd: init returned 0x55da33058c80 for 'evtraceroute -4 -I -a 16 -c 3 -f 1 -m 32 -w 4000 -z 10 -S 48 -p 80 -A
@@ -62,3 +69,5 @@ perd[7356]: a process is still running
 perd[14369]: USER root pid   0 cmd condmv -A "RESULT 9901 ongoing" /home/atlas/data/new/main /home/atlas/data/out/main
 eperd[1708]: ping_cb: not busy for state 0x561d9a345560,
 python3[780014]: importing module contextlib
+osqueryd[3448706]: I0621 04:21:03.856863 3448900 query.cpp:128] Scheduled query has been updated: pack_ossec-rootkit_telekit_trojan
+osqueryd[1770911]: I0629 04:15:06.411104 1771203 query.cpp:128] Scheduled query has been updated: system_info
