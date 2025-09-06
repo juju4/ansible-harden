@@ -6,18 +6,17 @@
 ## https://github.com/fcaviggia/hardening-script-el6
 ## https://github.com/major/securekickstarts
 
-- name: Include version-specific variables for Ubuntu.
-  ansible.builtin.include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-  when: ansible_distribution == 'Ubuntu'
-- name: Include version-specific variables for Debian.
-  ansible.builtin.include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-  when: ansible_distribution == 'Debian'
-- name: Include version-specific variables for RedHat
-  ansible.builtin.include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
-  when: ansible_os_family == "RedHat"
-- name: Include version-specific variables for Alpine
-  ansible.builtin.include_vars: "Alpine.yml"
-  when: ansible_os_family == "Alpine"
+- name: Include variables
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - '{{ ansible_distribution }}.yml'
+        - '{{ ansible_os_family }}.yml'
+      paths:
+        - 'vars'
 
 - name: Import travis
   ansible.builtin.import_tasks: travis.yml
