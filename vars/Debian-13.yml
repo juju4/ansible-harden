@@ -55,7 +55,7 @@ harden_pkg:
   - ecryptfs-utils
   # - apt-listbugs
   - apt-listchanges
-  # - libopenscapXX
+  - libopenscap33
   # - ssg-debian
   # - ssg-applications
 
