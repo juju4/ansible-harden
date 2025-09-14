@@ -49,6 +49,13 @@ jobs:
         with:
           egress-policy: block
           allowed-endpoints: >
+            0.debian.pool.ntp.org:123
+            0.debian.pool.ntp.org:443
+            1.debian.pool.ntp.org:123
+            1.debian.pool.ntp.org:443
+            2.debian.pool.ntp.org:123
+            2.debian.pool.ntp.org:443
+            3.debian.pool.ntp.org:123
             azure.archive.ubuntu.com:80
             esm.ubuntu.com:443
             files.pythonhosted.org:443
