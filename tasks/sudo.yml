@@ -39,4 +39,4 @@
     mode: '0440'
     backup: "{{ harden_backup | default(false) }}"
     validate: 'visudo -cf %s'
-  when: sudo_v | string is version_compare('1.9.4', '>=') and harden_sudo_remotesyslog | string
+  when: sudo_v | string is version_compare('1.9.4', '>=') and harden_sudo_remotesyslog | length > 0
