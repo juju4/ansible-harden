@@ -129,7 +129,7 @@
 
 - name: Import root-forward
   ansible.builtin.import_tasks: root-forward.yml
-  when: harden_rootforward is defined and harden_rootforward
+  when: harden_rootforward is defined and harden_rootforward | length > 0
 
 - name: Import fail2ban
   ansible.builtin.import_tasks: fail2ban.yml
@@ -147,4 +147,4 @@
 
 - name: Import testing
   ansible.builtin.import_tasks: testing.yml
-  when: harden_testing
+  when: harden_testing | bool
