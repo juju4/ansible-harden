@@ -34,12 +34,12 @@
     mode: '0755'
     owner: root
 
+# https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#RuntimeMaxSec=
 - name: Debian | Enforce run time limit
   ansible.builtin.copy:
     content: |
-      [Service]
+      [Unit]
       RuntimeMaxSec=60
-      RuntimeRandomizedExtraSec=15
     dest: /etc/systemd/system/apt-daily.service.d/runtimemax.conf
     mode: '0644'
     owner: root
