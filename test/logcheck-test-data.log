@@ -63,6 +63,7 @@ otelcol-contrib[9167]: #011github.com/open-telemetry/opentelemetry-collector-con
 otelcol-contrib[44887]: #011go.opentelemetry.io/collector/processor/batchprocessor@v0.111.0/batch_processor.go:277
 otelcol-contrib[1248]: 2025-06-05T17:47:16.241Z        warn        batchprocessor@v0.125.0/batch_processor.go:264        Sender failed        {"otelcol.component.id": "batch", "otelcol.component.kind": "processor", "otelcol.pipeline.id": "logs/spython", "otelcol.signal": "logs", "error": "write /tmp/otel-debug.log: no space left on device"}
 otelcol-contrib[2819356]: 2025-06-24T15:40:50.887Z        info        internal/retry_sender.go:133        Exporting failed. Will retry the request after interval.        {"otelcol.component.id": "otlphttp/category", "otelcol.component.kind": "exporter", "otelcol.signal": "logs", "error": "rpc error: code = Unavailable desc = error exporting items, request to https://server.lan/api/default/v1/logs responded with HTTP Status Code 502", "interval": "19.285948507s"}
+otelcol-contrib[44834]: 2025-07-11T11:42:45.813Z        error        internal/base_exporter.go:116        Exporting failed. Rejecting data.        {"otelcol.component.id": "file/debug", "otelcol.component.kind": "exporter", "otelcol.signal": "logs", "error": "write length 14061736 exceeds maximum file size 10485760", "rejected_items": 4404}
 systemd[44160]: named.service: ProtectHostname=yes is configured, but the kernel does not support UTS namespaces, ignoring namespace setup.
 dns_exporter[10409]: 2025-01-06 06:01:35 +0000 ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config
 dns_exporter[43577]: 2025-01-07 19:22:29 +0000 INFO dns_exporter.dns_exporter.entrypoint.main():170:  Ready to serve requests. Starting listener on 127.0.0.1 port 15353...
@@ -85,5 +86,7 @@ dhcpd[12033]: reuse_lease: lease age 79 (secs) under 25% threshold, reply with u
 IPCC.xs[2465327]: pam_unix(proxmox-ve-auth:auth):
 pvedaemon[2465327]: authentication failure;
 pveproxy[2470266]: got inotify poll request in wrong process - disabling inotify
+pveproxy[62730]: Warning: unable to close filehandle GEN5 properly: No space left on device at /usr/share/perl5/PVE/APIServer/AnyEvent.pm line 1980.
+pveproxy[62730]: error writing access log
 sshd: banner exchange: Connection from 192.168.1.2 port 54110: could not read protocol version
 sudo:  deploy : PWD=/home/deploy ; USER=root ; COMMAND=/bin/sh -c 'echo BECOME-SUCCESS-xxxxxx ; http_proxy=http://USER:PASSWORD@10.8.0.1:3128 https_proxy=http://USER:PASSWORD@10.8.0.1:3128 no_proxy=127.0.0.1,::1,localhost,10.0.0.0/8,192.168.0.0/16,internal /usr/bin/python3'

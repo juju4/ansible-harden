@@ -311,7 +311,7 @@ s/osqueryd\[[0-9]*\]: I1221 [0-9]*:[0-9]*:[0-9]*\.[0-9]* 25046 rocksdb.cpp:133\]
 s/osqueryd\[[0-9]*\]: W\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* hashing.cpp:133\] Failed to hash \/etc\/resolv.conf.dhclient-new.[0-9]*/osqueryd: W\1 HH:MM:SS.XXXXXXX N hashing.cpp:133] Failed to hash \/etc\/resolv.conf.dhclient-new.N/
 s/osqueryd\[[0-9]*\]: W\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* hashing.cpp:133\] Failed to hash (.*)$/osqueryd: W\1 HH:MM:SS.XXXXXXX N hashing.cpp:133] Failed to hash XXX/
 s/osqueryd\[[0-9]*\]: W\([0-9]*\) [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* virtual_table.cpp:1005\] \(.*\)$/osqueryd: W\1 HH:MM:SS.XXXXXXX N virtual_table.cpp:1005] \1/
-/osqueryd\[[0-9]*\]: I062[0-9]* [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* query.cpp:128\] Scheduled query has been updated: .*/d
+/osqueryd\[[0-9]*\]: I0[0-9]* [0-9]*:[0-9]*:[0-9]*\.[0-9]* [0-9 ]* query.cpp:128\] Scheduled query has been updated: .*/d
 s/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\1 ouid=\2/
 # s/kernel: \[[ 0-9N]*\.[0-9N]*\] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name=".*" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="open" class="file" profile="\/opt\/osquery\/bin\/osqueryd" name="XXX" pid=N comm="SchedulerRunner" requested_mask="r" denied_mask="r" fsuid=\1 ouid=\2/
 
@@ -462,6 +462,7 @@ s/otelcol-contrib\[[0-9]*\]: Error:/otelcol-contrib: Error:/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* collector server run finished with error:/otelcol-contrib: YYYY-MM-DD HH:MM:SS collector server run finished with error:/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z        warn/otelcol-contrib:        warn/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z        error/otelcol-contrib:        error/
+s/otelcol-contrib\(.*\)"error": "write length [0-9]* exceeds maximum file size \([0-9]*\)"/otelcol-contrib\1"error": "write length N exceeds maximum file size \2"/
 
 # proxmox
 s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not have an email address/proxmox-mail-forward: mail forward failed: user '\1' does not have an email address/
@@ -476,12 +477,15 @@ s/pveproxy\[[0-9]*\]: worker exit/pveproxy: worker exit/
 s/pveproxy\[[0-9]*\]: detected empty handle/pveproxy: detected empty handle/
 /pveproxy\[[0-9]*\]: starting [0-9]* worker(s)/d
 /pveproxy\[[0-9]*\]: proxy detected vanished client connection/d
+s/pveproxy\[[0-9]*\]: Warning: /pveproxy: Warning: /
+s/pveproxy\[[0-9]*\]: error /pveproxy: error /
 /pvesh: Starting CT [0-9]*/d
 /pvestatd: modified cpu set for lxc\/[0-9]*: [0-9]*-[0-9]*/d
 s/pvedaemon\[[0-9]*\]: worker [0-9]* started/pvedaemon: worker N started/
 s/pvedaemon\[[0-9]*\]: worker [0-9]* finished/pvedaemon: worker N finished/
 s/pvedaemon\[[0-9]*\]: worker exit/pvedaemon: worker exit/
 s/pvedaemon\[[0-9]*\]: <\(.*\)> /pvedaemon: <\1> /
+/pve-firewall\[[0-9]*\]: firewall update time ([0-9]*\.[0-9]* seconds)/d
 s/spiceproxy\[[0-9]*\]: worker [0-9]* started/spiceproxy: worker N started/
 s/spiceproxy\[[0-9]*\]: worker [0-9]* finished/spiceproxy: worker N finished/
 s/spiceproxy\[[0-9]*\]: worker exit/spiceproxy: worker exit/
