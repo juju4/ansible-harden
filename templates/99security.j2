@@ -1,0 +1,34 @@
+{{ ansible_managed | comment }}
+
+## /etc/apt/apt.conf.d/99security
+## https://www.debian.org/doc/manuals/securing-debian-howto/ch4.fr.html#s4.10
+## http://wiki.itadmins.net/doku.php?id=debian:apt-xtras
+DPkg
+{
+    Pre-Invoke  {
+{% if ansible_mounts is defined %}
+{%     for item in ansible_mounts %}
+{%         if harden_mount_options_aptpre[item.mount] is defined %}
+        "mount {{ item.mount }} -o remount,{{ harden_mount_options_aptpre[item.mount] }}";
+{%         endif %}
+{%     endfor %}
+{% endif %}
+{% if harden_immutable_apt_dirs | length > 0 %}
+        "chattr -R -i {{ harden_immutable_apt_dirs | join(' ') }} > /tmp/apt.tmp 2>&1; true";
+{% endif %}
+    };
+    Post-Invoke  {
+{% if ansible_mounts is defined %}
+{%     for item in ansible_mounts %}
+{%         if harden_mount_options_aptpost[item.mount] is defined %}
+        "mount {{ item.mount }} -o remount,{{ harden_mount_options_aptpost[item.mount] }}";
+{%         endif %}
+{%     endfor %}
+{% endif %}
+        "if [ -x /usr/bin/rkhunter ] && ( ! grep -q -E '^DISABLE_TESTS=.*(hashes.*attributes|attributes.*hashes|properties)' /etc/rkhunter.conf || grep -q -E '^ENABLE_TESTS=.*(hashes|attributes|properties)' /etc/rkhunter.conf); then /usr/bin/rkhunter --propupd --nolog; fi";
+## https://isc.sans.edu/diary/XOR+DDOS+Mitigation+and+Analysis/19827
+{% if harden_immutable_apt_dirs | length > 0 %}
+        "chattr -R +i {{ harden_immutable_apt_dirs | join(' ') }} > /tmp/apt2.tmp 2>&1; true";
+{% endif %}
+    };
+};
