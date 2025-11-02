@@ -166,6 +166,7 @@ s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="\(.*\)" 
 s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="\(.*\)" \(.*\)label="lxc-[0-9]*_<\/var\/lib\/lxc>\/\/&:lxc-[0-9]*_<-var-lib-lxc>:unconfined" name=".*" pid=[0-9N]* comm="\(.*\)" /kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="\1" \2label="lxc-N_<\/var\/lib\/lxc>\/\/&:lxc-N_<-var-lib-lxc>:unconfined" name="XXX" pid=N comm="\3" /
 s/lxc-[0-9]*_/lxc-N_/g
 s/kernel: .*audit: type=1400 audit([0-9N]*\.[0-9N]*:[0-9N]*): apparmor="ALLOWED" operation="\(.*\)" class="\(.*\)" profile="\(.*\)" name=".*" pid=[0-9N]* comm="\(.*\)" requested_mask="\(.*\)" denied_mask="\(.*\)" fsuid=\([0-9]*\) ouid=\([0-9]*\)/kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="ALLOWED" operation="\1" class="\2" profile="\3" name="XXX" pid=N comm="\4" requested_mask="\5" denied_mask="\6" fsuid=\7 ouid=\8/
+s/kernel: IPv4: martian source \(.*\)\.[0-9]* from \(.*\)\.[0-9]*, on dev fwbr[0-9a-z]/kernel: IPv4: martian source \1.abc from \2.xyz, on dev fwbrXXX/
 
 # ubuntu_pro_apt_news
 s/audit: type=1400 audit(NNN.N:NNN): apparmor=\(.*\) name="\(.*\)\/#[0-9]*" pid=/audit: type=1400 audit(NNN.N:NNN): apparmor=\1 name="\2\/#NNN" pid=/
@@ -208,7 +209,7 @@ s/kernel: \[[0-9N]*\.[0-9N]*\] traps: \(.*\)\[[0-9]*\] trap \(.*\) ip:[0-9a-f]* 
 # kernel: squid[55680]: segfault at ffffffffffffffe8 ip 0000564ccbdf08e8 sp 00007ffd117ccd80 error 5 in squid[564ccbc16000+48f000]
 s/kernel: \(.*\)\[[0-9]*\]: segfault at [0-9a-f]* ip [0-9a-f]* sp [0-9a-f]* error [0-9]* in \(.*\)\[[0-9a-f]*+[0-9a-f]*\]/kernel: \1: segfault at HHH ip HHH sp HHH error N in \2[HHH+HHH]/
 # s/kernel: \(.*\): segfault at [0-9a-f]* ip [0-9a-f]* sp [0-9a-f]* error [0-9]* in \(.*\)\[[0-9a-f]*+[0-9a-f]*\]/kernel: \1: segfault at HHH ip HHH sp HHH error N in \2[HHH+HHH]/
-s/kernel: ll header: \([09]*\): \([0-9a-f]*\) \([0-9a-f]*\) \([0-9a-f]*\) [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]*/kernel: ll header: \1: \2 \3 \4 HH HH HH HH HH HH HH HH HH HH HH HH HH/
+/kernel: ll header: \([09]*\): \([0-9a-f]*\) \([0-9a-f]*\) \([0-9a-f]*\) [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]* [0-9a-f]*/d
 s/kernel: .*overlayfs: fs on '\/var\/lib\/docker\/\(.*\)\([0-9]*\)\/l[0-9]*' does not support file handles, falling back to xino=off./kernel: overlayfs: fs on '\/var\/lib\/docker\/\1NNN\/lN' does not support file handles, falling back to xino=off./
 s/kernel: .*overlayfs: fs on '\/var\/lib\/docker\/\(.*\)\([0-9]*\)\/lower[0-9]*' does not support file handles, falling back to xino=off./kernel: overlayfs: fs on '\/var\/lib\/docker\/\1NNN\/lowerN' does not support file handles, falling back to xino=off./
 s/kernel: .*overlayfs: fs on '\/var\/lib\/\(.*\)\/[A-Z0-9]*' does not support file handles, falling back to xino=off./kernel: overlayfs: fs on '\/var\/lib\/\1\/XXX' does not support file handles, falling back to xino=off./
@@ -404,7 +405,7 @@ s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error 
 s/alertmanager\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/alertmanager: caller=/
 s/alertmanager\[[0-9]*\]: time=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=/alertmanager: level=/
 s/_exporter\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: caller=/
-s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 ERROR dns_exporter.dns_exporter.exporter.validate_server_ip():503:  No server found in config/
+s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* ERROR dns_exporter.dns_exporter./dns_exporter: YYYY-MM-DD HH:MM:SS +0000 ERROR dns_exporter.dns_exporter./
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* INFO dns_exporter/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 INFO dns_exporter/
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* WARNING dns_exporter/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 WARNING dns_exporter/
 s/dns_exporter\[[0-9]*\]: Exception occurred during processing of request from ('\(.*\)', [0-9]*)/dns_exporter: Exception occurred during processing of request from ('\1', N)/
@@ -463,6 +464,7 @@ s/otelcol-contrib\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* collect
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z        warn/otelcol-contrib:        warn/
 s/otelcol-contrib\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z        error/otelcol-contrib:        error/
 s/otelcol-contrib\(.*\)"error": "write length [0-9]* exceeds maximum file size \([0-9]*\)"/otelcol-contrib\1"error": "write length N exceeds maximum file size \2"/
+s/tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z is before \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z/tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time \1-\2-\3THH:MM:SSZ is before \4-\5-\6THH:MM:SSZ/
 
 # proxmox
 s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not have an email address/proxmox-mail-forward: mail forward failed: user '\1' does not have an email address/

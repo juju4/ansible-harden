@@ -38,6 +38,7 @@ kernel: [ N.N] audit: type=1400 audit(1733930782.169:353): apparmor="DENIED" ope
 kernel: audit: type=1400 audit(NNN.N:NNN): apparmor="STATUS" operation="profile_load" label="lxc-220_</var/lib/lxc>//&:lxc-220_<-var-lib-lxc>:unconfined" name="/usr/lib/connman/scripts/dhclient-script" pid=N comm="apparmor_parser"
 kernel: [N.N] audit: type=1400 audit(NNN.N:NNN): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" label="lxc-197_</var/lib/lxc>//&:lxc-197_<-var-lib-lxc>:unconfined" name="QtWebEngineProcess" pid=N comm="apparmor_parser"
 kernel: [ N.N] audit: type=1400 audit(1734884862.273:182): apparmor="ALLOWED" operation="capable" class="cap" info="optional: no audit" error=-1 profile="/opt/osquery/bin/osqueryd" pid=942 comm="SchedulerRunner" capability=34  capname="syslog"
+kernel: IPv4: martian source 192.168.1.254 from 192.168.1.221, on dev fwbr246i0
 2025-01-20T18:01:55.303911+00:00 HOST kernel: audit: type=1400 audit(1737396115.302:125186): apparmor="ALLOWED" operation="sendmsg" class="file" profile="php-fpm" name="/run/systemd/notify" pid=39963 comm="php-fpm8.2" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
 pmxcfs[9457]: [status] notice: RRDC update error /var/lib/rrdcached/db/pve2-vm/231: -1
 postfix/smtp[52867]: 699FCAEE8: to=<recipient@example.com>, orig_to=<logcheck>, relay=192.168.1.2[192.168.1.2]:25, delay=0.29, delays=0/0.01/0.25/0.04, dsn=2.0.0, status=sent (250 OK id=5tUVCa-00089k-1A)
