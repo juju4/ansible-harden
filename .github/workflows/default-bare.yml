@@ -61,6 +61,7 @@ jobs:
             galaxy.ansible.com:443
             github.com:443
             lkrg.org:443
+            packages.chef.io:443
             packages.microsoft.com:443
             pypi.org:443
             raw.githubusercontent.com:443
