@@ -65,6 +65,7 @@ jobs:
             packages.chef.io:443
             packages.microsoft.com:443
             pentestmonkey.net:80
+            pkg.osquery.io:443
             pypi.org:443
             raw.githubusercontent.com:443
             www.google.com:1025
