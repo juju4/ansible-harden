@@ -49,14 +49,23 @@ jobs:
         with:
           egress-policy: block
           allowed-endpoints: >
+            pool.ntp.org:123
+            debian.pool.ntp.org:123
+            0.debian.pool.ntp.org:123
+            1.debian.pool.ntp.org:123
+            2.debian.pool.ntp.org:123
+            3.debian.pool.ntp.org:123
             azure.archive.ubuntu.com:80
             esm.ubuntu.com:443
             files.pythonhosted.org:443
             galaxy.ansible.com:443
             github.com:443
+            lkrg.org:443
             packages.microsoft.com:443
             pypi.org:443
+            raw.githubusercontent.com:443
             www.google.com:1025
+            www.openwall.com:443
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # tag=v5.0.0
         with:
