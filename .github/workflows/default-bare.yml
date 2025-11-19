@@ -70,6 +70,7 @@ jobs:
             packages.microsoft.com:443
             pentestmonkey.net:80
             pkg.osquery.io:443
+            pkg.osquerypackages.com:443
             osquery-packages.s3.us-east-1.amazonaws.com:443
             pypi.org:443
             raw.githubusercontent.com:443
