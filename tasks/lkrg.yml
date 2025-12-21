@@ -9,6 +9,8 @@
     owner: root
     mode: "{{ item.m }}"
     checksum: "{{ item.c | default(omit) }}"
+  register: dl_result
+  until: dl_result is success
   with_items:
     - { u: "https://lkrg.org/download/lkrg-{{ harden_lkrg_version }}.tar.gz", m: '0600' }
     - { u: "https://lkrg.org/download/lkrg-{{ harden_lkrg_version }}.tar.gz.sign", m: '0600' }
