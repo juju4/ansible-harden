@@ -48,7 +48,7 @@
   register: pkg_result
   until: pkg_result is success
   when: >
-    not (ansible_distribution_major_version|int == 8)
+    not (ansible_facts['distribution_major_version']|int == 8)
 
 - name: Password set for single mode
   ansible.builtin.lineinfile:
@@ -57,17 +57,17 @@
     line: 'SINGLE=/sbin/sulogin'
     mode: '0644'
   when: >
-    not (ansible_distribution_major_version|int == 8)
+    not (ansible_facts['distribution_major_version']|int == 8)
 
-- name: Debug | ansible_virtualization_type var
+- name: Debug | ansible_facts['virtualization_type'] var
   ansible.builtin.debug:
-    var: ansible_virtualization_type
+    var: ansible_facts['virtualization_type']
 - name: Container inside | disable incompatible daemons
   ansible.builtin.set_fact:
     harden_services_containers: []
   when: >
-    (ansible_virtualization_type is defined and
-      (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    (ansible_facts['virtualization_type'] is defined and
+      (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
     )
 - name: Redhat | Ensure services are running and enabled on boot.
   ansible.builtin.service:
@@ -83,21 +83,21 @@
   args:
     creates: /var/lib/rkhunter/db/rkhunter.dat
   when: >
-    not (ansible_distribution_major_version|int == 8)
+    not (ansible_facts['distribution_major_version']|int == 8)
 
 - name: Import selinux
   ansible.builtin.import_tasks: selinux.yml
   when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    not (ansible_facts['virtualization_type'] is defined and
+          (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
         ) and
-    not (ansible_distribution_major_version|int == 8)
+    not (ansible_facts['distribution_major_version']|int == 8)
 
 - name: Import yum-cron
   ansible.builtin.import_tasks: yum-cron.yml
   when: >
     harden_security_update_auto and
-    not (ansible_distribution_major_version|int == 8)
+    not (ansible_facts['distribution_major_version']|int == 8)
 
 - name: Ensure YUM Removes Previous Package Versions
   ansible.builtin.lineinfile:

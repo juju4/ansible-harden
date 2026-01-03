@@ -28,7 +28,7 @@
     ## as validate option seems incorrect
     - name: Ensure iptables v4 rules are correct
       ansible.builtin.shell: "iptables-restore -tv < {{ iptables_rulesv4 }}"
-      when: rulesv4.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+      when: rulesv4.changed and not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")
 
 - name: Firewall IPv6
   when: harden_fw is defined and harden_fw and harden_fw6_template is defined
@@ -54,10 +54,10 @@
       register: rulesv6
     - name: Ensure iptables v6 rules are correct
       ansible.builtin.shell: "ip6tables-restore -tv < {{ iptables_rulesv6 }}"
-      when: rulesv6.changed and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+      when: rulesv6.changed and not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")
 
 - name: Alpine Linux Firewall
-  when: ansible_os_family == "Alpine"
+  when: ansible_facts['os_family'] == "Alpine"
   block:
     - name: Alpine | Load iptables rules - v4  # noqa no-changed-when
       ansible.builtin.shell: >

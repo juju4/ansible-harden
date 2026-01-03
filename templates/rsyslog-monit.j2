@@ -1,18 +1,18 @@
 {{ ansible_managed | comment }}
-{% if ansible_distribution == "Alpine" %}
+{% if ansible_facts['distribution'] == "Alpine" %}
 check process rsyslog matching "rsyslogd"
 {% else %}
 check process rsyslog
 {% endif %}
-{% if ansible_os_family == "RedHat" %}
+{% if ansible_facts['os_family'] == "RedHat" %}
   with pidfile "/var/run/syslogd.pid"
 {% endif %}
-{% if ansible_os_family == 'Debian' %}
+{% if ansible_facts['os_family'] == 'Debian' %}
   matching rsyslog
 {% endif %}
   group system
   group rsyslog
-{% if ansible_service_mgr == 'systemd' %}
+{% if ansible_facts['service_mgr'] == 'systemd' %}
   start program = "/bin/systemctl start rsyslog" with timeout 60 seconds
   stop program  = "/bin/systemctl stop rsyslog"
 {% else %}
@@ -31,7 +31,7 @@ check file rsyslog_binary
   if failed checksum then alert
 
 check file rsyslog_conf with path /etc/rsyslog.conf
-{% if ansible_os_family == 'Debian' %}
+{% if ansible_facts['os_family'] == 'Debian' %}
   include /etc/monit/templates/rootrc
 {% endif %}
   group rsyslog

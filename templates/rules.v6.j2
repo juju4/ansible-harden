@@ -104,7 +104,7 @@
 ## http://docs.ansible.com/ansible/playbooks_variables.html#fact-caching
 {%     if groups['monitoring'] is defined and groups['monitoring'] %}
 {%         for host in groups['monitoring'] %}
--A INPUT -p tcp -s {{ hostvars[host].ansible_default_ipv4.address }} --dport 5666 -j ACCEPT
+-A INPUT -p tcp -s {{ hostvars[host].ansible_facts['default_ipv4'].address }} --dport 5666 -j ACCEPT
 {%         endfor %}
 {%     endif %}
 {% endif %}

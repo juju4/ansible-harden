@@ -4,7 +4,7 @@
 ## reduce falco triggers when editing /etc
 - name: Set swapfiles directory of vim
   ansible.builtin.lineinfile:
-    dest: "{{ ansible_env['HOME'] }}/.vimrc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.vimrc"
     regexp: "^set directory=.*"
     line: "set directory=$HOME/.vim/swapfiles"
     mode: '0600'
@@ -13,6 +13,6 @@
 
 - name: Ensure vim swapfiles directory exist
   ansible.builtin.file:
-    dest: "{{ ansible_env['HOME'] }}/.vim/swapfiles"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.vim/swapfiles"
     state: directory
     mode: '0700'

@@ -23,7 +23,7 @@
     - { r: '^ENV_SUPATH', l: "ENV_SUPATH      {{ harden_logindefs_env_supath }}" }
     - { r: '^ENV_PATH', l: "ENV_PATH        {{ harden_logindefs_env_path }}" }
     - { r: '^UMASK', l: "UMASK     {{ harden_umask }}" }
-  when: ansible_os_family != "Alpine"
+  when: ansible_facts['os_family'] != "Alpine"
 
 - name: Set Account Expiration Following Inactivity
   ansible.builtin.lineinfile:
@@ -31,7 +31,7 @@
     regexp: '^INACTIVE=.*'
     line: 'INACTIVE=90'
     mode: '0644'
-  when: ansible_os_family != "Alpine"
+  when: ansible_facts['os_family'] != "Alpine"
 
 ## https://unixserveradmin.wordpress.com/2012/12/08/how-to-stop-usb-mass-storage-device-in-rhelcentos/
 - name: Disable USB
@@ -55,7 +55,7 @@
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
       ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
-      when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
+      when: ansible_facts['os_family'] != "Alpine" and (defgrub is defined and defgrub.stat.exists)
 - name: Allow USB
   when: not (harden_disable_usb is defined and harden_disable_usb)
   block:
@@ -75,7 +75,7 @@
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
       ## http://security.stackexchange.com/questions/49097/protecting-against-firewire-dma-vulnerabilities-in-linux
-      when: ansible_os_family != "Alpine" and (defgrub is defined and defgrub.stat.exists)
+      when: ansible_facts['os_family'] != "Alpine" and (defgrub is defined and defgrub.stat.exists)
 
 - name: Disable firewire DMA drivers - modprobe
   ansible.builtin.lineinfile:
@@ -96,22 +96,22 @@
 
 - name: Disable Distribution bug report
   when: >
-    ansible_system == 'Linux' and harden_linux_disable_bugreport is defined and
+    ansible_facts['system'] == 'Linux' and harden_linux_disable_bugreport is defined and
     harden_linux_disable_bugreport and
-    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+    not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")
   block:
     - name: Ubuntu | check if apport is present
       ansible.builtin.stat:
         path: /etc/default/apport
       register: defapport
-      when: ansible_distribution == 'Ubuntu'
+      when: ansible_facts['distribution'] == 'Ubuntu'
     - name: Ubuntu | ensure Apport crash report is disabled
       ansible.builtin.replace:
         dest: /etc/default/apport
         regexp: '^enabled=.*$'
         replace: 'enabled=0'
         mode: '0644'
-      when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
+      when: ansible_facts['distribution'] == 'Ubuntu' and defapport.stat.exists
     - name: Set sensible core pattern
       ansible.posix.sysctl:
         name: "kernel.core_pattern"
@@ -120,18 +120,18 @@
         state: present
         reload: yes
       when: >
-        not (ansible_os_family == 'RedHat' and
-              (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
+        not (ansible_facts['os_family'] == 'RedHat' and
+              (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "lxc")
             )
         and not (
-              (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 20) and
-              (ansible_virtualization_type is defined and ansible_virtualization_type == "lxc")
+              (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20) and
+              (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "lxc")
             )
 
 - name: Import iptables
   ansible.builtin.import_tasks: iptables.yml
   when:
-    - ansible_os_family == 'Debian' or ansible_os_family == "RedHat" or ansible_os_family == "Alpine"
+    - ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Alpine"
     - harden_fw_type == 'iptables'
 
 - name: Import nftables
@@ -145,21 +145,21 @@
 
 - name: Import aide-hids
   ansible.builtin.import_tasks: aide-hids.yml
-  when: harden_aide and (ansible_os_family == 'Debian' or ansible_os_family == "RedHat")
+  when: harden_aide and (ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == "RedHat")
 
 - name: Import ubuntu-livepatch
   ansible.builtin.import_tasks: ubuntu-livepatch.yml
   when:
-    - ansible_distribution == 'Ubuntu'
-    - '"LTS" in ansible_lsb["description"]'
-    - ansible_distribution_major_version | int >= 16
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - "'LTS' in ansible_facts['lsb']['description']"
+    - ansible_facts['distribution_major_version'] | int >= 16
     - harden_ubuntu_livepatch is defined
     - harden_ubuntu_livepatch
 
 - name: Import redhat-kpatch
   ansible.builtin.import_tasks: redhat-kpatch.yml
   when: >
-    ansible_distribution == 'RedHat Enterprise Linux' and ansible_distribution_version == '7.2' and
+    ansible_facts['distribution'] == 'RedHat Enterprise Linux' and ansible_facts['distribution_version'] == '7.2' and
     harden_rhel_kpatch is defined and harden_rhel_kpatch
 
 - name: Import grub
@@ -167,15 +167,15 @@
 - name: Import monit
   ansible.builtin.import_tasks: monit.yml
   when: >
-    not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8)
+    not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int == 8)
 - name: Import passwd
   ansible.builtin.import_tasks: passwd.yml
   when:
-    - not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int == 24)
+    - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int == 24)
 
 - name: Alpine rsyslog
   when:
-    - ansible_distribution == "Alpine"
+    - ansible_facts['distribution'] == "Alpine"
     - harden_rsyslog_enable | bool
   block:
     - name: Alpine | Ensure /etc/rsyslog.d exists
@@ -204,8 +204,8 @@
   ansible.builtin.import_tasks: lkrg.yml
   when: >
     harden_lkrg and
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    not (ansible_facts['virtualization_type'] is defined and
+          (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
         )
 
 - name: Import lynis

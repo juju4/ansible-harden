@@ -10,9 +10,9 @@
     checksum: "{{ item.h }}"
   with_items: "{{ harden_cracklib_dict }}"
   when:
-    - ansible_os_family == 'Debian' or (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7)
-    - not (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12)
-    - not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24)
+    - ansible_facts['os_family'] == 'Debian' or (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int < 7)
+    - not (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int >= 12)
+    - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 24)
 
 - name: Check for cracklib refresh marker
   ansible.builtin.stat:
@@ -20,9 +20,9 @@
   register: cracklibrefresh
 - name: Debian | Cracklib db does not exist
   when:
-    - ansible_os_family == 'Debian'
-    - not (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12)
-    - not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24)
+    - ansible_facts['os_family'] == 'Debian'
+    - not (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int >= 12)
+    - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 24)
     - not cracklibrefresh.stat.exists
   block:
     - name: Debian | create cracklib database
@@ -32,7 +32,7 @@
       #   creates: /var/cache/cracklib/cracklib_dict.pwd
 - name: RedHat | Cracklib db does not exist
   when: >
-    (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7) and
+    (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int < 7) and
     not cracklibrefresh.stat.exists
   block:
     - name: RedHat | create cracklib database
@@ -49,12 +49,12 @@
     mode: '0600'
     state: touch
   when: >
-    (ansible_os_family == 'Debian' or
-      (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int < 7)
+    (ansible_facts['os_family'] == 'Debian' or
+      (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int < 7)
     ) and not cracklibrefresh.stat.exists
 
 - name: Redhat | password criteria
-  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 7
+  when: ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int >= 7
   block:
     # complexity... do we still want that?
     - name: RedHat | Set Password Strength complexity

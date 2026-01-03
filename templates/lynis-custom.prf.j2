@@ -27,16 +27,16 @@ skip-test=FINT-4402
 skip-test=TOOL-5002
 # Remote logging?
 skip-test=LOGG-2154
-{% if ansible_hostname == 'pluto' %}
+{% if ansible_facts['hostname'] == 'pluto' %}
 # TFTP
 skip-test=INSE-8318
 skip-test=INSE-8320
 {% endif %}
-{% if ansible_domain == 'vps.ovh.ca' and ansible_virtualization_type == 'openstack' %}
+{% if ansible_facts['domain'] == 'vps.ovh.ca' and ansible_facts['virtualization_type'] == 'openstack' %}
 # Checking if /home is mounted separately or mounted on / file system
 skip-test=FILE-6310
 {% endif %}
-{% if 'rpi' in ansible_kernel %}
+{% if 'rpi' in ansible_facts['kernel'] %}
 # only for Raspberry where single partition
 skip-test=FILE-6310
 # auditd

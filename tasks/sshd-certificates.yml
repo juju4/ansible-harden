@@ -65,7 +65,7 @@
     - name: Sign SSH host key
       ansible.builtin.command: >
         ssh-keygen -s {{ harden_sshd_ca_path }} \
-          -I "{{ ansible_hostname }}" \
+          -I "{{ ansible_facts['hostname'] }}" \
           -h \
           -V {{ harden_sshd_host_key_validity | default('-1d:+54w') }} \
           {{ harden_sshd_host_key_opath | default('/tmp') }}/{{ inventory_hostname }}{{ harden_sshd_host_key | default('/etc/ssh/ssh_host_ed25519_key.pub') }}

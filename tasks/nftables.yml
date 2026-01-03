@@ -3,9 +3,9 @@
 - name: Nftables Firewall
   when:
     - harden_fw is defined and harden_fw
-    - (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12) or
-      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 22) or
-      (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 9)
+    - (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int >= 12) or
+      (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22) or
+      (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int >= 9)
   block:
     - name: Nftables configuration file update
       ansible.builtin.template:

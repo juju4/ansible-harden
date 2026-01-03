@@ -14,8 +14,8 @@
 ## http://www.stewin.org/papers/dimvap15-stewin.pdf
 - name: Update grub settings
   when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    not (ansible_facts['virtualization_type'] is defined and
+          (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
         ) and hasgrub.stat.exists
   block:
     - name: Enable IOMMU in grub
@@ -47,7 +47,7 @@
         create: yes
       notify:
         - Refresh grub config
-      when: ansible_os_family == 'Debian' and harden_grub_md5password is defined and harden_grub_md5password | string
+      when: ansible_facts['os_family'] == 'Debian' and harden_grub_md5password is defined and harden_grub_md5password | string
     - name: Enable grub password
       ansible.builtin.lineinfile:
         dest: /boot/grub/grub.cfg
@@ -55,4 +55,4 @@
         line: "password --md5 {{ harden_grub_md5password }}"
         mode: '0644'
         create: yes
-      when: ansible_os_family == "RedHat" and harden_grub_md5password is defined and harden_grub_md5password | string
+      when: ansible_facts['os_family'] == "RedHat" and harden_grub_md5password is defined and harden_grub_md5password | string

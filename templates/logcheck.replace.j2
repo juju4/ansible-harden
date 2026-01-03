@@ -1,8 +1,8 @@
 {{ ansible_managed | comment }}
 # /etc/logcheck/logcheck.replace
 
-{% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
-      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
+{% if (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int > 10) or
+      (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int > 20) %}
 # Final uniq+sort is done by syslog-summary normally
 s/[A-Z][a-z][a-z]\s*[0-9]*\s*[0-9]*:[0-9]*:[0-9]*\s*//
 s/[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*+[0-9]*:[0-9]* //
@@ -56,8 +56,8 @@ s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read 0 written [0-9]*/sftp-server:
 s/sftp-server\[[0-9]*\]: close "\(.*\)" bytes read [0-9]* written 0/sftp-server: close "\1" bytes read N written 0/
 s/sshd\[[0-9]*\]: message repeated [0-9]* times: \[ error: channel 0: chan_read_failed for istate 1\]/sshd: message repeated N times: [ error: channel 0: chan_read_failed for istate 1]/
 s/sshd\[[0-9]*\]: refused local port forward: originator \(.*\) port [0-9]*, target \(.*\) port \([0-9]*\)/sshd: refused local port forward: originator \1 port N, target \2 port \3/
-{% if (ansible_distribution == 'Debian' and ansible_distribution_major_version|int > 10) or
-      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) %}
+{% if (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int > 10) or
+      (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int > 20) %}
 # for other sftp-server logs
 s/sftp-server\[[0-9]*\]: /sftp-server: /
 s/sshd\[[0-9]*\]: /sshd: /

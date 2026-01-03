@@ -1,6 +1,6 @@
 ---
 
-# - debug: var=ansible_mounts
+# - debug: var=ansible_facts['mounts']
 # - debug: var=harden_mount_options
 
 - name: Backup fstab

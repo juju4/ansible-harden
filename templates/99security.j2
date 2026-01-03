@@ -6,8 +6,8 @@
 DPkg
 {
     Pre-Invoke  {
-{% if ansible_mounts is defined %}
-{%     for item in ansible_mounts %}
+{% if ansible_facts['mounts'] is defined %}
+{%     for item in ansible_facts['mounts'] %}
 {%         if harden_mount_options_aptpre[item.mount] is defined %}
         "mount {{ item.mount }} -o remount,{{ harden_mount_options_aptpre[item.mount] }}";
 {%         endif %}
@@ -18,8 +18,8 @@ DPkg
 {% endif %}
     };
     Post-Invoke  {
-{% if ansible_mounts is defined %}
-{%     for item in ansible_mounts %}
+{% if ansible_facts['mounts'] is defined %}
+{%     for item in ansible_facts['mounts'] %}
 {%         if harden_mount_options_aptpost[item.mount] is defined %}
         "mount {{ item.mount }} -o remount,{{ harden_mount_options_aptpost[item.mount] }}";
 {%         endif %}

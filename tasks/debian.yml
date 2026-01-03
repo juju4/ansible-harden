@@ -41,13 +41,13 @@
   ansible.builtin.import_tasks: unattended-upgrades.yml
   when: harden_security_update_auto
 
-- name: Debug | ansible_mounts var
+- name: Debug | ansible_facts['mounts'] var
   ansible.builtin.debug:
-    var: ansible_mounts
+    var: ansible_facts['mounts']
 - name: Add apt hardening with some immutable directories
   ansible.builtin.template:
     src: 99security.j2
-    dest: /etc/apt/apt.conf.d
+    dest: /etc/apt/apt.conf.d/99security
     owner: root
     mode: '0644'
 
@@ -77,11 +77,11 @@
     mode: '0644'
     insertafter: '^#HRNGDEVICE=/dev/null'
     line: 'HRNGDEVICE=/dev/urandom'
-  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and rngconf.stat.exists
+  when: (ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu') and rngconf.stat.exists
 
 ## https://bugs.launchpad.net/ubuntu/+source/debsecan/+bug/95925
 - name: Ubuntu | Disable debsecan reports
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Ubuntu'
   block:
     - name: Ubuntu | Disable automatic report of debsecan
       ansible.builtin.replace:
@@ -97,20 +97,20 @@
         replace: '#\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron'
         mode: '0644'
 - name: Debian distrib debsecan
-  when: ansible_distribution == 'Debian'
+  when: ansible_facts['distribution'] == 'Debian'
   block:
     - name: Debian | define distribution of debsecan
       ansible.builtin.replace:
         dest: /etc/default/debsecan
         regexp: '^SUITE=.*'
-        replace: 'SUITE={{ ansible_distribution_release }}'
+        replace: "SUITE={{ ansible_facts['distribution_release'] }}"
         mode: '0644'
         backup: "{{ harden_backup | default(false) }}"
     - name: Debian | Report only fixed for debsecan cron
       ansible.builtin.replace:
         dest: /etc/cron.d/debsecan
         regexp: '^([0-9].*) \* \* \* \* daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron$'
-        replace: '\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron --only-fixed --suite {{ ansible_distribution_release }}'
+        replace: "\\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron --only-fixed --suite {{ ansible_facts['distribution_release'] }}"
         mode: '0644'
 
 ## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
@@ -136,14 +136,14 @@
     var: getcap1.stdout
 - name: Set more granular capabilities
   when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    not (ansible_facts['virtualization_type'] is defined and
+          (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
         )
     and getcap1.stdout is defined and getcap1.stdout != harden_cap_test_bincap
   block:
-    - name: Debug | ansible_virtualization_type var
+    - name: Debug | ansible_facts['virtualization_type'] var
       ansible.builtin.debug:
-        var: ansible_virtualization_type
+        var: ansible_facts['virtualization_type']
     - name: Capabilities Hardening - default network tools
       community.general.capabilities:
         path: "{{ item.bin }}"
@@ -174,19 +174,19 @@
       ansible.builtin.command: "chattr -i /etc/init.d"
       when: >
         rclsattr.stdout.find("----i-") == -1 and
-        not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+        not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")
     - name: Set umask in /etc/init.d/rc
       ansible.builtin.lineinfile:
         dest: /etc/init.d/rc
         regexp: '^umask '
         line: "umask {{ harden_umask }}"
         mode: '0644'
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
     - name: Set back immutable flag on file
       ansible.builtin.command: "chattr +i /etc/init.d"
       when: >
         rclsattr.stdout.find("----i-") == -1 and
-        not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+        not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")
       failed_when: false
 
 - name: Import apparmor-audit

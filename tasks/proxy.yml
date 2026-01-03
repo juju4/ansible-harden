@@ -8,7 +8,7 @@
     mode: '0644'
     create: yes
     backup: "{{ harden_backup | default(false) }}"
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: RedHat | Ensure dnf is configured with proxy
   community.general.ini_file:
@@ -22,7 +22,7 @@
     - { o: proxy, v: "{{ harden_proxy_url }}" }
     - { o: proxy_username, v: "{{ harden_proxy_user | default(omit) }}" }
     - { o: proxy_password, v: "{{ harden_proxy_pass | default(omit) }}" }
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: Linux | Update /etc/environment with proxy
   ansible.builtin.lineinfile:
@@ -34,4 +34,4 @@
     - { re: ^http_proxy=.*, l: "http_proxy={{ harden_proxy_url }}" }
     - { re: ^https_proxy=.*, l: "https_proxy={{ harden_proxy_url }}" }
     - { re: ^no_proxy=.*, l: "no_proxy={{ harden_no_proxy | default('127.0.0.1,::1,localhost,10.0.0.0/8,192.168.0.0/16') }}" }
-  when: ansible_system == 'Linux'
+  when: ansible_facts['system'] == 'Linux'
