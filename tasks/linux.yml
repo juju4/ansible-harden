@@ -128,6 +128,12 @@
               (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "lxc")
             )
 
+- name: Import ipset
+  ansible.builtin.import_tasks: iptables-ipset.yml
+  when:
+    - harden_ipset_enable | bool
+    - harden_fw_type == 'iptables' or harden_fw_type == 'nftables'
+
 - name: Import iptables
   ansible.builtin.import_tasks: iptables.yml
   when:

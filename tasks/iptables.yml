@@ -3,9 +3,6 @@
 - name: Firewall IPv4
   when: harden_fw is defined and harden_fw
   block:
-    - name: Import iptables-ipset
-      ansible.builtin.import_tasks: iptables-ipset.yml
-      when: harden_ipset_enable
     - name: Ensure iptables directory exists
       ansible.builtin.file:
         dest: /etc/iptables
