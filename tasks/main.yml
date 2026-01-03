@@ -11,16 +11,16 @@
   vars:
     params:
       files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - '{{ ansible_distribution }}.yml'
-        - '{{ ansible_os_family }}.yml'
+        - "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_version'] }}.yml"
+        - "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
       paths:
         - 'vars'
 
 - name: Import travis
   ansible.builtin.import_tasks: travis.yml
-  when: ansible_os_family != "Windows"
+  when: ansible_facts['os_family'] != "Windows"
 
 - name: Ensure archives folder exists
   ansible.builtin.file:
@@ -30,13 +30,13 @@
 
 - name: Import debian-apt-source
   ansible.builtin.import_tasks: debian-apt-source.yml
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Debian | update apt cache
   ansible.builtin.apt:
     update_cache: yes
     cache_valid_time: 3600
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Install some hardening packages
   ansible.builtin.package:
@@ -58,8 +58,8 @@
     state: present
   register: pkg_result
   until: pkg_result is success
-  when: not (ansible_virtualization_type is defined and
-              (ansible_virtualization_type == 'lxc' or ansible_virtualization_type == 'docker'))
+  when: not (ansible_facts['virtualization_type'] is defined and
+              (ansible_facts['virtualization_type'] == 'lxc' or ansible_facts['virtualization_type'] == 'docker'))
 
 - name: Remove some packages
   ansible.builtin.package:
@@ -72,8 +72,8 @@
 - name: Arpwatch
   when: >
     harden_arpwatch and
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    not (ansible_facts['virtualization_type'] is defined and
+          (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
         )
   block:
     - name: Install arpwatch
@@ -93,31 +93,31 @@
     state: absent
   when: >
     not harden_arpwatch or
-    (ansible_virtualization_type is defined and
-      (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    (ansible_facts['virtualization_type'] is defined and
+      (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
     )
   register: pkg_result
   until: pkg_result is success
 
 - name: Import linux
   ansible.builtin.import_tasks: linux.yml
-  when: ansible_system == 'Linux'
+  when: ansible_facts['system'] == 'Linux'
 
 - name: Debian | Harden
   ansible.builtin.import_tasks: debian.yml
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Redhat | Harden
   ansible.builtin.import_tasks: redhat.yml
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: Alpine | Harden
   ansible.builtin.import_tasks: alpine.yml
-  when: ansible_os_family == "Alpine"
+  when: ansible_facts['os_family'] == "Alpine"
 
 - name: Import unix
   ansible.builtin.import_tasks: unix.yml
-  when: ansible_system == 'Linux' or ansible_distribution == 'OpenBSD'
+  when: ansible_facts['system'] == 'Linux' or ansible_facts['distribution'] == 'OpenBSD'
 
 - name: Import restrict_compiler
   ansible.builtin.import_tasks: restrict_compiler.yml
@@ -134,7 +134,7 @@
 - name: Import fail2ban
   ansible.builtin.import_tasks: fail2ban.yml
   when: >
-    not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8)
+    not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int >= 8)
 
 - name: Import vim-swapfiles
   ansible.builtin.import_tasks: vim-swapfiles.yml
@@ -143,7 +143,7 @@
 - name: Import chkrootkit
   ansible.builtin.import_tasks: chkrootkit.yml
   when: >
-    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 22)
+    (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22)
 
 - name: Import testing
   ansible.builtin.import_tasks: testing.yml

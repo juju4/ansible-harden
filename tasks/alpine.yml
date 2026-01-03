@@ -17,4 +17,4 @@
   with_items:
     - "{{ harden_services }}"
     - "{{ harden_services_containers }}"
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when: not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")

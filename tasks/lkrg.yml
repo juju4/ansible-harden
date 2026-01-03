@@ -57,14 +57,14 @@
     regexp: -f5
     replace: -f7
     mode: '0644'
-  when: ansible_distribution_release == 'xenial'
+  when: ansible_facts['distribution_release'] == 'xenial'
 
 - name: Import immutable
   ansible.builtin.import_tasks: immutable.yml
   vars:
     target_dir: /lib/modules
     state: pre
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Install lkrg
   ansible.builtin.command: make install  # noqa no-changed-when
@@ -76,7 +76,7 @@
   vars:
     target_dir: /lib/modules
     state: post
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Start lkrg if not container
   ansible.builtin.systemd:

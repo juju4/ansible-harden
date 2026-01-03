@@ -4,10 +4,10 @@ check process sshd
   with pidfile "/var/run/sshd.pid" every 5 cycles
   group system
   group sshd
-{% if ansible_service_mgr == 'systemd' %}
+{% if ansible_facts['service_mgr'] == 'systemd' %}
   start program = "/bin/systemctl start ssh" with timeout 60 seconds
   stop program  = "/bin/systemctl stop ssh"
-{% elif ansible_distribution == 'Alpine' %}
+{% elif ansible_facts['distribution'] == 'Alpine' %}
   start program = "/etc/init.d/sshd start" with timeout 60 seconds
   stop program  = "/etc/init.d/sshd stop"
 {% else %}
@@ -28,7 +28,7 @@ check file sshd_binary
   if failed checksum then alert
 
 check file sshd_conf with path /etc/ssh/sshd_config
-{% if ansible_os_family == 'Debian' %}
+{% if ansible_facts['os_family'] == 'Debian' %}
   include /etc/monit/templates/rootrc
 {% endif %}
   group sshd

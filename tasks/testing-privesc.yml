@@ -5,7 +5,7 @@
   ansible.builtin.user:
     name: _test
     state: present
-  when: ansible_os_family != "Alpine"
+  when: ansible_facts['os_family'] != "Alpine"
 
 - name: Alpine | Add _test user
   ansible.builtin.command: adduser -D _test
@@ -13,11 +13,11 @@
     creates: /home/_test
   become: yes
   failed_when: false
-  when: ansible_os_family == "Alpine"
+  when: ansible_facts['os_family'] == "Alpine"
 - name: Alpine | Unlock user
   ansible.builtin.command: "passwd -u _test"
   failed_when: false
-  when: ansible_os_family == "Alpine"
+  when: ansible_facts['os_family'] == "Alpine"
 
 - name: Retrieve unix-privesc-check
   ansible.builtin.get_url:

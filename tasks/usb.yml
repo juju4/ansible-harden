@@ -22,7 +22,7 @@
     replace: ' /sbin/udevd --resolve-names=never'
     mode: '0644'
     backup: "{{ harden_backup | default(false) }}"
-  when: ansible_os_family == 'Alpine'
+  when: ansible_facts['os_family'] == 'Alpine'
 
 - name: USB | add restriction rules
   ansible.builtin.template:

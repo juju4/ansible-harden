@@ -9,8 +9,8 @@
   ansible.builtin.command: ssh-keygen -A
   when: >
     not sshkey.stat.exists and
-    ((ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 7) or
-      ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == "Alpine"
+    ((ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] | int >= 7) or
+      ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu' or ansible_facts['distribution'] == "Alpine"
     )
 
 - name: Ensure sshd groups exist
@@ -22,7 +22,7 @@
     - sftp-users
     - forwarding-users
     - restricted-users
-  when: ansible_distribution != "Alpine"
+  when: ansible_facts['distribution'] != "Alpine"
 
 - name: Alpine | Ensure sshd groups exist
   ansible.builtin.command: "addgroup {{ item }}"
@@ -31,7 +31,7 @@
     - forwarding-users
     - restricted-users
   failed_when: false
-  when: ansible_distribution == "Alpine"
+  when: ansible_facts['distribution'] == "Alpine"
 
 - name: Ensure privsep directory for sshd at reboot (systemd-tmpfiles)
   ansible.builtin.lineinfile:
@@ -40,15 +40,15 @@
     mode: '0644'
     create: yes
   when: >
-    ansible_service_mgr == 'systemd' and
-    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18)
+    ansible_facts['service_mgr'] == 'systemd' and
+    (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] | int >= 18)
 
 - name: Ensure privsep directory for sshd
   ansible.builtin.file:
     dest: /run/sshd
     mode: '0755'
     state: directory
-  when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version | int >= 18)
+  when: (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] | int >= 18)
 
 - name: Import sshd-certificates
   ansible.builtin.import_tasks: sshd-certificates.yml

@@ -3,7 +3,7 @@ check process osqueryd
   with pidfile "/var/run/osqueryd.pid"
   group system
   group osqueryd
-{% if ansible_service_mgr == 'systemd' %}
+{% if ansible_facts['service_mgr'] == 'systemd' %}
   start program = "/bin/systemctl start osqueryd" with timeout 60 seconds
   stop program  = "/bin/systemctl stop osqueryd"
 {% else %}
@@ -22,7 +22,7 @@ check file osqueryd_binary
   if failed checksum then alert
 
 check file osqueryd_conf with path /etc/osquery/osquery.conf
-{% if ansible_os_family == 'Debian' %}
+{% if ansible_facts['os_family'] == 'Debian' %}
   include /etc/monit/templates/rootrc
 {% endif %}
   group osqueryd

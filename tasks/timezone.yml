@@ -8,7 +8,7 @@
   until: pkg_result is success
 
 - name: Alpine | timezone
-  when: ansible_distribution == "Alpine"
+  when: ansible_facts['distribution'] == "Alpine"
   block:
     - name: Alpine | copy timezone file
       ansible.builtin.copy:
@@ -28,5 +28,5 @@
   community.general.timezone:
     name: "{{ harden_timezone | default('UTC') }}"
   when: >
-    ansible_distribution != "Alpine" and
-    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+    ansible_facts['distribution'] != "Alpine" and
+    not (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] == "docker")

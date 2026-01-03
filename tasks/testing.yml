@@ -6,7 +6,7 @@
     state: present
 
 - name: Testing | inspec
-  when: harden_testing_inspec and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
+  when: harden_testing_inspec and (ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "RedHat")
   block:
     # - name: testing | Ensure ruby and dependencies are present
     #   ansible.builtin.package:
@@ -33,28 +33,28 @@
       ansible.builtin.apt_key:
         url: https://packages.chef.io/chef.asc
         state: present
-      when: ansible_os_family == 'Debian'
+      when: ansible_facts['os_family'] == 'Debian'
       register: pkg_result
       until: pkg_result is success
     - name: Debian | install inspec package
       ansible.builtin.apt:
         deb: "/tmp/{{ inspec_url | basename }}"
         state: present
-      when: ansible_os_family == 'Debian'
+      when: ansible_facts['os_family'] == 'Debian'
       register: pkg_result
       until: pkg_result is success
     - name: RedHat | install chef public key for inspec package
       ansible.builtin.rpm_key:
         key: https://packages.chef.io/chef.asc
         state: present
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts['os_family'] == 'RedHat'
       register: pkg_result
       until: pkg_result is success
     - name: RedHat | install inspec package
       ansible.builtin.dnf:
         name: "/tmp/{{ inspec_url | basename }}"
         state: present
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts['os_family'] == 'RedHat'
       register: pkg_result
       until: pkg_result is success
 
@@ -76,7 +76,7 @@
       # shell: "inspec exec {{ harden_testing_inspec_paths | join(' ') }} | tee /var/log/inspec.log"
       ansible.builtin.shell: |
         set -o pipefail
-        inspec exec inspec --input-file inspec/profile-attributes-{{ ansible_os_family }}.yml |
+        inspec exec inspec --input-file inspec/profile-attributes-{{ ansible_facts['os_family'] }}.yml |
             tee {{ log_dir | default('/var/log') }}/inspec.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
       args:
@@ -93,7 +93,7 @@
     - name: Testing | run inspec baselines
       ansible.builtin.shell: |
         set -o pipefail
-        inspec exec {{ item.u }} --attrs inspec/profile-attributes-{{ ansible_os_family }}.yml |
+        inspec exec {{ item.u }} --attrs inspec/profile-attributes-{{ ansible_facts['os_family'] }}.yml |
             tee -a {{ log_dir | default('/var/log') }}/inspec-{{ item.i }}.log |
             sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
       args:
