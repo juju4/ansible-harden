@@ -471,6 +471,7 @@ s/proxmox-mail-forward\[[0-9]*\]: mail forward failed: user '\(.*\)' does not ha
 s/proxmox-mail-forward\[[0-9]*\]: could not notify via target/proxmox-mail-forward: could not notify via target/
 s/proxmox-mail-forward\[[0-9]*\]: notify via target/proxmox-mail-forward: notify via target/
 s/proxmox-mail-forward\[[0-9]*\]: skipping disabled matcher/proxmox-mail-forward: skipping disabled matcher/
+s/proxmox-mail-forward\[[0-9]*\]: forward mail to/proxmox-mail-forward: forward mail to/
 s/pvestatd\[[0-9]*\]: status update time ([0-9]*.[0-9]* seconds)/pvestatd: status update time (N.N seconds)/
 s/pvestatd\[[0-9]*\]: modified cpu set for/pvestatd: modified cpu set for/
 s/pveproxy\[[0-9]*\]: worker [0-9]* started/pveproxy: worker N started/
@@ -602,3 +603,18 @@ s/step\[[0-9]*\]: error validating renew token: /step: error validating renew to
 /step\[[0-9]*\]: main\.main/d
 /step\[[0-9]*\]: #011.\/main.go:/d
 s/step\[[0-9]*\]: client POST/step: client POST/
+
+# wireguard debug
+s/kernel: wireguard: wg0: Keypair [0-9]* created for peer \([0-9]*\)/kernel: wireguard: wg0: Keypair N created for peer \1/
+s/kernel: wireguard: wg0: Keypair [0-9]* destroyed for peer \([0-9]*\)/kernel: wireguard: wg0: Keypair N destroyed for peer \1/
+s/kernel: wireguard: \(.*\) (\([0-9a-f\.:]*\):[0-9]*) did not complete after \([0-9]*\) seconds, retrying (try [0-9]*)/kernel: wireguard: \1 (\2:N) did not complete after \3 seconds, retrying (try N)/
+s/kernel: wireguard: \(.*\) (\([0-9a-f\.:]*\):[0-9]*)/kernel: wireguard: \1 (\2:N)/
+
+# velociraptor
+s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z While getting https:\/\/\([0-9a-f\.:]*\):\([0-9]*\)\/: Invalid status while downloading PEM (\([0-9]*\))/velociraptor: [INFO] While getting https:\/\/\4:\5\/: Invalid status while downloading PEM (\6)/
+s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z Waiting for a reachable server: [0-9]*m[0-9]*s/velociraptor: [INFO] Waiting for a reachable server: NmNs/
+
+# lighttpd
+s/lighttpd\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*: /lighttpd: YYYY-MM-DD HH:SS:MM: /
+
+s/ntpd\[[0-9]*\]: reply from \([0-9\.]*\): not synced (alarm), next query [0-9]*s/ntpd: reply from \1: not synced (alarm), next query Ns/
