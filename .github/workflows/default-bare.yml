@@ -25,7 +25,7 @@ jobs:
             version: '24.04'
             suite: default
             experimental: false
-            egress_policy: block
+            egress_policy: audit
           - distribution: ubuntu
             version: '22.04'
             suite: default
