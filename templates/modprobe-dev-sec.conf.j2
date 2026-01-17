@@ -6,7 +6,9 @@ install hfs /bin/true
 install hfsplus /bin/true
 install squashfs /bin/true
 install udf /bin/true
-install vfat /bin/true
+# required for /boot/efi
+# https://unix.stackexchange.com/questions/638038/boot-efi-failed-to-mount-due-to-unknown-file-system-vfat-centos-7-5
+# install vfat /bin/true
 # https://askubuntu.com/questions/719058/blk-update-request-i-o-error-dev-fd0-sector-0
 blacklist floppy
 # https://cisofy.com/lynis/controls/NETW-3200/
