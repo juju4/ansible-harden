@@ -53,6 +53,11 @@
       ansible.builtin.set_fact:
         ntpclient_listen: ['127.0.0.1', '::1']
       when: ansible_os_family == "RedHat"
+    - name: Ubuntu 24.04 | php snmp MIP
+      ansible.builtin.package:
+        name: snmp
+        state: present
+      when: ansible_distribution == "Ubuntu"
     - name: Validate ansible_remote_tmp dir permissions
       ansible.builtin.file:
         path: "{{ ansible_remote_tmp }}"
