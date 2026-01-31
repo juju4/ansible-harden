@@ -16,6 +16,28 @@
   notify:
     - Ipset restore
 
+- name: Ensure ipset refresh script is present
+  ansible.builtin.template:
+    src: ipsets-refresh.sh.j2
+    dest: /usr/local/bin/ipsets-refresh.sh
+    mode: "0755"
+  when:
+    - harden_ipset_list_dataurl is defined
+    - harden_ipset_list_dataurl | length > 0
+
+- name: Ensure ipset refresh scheduled task
+  ansible.builtin.cron:
+    name: url based ipset refresh
+    weekday: "0"
+    minute: "0"
+    hour: "12"
+    user: nobody
+    job: /usr/local/bin/ipsets-refresh.sh > /var/tmp/ipsets-refresh.log
+    cron_file: ansible_ipset_refresh
+  when:
+    - harden_ipset_list_dataurl is defined
+    - harden_ipset_list_dataurl | length > 0
+
 - name: Check existing lists
   ansible.builtin.command: "ipset list"
   changed_when: false

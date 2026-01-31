@@ -1,0 +1,28 @@
+#!/bin/sh
+{{ ansible_managed | comment }}
+
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin
+export TMPDIR=/var/tmp
+umask 077
+
+cd $TMPDIR || exit 1
+
+{% for item in harden_ipset_list_dataurl %}
+# {{ item.n }}
+listname="{{ item.n }}"
+url="{{ item.url }}"
+filename="${url##*/}"
+curl -s -O $url
+if [ "${filename}" = "drop_v4.json" ]; then
+  jq -r '.cidr |  select(. != null)' drop_v4.json | while IFS= read -r ip
+  do
+    sudo -n ipset add "${listname}" "${ip}"
+  done
+else
+  sed 's@#.*@@;s@;.*@@;' "${filename}" | while IFS= read -r ip
+  do
+    sudo -n ipset add "${listname}" "${ip}"
+  done
+fi
+
+{% endfor %}
