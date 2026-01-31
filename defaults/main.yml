@@ -298,3 +298,5 @@ harden_testing_kernelpop_version: 'b3467d3c64f9657a822c1f3c0d70769efabebf60'
 harden_testing_les_checksum: 'sha256:8832e8e9903653659a66968ab77ab2adf2b1cb08868db56ed14bded21f710de9'
 harden_testing_les2_checksum: 'sha256:51589b6b7f3d0ebe06cdec01c7e4b5f8c4a49df154b2b7013ba74cdbfba3e030'
 harden_testing_speculative: true
+
+is_container: false

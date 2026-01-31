@@ -3,32 +3,31 @@
 - name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
-  when: >
-    not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
-        )
+  when:
+    - not is_container | bool
 
 - name: Restart sshd
   ansible.builtin.service:
     name: "{{ ssh_svc }}"
     state: "restarted"
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when:
+    - not is_container | bool
 
 - name: Restart iptables
   ansible.builtin.service:
     name: "{{ iptables_persistent_svc }}"
     state: "restarted"
-  when: >
-    not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when:
+    - not is_container | bool
 
 - name: Restart ipset-persistence
   ansible.builtin.service:
     name: ipset-persistence
     state: restarted
   when: >
-    (ansible_distribution ==  'Debian' or
-      (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 16)
-    ) and not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+    (ansible_facts.distribution ==  'Debian' or
+      (ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version|int < 16)
+    ) and not is_container | bool
 
 - name: Ipset restore
   ansible.builtin.command: /sbin/ipset restore -f -! /etc/ipsets.conf
@@ -39,8 +38,8 @@
     state: restarted
   when: >
     (
-      (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
-      not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+      (ansible_facts.os_family == 'RedHat' or ansible_facts.os_family == "Alpine") and
+      not is_container | bool
     )
 
 - name: Restart ip6tables - redhat|alpine
@@ -49,8 +48,8 @@
     state: restarted
   when: >
     (
-      (ansible_os_family == 'RedHat' or ansible_os_family == "Alpine") and
-      not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker") and
+      (ansible_facts.os_family == 'RedHat' or ansible_facts.os_family == "Alpine") and
+      not is_container | bool and
       ipv6_config != 'disable'
     )
 
@@ -71,13 +70,15 @@
   ansible.builtin.service:
     name: rsyslog
     state: restarted
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when:
+    - not is_container | bool
 
 - name: Restart fail2ban
   ansible.builtin.service:
     name: fail2ban
     state: restarted
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when:
+    - not is_container | bool
 
 - name: Restart journald
   ansible.builtin.service:
@@ -91,7 +92,8 @@
   ansible.builtin.service:
     name: monit
     state: restarted
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when:
+    - not is_container | bool
 
 - name: Update-initramfs
   ansible.builtin.command: update-initramfs -k all -u

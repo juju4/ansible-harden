@@ -18,6 +18,17 @@
       paths:
         - 'vars'
 
+- name: Set fact is_container
+  ansible.builtin.set_fact:
+    is_container: true
+  when: >
+    (ansible_facts['virtualization_type'] is defined and
+      (ansible_facts['virtualization_type'] == "docker"
+       or ansible_facts['virtualization_type'] == "container"
+       or ansible_facts['virtualization_type'] == "containerd"
+      )
+    )
+
 - name: Import travis
   ansible.builtin.import_tasks: travis.yml
   when: ansible_facts['os_family'] != "Windows"
