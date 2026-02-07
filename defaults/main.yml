@@ -67,6 +67,8 @@ harden_sshd_ca_signing_userkeys: []
 ## You might also want to review harden_sshd_crypto in vars/{{distro}}.yml
 ## will break 'vagrant up' ssh detection (vagrant ssh fine): use second line for MACs
 harden_sshd_passwordauthentication: false
+# sshd 9.8+
+harden_sshd_persourcepenalityexemptlist: 127.0.0.0/8,10.0.0.0/8,192.168.0.0/16
 harden_motd_template: motd.j2
 harden_modprobe_template: modprobe-dev-sec.conf.j2
 harden_securetty: true
