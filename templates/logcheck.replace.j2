@@ -404,6 +404,8 @@ s/_exporter\[[0-9]*\]: level=\(.*\) ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*
 s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error reading config file/process_exporter: error reading config file/
 s/alertmanager\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/alertmanager: caller=/
 s/alertmanager\[[0-9]*\]: time=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=/alertmanager: level=/
+s/alertmanager: level=WARN source=notify.go:866 msg=\(.*\) attempts=[0-9]* err="send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\(.*\) [0-9a-z\-]*\.[0-9]* - gsmtp"/alertmanager: level=WARN source=notify.go:866 msg=\1 attempts=N err="send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\2 UUID - gsmtp"/
+
 s/_exporter\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: caller=/
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* ERROR dns_exporter.dns_exporter./dns_exporter: YYYY-MM-DD HH:MM:SS +0000 ERROR dns_exporter.dns_exporter./
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* INFO dns_exporter/dns_exporter: YYYY-MM-DD HH:MM:SS +0000 INFO dns_exporter/
@@ -435,6 +437,7 @@ s/postfix\/smtp\[[0-9]*\]: [0-9A-Z]*: to=\(.*\), relay=\(.*\), delay=[0-9\.]*, d
 s/postfix\/smtp\[[0-9]*\]: connect to /postfix\/smtp: connect to /
 s/postfix\/cleanup\[[0-9]*\]: [0-9A-Z]*: message-id=<[0-9]*.[0-9A-Z]*@\(.*\)>/postfix\/cleanup: XXX: message-id=<NNN.XXX@\1>/
 s/postfix\/smtp\[[0-9]*\]: Untrusted TLS connection established to \(.*\)\[[0-9a-f:.]*\]:\([0-9]*\): \(.*\)/postfix\/smtp: Untrusted TLS connection established to \1[IP]:\2: \3/
+/postfix\/scache\[[0-9]*\]: statistics: /d
 
 # teleport timestamp
 s/teleport\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*Z ERRO/teleport: YYYY-MM-DDTHH:MM:SSZ ERRO/
@@ -472,6 +475,7 @@ s/proxmox-mail-forward\[[0-9]*\]: could not notify via target/proxmox-mail-forwa
 s/proxmox-mail-forward\[[0-9]*\]: notify via target/proxmox-mail-forward: notify via target/
 s/proxmox-mail-forward\[[0-9]*\]: skipping disabled matcher/proxmox-mail-forward: skipping disabled matcher/
 s/proxmox-mail-forward\[[0-9]*\]: forward mail to/proxmox-mail-forward: forward mail to/
+s/proxmox-mail-forward\[[0-9]*\]: /proxmox-mail-forward: /
 s/pvestatd\[[0-9]*\]: status update time ([0-9]*.[0-9]* seconds)/pvestatd: status update time (N.N seconds)/
 s/pvestatd\[[0-9]*\]: modified cpu set for/pvestatd: modified cpu set for/
 s/pveproxy\[[0-9]*\]: worker [0-9]* started/pveproxy: worker N started/
@@ -611,10 +615,14 @@ s/kernel: wireguard: \(.*\) (\([0-9a-f\.:]*\):[0-9]*) did not complete after \([
 s/kernel: wireguard: \(.*\) (\([0-9a-f\.:]*\):[0-9]*)/kernel: wireguard: \1 (\2:N)/
 
 # velociraptor
-s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z While getting https:\/\/\([0-9a-f\.:]*\):\([0-9]*\)\/: Invalid status while downloading PEM (\([0-9]*\))/velociraptor: [INFO] While getting https:\/\/\4:\5\/: Invalid status while downloading PEM (\6)/
+s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z While getting https:\/\/\([0-9a-z\.:]*\):\([0-9]*\)\/: Invalid status while downloading PEM (\([0-9]*\))/velociraptor: [INFO] While getting https:\/\/\4:\5\/: Invalid status while downloading PEM (\6)/
+# velociraptor[1338]: [INFO] While getting https://server.internal:8000/: Get \"https://server.internal:8000/server.pem\": lookup server.internal on 192.168.1.2:53: read udp 192.168.1.4:49087->192.168.1.5:53: i/o timeout
+s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z While getting https:\/\/\([0-9a-z\.:]*\):\([0-9]*\)\/: Get "\(.*\)": lookup \(.*\) on \(.*\):53: read udp \(.*\):[0-9]*->/velociraptor: [INFO] While getting https:\/\/\4:\5\/: Get "\6": lookup \7 on \8:53: read udp \9:N->/
 s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z Waiting for a reachable server: [0-9]*m[0-9]*s/velociraptor: [INFO] Waiting for a reachable server: NmNs/
+s/velociraptor\[[0-9]*\]: \[INFO\] \([0-9]*\)-\([0-9]*\)-\([0-9]*\)T[0-9]*:[0-9]*:[0-9]*Z /velociraptor: [INFO] /
 
 # lighttpd
 s/lighttpd\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*: /lighttpd: YYYY-MM-DD HH:SS:MM: /
 
 s/ntpd\[[0-9]*\]: reply from \([0-9\.]*\): not synced (alarm), next query [0-9]*s/ntpd: reply from \1: not synced (alarm), next query Ns/
+s/ntpd\[[0-9]*\]: /ntpd: /

@@ -86,6 +86,7 @@ rsyslogd[875]: rsyslogd[internal_messages]: 3827 messages lost due to rate-limit
 dhcpd[12033]: reuse_lease: lease age 79 (secs) under 25% threshold, reply with unaltered, existing lease for 192.168.1.2
 IPCC.xs[2465327]: pam_unix(proxmox-ve-auth:auth):
 proxmox-mail-forward[65303]: forward mail to
+proxmox-mail-forward[7434]: notified via target
 pvedaemon[2465327]: authentication failure;
 pveproxy[2470266]: got inotify poll request in wrong process - disabling inotify
 pveproxy[62730]: Warning: unable to close filehandle GEN5 properly: No space left on device at /usr/share/perl5/PVE/APIServer/AnyEvent.pm line 1980.
@@ -98,5 +99,9 @@ kernel: wireguard: wg0: Sending keepalive packet to peer 6 (123.45.67.89:54321)
 kernel: wireguard: wg0: Handshake for peer 6 (123.45.67.89:54321) did not complete after 5 seconds, retrying (try 4)
 velociraptor[24604]: [INFO] 2025-01-01T08:48:33Z While getting https://192.168.1.2:8000/: Invalid status while downloading PEM (404)
 velociraptor[24604]: [INFO] 2025-01-01T08:48:33Z Waiting for a reachable server: 1m12s
+velociraptor[1338]: [INFO] 2025-01-01T07:00:21Z While getting https://192.168.1.2:8000/: Get "https://192.168.1.2:8000/server.pem": dial tcp 192.168.1.2:8000: connect: connection refused
+velociraptor[1338]: [INFO] 2025-01-01T07:00:21Z While getting https://server.internal:8000/: Get "https://server.internal:8000/server.pem": lookup server.internal on 192.168.1.2:53: read udp 192.168.1.4:49087->192.168.1.5:53: i/o timeout
 lighttpd[9638]: 2025-11-01 11:02:59: (mod_openssl.c.1335) SSL: inactive/expired X509 certificate
 ntpd[1383]: reply from 192.168.1.2: not synced (alarm), next query 3113s
+ntpd[8271]: ntp engine ready
+alertmanager: level=WARN source=notify.go:866 msg="Notify attempt failed, will retry later" component=dispatcher receiver=email-me integration=email[0] aggrGroup="{}/{}:{alertname=\"ProcessNotRunning\"}" attempts=9 err="send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\n5.4.5 sending limits go to\n5.4.5  https://support.google.com/a/answer/166852 a640c23a62f3a-b88232d1b7bsm123456789b.55 - gsmtp"

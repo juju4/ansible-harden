@@ -72,3 +72,5 @@ python3[780014]: importing module contextlib
 osqueryd[3448706]: I0621 04:21:03.856863 3448900 query.cpp:128] Scheduled query has been updated: pack_ossec-rootkit_telekit_trojan
 osqueryd[1770911]: I0629 04:15:06.411104 1771203 query.cpp:128] Scheduled query has been updated: system_info
 osqueryd[52226]: I0715 01:19:40.769425 52462 query.cpp:128] Scheduled query has been updated: pack_ossec-rootkit_esrk_rootkit
+postfix/scache[9433]: statistics: start interval
+postfix/scache[9433]: statistics: domain lookup hits=0 miss=17 success=0%
