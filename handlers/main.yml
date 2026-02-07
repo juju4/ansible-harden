@@ -97,7 +97,7 @@
 
 - name: Update-initramfs
   ansible.builtin.command: update-initramfs -k all -u
-  when: ansible_os_family == "Debian"
+  when: ansible_facts.os_family == "Debian"
 
 - name: Enable apparmor audit profile
   ansible.builtin.command: aa-complain /etc/apparmor.d/apparmor.audit
