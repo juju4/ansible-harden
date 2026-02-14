@@ -157,6 +157,7 @@ jobs:
           systemctl -l --no-pager status ntpd || true
           systemctl -l --no-pager status chronyd || true
           systemctl -l --no-pager status monit
+          systemctl -l --no-pager status lkrg || true
           systemd-analyze --no-pager security || true
           rsyslogd -v
         if: ${{ always() }}
@@ -253,6 +254,7 @@ jobs:
           set -x
           sudo systemctl list-unit-files --all
           sudo journalctl --field _SYSTEMD_UNIT
+          sudo journalctl -xe -l --no-pager | tail -500
         if: ${{ always() }}
         continue-on-error: true
       - name: logcheck
