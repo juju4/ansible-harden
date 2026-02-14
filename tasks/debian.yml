@@ -53,7 +53,10 @@
 
 - name: Import debian-logcheck
   ansible.builtin.import_tasks: debian-logcheck.yml
-  when: harden_logcheck is defined and harden_logcheck
+  when:
+    - harden_logcheck is defined
+    - harden_logcheck | bool
+    - harden_rsyslog_enable | bool
 
 - name: Enable sysstat sar collection
   ansible.builtin.replace:
