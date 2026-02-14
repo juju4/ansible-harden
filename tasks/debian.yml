@@ -113,7 +113,7 @@
       ansible.builtin.replace:
         dest: /etc/cron.d/debsecan
         regexp: '^([0-9].*) \* \* \* \* daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron$'
-        replace: "\\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron --only-fixed --suite {{ ansible_facts['distribution_release'] }}"
+        replace: "\\1 * * * * daemon test -x /usr/bin/debsecan && /usr/bin/debsecan --cron --only-fixed --suite {{ ansible_facts['distribution_release'] }} 2>/var/tmp/debsecan.err"
         mode: '0644'
 
 ## http://linux-audit.com/linux-capabilities-hardening-linux-binaries-by-removing-setuid/
