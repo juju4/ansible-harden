@@ -1,0 +1,460 @@
+#!/usr/sbin/nft -f
+{{ ansible_managed | comment }}
+
+# router/gateway base
+
+flush ruleset
+
+table ip nat {
+    chain PREROUTING {
+        type nat hook prerouting priority dstnat; policy accept;
+    }
+
+    chain INPUT {
+        type nat hook input priority 100; policy accept;
+    }
+
+    chain OUTPUT {
+        type nat hook output priority -100; policy accept;
+    }
+
+    chain POSTROUTING {
+        type nat hook postrouting priority srcnat; policy accept;
+
+        # Default NAT masquerading
+        oifname "{{ harden_if_ext | default('eth0') }}" ip saddr {{ harden_fw_lan_subnet }} counter packets 0 bytes 0 masquerade
+    }
+}
+table ip filter {
+    # nft sets
+    # https://wiki.nftables.org/wiki-nftables/index.php/Sets
+{% for l in harden_ipset_list_data %}
+    set {{ l.n }} {
+        type ipv4_addr;
+        size {{ l.size | default(65536) }};
+        flags {{ l.flags | default('interval') }}
+        elements = { {{ l.list | join(", ") }} }
+    }
+{% endfor %}
+
+    # rules
+    chain INPUT {
+        type filter hook input priority filter; policy {{ harden_fw_default | lower }};
+
+        ip saddr @blacklist_cidr counter packets 0 bytes 0 drop
+
+        # Local DHCP
+        iifname "{{ harden_if_ext | default('eth0') }}" ip saddr 0.0.0.0 ip daddr 255.255.255.255 udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
+        iifname "eth0" udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
+        iifname "eth0" icmp icmp type echo-reply ct state new packets 0 bytes 0 accept
+
+
+        # https://wiki.nftables.org/wiki-nftables/index.php/Rate_limiting_matchings
+        iifname "{{ harden_if_ext | default('eth0') }}" icmp type echo-request limit rate 10/second counter packets 0 bytes 0 accept
+        # iifname "{{ harden_if_ext | default('eth0') }}" tcp ct state new limit rate 100/second counter packets 0 bytes 0 accept
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto igmp ip saddr {{ harden_fw_gw }} ip daddr 224.0.0.1 counter packets 0 bytes 0 drop
+
+        iifname "lo" counter packets 0 bytes 0 accept
+
+        ct state related,established counter packets 0 bytes 0 accept
+
+        # block noise
+        iifname "{{ harden_if_ext | default('eth0') }}" icmp type router-advertisement icmp code net-unreachable ip saddr 1.0.168.192 ip daddr 224.0.0.1 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto tcp tcp dport { 23, 25, 53, 445, 5666, 1443 } counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto tcp tcp sport 51053 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto tcp tcp dport 161 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto tcp tcp dport 9090 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto tcp tcp dport 137 counter packets 0 bytes 0 drop
+        # Windows
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto udp udp dport 135 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto udp udp dport 137 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto udp udp dport 138 counter packets 0 bytes 0 drop
+
+        # Incoming SSH: trusted systems, general access/jump (github lab, semaphore)
+{% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}
+{%     for host in harden_fw_ssh_restricted %}
+        ip saddr {{ host }} tcp dport {{ harden_fw_ssh_port }} counter packets 0 bytes 0 accept
+{%     endfor %}
+{% else %}
+        tcp dport {{ harden_fw_ssh_port }} counter packets 0 bytes 0 accept
+{% endif %}
+        tcp dport {{ harden_fw_ssh_port }} counter packets 0 bytes 0 accept
+        # Outgoing SSH
+        tcp sport 22 ct state established counter packets 0 bytes 0 accept
+        ct state related,established counter packets 0 bytes 0 accept
+        # NTP
+        udp dport 123 counter packets 0 bytes 0 accept
+        # ICMP
+        meta l4proto icmp icmp type echo-request ct state new,related,established counter packets 0 bytes 0 accept
+        meta l4proto icmp icmp type echo-reply ct state related,established counter packets 0 bytes 0 accept
+        # Monitoring: node_exporter, pve_exporter
+{% if monclient_server_ip is defined %}
+{%     for host in monclient_server_ip %}
+{%         for target in monclient_target_subnets %}
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9100 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9221 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 80 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 443 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9256 counter packets 0 bytes 0 accept  # process exporter
+{%         endfor %}
+{%     endfor %}
+{% endif %}
+
+        # snmp
+{% if harden_fw_snmp_restricted is defined and harden_fw_snmp_restricted %}
+{%     for host in harden_fw_snmp_restricted %}
+        ip saddr {{ host }} udp dport 161 counter packets 0 bytes 0 accept
+{%     endfor %}
+{% else %}
+        udp dport 161 counter packets 0 bytes 0 accept
+{% endif %}
+
+        # Application: https
+        ip saddr {{ harden_fw_lan_subnet }} tcp dport 443 counter packets 0 bytes 0 accept
+        # Application openvpn, ipsec
+        udp dport 1194 counter packets 0 bytes 0 accept
+        udp dport 500 counter packets 0 bytes 0 accept
+        udp dport 4500 counter packets 0 bytes 0 accept
+        # Application webserver, preseed
+        ip saddr {{ harden_fw_lan_subnet }} tcp dport 80 counter packets 0 bytes 0 accept
+
+        # Proxy(s)
+{% if harden_fw_proxy is defined and harden_fw_proxy %}
+{%     for item in harden_fw_proxy %}
+        iifname "{{ item.if }}" ip daddr {{ item.dstip }} tcp dport {{ item.port }} counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+        # VA scan?
+{% if harden_fw_centralscan is defined %}
+{%     for scan_ip in harden_fw_centralscan %}
+          ip saddr {{ scan_ip }} log prefix "iptables: [accept-scan-in] " counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+        # Proxy: block outside requests
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 8080 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 8888 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 3129 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 3128 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 3127 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 1443 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 10443 counter packets 0 bytes 0 drop
+        iifname "{{ harden_if_ext | default('eth0') }}" tcp dport 10080 counter packets 0 bytes 0 drop
+
+        # prometheus & co
+{% if harden_fw_ssh_restricted is defined and harden_fw_ssh_restricted != [] %}
+{%     for host in harden_fw_ssh_restricted %}
+        meta l4proto tcp ip saddr {{ host }} tcp dport { 9090, 3000 } counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+{% if harden_fw_trusted_ips is defined and harden_fw_trusted_ips %}
+{%     for s in harden_fw_trusted_ips %}
+        iifname "{{ harden_if_ext | default('eth0') }}" ip saddr {{ s }} tcp dport 443 counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+        # https://wiki.nftables.org/wiki-nftables/index.php/Logging_traffic
+        # https://serverfault.com/questions/958475/how-can-i-log-packets-dropped-by-policy-in-nftables
+        counter packets 0 bytes 0 log prefix "iptables: [{{ harden_fw_default | lower }}-default-in] " level debug
+    }
+
+    chain FORWARD {
+        type filter hook forward priority filter; policy {{ harden_fw_default | lower }};
+
+        ip daddr @blacklist_cidr counter packets 0 bytes 0 drop
+
+        ct state established counter packets 0 bytes 0 accept
+        tcp dport {{ harden_fw_ssh_port }} counter packets 0 bytes 0 accept
+
+        # ICMP
+        meta l4proto icmp icmp type echo-reply ct state new,related,established counter packets 0 bytes 0 accept
+        meta l4proto icmp icmp type echo-request ct state new,related,established counter packets 0 bytes 0 accept
+
+        # SMTP
+{% if harden_fw_smtp_ports is defined and harden_fw_smtp_ports != [] %}
+{%     for port in harden_fw_smtp_ports %}
+{%         if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
+{%             for host in harden_fw_smtpservers %}
+        ip daddr {{ host }} tcp dport {{ port }} counter packets 0 bytes 0 accept
+{%             endfor %}
+{%         else %}
+        tcp dport {{ port }} counter packets 0 bytes 0 accept
+{%         endif %}
+{%     endfor %}
+{% endif %}
+
+{% if monclient_server_ip is defined %}
+{%     for host in monclient_server_ip %}
+{%         for target in monclient_target_subnets %}
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9100 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9221 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 80 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 443 counter packets 0 bytes 0 accept
+{%         endfor %}
+{%     endfor %}
+{% endif %}
+
+{% if harden_fw_proxy_servers is defined %}
+{%     for proxy in harden_fw_proxy_servers %}
+        meta l4proto tcp ip daddr {{ proxy.dst }} tcp dport {{ proxy.dport }} counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+        # VA scan?
+{% if harden_fw_centralscan is defined %}
+{%     for scan_ip in harden_fw_centralscan %}
+          ip saddr {{ scan_ip }} log prefix "iptables: [accept-scan-forward] " counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+        counter packets 0 bytes 0 log prefix "iptables: [{{ harden_fw_default | lower }}-default-forward] " level debug
+    }
+
+    chain OUTPUT {
+        type filter hook output priority filter; policy {{ harden_fw_default | lower }};
+
+        ip daddr @blacklist_cidr counter packets 0 bytes 0 drop
+
+        oifname "lo" counter packets 0 bytes 0 accept
+
+        ct state established counter packets 0 bytes 0 accept
+
+        # Local DHCP
+        oifname "{{ harden_if_ext | default('eth0') }}" ip daddr {{ harden_fw_lan_subnet }} udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
+
+        # Incoming SSH
+        tcp sport 22 ct state established counter packets 0 bytes 0 accept
+        # Outgoing SSH
+        meta l4proto tcp tcp dport 22 skuid 0 counter packets 0 bytes 0 log prefix "iptables: [deny-root-ssh-out] "
+        meta l4proto tcp tcp dport 22 skuid 0 counter packets 0 bytes 0 reject
+        tcp dport 22 ct state new,established counter packets 0 bytes 0 log prefix "iptables: [allow-ssh-out] " accept
+
+        # DNS
+{% if harden_fw_dnsservers is defined and harden_fw_dnsservers %}
+{%     for host in harden_fw_dnsservers %}
+        ip daddr {{ host }} tcp dport 53 counter packets 0 bytes 0 accept
+        ip daddr {{ host }} udp dport 53 counter packets 0 bytes 0 accept
+{%     endfor %}
+{% else %}
+        tcp dport 53 counter packets 0 bytes 0 accept
+        udp dport 53 counter packets 0 bytes 0 accept
+{% endif %}
+        # DNSCrypt + tcp/443(later), various possible
+        udp dport 443 counter packets 0 bytes 0 accept
+        udp dport 8443 counter packets 0 bytes 0 accept
+        udp dport 5353 counter packets 0 bytes 0 accept
+
+        # NTP
+        udp dport 123 counter packets 0 bytes 0 accept
+
+        # ICMP
+        meta l4proto icmp icmp type echo-reply ct state related,established counter packets 0 bytes 0 accept
+        meta l4proto icmp icmp type echo-request ct state new,related,established counter packets 0 bytes 0 accept
+        meta l4proto icmp icmp type destination-unreachable ct state new,related,established counter packets 0 bytes 0 accept
+        meta l4proto icmp icmp type time-exceeded ct state new,related,established counter packets 0 bytes 0 accept
+
+        # SMTP
+{% if harden_fw_smtp_ports is defined and harden_fw_smtp_ports != [] %}
+{%     for port in harden_fw_smtp_ports %}
+{%         if harden_fw_smtpservers is defined and harden_fw_smtpservers != [] %}
+{%             for host in harden_fw_smtpservers %}
+        ip daddr {{ host }} tcp dport {{ port }} counter packets 0 bytes 0 accept
+{%             endfor %}
+{%         else %}
+        tcp dport {{ port }} counter packets 0 bytes 0 accept
+{%         endif %}
+{%     endfor %}
+{% endif %}
+
+        # Monitoring
+{% if monclient_server_ip is defined %}
+{%     for host in monclient_server_ip %}
+{%         for target in monclient_target_subnets %}
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9100 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 9221 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 80 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} ip daddr {{ target }} tcp dport 443 counter packets 0 bytes 0 accept
+{%         endfor %}
+{%     endfor %}
+{% endif %}
+
+        # SNMP
+{% if harden_fw_snmp_restricted is defined and harden_fw_snmp_restricted %}
+{%     for host in harden_fw_snmp_restricted %}
+        ip saddr {{ host }} udp dport 161 counter packets 0 bytes 0 accept
+        ip saddr {{ host }} udp sport 161 counter packets 0 bytes 0 accept
+{%     endfor %}
+{% else %}
+        udp dport 161 counter packets 0 bytes 0 accept
+{% endif %}
+
+        # Application openvpn, ipsec
+        udp dport 1194 counter packets 0 bytes 0 accept
+        udp sport 1194 counter packets 0 bytes 0 accept
+        udp sport 500 udp dport 500 counter packets 0 bytes 0 accept
+        udp sport 4500 udp dport 4500 counter packets 0 bytes 0 accept
+
+        # VA scan?
+{% if harden_fw_centralscan is defined %}
+{%     for scan_ip in harden_fw_centralscan %}
+        ip saddr {{ scan_ip }} log prefix "iptables: [accept-scan-out] " counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+{% if harden_fw_proxy_servers is defined %}
+{%     for proxy in harden_fw_proxy_servers %}
+        ip daddr {{ proxy.dst }} tcp dport {{ proxy.dport }} counter packets 0 bytes 0 accept
+{%     endfor %}
+{% endif %}
+
+        # generic rule
+        meta l4proto tcp ct state established counter packets 0 bytes 0 accept
+
+        counter packets 0 bytes 0 log prefix "iptables: [{{ harden_fw_default | lower }}-default-out] " level debug
+    }
+
+    chain fail2ban-snmpd {
+        counter packets 0 bytes 0 return
+    }
+
+    chain fail2ban-ssh {
+        counter packets 0 bytes 0 return
+    }
+
+    chain fail2ban-sshd {
+        counter packets 0 bytes 0 return
+    }
+}
+table ip6 filter {
+    # nft sets
+    # https://wiki.nftables.org/wiki-nftables/index.php/Sets
+{% for l in harden_ipset_list_data_ipv6 %}
+    set {{ l.n }} {
+        type ipv6_addr;
+        size {{ l.size | default(65536) }};
+        flags {{ l.flags | default('interval') }}
+        elements = { {{ l.list | join(", ") }} }
+    }
+{% endfor %}
+
+    chain INPUT {
+        type filter hook input priority filter; policy {{ harden_fw_default | lower }};
+
+        meta l4proto tcp tcp dport 22 counter packets 0 bytes 0 jump fail2ban-sshd
+        meta l4proto udp udp dport 161 counter packets 0 bytes 0 jump fail2ban-snmpd
+        meta l4proto tcp tcp dport 22 counter packets 0 bytes 0 jump fail2ban-ssh
+        rt type 0 counter packets 0 bytes 0 drop
+        iifname "lo" counter packets 0 bytes 0 accept
+        ct state invalid counter packets 0 bytes 0 drop
+
+        iifname != "lo" ip6 saddr ::1 counter packets 0 bytes 0 drop
+        ip6 saddr fe80::/10 counter packets  0 bytes 0 accept
+        ip6 daddr ff00::/8 counter packets 0 bytes 0 accept
+
+        iifname "{{ harden_if_ext | default('eth0') }}" meta l4proto tcp tcp dport { 23, 25, 53, 80, 443, 1900, 5666 } counter packets 0 bytes 0 drop
+        ip6 saddr fe80::/10 tcp dport 22 counter packets 0 bytes 0 accept
+
+        tcp sport 22 ct state established counter packets 0 bytes 0 accept
+        ct state related,established counter packets 0 bytes 0 accept
+
+        udp dport 123 counter packets 0 bytes 0 accept
+
+        meta l4proto ipv6-icmp icmpv6 type destination-unreachable counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type packet-too-big counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type time-exceeded counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type parameter-problem counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type echo-request counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type nd-router-solicit counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type nd-router-advert counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type nd-neighbor-solicit counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type nd-neighbor-advert counter packets 0 bytes 0 accept
+        meta l4proto ipv6-icmp icmpv6 type nd-redirect counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+        # meta l4proto ipv6-icmp ip6 saddr fe80::/10 xt match icmp6 counter packets 0 bytes 0 accept
+
+        # udp dport 161 counter packets 0 bytes 0 accept
+
+        # limit rate 5/minute counter packets 0 bytes 0 log prefix "iptables6 denied: " level debug
+        meta l4proto tcp tcp sport { 80, 443 } ct state established counter packets 0 bytes 0 accept
+        tcp dport 8080 counter packets 0 bytes 0 accept
+        tcp dport 9091 counter packets 0 bytes 0 accept
+
+        counter packets 0 bytes 0 log prefix "iptables6: [{{ harden_fw_default | lower }}-default-in] " level debug
+    }
+
+    chain FORWARD {
+        type filter hook forward priority filter; policy {{ harden_fw_default | lower }};
+        rt type 0 counter packets 0 bytes 0 drop
+        tcp dport 22 counter packets 0 bytes 0 log prefix "iptables6: [allow-ssh-forward] " accept
+        tcp dport 53 counter packets 0 bytes 0 accept
+        udp dport 53 counter packets 0 bytes 0 accept
+
+        # Application vpn netbird - output
+        ip6 daddr @netbird_relay_ipv6 tcp dport 443 counter packets 0 bytes 0 accept
+
+        counter packets 0 bytes 0 log prefix "iptables6: [{{ harden_fw_default | lower }}-default-forward] " level debug
+    }
+
+    chain OUTPUT {
+        type filter hook output priority filter; policy {{ harden_fw_default | lower }};
+        rt type 0 counter packets 0 bytes 0 drop
+        oifname "lo" counter packets 0 bytes 0 accept
+        ip6 saddr fe80::/10 counter packets 0 bytes 0 accept
+        ip6 daddr ff00::/8 counter packets 0 bytes 0 accept
+        oifname "{{ harden_if_ext | default('eth0') }}" meta l4proto ipv6-icmp icmpv6 type nd-neighbor-advert ip6 daddr fe80::/10 counter packets 0 bytes 0 accept
+        oifname "{{ harden_if_ext | default('eth0') }}" meta l4proto ipv6-icmp icmpv6 type echo-reply counter packets 0 bytes 0 accept
+
+        # SSH
+        tcp sport 22 ct state established counter packets 0 bytes 0 accept
+        tcp dport 22 ct state new,established counter packets 0 bytes 0 log prefix "iptables6: [allow-ssh-out] " accept
+
+        # DNS
+        ip6 daddr 2001:4860:4860::8888 tcp dport 53 counter packets 0 bytes 0 accept
+        ip6 daddr 2001:4860:4860::8888 udp dport 53 counter packets 0 bytes 0 accept
+        ip6 daddr 2001:4860:4860::8844 tcp dport 53 counter packets 0 bytes 0 accept
+        ip6 daddr 2001:4860:4860::8844 udp dport 53 counter packets 0 bytes 0 accept
+
+        # NTP
+        udp dport 123 counter packets 0 bytes 0 accept
+        tcp dport 25 counter packets 0 bytes 0 accept
+
+        # SMTP/gmail
+        ip6 daddr @gmail_smtp_ipv6 tcp dport 587 counter packets 0 bytes 0 accept
+
+        meta l4proto tcp tcp dport { 80, 443 } ct state new,established counter packets 0 bytes 0 accept
+        meta l4proto tcp ct state established counter packets 0 bytes 0 accept
+
+        # Application vpn netbird - output
+        # https://docs.netbird.io/about-netbird/faq#what-firewall-ports-should-i-open-to-use-net-bird
+        ip6 daddr @netbird_relay_ipv6 tcp dport 443 counter packets 0 bytes 0 accept
+        ip6 daddr 2600:1901:0:adb3:: tcp dport 443 counter packets 0 bytes 0 accept
+        # ip6 daddr turn.netbird.io tcp dport 443-65535 counter packets 0 bytes 0 accept  # no ipv6 returned
+        # Application vpn tailscale - output - PENDING
+        # https://tailscale.com/kb/1082/firewall-ports
+
+        counter packets 0 bytes 0 log prefix "iptables6: [{{ harden_fw_default | lower }}-default-out] " level debug
+    }
+
+    chain fail2ban-snmpd {
+        counter packets 0 bytes 0 return
+    }
+
+    chain fail2ban-ssh {
+        counter packets 0 bytes 0 return
+    }
+
+    chain fail2ban-sshd {
+        counter packets 0 bytes 0 return
+    }
+}

@@ -148,6 +148,7 @@ harden_fw: true
 harden_fw_type: iptables
 # harden_fw_type: nftables
 harden_fw_template: rules.v4.j2
+# harden_fw_template: rules-nft.j2
 ## Note: in default config, if you switch default policy to drop, you will lose access...
 harden_fw_default: DROP
 # harden_fw_default: ACCEPT
@@ -174,6 +175,7 @@ harden_fw_smtp_ports:
 #   - { proto: 'tcp', port: 9091 }
 ## FIXME! open all or more? security can be split between VA scan, IR, ...
 # harden_fw_security_source:
+harden_fw_lan_subnet: 192.168.1.0/24
 harden_fw6_template: rules.v6.j2
 harden_fw6_default: ACCEPT
 harden_fw6_gw: ''
