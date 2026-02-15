@@ -145,10 +145,10 @@ harden_apparmor_audit: false
 ## firewall rules? avoid to lock yourself
 # harden_fw: false
 harden_fw: true
-harden_fw_type: iptables
-# harden_fw_type: nftables
-harden_fw_template: rules.v4.j2
-# harden_fw_template: rules-nft.j2
+# harden_fw_type: iptables
+harden_fw_type: nftables
+# harden_fw_template: rules.v4.j2
+harden_fw_template: rules-nft.j2
 ## Note: in default config, if you switch default policy to drop, you will lose access...
 harden_fw_default: DROP
 # harden_fw_default: ACCEPT
