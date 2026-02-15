@@ -201,6 +201,7 @@ harden_ipset_list_data: []
 #  - n: blacklist_cidr
 #    list:
 #      - a.b.c.d
+harden_ipset_list_data_ipv6: []
 
 ### Monitoring
 ## can use inventory group but
