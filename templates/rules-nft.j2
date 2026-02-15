@@ -41,12 +41,10 @@ table ip filter {
     chain INPUT {
         type filter hook input priority filter; policy {{ harden_fw_default | lower }};
 
-        ip saddr @blacklist_cidr counter packets 0 bytes 0 drop
-
         # Local DHCP
         iifname "{{ harden_if_ext | default('eth0') }}" ip saddr 0.0.0.0 ip daddr 255.255.255.255 udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
         iifname "eth0" udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
-        iifname "eth0" icmp icmp type echo-reply ct state new packets 0 bytes 0 accept
+        iifname "eth0" meta l4proto icmp icmp type echo-reply ct state new packets 0 bytes 0 accept
 
 
         # https://wiki.nftables.org/wiki-nftables/index.php/Rate_limiting_matchings
@@ -163,8 +161,6 @@ table ip filter {
     chain FORWARD {
         type filter hook forward priority filter; policy {{ harden_fw_default | lower }};
 
-        ip daddr @blacklist_cidr counter packets 0 bytes 0 drop
-
         ct state established counter packets 0 bytes 0 accept
         tcp dport {{ harden_fw_ssh_port }} counter packets 0 bytes 0 accept
 
@@ -214,8 +210,6 @@ table ip filter {
 
     chain OUTPUT {
         type filter hook output priority filter; policy {{ harden_fw_default | lower }};
-
-        ip daddr @blacklist_cidr counter packets 0 bytes 0 drop
 
         oifname "lo" counter packets 0 bytes 0 accept
 
@@ -429,19 +423,8 @@ table ip6 filter {
         udp dport 123 counter packets 0 bytes 0 accept
         tcp dport 25 counter packets 0 bytes 0 accept
 
-        # SMTP/gmail
-        ip6 daddr @gmail_smtp_ipv6 tcp dport 587 counter packets 0 bytes 0 accept
-
         meta l4proto tcp tcp dport { 80, 443 } ct state new,established counter packets 0 bytes 0 accept
         meta l4proto tcp ct state established counter packets 0 bytes 0 accept
-
-        # Application vpn netbird - output
-        # https://docs.netbird.io/about-netbird/faq#what-firewall-ports-should-i-open-to-use-net-bird
-        ip6 daddr @netbird_relay_ipv6 tcp dport 443 counter packets 0 bytes 0 accept
-        ip6 daddr 2600:1901:0:adb3:: tcp dport 443 counter packets 0 bytes 0 accept
-        # ip6 daddr turn.netbird.io tcp dport 443-65535 counter packets 0 bytes 0 accept  # no ipv6 returned
-        # Application vpn tailscale - output - PENDING
-        # https://tailscale.com/kb/1082/firewall-ports
 
         counter packets 0 bytes 0 log prefix "iptables6: [{{ harden_fw_default | lower }}-default-out] " level debug
     }
