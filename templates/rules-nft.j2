@@ -44,7 +44,7 @@ table ip filter {
         # Local DHCP
         iifname "{{ harden_if_ext | default('eth0') }}" ip saddr 0.0.0.0 ip daddr 255.255.255.255 udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
         iifname "eth0" udp sport 68 udp dport 67 counter packets 0 bytes 0 accept
-        iifname "eth0" meta l4proto icmp icmp type echo-reply ct state new packets 0 bytes 0 accept
+        iifname "eth0" meta l4proto icmp icmp type echo-reply ct state new counter packets 0 bytes 0 accept
 
 
         # https://wiki.nftables.org/wiki-nftables/index.php/Rate_limiting_matchings
@@ -393,9 +393,6 @@ table ip6 filter {
         tcp dport 22 counter packets 0 bytes 0 log prefix "iptables6: [allow-ssh-forward] " accept
         tcp dport 53 counter packets 0 bytes 0 accept
         udp dport 53 counter packets 0 bytes 0 accept
-
-        # Application vpn netbird - output
-        ip6 daddr @netbird_relay_ipv6 tcp dport 443 counter packets 0 bytes 0 accept
 
         counter packets 0 bytes 0 log prefix "iptables6: [{{ harden_fw_default | lower }}-default-forward] " level debug
     }
