@@ -300,7 +300,7 @@ harden_testing_privesc: true
 harden_testing_privesc_upc: true
 harden_testing_privesc_lpc: true
 harden_testing_kernelpop_version: 'b3467d3c64f9657a822c1f3c0d70769efabebf60'
-harden_testing_les_checksum: 'sha256:f54f6a91257532f05606f1261859c7dca9a4d552e2073987767ecca3ad8bd2ad'
+harden_testing_les_checksum: 'sha256:a003d23cb062c12c488eae5c7dbfc1d5708ee9a9ec044428bdacab93240a3e5a'
 harden_testing_les2_checksum: 'sha256:51589b6b7f3d0ebe06cdec01c7e4b5f8c4a49df154b2b7013ba74cdbfba3e030'
 harden_testing_speculative: true
 
