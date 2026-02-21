@@ -301,6 +301,9 @@ table ip filter {
 {%     for proxy in harden_fw_proxy_servers %}
         ip daddr {{ proxy.dst }} tcp dport {{ proxy.dport }} counter packets 0 bytes 0 accept
 {%     endfor %}
+{% else %}
+        tcp dport 80 counter packets 0 bytes 0 accept
+        tcp dport 443 counter packets 0 bytes 0 accept
 {% endif %}
 
         # generic rule
