@@ -52,25 +52,27 @@
     - name: RedHat | set fact
       ansible.builtin.set_fact:
         ntpclient_listen: ['127.0.0.1', '::1']
-      when: ansible_os_family == "RedHat"
+      when: ansible_facts['os_family'] == "RedHat"
     - name: Ubuntu 24.04 | php snmp MIP
       ansible.builtin.package:
-        name: snmp
+        name:
+          - snmp
+          - snmp-mibs-downloader
         state: present
-      when: ansible_distribution == "Ubuntu"
-    - name: Validate ansible_remote_tmp dir permissions
+      when: ansible_facts['distribution'] == "Ubuntu"
+    - name: Validate ansible_facts['remote_tmp'] dir permissions
       ansible.builtin.file:
-        path: "{{ ansible_remote_tmp }}"
+        path: "{{ ansible_facts['remote_tmp'] }}"
         state: directory
         mode: '1777'
       when:
-        - ansible_remote_tmp is defined
-        - ansible_remote_tmp != '/tmp'
+        - ansible_facts['remote_tmp'] is defined
+        - ansible_facts['remote_tmp'] != '/tmp'
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
     - juju4.harden_mailserver
-    - { role: juju4.ipv6, when: not (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8) }
+    - { role: juju4.ipv6, when: not (ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version|int >= 8) }
     - juju4.auditd
     - juju4.osquery
     - juju4.ntpclient
