@@ -273,3 +273,13 @@ jobs:
           sudo journalctl -xe -g apparmor -l --no-pager | tail -500
         if: ${{ always() }}
         continue-on-error: true
+      - name: php
+        run: |
+          set -x
+          ls -A /usr/share/snmp/mibs/ || true
+          ls -A /usr/share/snmp/mibs-downloader/ || true
+          sudo cat /etc/snmp/snmp.conf || true
+          systemctl -l --no-pager status php-fpm || true
+          sudo cat /etc/php/*/fpm/php-fpm.conf || true
+        if: ${{ always() }}
+        continue-on-error: true
