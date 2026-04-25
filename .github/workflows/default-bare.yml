@@ -60,6 +60,7 @@ jobs:
             2.debian.pool.ntp.org:123
             3.debian.pool.ntp.org:123
             azure.archive.ubuntu.com:80
+            dl.google.com:443
             esm.ubuntu.com:443
             files.pythonhosted.org:443
             galaxy.ansible.com:443
