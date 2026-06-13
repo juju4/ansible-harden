@@ -81,6 +81,9 @@ harden_proxy_pass: ''
 harden_immutable_apt_dirs:
   - /lib
   - /etc/init.d
+  - /etc/pam.d
+  - /etc/systemd
+  - /usr/lib/systemd
   - /boot
 harden_immutable_others: []
 # harden_immutable_others: ['/etc/resolv.conf']
