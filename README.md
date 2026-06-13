@@ -161,6 +161,9 @@ This was previously task with connection=local and become=no but still called su
 Using instead delegate_to=localhost does not and is used in latest version.
 Typically happens if run under tool like semaphoreui and systemd unit is set with NoNewPrivileges restriction.
 
+* (ci full) "php-fpm8.3[54586]: Cannot find module (IPV6-UDP-MIB): At line 0 in (none)"
+  * <https://ixnfo.com/en/installing-mib-in-ubuntu-and-solving-the-error-snmp-cannot-find-module.html>
+  * [SNMP - Cannot find module](https://github.com/influxdata/telegraf/issues/4896)
 
 ## License
 
