@@ -83,6 +83,12 @@ step[36556]: error renewing certificate
 step[44643]: error validating renew token: token not valid yet (nbf)
 rsyslogd[875]: rsyslogd[internal_messages]: 3827 messages lost due to rate-limiting (500 allowed within 5 seconds)
 2025-05-28T06:01:59.881607+00:00 myhost sshd[3666]: Connection from 127.0.0.1 port 45688 on 127.0.0.1 port 22 rdomain ""
+sshd-session[61306]: Connection from 192.168.1.2 port 41068 on 192.168.1.1 port 22 rdomain ""
+sshd-session[61306]: Connection closed by 192.168.1.2 port 41068
+sshd-session[61199]: kex_exchange_identification: Connection closed by remote host
+sshd-session[62411]: User child is on pid 4109311
+sshd-session[62411]: Received disconnect from 192.168.1.2 port 16180:11: disconnected by user
+sshd-session[62411]: Postponed publickey for root from 192.168.1.2 port 61961 ssh2 [preauth]
 dhcpd[12033]: reuse_lease: lease age 79 (secs) under 25% threshold, reply with unaltered, existing lease for 192.168.1.2
 IPCC.xs[2465327]: pam_unix(proxmox-ve-auth:auth):
 proxmox-mail-forward[65303]: forward mail to
@@ -105,3 +111,4 @@ lighttpd[9638]: 2025-11-01 11:02:59: (mod_openssl.c.1335) SSL: inactive/expired 
 ntpd[1383]: reply from 192.168.1.2: not synced (alarm), next query 3113s
 ntpd[8271]: ntp engine ready
 alertmanager: level=WARN source=notify.go:866 msg="Notify attempt failed, will retry later" component=dispatcher receiver=email-me integration=email[0] aggrGroup="{}/{}:{alertname=\"ProcessNotRunning\"}" attempts=9 err="send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\n5.4.5 sending limits go to\n5.4.5  https://support.google.com/a/answer/166852 a640c23a62f3a-b88232d1b7bsm123456789b.55 - gsmtp"
+alertmanager: level=ERROR source=dispatch.go:360 msg="Notify for alerts failed" component=dispatcher num_alerts=3 err="email-me/email[0]: notify retry canceled after 16 attempts: send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\n5.4.5 sending limits go to\n5.4.5  https://support.google.com/a/answer/166852 ffacd0b12a97d-43796a78901sc1345641f8f.17 - gsmtp"

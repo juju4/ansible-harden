@@ -18,11 +18,17 @@ s/sshd\[[0-9]*\]: Failed \(.*\) for \(.*\) from \([0-9a-fA-F\.:]*\) port [0-9]* 
 s/sshd\[[0-9]*\]: Accepted publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
 s/sshd\[[0-9]*\]: Failed publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
 s/sshd\[[0-9]*\]: Postponed publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
+s/sshd-session\[[0-9]*\]: Postponed publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd: Accepted publickey for \1 from \2 port N ssh2/
 #s/sshd\[[0-9]*\]: input_userauth_request: invalid user .*/sshd: input_userauth_request: invalid user XXX/
 #s/sshd\[[0-9]*\]: Invalid user .* from \([0-9\.]*\)/sshd: Invalid user XXX from \1/
 s/sshd\[[0-9]*\]: Connection closed by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection closed by \1 port N/
+s/sshd-session\[[0-9]*\]: Connection closed by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd-session: Connection closed by \1 port N/
 s/sshd\[[0-9]*\]: Connection reset by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Connection reset by \1 port N/
+s/sshd-session\[[0-9]*\]: Connection reset by \([0-9a-fA-F\.:]*\) port [0-9]*/sshd-session: Connection reset by \1 port N/
 s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from \1 port N on \2 port \3/
+s/sshd-session\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd-session: Connection from \1 port N on \2 port \3/
+s/sshd-session\[[0-9]*\]: User child is on pid [0-9]*/sshd-session: User child is on pid N/
+s/sshd-session\[[0-9]*\]: Received disconnect from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Received disconnect from \1 port N/
 #s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from <IP> port N on \2 port \3/
 s/sshd\[[0-9]*\]: Disconnected from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 port N/
 s/sshd\[[0-9]*\]: Disconnected from user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 \2 port N/
@@ -61,6 +67,7 @@ s/sshd\[[0-9]*\]: refused local port forward: originator \(.*\) port [0-9]*, tar
 # for other sftp-server logs
 s/sftp-server\[[0-9]*\]: /sftp-server: /
 s/sshd\[[0-9]*\]: /sshd: /
+s/sshd-session\[[0-9]*\]: /sshd-session: /
 {% endif %}
 
 ### kernel
@@ -405,6 +412,7 @@ s/process_exporter\[[0-9]*\]: [0-9]*\/[0-9]*\/[0-9]* [0-9]*:[0-9]*:[0-9]* error 
 s/alertmanager\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/alertmanager: caller=/
 s/alertmanager\[[0-9]*\]: time=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z level=/alertmanager: level=/
 s/alertmanager: level=WARN source=notify.go:866 msg=\(.*\) attempts=[0-9]* err="send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\(.*\) [0-9a-z\-]*\.[0-9]* - gsmtp"/alertmanager: level=WARN source=notify.go:866 msg=\1 attempts=N err="send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\2 UUID - gsmtp"/
+s/alertmanager: level=ERROR source=dispatch.go:360 msg=\(.*\) component=dispatcher num_alerts=[0-9]* err="email-me\/email\[0\]: notify retry canceled after [0-9]* attempts: send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\(.*\) [0-9a-z\-]*\.[0-9]* - gsmtp"/alertmanager: level=ERROR source=dispatch.go:360 msg=\1 component=dispatcher num_alerts=N err="email-me\/email[0]: notify retry canceled after N attempts: send DATA command: 550 5.4.5 Daily user sending limit exceeded. For more information on Gmail\2 UUID - gsmtp"/
 
 s/_exporter\[[0-9]*\]: ts=[0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*\.[0-9]*Z caller=/_exporter: caller=/
 s/dns_exporter\[[0-9]*\]: [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]* +[0-9]* ERROR dns_exporter.dns_exporter./dns_exporter: YYYY-MM-DD HH:MM:SS +0000 ERROR dns_exporter.dns_exporter./
