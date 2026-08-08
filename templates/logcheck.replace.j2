@@ -29,6 +29,11 @@ s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*
 s/sshd-session\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd-session: Connection from \1 port N on \2 port \3/
 s/sshd-session\[[0-9]*\]: User child is on pid [0-9]*/sshd-session: User child is on pid N/
 s/sshd-session\[[0-9]*\]: Received disconnect from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Received disconnect from \1 port N/
+s/sshd-session\[[0-9]*\]: Disconnected from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd-session: Disconnected from \1 port N/
+s/sshd-session\[[0-9]*\]: Disconnected from user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd-session: Disconnected from \1 \2 port N/
+s/sshd-session\[[0-9]*\]: Starting session: command for \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd-session: Starting session: command for \1 from \2 port N/
+s/sshd-session\[[0-9]*\]: Starting session: command on \(.*\) for \(.*\) from \([0-9\.:]*\) port [0-9]*/sshd-session: Starting session: command on \1 for \2 from \3 port N/
+s/sshd-session\[[0-9]*\]: Accepted publickey for \(.*\) from \([0-9a-fA-F\.]*\) port [0-9]* ssh2/sshd-session: Accepted publickey for \1 from \2 port N ssh2/
 #s/sshd\[[0-9]*\]: Connection from \([0-9a-fA-F\.:]*\) port [0-9]* on \([0-9\.:]*\) port \([0-9]*\)/sshd: Connection from <IP> port N on \2 port \3/
 s/sshd\[[0-9]*\]: Disconnected from \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 port N/
 s/sshd\[[0-9]*\]: Disconnected from user \(.*\) \([0-9a-fA-F\.:]*\) port [0-9]*/sshd: Disconnected from \1 \2 port N/
