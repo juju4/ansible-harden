@@ -70,6 +70,3 @@ lkrg_dep_pkgs:
   - kernel-devel
   - make
   - gcc
-
-inspec_url: https://packages.chef.io/files/stable/inspec/5.10.5/el/7/inspec-5.10.5-1.el7.x86_64.rpm
-inspec_hash: 'sha256:4642f1209e60fbc88c365d57b8d007679c210c26f8d3f13dd893b0b2d3b883bd'

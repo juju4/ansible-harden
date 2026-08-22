@@ -137,7 +137,7 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/se
 ## Troubleshooting & Known issues
 
 * You are also advise to check projects like https://github.com/dev-sec
-Some tasks are better covered there like suid/sgid binaries cleaning and inspec control testing.
+Some tasks are better covered there like suid/sgid binaries cleaning and other control testing.
 
 * Canonical livepatch has some issues and may return ```canonical-livepatch: Bad server status code: 403. URL: https://livepatch.canonical.com/api/machine/xxx {"error": "Invalid Machine Token"}```
 https://askubuntu.com/questions/844583/state-check-failed-when-running-canonical-livepatch

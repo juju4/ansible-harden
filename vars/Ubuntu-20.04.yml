@@ -106,6 +106,3 @@ lkrg_dep_pkgs:
   - "linux-headers-{{ ansible_kernel }}"
   - make
   - gcc
-
-inspec_url: https://packages.chef.io/files/stable/inspec/5.10.5/ubuntu/18.04/inspec_5.10.5-1_amd64.deb
-inspec_hash: 'sha256:71e0a77ea844a014504e0d85f4481661bafcda8b010a304e66b918b8c846daef'
