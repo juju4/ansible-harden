@@ -35,11 +35,6 @@
     - name: Ubuntu 22.04 | disable sshd certificates
       ansible.builtin.set_fact:
         harden_sshd_ca_gen: false
-    - name: Ubuntu 26.04 | Disable lkrg
-      ansible.builtin.set_fact:
-        harden_lkrg: false
-      when:
-        - (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 26)
   roles:
     - juju4.redhat_epel
     - juju4.harden_sysctl
