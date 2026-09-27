@@ -282,7 +282,9 @@ monit_osqueryd: false
 
 # if hardensysctl_kernel_modules, add p_lkrg to the list
 harden_lkrg: false
-harden_lkrg_version: '1.0.0'
+# renovate: datasource=github-tags depName=lkrg-org/lkrg
+harden_lkrg_github_version: 'v1.0.1'
+harden_lkrg_version: "{{ harden_lkrg_github_version | regex_replace('^v', '') }}"
 harden_lkrg_sysctl:
   - { n: block_modules, v: 0 }
 
