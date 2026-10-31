@@ -103,6 +103,10 @@ jobs:
           sudo apt-get install -y acl || true
           mount
           sudo mount -o remount,acl / || true
+      - name: Ubuntu 24.04 | Remove php8.3-fpm, SNMP MIB
+        run: |
+          sudo apt-get purge -y php8.3-fpm || true
+        if: matrix.version == '24.04'
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
