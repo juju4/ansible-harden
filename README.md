@@ -165,6 +165,8 @@ Typically happens if run under tool like semaphoreui and systemd unit is set wit
   * <https://ixnfo.com/en/installing-mib-in-ubuntu-and-solving-the-error-snmp-cannot-find-module.html>
   * [SNMP - Cannot find module](https://github.com/influxdata/telegraf/issues/4896)
 
+* /etc/systemd/system as immutable will prevent snap auto refresh. either do those manually with temporary chattr, either do not set immutable on this folder. No known equivalent of apt.conf.d Pre-Invoke.
+
 ## License
 
 BSD 2-clause
