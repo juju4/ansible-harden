@@ -7,6 +7,10 @@ umask 077
 
 cd $TMPDIR || exit 1
 
+{% if harden_ipset_refresh_env | length > 0 %}
+. {{ harden_ipset_refresh_env }}
+
+{% endif %}
 {% for item in harden_ipset_list_dataurl %}
 # {{ item.n }}
 listname="{{ item.n }}"

@@ -205,6 +205,7 @@ harden_ipset_list_data: []
 #    list:
 #      - a.b.c.d
 harden_ipset_list_data_ipv6: []
+# harden_ipset_refresh_env: /etc/default/ipset
 
 ### Monitoring
 ## can use inventory group but
