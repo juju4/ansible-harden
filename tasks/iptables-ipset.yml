@@ -5,7 +5,9 @@
 
 - name: Ensure ipset package is present
   ansible.builtin.package:
-    name: 'ipset'
+    name:
+      - 'ipset'
+      - jq
     state: present
 
 - name: Set ipset configuration
